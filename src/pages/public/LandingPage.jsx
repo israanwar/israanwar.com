@@ -26,7 +26,12 @@ function useHeroSequence(text) {
     }
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedMotion) {
+    // Mobile: skip the 3.35s hold + per-character typing entirely. The
+    // subtitle (and the CTA below it, which is gated on `complete`) must be
+    // available the instant the page renders — see the mobile hero block
+    // in light-theme.css for the matching visual-only override.
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    if (reducedMotion || isMobile) {
       setSequence({ complete: true, typing: false, value: text });
       return undefined;
     }
@@ -48,13 +53,13 @@ function useHeroSequence(text) {
       if (complete) return;
 
       const current = glyphs[index - 1];
-      const humanRhythm = [28, 42, 34, 55, 31, 47, 36];
+      const humanRhythm = [12, 18, 15, 22, 13, 19, 15];
       const delay = current === ","
-        ? 180
+        ? 90
         : current === "."
-          ? 260
+          ? 130
           : current === " "
-            ? 22
+            ? 12
             : humanRhythm[(index - 1) % humanRhythm.length];
       timer = window.setTimeout(typeNext, delay);
     };
@@ -62,7 +67,7 @@ function useHeroSequence(text) {
     timer = window.setTimeout(() => {
       setSequence((current) => ({ ...current, typing: true }));
       typeNext();
-    }, 3350);
+    }, 350);
 
     return () => {
       cancelled = true;
@@ -75,6 +80,25 @@ function useHeroSequence(text) {
 
 function isDefaultHeroSubtitle(value) {
   return DEFAULT_HERO_SUBTITLES.has(String(value ?? "").trim().toLowerCase());
+}
+
+// Wraps each non-space character in its own span so hover (desktop) / tap
+// (mobile, via :active — no touch JS needed) can pop just that one letter.
+// Letters are grouped per word (word wrapper gets white-space: nowrap) so
+// the browser can still only wrap the text at real word boundaries — flat
+// letter-by-letter spans with no word grouping let the browser insert line
+// breaks mid-word (e.g. "syst" / "ems"), which this avoids.
+function renderTouchLetters(text, keyPrefix) {
+  return String(text ?? "").split(/(\s+)/).map((chunk, wi) => {
+    if (chunk === "" || /^\s+$/.test(chunk)) return chunk;
+    return (
+      <span className="okr__word-touch" key={`${keyPrefix}-w${wi}`}>
+        {Array.from(chunk).map((ch, ci) => (
+          <span className="okr__letter-touch" key={`${keyPrefix}-w${wi}-${ci}`}>{ch}</span>
+        ))}
+      </span>
+    );
+  });
 }
 
 function ScrollRevealTitle({ text }) {
@@ -156,12 +180,11 @@ export function LandingPage() {
       <span className="okr__scroll-progress" aria-hidden="true" />
     <div className="okr__home">
           <section className="okr__hero">
-            <div className="okr__hero-opening-curtain" aria-hidden="true">
-              <span><b>IA</b> / DIGITAL SYSTEMS</span>
-            </div>
             <div className="okr__wrap">
               {hero.kicker && (
-                <span className="okr__kicker okr__hero-kicker">{hero.kicker}</span>
+                <span className="okr__kicker okr__hero-kicker" aria-label={hero.kicker}>
+                  <span aria-hidden="true">{renderTouchLetters(hero.kicker, "kicker")}</span>
+                </span>
               )}
               <AnimatedHeadline
                 text={[hero.title_line1, hero.title_line2].filter(Boolean).join(" ")}
@@ -173,7 +196,7 @@ export function LandingPage() {
                 <p className="okr__hero-sub okr__hero-sub--typed" aria-label={heroSubtitle}>
                   <span className="okr__hero-sub-measure" aria-hidden="true">{heroSubtitle}</span>
                   <span className="okr__hero-sub-output" aria-hidden="true">
-                    {heroSequence.value}
+                    {renderTouchLetters(heroSequence.value, "sub")}
                     <i className={heroSequence.typing ? "is-typing" : ""} />
                   </span>
                 </p>

@@ -28,7 +28,6 @@ export function PostCard({ post, layout = "grid", index = null }) {
 
   const isHorizontal = layout === "horizontal";
   const cardIndex = index == null ? null : String(index + 1).padStart(2, "0");
-  const edition = String((index ?? 0) + 1).padStart(2, "0");
 
   return (
     <article
@@ -40,7 +39,6 @@ export function PostCard({ post, layout = "grid", index = null }) {
         to={`/blog/${post.slug}`}
         aria-label={post.image_alt || post.title}
       >
-        <span className="okr__blog-card-edition">IA BLOG POST / {edition}</span>
         <span className="okr__blog-card-cover-category">{category?.name || "Journal"}</span>
       </Link>
       <div className="okr__blog-card-body">
