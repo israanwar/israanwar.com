@@ -2275,17 +2275,17 @@
 }
 
 @media (max-width: 760px) {
-  /* The JS loop keeps running (paused during an active touch, resuming
-     right after) but this is where scroll-snap actually matters — a
-     finger swipe should settle on a card, not stop mid-drift. */
-  .okr__certstrip {
-    scroll-snap-type: x proximity;
-  }
+  /* No scroll-snap here (deliberately removed): the JS loop writes
+     track.scrollLeft every animation frame, and pairing that with
+     scroll-snap-type on a touch-scrolling container is a known WebKit/
+     mobile-Safari conflict — the snap engine fights the programmatic
+     writes and the strip can end up stuck, unresponsive to swipes
+     entirely. Plain overflow-x:auto (no snap) is what actually stays
+     draggable on real phones. */
   .okr__certstrip-card {
     width: 100px;
     height: 100px;
     padding: 18px;
-    scroll-snap-align: center;
   }
 }
 

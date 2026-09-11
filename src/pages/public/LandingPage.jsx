@@ -206,11 +206,21 @@ function CertificationsStrip({ providers, t }) {
 
   if (!providers?.length) return null;
 
+  // Touch devices routinely fire a synthetic "mouseenter" right after a
+  // tap/swipe with no matching "mouseleave" afterwards (a long-standing
+  // mobile-browser quirk) — left unguarded, that would latch
+  // hoveringRef true forever and permanently freeze the auto-scroll the
+  // very first time a finger passes over the strip. Gating on
+  // `(hover: hover)` restricts this pause path to devices that can
+  // actually hover with a mouse; touch keeps working through
+  // interactingRef (set from real pointer/touch events) instead.
   function handleMouseEnter() {
+    if (!window.matchMedia("(hover: hover)").matches) return;
     hoveringRef.current = true;
     syncPaused();
   }
   function handleMouseLeave() {
+    if (!window.matchMedia("(hover: hover)").matches) return;
     hoveringRef.current = false;
     syncPaused();
   }
