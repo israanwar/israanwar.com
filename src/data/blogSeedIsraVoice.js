@@ -1093,7 +1093,7 @@ Pada akhirnya workflow adalah cara menghormati waktu. Waktu diri sendiri, waktu 
   },
   {
     id: "post-2022-website-bagus-belum-tentu-menjual",
-    title: "Website Bagus Tapi Sepi Leads? Lah, Masalahnya Bukan Cuma Desain",
+    title: "Kenapa Banyak Website Gagal Menjual Walau Tampil Bagus",
     slug: "kenapa-banyak-website-gagal-menjual-walau-tampil-bagus",
     excerpt: "Desain cantik tidak otomatis menghasilkan leads. Kadang yang hilang bukan estetika, tapi alasan untuk percaya dan bergerak.",
     tags: ["Website", "SEO", "Conversion"],
@@ -1346,6 +1346,537 @@ Setelah itu, rapikan pesan. Buat satu halaman yang benar-benar menjelaskan penaw
 Jangan menunggu semuanya sempurna. Digital presence yang sehat dimulai dari versi sederhana yang jujur, lalu diperbaiki berdasarkan pertanyaan pelanggan. Setiap chat, keberatan, dan kebingungan adalah data. Jika data kecil ini dicatat, bisnis belajar tanpa terlalu banyak menebak.
 
 Tahun 2020 akhirnya menjadi pengingat bahwa digital bukan dunia terpisah dari bisnis. Digital adalah cara baru pelanggan menemukan, menilai, mempercayai, dan membeli. Bisnis yang memahami ini tidak harus paling besar. Ia hanya perlu lebih jelas, lebih siap, dan lebih mudah dipercaya.
+    `,
+  },
+  {
+    id: "post-2025-website-bagus-juga-bisa-sepi-pengunjung",
+    title: "Website yang Bagus Juga Bisa Sepi Pengunjung",
+    slug: "website-yang-bagus-juga-bisa-sepi-pengunjung",
+    excerpt: "Website yang terlihat bagus belum tentu mudah ditemukan. Sebelum memikirkan redesign atau menambah ratusan artikel, pahami lebih dulu bagaimana mesin pencari menemukan, memahami, menilai, dan akhirnya memperlihatkan halaman kepada orang yang tepat.",
+    tags: ["SEO", "Search Intent", "Topical Authority"],
+    published_at: "2025-01-06T09:00:00.000+08:00",
+    body: `
+## Website yang Bagus Belum Tentu Mudah Ditemukan
+
+Bayangkan kamu membuka sebuah restoran.
+
+Lokasinya nyaman. Interiornya bagus. Meja dan kursinya dibuat dengan serius. Makanannya enak. Pelayanannya ramah. Harganya masuk akal. Kalau dibandingkan dengan restoran populer di sekitarnya, kualitasnya mungkin tidak kalah.
+
+Masalahnya hanya satu.
+
+Restoran itu berada di sebuah gang kecil tanpa papan nama. Tidak ada petunjuk jalan. Tidak ada orang yang membicarakannya. Lokasinya bahkan belum tercantum dengan benar di peta.
+
+Kira-kira berapa banyak orang yang akan datang?
+
+Mungkin tidak banyak.
+
+Hal yang hampir sama terjadi pada website.
+
+Kita sering menganggap bahwa website yang bagus akan otomatis mendatangkan pengunjung. Desainnya sudah modern, halaman dibuka dengan cepat, navigasi rapi, foto terlihat profesional, copywriting sudah diperbaiki, dan tampilan mobile terasa nyaman.
+
+Setelah semuanya selesai, kita menunggu.
+
+Satu minggu berlalu. Satu bulan. Tiga bulan.
+
+Traffic tetap kecil.
+
+Di titik seperti ini, mudah untuk menyimpulkan bahwa desainnya masih kurang bagus atau kontennya masih kurang banyak. Padahal masalahnya belum tentu berada di sana.
+
+Masalahnya mungkin jauh lebih sederhana.
+
+Orang belum menemukan website kamu.
+
+Website yang bagus dan website yang mudah ditemukan adalah dua hal yang berbeda. Kualitas menjelaskan apa yang terjadi setelah seseorang masuk ke website. Visibilitas menjelaskan bagaimana orang tersebut sampai ke sana sejak awal.
+
+Great experience does not automatically create discovery.
+
+## Empat Lapisan Visibilitas Website
+
+Saya melihat visibilitas website sebagai sebuah sistem yang setidaknya memiliki empat lapisan.
+
+Lapisan pertama adalah discovery. Mesin pencari harus menemukan bahwa halaman tersebut ada.
+
+Lapisan kedua adalah understanding. Mesin pencari harus memahami apa yang sebenarnya dibahas oleh halaman tersebut.
+
+Lapisan ketiga adalah relevance. Halaman harus mempunyai hubungan yang kuat dengan kebutuhan atau pertanyaan pengguna.
+
+Lapisan terakhir adalah selection. Ketika halaman sudah muncul, pengguna tetap harus memilih halaman kamu dibandingkan pilihan lain yang tersedia.
+
+Empat lapisan tersebut sering dicampur menjadi satu istilah besar bernama SEO. Akibatnya, ketika traffic tidak tumbuh, kita buru-buru mengganti judul artikel, menambah keyword, membeli backlink, atau memproduksi lebih banyak konten.
+
+Padahal setiap lapisan memiliki masalah yang berbeda.
+
+Kalau sebuah halaman belum ditemukan crawler, memperbaiki copywriting belum menyelesaikan masalah. Kalau halaman sudah terindeks tetapi tidak relevan dengan kebutuhan pencarian apa pun, menambah sitemap juga tidak akan menyelesaikannya. Kalau halaman sudah memperoleh impressions tetapi tidak pernah dipilih pengguna, persoalannya sudah berbeda lagi.
+
+Diagnosis harus datang sebelum optimasi.
+
+## Sebelum Dibaca Manusia, Halaman Harus Ditemukan Mesin
+
+Google Search secara umum bekerja melalui proses crawling, indexing, lalu penyajian hasil pencarian. Pada tahap crawling, Google menggunakan sistem crawler untuk menemukan dan mengambil halaman di Internet.
+
+Google tidak mempunyai daftar ajaib yang otomatis mengetahui setiap URL baru yang diterbitkan. Halaman dapat ditemukan melalui link dari halaman lain, sitemap, maupun URL yang sebelumnya sudah diketahui oleh Google.
+
+Bayangkan sebuah perpustakaan menerima seribu buku baru.
+
+Sebelum buku tersebut dapat ditemukan pembaca, petugas harus mengetahui bahwa buku itu sudah datang. Buku kemudian dicatat, dimasukkan ke katalog, diklasifikasikan, dan ditempatkan pada kelompok yang tepat.
+
+Sebuah halaman website bekerja dengan prinsip yang mirip.
+
+Kamu bisa menerbitkan artikel terbaik yang pernah kamu tulis. Tetapi kalau halaman itu tidak memiliki internal link yang memadai, berada terlalu jauh dari struktur utama website, tidak masuk sitemap, atau secara teknis sulit dijangkau crawler, artikel tersebut seperti buku bagus yang masih berada di dalam kardus gudang.
+
+Buku itu ada.
+
+Tetapi keberadaannya belum banyak berarti.
+
+## Ditemukan Belum Tentu Diindeks
+
+Setelah menemukan sebuah halaman, mesin pencari masih harus memahami isinya.
+
+Google memproses teks, gambar, title, link, struktur dokumen, atribut, dan berbagai sinyal lain untuk menentukan apa yang terdapat pada halaman tersebut. Setelah itu barulah sebuah halaman dapat dipertimbangkan untuk masuk ke indeks.
+
+Di sinilah terdapat satu perbedaan yang sering dilupakan.
+
+Crawled tidak sama dengan indexed.
+
+Google sendiri menjelaskan bahwa crawling tidak menjamin indexing. Sebuah halaman dapat ditemukan dan diproses tanpa akhirnya dimasukkan ke indeks.
+
+Masalah lain muncul ketika satu konten tersedia melalui banyak URL.
+
+Sebuah website dapat memiliki versi HTTP dan HTTPS, www dan non-www, parameter URL, kategori, filter, pagination, atau variasi URL lain yang sebenarnya menampilkan informasi hampir sama.
+
+Dalam kondisi seperti itu, mesin pencari harus menentukan URL mana yang dianggap sebagai representasi utama. Proses ini berkaitan dengan canonicalization.
+
+Masalahnya terlihat teknis, tetapi dampaknya sangat praktis.
+
+Website bisa memiliki ribuan URL tanpa benar-benar memiliki ribuan halaman yang memberikan nilai berbeda.
+
+More pages do not necessarily mean more information.
+
+## Terindeks Juga Belum Berarti Penting
+
+Sekarang bayangkan persoalan teknis sudah selesai.
+
+Halaman berhasil di-crawl. Halaman juga berhasil masuk indeks.
+
+Apakah traffic otomatis datang?
+
+Belum tentu.
+
+Ketika seseorang melakukan pencarian, mesin pencari harus menentukan halaman mana yang paling relevan terhadap kebutuhan pengguna pada saat itu.
+
+Di sinilah search intent menjadi penting.
+
+Bandingkan tiga pencarian berikut.
+
+"cara memilih laptop kerja"
+
+"ThinkPad T14 review"
+
+"beli ThinkPad T14 Jakarta"
+
+Ketiganya berbicara tentang laptop. Namun kebutuhan manusia di balik ketiga query tersebut berbeda.
+
+Pencarian pertama menunjukkan kebutuhan eksplorasi. Pencarian kedua lebih dekat kepada evaluasi. Pencarian ketiga sudah menunjukkan kecenderungan transaksi.
+
+Satu halaman belum tentu cocok untuk menjawab ketiganya.
+
+Karena itulah semantic SEO seharusnya tidak dimulai dari pertanyaan mengenai berapa kali sebuah keyword harus dimasukkan ke artikel.
+
+Pertanyaan yang lebih penting adalah entitas apa yang sedang dibicarakan, atribut apa yang ingin diketahui pengguna, hubungan apa yang perlu dijelaskan, konteks apa yang melatarbelakangi pertanyaan tersebut, dan informasi lanjutan apa yang kemungkinan akan dibutuhkan pembaca.
+
+Sebuah artikel tidak seharusnya hanya menargetkan kumpulan kata.
+
+Ia harus membangun konteks.
+
+## Mesin Pencari Perlu Memahami Hubungan Antarkonsep
+
+Misalnya kamu menulis tentang sepatu lari.
+
+Kalau pendekatannya hanya keyword, kamu mungkin membuat artikel tentang sepatu lari terbaik, harga sepatu lari, dan rekomendasi sepatu lari.
+
+Secara semantik, topiknya jauh lebih luas.
+
+Ada jenis kaki, pronation, cushioning, heel-to-toe drop, berat badan pengguna, jenis permukaan, jarak lari, durability, sizing, hingga hubungan antara karakter sepatu dengan kebutuhan pelari.
+
+Semua itu membentuk jaringan makna.
+
+Inilah yang membuat topical authority berbeda dari sekadar produksi artikel dalam jumlah besar.
+
+Sebuah website tidak terlihat memiliki kedalaman karena mempunyai banyak URL. Website terlihat mempunyai kedalaman ketika berbagai halaman di dalamnya menjelaskan sebuah bidang secara terstruktur, konsisten, dan saling berhubungan.
+
+Topical authority bukan lomba jumlah artikel.
+
+It is a problem of coverage and relationships.
+
+## Internal Linking Bukan Sekadar Menu Navigasi
+
+Internal link sering diperlakukan seperti pekerjaan tambahan setelah sebuah artikel selesai ditulis.
+
+Menurut saya, pendekatan seperti itu kurang tepat.
+
+Hubungan antarkonten sebaiknya dipikirkan sejak penyusunan topical map.
+
+Ketika artikel ini membahas crawling, misalnya, pembaca secara kontekstual dapat diarahkan ke pembahasan khusus tentang bagaimana mesin pencari menemukan halaman.
+
+Ketika pembahasan berpindah ke indexing, hubungan berikutnya dapat diarahkan pada canonicalization, noindex, kualitas halaman, atau status indeks.
+
+Ketika kita berbicara tentang search intent, pembaca bisa dibawa ke pembahasan yang lebih dalam mengenai bagaimana mengenali maksud di balik query.
+
+Dengan demikian, internal link tidak lagi menjadi sekadar "Baca juga artikel lainnya."
+
+Link berubah menjadi hubungan antarkonsep.
+
+Crawler memperoleh jalur untuk menemukan halaman. Pembaca memperoleh kelanjutan pengetahuan. Website memperoleh struktur semantik.
+
+Internal linking bekerja pada dua level sekaligus.
+
+Discovery dan context.
+
+## Jangan Campur Semua Intent dalam Satu Halaman
+
+Sebuah kesalahan lain muncul ketika satu halaman dipaksa melakukan terlalu banyak pekerjaan.
+
+Satu halaman ingin menjelaskan produk, menargetkan keyword, menjawab pertanyaan, memuat testimonial, menjual paket, menjelaskan perusahaan, mengumpulkan leads, dan sekaligus mengejar ranking.
+
+Hasilnya sering kali adalah halaman yang mencoba berbicara kepada semua orang tetapi tidak benar-benar jelas kepada siapa pun.
+
+Halaman informasional dan halaman fungsional mempunyai tujuan yang berbeda.
+
+Artikel berjudul "Apa Itu CRM dan Bagaimana Cara Kerjanya" mempunyai tugas memberikan pemahaman.
+
+Halaman "Software CRM untuk Tim Penjualan" mempunyai tugas mendorong tindakan.
+
+Keduanya bisa membahas entitas yang sama. Keduanya bahkan seharusnya saling terhubung. Tetapi intent-nya berbeda.
+
+Pemisahan ini membantu pengguna memahami fungsi halaman dan membantu mesin pencari memahami konteksnya.
+
+## Website Sering Berbicara dengan Bahasa Perusahaan, Bukan Bahasa Masalah
+
+Perusahaan suka menulis kalimat seperti ini.
+
+"We provide integrated digital transformation solutions."
+
+Pengguna mungkin mengetik sesuatu yang jauh lebih sederhana.
+
+"cara mengurangi pekerjaan manual tim sales"
+
+Perusahaan menulis
+
+"end-to-end customer engagement platform."
+
+Pengguna bertanya
+
+"bagaimana agar customer service tidak menjawab pertanyaan yang sama berulang kali"
+
+Produk yang dibicarakan bisa saja sama.
+
+Bahasanya berbeda.
+
+Inilah salah satu alasan website yang terlihat profesional tetap tidak mendapatkan traffic yang relevan.
+
+Website berbicara dengan bahasa organisasi.
+
+Pasar berbicara dengan bahasa masalah.
+
+Keyword research yang baik sebenarnya bukan pekerjaan mencari kata sebanyak mungkin. Kita sedang mempelajari bagaimana manusia memberi nama pada kebutuhannya, bagaimana mereka menggambarkan masalah, apa yang ingin mereka ketahui, dan informasi apa yang mereka perlukan sebelum mengambil keputusan.
+
+Search queries are fragments of human problems.
+
+## Konten yang Rapi Belum Tentu Memberikan Information Gain
+
+Sekarang cari satu topik populer di Google dan buka beberapa artikel yang berada pada hasil teratas.
+
+Kamu mungkin menemukan pola yang sangat mirip.
+
+Definisi.
+
+Manfaat.
+
+Jenis.
+
+Cara menggunakan.
+
+Kesimpulan.
+
+Artikel berikutnya menggunakan struktur yang sama. Artikel selanjutnya juga begitu.
+
+Lama-kelamaan Internet dipenuhi puluhan halaman yang sebenarnya mengatakan hal serupa dengan susunan kata berbeda.
+
+Masalahnya bukan hanya plagiarisme.
+
+Masalahnya adalah information gain.
+
+Apa yang pembaca dapatkan dari halaman kamu yang tidak ia dapatkan dari halaman lainnya?
+
+Google melalui panduan helpful content terus mendorong konten yang memberikan nilai nyata, informasi asli, analisis, pengalaman, atau sesuatu yang membantu pembaca menyelesaikan tujuannya.
+
+Artinya, sebuah artikel seharusnya berani memberikan sesuatu yang baru.
+
+Data.
+
+Pengalaman langsung.
+
+Framework.
+
+Perbandingan.
+
+Observasi.
+
+Contoh.
+
+Konsekuensi yang jarang dibahas.
+
+Misalnya artikel ini tidak berhenti pada pernyataan bahwa website sepi karena SEO-nya buruk. Pernyataan itu terlalu luas untuk digunakan sebagai diagnosis.
+
+Kita memisahkan masalah visibilitas ke dalam discovery, understanding, relevance, dan selection.
+
+Framework sederhana tersebut memberi pembaca cara untuk menentukan di mana masalah sebenarnya berada.
+
+Itulah information gain.
+
+## E-E-A-T Bukan Sekadar Kotak Bio Penulis
+
+Ada kesalahpahaman bahwa E-E-A-T bisa diselesaikan hanya dengan menambahkan nama penulis, foto, jabatan, dan tautan LinkedIn di bawah artikel.
+
+Tentu informasi tersebut berguna.
+
+Tetapi trust tidak dibangun hanya melalui author box.
+
+Experience, Expertise, Authoritativeness, dan Trustworthiness terlihat melalui keseluruhan kualitas informasi.
+
+Apakah penulis memahami topik yang dibahas.
+
+Apakah sumber dapat diverifikasi.
+
+Apakah pernyataannya akurat.
+
+Apakah penulis memiliki pengalaman yang relevan.
+
+Apakah website memiliki identitas yang jelas.
+
+Apakah data diperbarui ketika kondisi berubah.
+
+Apakah artikel membedakan fakta, analisis, pengalaman, dan pendapat.
+
+Dalam dokumentasi helpful content, Google bahkan menempatkan trust sebagai unsur yang sangat penting dalam E-E-A-T.
+
+Itulah alasan saya lebih memilih menulis
+
+"Google tidak menjamin semua halaman yang di-crawl akan diindeks"
+
+kemudian mendukungnya menggunakan dokumentasi Google Search Central.
+
+Kalimat itu mungkin tidak terdengar seheboh
+
+"Gunakan tujuh trik rahasia agar halaman pasti masuk Google."
+
+Namun pernyataan pertama mempunyai satu keuntungan yang tidak dimiliki pernyataan kedua.
+
+Ia dapat dipertanggungjawabkan.
+
+Trust is accumulated through accuracy.
+
+## Topical Authority Membutuhkan Arah
+
+Website juga dapat mengalami masalah karena menerbitkan artikel secara acak.
+
+Hari ini membahas SEO.
+
+Besok cryptocurrency.
+
+Lusa kesehatan.
+
+Minggu berikutnya resep makanan.
+
+Masing-masing artikel mungkin bagus. Tetapi secara keseluruhan, website tersebut tidak membangun sistem pengetahuan yang jelas.
+
+Kalau israanwar.com ingin membangun otoritas kuat pada Search Optimization, misalnya, pembahasannya harus berkembang secara sistematis.
+
+Crawling mengarah ke indexing.
+
+Indexing berkaitan dengan canonicalization.
+
+Search intent berhubungan dengan content architecture.
+
+Content architecture berkaitan dengan internal linking.
+
+Kemudian pembahasannya bisa berkembang menuju structured data, entity relationships, E-E-A-T, content quality, AEO, GEO, hingga citation readiness.
+
+Artikel-artikel tersebut saling terhubung dan membentuk topical map.
+
+Kita tidak lagi bertanya
+
+"Hari ini enaknya menulis apa?"
+
+Kita bertanya
+
+"Bagian mana dari topik ini yang belum dijelaskan?"
+
+Perbedaannya besar.
+
+Yang pertama menghasilkan kalender konten.
+
+Yang kedua menghasilkan knowledge system.
+
+## Diagnosis Website Seperti Dokter Memeriksa Pasien
+
+Kalau seseorang datang ke rumah sakit karena sakit kepala, dokter yang baik tidak langsung melakukan operasi.
+
+Ia bertanya.
+
+Sejak kapan sakitnya muncul.
+
+Di bagian mana.
+
+Seberapa sering.
+
+Apakah ada demam.
+
+Apakah ada riwayat penyakit.
+
+Apakah tekanan darah normal.
+
+SEO seharusnya bekerja dengan logika yang sama.
+
+Kalau traffic website kecil, jangan langsung membeli backlink.
+
+Periksa dahulu apakah halaman dapat di-crawl. Pastikan URL sudah terindeks. Periksa canonical. Lihat impressions di Search Console. Cari tahu query apa yang memunculkan halaman. Periksa apakah query tersebut sesuai dengan tujuan halaman.
+
+Kalau impressions tinggi tetapi click-through rate rendah, persoalannya mungkin berada pada cara halaman dipresentasikan.
+
+Kalau orang masuk tetapi tidak melakukan tindakan apa pun, mungkin masalahnya sudah berpindah ke user experience, kejelasan pesan, atau ketidaksesuaian intent.
+
+Kalau beberapa halaman membahas hal yang hampir sama, website bahkan bisa bersaing dengan dirinya sendiri.
+
+You cannot optimize what you have not diagnosed.
+
+## Jangan Buru-buru Membuat Website Baru
+
+Ketika sebuah website sepi, salah satu reaksi yang paling umum adalah redesign.
+
+Logo diperbesar.
+
+Warna diubah.
+
+CMS dipindahkan.
+
+Animasi ditambahkan.
+
+Homepage dibuat lebih modern.
+
+Enam bulan kemudian, traffic tetap tidak banyak berubah.
+
+Mengapa?
+
+Karena kita memperbaiki bangunan ketika masalah sebenarnya berada pada jalan menuju bangunan.
+
+Redesign kadang memang diperlukan. Tetapi redesign bukan obat untuk semua masalah visibilitas.
+
+Kalau halaman tidak terindeks, perbaiki indexing.
+
+Kalau struktur website tidak jelas, perbaiki information architecture.
+
+Kalau topiknya terlalu dangkal, tambah entity coverage.
+
+Kalau artikelnya sama dengan semua kompetitor, tambah information gain.
+
+Kalau pembaca sulit mempercayainya, perkuat evidence dan E-E-A-T.
+
+Kalau halaman muncul tetapi tidak dipilih, evaluasi title, description, positioning, dan relevansinya terhadap intent.
+
+Setiap masalah membutuhkan intervensi yang berbeda.
+
+## SEO Bukan Tentang Membuat Robot Menyukai Tulisan Kita
+
+Semakin lama saya mempelajari search, semakin saya merasa tujuan SEO sering dijelaskan secara terbalik.
+
+Kita sering mendengar nasihat
+
+"Tulis supaya Google suka."
+
+Menurut saya, pendekatan itu kurang tepat.
+
+Kita seharusnya membuat informasi yang jelas dan berguna bagi manusia, kemudian menyusunnya sedemikian rupa sehingga mesin dapat memahami struktur, entitas, hubungan, dan konteksnya.
+
+Subjek harus jelas.
+
+Predikat harus jelas.
+
+Objek harus jelas.
+
+Entitas harus konsisten.
+
+Hubungan antarkonsep harus dapat ditelusuri.
+
+Pernyataan faktual harus dapat diverifikasi.
+
+Setiap paragraf idealnya mempunyai satu gagasan yang cukup jelas sehingga tetap bermakna ketika dipahami sebagai sebuah passage.
+
+Inilah salah satu alasan saya menyukai kalimat yang sederhana.
+
+Bukan karena pembaca tidak mampu memahami bahasa rumit.
+
+Justru sebaliknya.
+
+Tulisan yang rumit sering menjadi tempat penulis bersembunyi ketika gagasannya sendiri belum cukup jelas.
+
+Clear writing is usually a consequence of clear thinking.
+
+## Pada Akhirnya, Website Harus Punya Alasan untuk Ditemukan
+
+Internet tidak kekurangan website.
+
+Internet juga tidak kekurangan artikel.
+
+Setiap hari semakin banyak halaman baru diterbitkan, diperbarui, diringkas oleh mesin, dan direkomendasikan oleh sistem AI.
+
+Karena itu pertanyaan yang penting bukan lagi hanya
+
+"Apakah website saya terlihat bagus?"
+
+Pertanyaan yang lebih berguna adalah
+
+Mengapa mesin pencari perlu memahami website ini?
+
+Mengapa halaman ini relevan terhadap kebutuhan tertentu?
+
+Apa informasi baru yang diberikan?
+
+Apa hubungan halaman ini dengan pengetahuan lain di dalam website?
+
+Mengapa pembaca harus mempercayainya?
+
+Mengapa seseorang harus memilihnya dibandingkan halaman lain?
+
+Desain yang bagus memberikan alasan untuk bertahan.
+
+Konten yang bagus memberikan alasan untuk membaca.
+
+Produk yang bagus memberikan alasan untuk membeli.
+
+Tetapi visibilitas memberi kesempatan agar seluruh alasan tersebut ditemukan.
+
+Itulah bagian yang sering terlewat.
+
+Kita sibuk mempercantik restoran tetapi lupa memasang papan nama.
+
+Kita sibuk menambah artikel tetapi lupa membangun topical map.
+
+Kita sibuk mengejar keyword tetapi lupa memahami entitas.
+
+Kita sibuk mengejar ranking tetapi lupa bertanya apakah halaman kita benar-benar memberikan informasi baru.
+
+Kalau website kamu bagus tetapi masih sepi, jangan langsung menyimpulkan bahwa semuanya gagal.
+
+Bisa jadi bangunannya sudah bagus.
+
+Bisa jadi produknya juga bagus.
+
+Masalahnya mungkin hanya satu.
+
+Belum cukup banyak jalan yang membawa orang ke sana.
+
+Dan di Internet, sesuatu yang tidak dapat ditemukan sering kali memiliki nasib yang hampir sama dengan sesuatu yang tidak pernah ada.
     `,
   },
 ];
@@ -1624,6 +2155,8 @@ const OKKA_META_DESCRIPTIONS = {
     "Kerjaan banyak drama sering karena workflow cuma ada di kepala. Ini cara membuat alur kerja lebih tenang tanpa kebanyakan rapat.",
   "kenapa-banyak-website-gagal-menjual-walau-tampil-bagus":
     "Website bagus tapi sepi leads? Masalahnya sering bukan desain, tapi orientasi, bukti, CTA, dan alasan untuk percaya.",
+  "website-yang-bagus-juga-bisa-sepi-pengunjung":
+    "Website dengan desain bagus tetap bisa sepi jika sulit ditemukan. Pelajari hubungan crawling, indexing, search intent, topical authority, dan visibilitas organik.",
   "selling-yang-baik-adalah-arsitektur-kepercayaan":
     "Selling yang enak tidak memburu orang. Ia membuat keputusan terasa jelas, aman, dan masuk akal tanpa tekanan berlebihan.",
   "branding-di-era-scroll-cepat-dipercaya-sebelum-dijelaskan":
@@ -1695,6 +2228,11 @@ const OKKA_RELATED_SLUGS = {
     "masa-depan-digital-milik-tim-kecil-yang-punya-sistem-belajar",
     "ai-workflow-untuk-bisnis-kecil-mulai-dari-audit-bukan-tool",
   ],
+  "website-yang-bagus-juga-bisa-sepi-pengunjung": [
+    "kenapa-banyak-website-gagal-menjual-walau-tampil-bagus",
+    "seo-in-the-age-of-ai-search-is-still-about-trust",
+    "website-yang-tajam-adalah-mesin-kepercayaan",
+  ],
   "seo-in-the-age-of-ai-search-is-still-about-trust": [
     "cara-membaca-riset-tanpa-jadi-korban-grafik-cantik",
     "website-yang-tajam-adalah-mesin-kepercayaan",
@@ -1765,6 +2303,9 @@ const FIRSTROUND = { title: "First Round Review. Essays on building teams & comp
 const NEUMEIER = { title: "Marty Neumeier. Brand strategy essays & books", url: "https://www.martyneumeier.com/", source: "martyneumeier.com" };
 const STRATECHERY = { title: "Stratechery by Ben Thompson. Analisis strategi tech", url: "https://stratechery.com/", source: "stratechery.com" };
 const A16Z = { title: "Andreessen Horowitz. Insights on tech, growth & distribution", url: "https://a16z.com/", source: "a16z.com" };
+const GSE_HOW_SEARCH_WORKS = { title: "Google Search Central. How Google Search Works", url: "https://developers.google.com/search/docs/fundamentals/how-search-works", source: "developers.google.com" };
+const GOOGLE_CANONICALIZATION = { title: "Google Search Central. Canonicalization", url: "https://developers.google.com/search/docs/crawling-indexing/canonicalization", source: "developers.google.com" };
+const GOOGLE_QUALITY_RATER_GUIDELINES = { title: "Google Search Quality Evaluator Guidelines", url: "https://static.googleusercontent.com/media/guidelines.raterhub.com/en//searchqualityevaluatorguidelines.pdf", source: "static.googleusercontent.com" };
 
 const OKKA_REFERENCES = {
   "e-commerce-yang-serius-tidak-dimulai-dari-keranjang-tapi-dari-rasa-percaya": [BAYMARD_CHECKOUT, BAYMARD_MOBILE, BAYMARD_CATEGORY, GOOGLE_PRODUCT_DATA],
@@ -1788,6 +2329,7 @@ const OKKA_REFERENCES = {
   "branding-di-era-scroll-cepat-dipercaya-sebelum-dijelaskan": [NEUMEIER, NNG],
   "ketika-semua-orang-online-masalahnya-bukan-lagi-punya-akun": [STRATECHERY, HBR],
   "bisnis-kecil-setelah-dunia-pindah-ke-layar": [STRATECHERY, HBR],
+  "website-yang-bagus-juga-bisa-sepi-pengunjung": [GSE_HOW_SEARCH_WORKS, GHELPFUL, GOOGLE_CANONICALIZATION, GOOGLE_QUALITY_RATER_GUIDELINES],
 };
 
 // Appendix per post — ditulis dalam format markdown ringan, di-parse
@@ -1898,6 +2440,19 @@ Kalau lo relate sama tulisan ini, lanjut ke [kenapa website cantik tetap bisa se
 ## Baca juga
 
 Ide ini bersambung ke [workflow yang tidak cuma hidup di kepala](/blog/workflow-adalah-infrastruktur-kreatif) dan [cara memulai AI dari kerjaan yang bikin capek](/blog/ai-workflow-untuk-bisnis-kecil-mulai-dari-audit-bukan-tool).
+`,
+  "website-yang-bagus-juga-bisa-sepi-pengunjung": `
+## Poin praktis
+
+- Pisahkan diagnosis ke empat lapisan: discovery, understanding, relevance, dan selection, sebelum menyimpulkan "SEO-nya jelek".
+- Cek dulu apakah halaman bisa di-crawl dan sudah terindeks lewat Search Console sebelum memperbaiki copywriting atau redesign.
+- Bangun topical map, bukan kalender konten acak, supaya topical authority terbentuk dari cakupan dan hubungan antarartikel.
+- Pisahkan halaman informasional dan halaman fungsional. Jangan paksa satu halaman menjawab semua search intent sekaligus.
+- Perkuat E-E-A-T lewat akurasi dan sumber yang bisa diverifikasi, bukan sekadar menambah kotak bio penulis.
+
+## Baca juga
+
+Kalau visibilitas sudah mulai terbentuk tapi traffic yang datang belum menghasilkan leads, lanjut ke [kenapa banyak website gagal menjual walau tampil bagus](/blog/kenapa-banyak-website-gagal-menjual-walau-tampil-bagus). Untuk konteks trust dan E-E-A-T di era pencarian yang berubah, baca juga [SEO setelah AI: konten generik makin kalah](/blog/seo-in-the-age-of-ai-search-is-still-about-trust).
 `,
   "brand-yang-cerdas-tidak-mengejar-semua-orang": `
 ## Poin praktis
@@ -2097,6 +2652,7 @@ const OKKA_CATEGORIES = {
   "branding-di-era-scroll-cepat-dipercaya-sebelum-dijelaskan": "branding-marketing-selling",
   "ketika-semua-orang-online-masalahnya-bukan-lagi-punya-akun": "business-strategy",
   "bisnis-kecil-setelah-dunia-pindah-ke-layar": "business-strategy",
+  "website-yang-bagus-juga-bisa-sepi-pengunjung": "search-optimization",
 };
 
 // Focus keyword per post — kata/frasa utama yang dibidik SEO/AEO/GEO.
@@ -2124,6 +2680,7 @@ const OKKA_FOCUS_KEYWORDS = {
   "branding-di-era-scroll-cepat-dipercaya-sebelum-dijelaskan": "branding di era scroll cepat",
   "ketika-semua-orang-online-masalahnya-bukan-lagi-punya-akun": "strategi bisnis di era digital",
   "bisnis-kecil-setelah-dunia-pindah-ke-layar": "bisnis kecil di era digital",
+  "website-yang-bagus-juga-bisa-sepi-pengunjung": "penyebab website sepi",
 };
 
 // Meta title override kalau title asli terlalu panjang untuk SERP (>60 char).
@@ -2145,11 +2702,12 @@ const OKKA_META_TITLES = {
   "politik-perhatian-di-era-algoritma": "Kita Merasa Tahu Karena Algoritma?",
   "ai-tidak-menggantikan-strategi-ia-menguji-kedewasaan-bisnis": "AI Membongkar Strategi yang Berantakan",
   "workflow-adalah-infrastruktur-kreatif": "Workflow Jangan Cuma Ada di Kepala",
-  "kenapa-banyak-website-gagal-menjual-walau-tampil-bagus": "Website Bagus Tapi Sepi Leads?",
+  "kenapa-banyak-website-gagal-menjual-walau-tampil-bagus": "Kenapa Banyak Website Gagal Menjual Walau Tampil Bagus",
   "selling-yang-baik-adalah-arsitektur-kepercayaan": "Selling yang Membuat Orang Mikir Jernih",
   "branding-di-era-scroll-cepat-dipercaya-sebelum-dijelaskan": "Brand Tidak Punya Waktu untuk Membosankan",
   "ketika-semua-orang-online-masalahnya-bukan-lagi-punya-akun": "Semua Online, Kenapa Belum Dipilih?",
   "bisnis-kecil-setelah-dunia-pindah-ke-layar": "Bisnis Kecil Tidak Bisa Lagi Asal Ada",
+  "website-yang-bagus-juga-bisa-sepi-pengunjung": "Website yang Bagus Juga Bisa Sepi Pengunjung",
 };
 
 // Hitung reading time otomatis dari isi TipTap doc.
@@ -2274,6 +2832,11 @@ const OKKA_FAQS = {
     { question: "Apa yang paling berubah untuk bisnis kecil setelah pandemi?", answer: "Digital bukan lagi tambahan, tapi lapisan utama pengalaman pelanggan. Bisnis kecil yang dulu andal di interaksi fisik harus belajar menerjemahkan trust ke antarmuka digital. Yang berhasil bukan yang paling canggih, tapi yang paling jelas dari jarak jauh." },
     { question: "Bagaimana bisnis kecil bersaing dengan yang besar di digital?", answer: "Bukan dengan menyaingi skala, tapi dengan menjadi jelas untuk orang yang tepat. Bisnis kecil bisa bergerak lebih cepat, lebih personal, dan lebih jujur. Ini keunggulan yang tidak bisa ditiru dengan mudah oleh brand besar dengan proses yang berat." },
     { question: "Apa investasi digital pertama yang harus dilakukan UMKM?", answer: "Google Business Profile yang lengkap dan website satu halaman yang menjawab pertanyaan dasar. Siapa lo, apa yang lo jual, kenapa harus percaya, bagaimana cara beli. Bukan bikin app atau ecommerce dulu. Rumah digital yang jelas mengalahkan platform yang rumit." },
+  ],
+  "website-yang-bagus-juga-bisa-sepi-pengunjung": [
+    { question: "Kenapa website yang sudah bagus tetap bisa sepi pengunjung?", answer: "Karena kualitas desain dan visibilitas adalah dua hal berbeda. Desain menjelaskan apa yang terjadi setelah orang masuk ke website. Visibilitas menjelaskan bagaimana orang bisa sampai ke sana sejak awal. Kalau halaman belum ditemukan, dipahami, dianggap relevan, dan dipilih mesin pencari, desain sebagus apa pun tidak akan terlihat oleh banyak orang." },
+    { question: "Apa bedanya halaman yang di-crawl, diindeks, dan yang benar-benar mendapat traffic?", answer: "Crawling hanya berarti Google menemukan dan mengambil halaman. Indexing berarti halaman itu dipahami dan layak dipertimbangkan masuk hasil pencarian, tapi crawling tidak menjamin indexing. Traffic baru datang setelah halaman juga relevan dengan search intent tertentu dan akhirnya dipilih pengguna dibanding hasil lain. Tiga tahap ini terpisah, dan masalahnya bisa muncul di tahap mana saja." },
+    { question: "Kalau traffic website kecil, apa yang harus diperiksa lebih dulu sebelum redesign?", answer: "Diagnosis dulu, baru intervensi. Periksa apakah halaman bisa di-crawl dan sudah terindeks, cek canonical, lihat impressions dan query di Search Console, lalu cocokkan apakah query tersebut sesuai tujuan halaman. Redesign hanya membantu kalau masalahnya memang ada di pengalaman halaman, bukan di crawling, indexing, atau kecocokan search intent." },
   ],
 };
 

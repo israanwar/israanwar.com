@@ -516,6 +516,33 @@ function ensureSeed() {
     write(KEYS.posts, refreshed);
     localStorage.setItem("okr:seeded:blog:editorial:v11", "1");
   }
+  // v12 = tambah artikel baru "Website yang Bagus Juga Bisa Sepi Pengunjung"
+  // (search-optimization) + judul artikel "kenapa-banyak-website-gagal-
+  // menjual-walau-tampil-bagus" diganti (dulu "Website Bagus Tapi Sepi
+  // Leads?") supaya tidak lagi mirip dengan judul artikel baru ini.
+  if (localStorage.getItem("okr:seeded:blog:editorial:v12") !== "1") {
+    const existing = read(KEYS.posts, []);
+    const seedBySlug = new Map(ISRA_ANWAR_BLOG_POSTS_SEED.map((post) => [post.slug, post]));
+    const refreshSlugs = new Set([
+      "website-yang-bagus-juga-bisa-sepi-pengunjung",
+      "kenapa-banyak-website-gagal-menjual-walau-tampil-bagus",
+    ]);
+    const refreshedPosts = existing.map((post) => {
+      const seeded = seedBySlug.get(post.slug);
+      if (!seeded || !refreshSlugs.has(post.slug)) return post;
+      return {
+        ...post,
+        ...seeded,
+        id: post.id ?? seeded.id,
+        author_id: post.author_id ?? seeded.author_id,
+        updated_at: now(),
+      };
+    });
+    const refreshedSlugs = new Set(refreshedPosts.map((post) => post.slug));
+    const missingPosts = ISRA_ANWAR_BLOG_POSTS_SEED.filter((post) => !refreshedSlugs.has(post.slug));
+    write(KEYS.posts, [...refreshedPosts, ...missingPosts]);
+    localStorage.setItem("okr:seeded:blog:editorial:v12", "1");
+  }
   if (!read(KEYS.media)) write(KEYS.media, []);
   if (!read(KEYS.products)) write(KEYS.products, []);
   if (!read(KEYS.orders)) write(KEYS.orders, []);
