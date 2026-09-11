@@ -1208,10 +1208,11 @@
 }
 
 .okr-logo__wordmark {
-  font-family: "Archivo Black", "Arial Black", sans-serif !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
   font-size: 17px;
   font-weight: 400;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
+  text-transform: uppercase;
 }
 
 @media (max-width: 720px) {

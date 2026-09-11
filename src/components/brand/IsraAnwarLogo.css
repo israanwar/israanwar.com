@@ -20,8 +20,9 @@
 }
 
 .okr-logo__mark-image {
-  width: 42px;
-  height: 42px;
+  width: 54px;
+  height: 54px;
+  transition: transform 220ms cubic-bezier(.16, 1, .3, 1);
 }
 
 .okr-mark {
@@ -29,13 +30,22 @@
   height: 34px;
 }
 
+/* Touch/hover feedback on the mark — hovering (or tapping, via :active)
+   anywhere over the logo lifts it with a small scale + tilt. Keyboard
+   focus is handled separately since focus lands on the wrapping
+   `<Link className="okr__brand">` in the header, outside this element. */
+.okr-logo:hover .okr-logo__mark-image,
+.okr-logo:active .okr-logo__mark-image,
+.okr__brand:focus-visible .okr-logo__mark-image {
+  transform: scale(1.12) rotate(-4deg);
+}
+
+/* The "Isra Anwar" wordmark next to the mark is intentionally hidden —
+   the mark alone is the logo now. Kept in the markup (not removed from
+   IsraAnwarLogo.jsx) so the accessible name on the parent
+   `role="img"` span is unaffected. */
 .okr-logo__wordmark {
-  color: currentColor;
-  font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, sans-serif;
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0.13em;
-  white-space: nowrap;
+  display: none;
 }
 
 @media (max-width: 640px) {
@@ -44,13 +54,8 @@
   }
 
   .okr-logo__mark-image {
-    width: 36px;
-    height: 36px;
-  }
-
-  .okr-logo__wordmark {
-    font-size: 16px;
-    letter-spacing: 0.11em;
+    width: 46px;
+    height: 46px;
   }
 
   .okr-mark {
@@ -60,4 +65,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .okr-logo__mark-image {
+    transition: none;
+  }
+  .okr-logo:hover .okr-logo__mark-image,
+  .okr-logo:active .okr-logo__mark-image,
+  .okr__brand:focus-visible .okr-logo__mark-image {
+    transform: none;
+  }
 }

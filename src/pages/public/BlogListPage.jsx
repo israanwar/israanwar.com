@@ -5,7 +5,7 @@ import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { useLivePosts } from "../../hooks/usePageData";
 import { BLOG_CATEGORIES, CATEGORY_BY_SLUG } from "../../data/blogCategories";
-import { PostCard } from "../../components/blog/PostCard";
+import { BlogPinCard } from "../../components/blog/BlogPinCard";
 import { BlogPagination } from "../../components/blog/BlogPagination";
 import { BlogSidebar } from "../../components/blog/BlogSidebar";
 import { useI18n } from "../../lib/i18n";
@@ -62,6 +62,12 @@ export function BlogListPage({ initialCategorySlug = null }) {
   const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10) || 1);
 
   // Filter → sort → paginate
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    for (const p of allPosts) counts[p.category] = (counts[p.category] ?? 0) + 1;
+    return counts;
+  }, [allPosts]);
+
   const filtered = useMemo(() => {
     let list = allPosts;
     if (activeCategory) list = list.filter((p) => p.category === activeCategory.slug);
@@ -180,17 +186,21 @@ export function BlogListPage({ initialCategorySlug = null }) {
                   to="/blog"
                   className={`okr__rail-chip${!activeCategory ? " is-active" : ""}`}
                 >
-                  {t("blog_all")}
+                  {t("blog_all")} <span className="okr__rail-chip-count">{allPosts.length}</span>
                 </Link>
-                {BLOG_CATEGORIES.map((c) => (
-                  <Link
-                    key={c.slug}
-                    to={`/blog/${c.slug}`}
-                    className={`okr__rail-chip${activeCategory?.slug === c.slug ? " is-active" : ""}`}
-                  >
-                    {localizeBlogCategory(c, lang).name}
-                  </Link>
-                ))}
+                {BLOG_CATEGORIES.map((c) => {
+                  const count = categoryCounts[c.slug] ?? 0;
+                  if (!count) return null;
+                  return (
+                    <Link
+                      key={c.slug}
+                      to={`/blog/${c.slug}`}
+                      className={`okr__rail-chip${activeCategory?.slug === c.slug ? " is-active" : ""}`}
+                    >
+                      {localizeBlogCategory(c, lang).name} <span className="okr__rail-chip-count">{count}</span>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
 
@@ -237,8 +247,10 @@ export function BlogListPage({ initialCategorySlug = null }) {
                     )}
                   </div>
                 ) : (
-                  <div className="okr__blog-grid okr__blog-grid--editorial">
-                    {pageItems.map((p, i) => <PostCard key={p.id} post={p} index={pageStart + i} />)}
+                  <div className="okr__blog-pin-grid">
+                    {pageItems.map((p, i) => (
+                      <BlogPinCard key={p.id} post={p} index={pageStart + i} lang={lang} t={t} />
+                    ))}
                   </div>
                 )}
 
@@ -257,8 +269,9 @@ export function BlogListPage({ initialCategorySlug = null }) {
           </div>
         </section>
 
-      {/* Layout CSS via style tag — sidebar hidden di mobile, side-by-side di desktop.
-          Grid card: 3 kolom di desktop, 2 di tablet, 2 compact kolom di mobile. */}
+      {/* Layout CSS via style tag — sidebar hidden di mobile, side-by-side di
+          desktop. Pin-card / pin-grid / rail-chip-count styling lives in
+          landing.css since the homepage reuses the same pinboard cards. */}
       <style>{`
         .okr__blog-layout {
           display: grid;
@@ -266,20 +279,9 @@ export function BlogListPage({ initialCategorySlug = null }) {
           gap: 40px;
           align-items: flex-start;
         }
-        .okr__blog-grid {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 20px;
-        }
-        @media (max-width: 1100px) {
-          .okr__blog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        }
         @media (max-width: 960px) {
           .okr__blog-layout { grid-template-columns: 1fr; }
           .okr__blog-sidebar { display: none; }
-        }
-        @media (max-width: 640px) {
-          .okr__blog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
         }
       `}</style>
     </>

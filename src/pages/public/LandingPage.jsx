@@ -8,7 +8,7 @@ import { useLiveSettings, useLiveHomepage, useLivePosts, useLivePage } from "../
 import { useI18n } from "../../lib/i18n";
 import { localizeHomepage, localizePage, localizeSiteDescription } from "../../lib/pageI18n";
 import { useLandingEffects, useProcessScrollStory } from "../../hooks/useLandingEffects";
-import { PostCard } from "../../components/blog/PostCard";
+import { BlogPinCard } from "../../components/blog/BlogPinCard";
 
 const DEFAULT_HERO_SUBTITLES = new Set([
   "web, seo, ai workflow & content strategy for personal brands and businesses.",
@@ -552,9 +552,9 @@ export function LandingPage() {
                     {t("section_journal_all")} <ArrowRight size={15} />
                   </Link>
                 </div>
-                <div className="okr__journal okr__journal--editorial okr__blog-grid--editorial">
+                <div className="okr__blog-pin-grid">
                   {posts.map((p, i) => (
-                    <PostCard key={p.id} post={p} index={i} />
+                    <BlogPinCard key={p.id} post={p} index={i} lang={lang} t={t} />
                   ))}
                 </div>
               </div>

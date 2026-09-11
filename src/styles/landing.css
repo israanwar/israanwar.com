@@ -2289,6 +2289,108 @@
   }
 }
 
+/* ==========================================================================
+   Blog post pinboard cards — shared by the homepage "Latest notes" section
+   and the full /blog listing page (see BlogPinCard). Same visual language
+   as the Certifications board: white card, small fixed tilt/lift, a pin at
+   the top, no cover image. `.okr__rail-chip-count` is the small post-count
+   badge added to the /blog page's existing category filter chips.
+   ========================================================================== */
+.okr__blog-pin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px 20px;
+  padding-top: 6px;
+}
+@media (max-width: 1100px) {
+  .okr__blog-pin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .okr__blog-pin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 10px; }
+}
+
+.okr__rail-chip-count {
+  margin-left: 2px;
+  color: var(--okr-dim, #9a8f92);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+.okr__rail-chip.is-active .okr__rail-chip-count {
+  color: var(--okr-primary-2, #b84e2c);
+}
+
+.okr__blog-pin-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 168px;
+  padding: 22px 20px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--okr-glass-border);
+  background: var(--okr-card-surface, #fff);
+  box-shadow: 0 10px 26px rgba(55, 31, 35, 0.07);
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.94;
+  transform: rotate(var(--tilt, 0deg)) translateY(calc(-1 * var(--lift, 0px)));
+  transition: transform 200ms cubic-bezier(.16, 1, .3, 1), box-shadow 200ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+.okr__blog-pin-card:nth-child(even) {
+  transform: rotate(var(--tilt, 0deg)) translateY(var(--lift, 0px));
+}
+.okr__blog-pin-card:hover,
+.okr__blog-pin-card:focus-visible {
+  opacity: 1;
+  border-color: rgba(184, 78, 44, 0.32);
+  transform: rotate(calc(var(--tilt, 0deg) * 0.3)) translateY(-6px) scale(1.02);
+  box-shadow: 0 26px 52px rgba(55, 31, 35, 0.15), 0 6px 16px rgba(55, 31, 35, 0.08);
+}
+.okr__blog-pin-card:focus-visible {
+  outline: 2px solid var(--okr-primary-2, #b84e2c);
+  outline-offset: 3px;
+}
+.okr__blog-pin-dot {
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  border-radius: 999px;
+  background: var(--okr-primary-2, #b84e2c);
+  box-shadow: 0 2px 4px rgba(55, 31, 35, 0.3);
+}
+.okr__blog-pin-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  color: var(--okr-muted, #74686c);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.okr__blog-pin-title {
+  margin: 0;
+  color: var(--okr-text, #20181b);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.okr__blog-pin-index {
+  margin-top: auto;
+  padding-top: 14px;
+  color: var(--okr-dim, #9a8f92);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .okr__blog-pin-card { transition: opacity 120ms ease, border-color 120ms ease; }
+  .okr__blog-pin-card:hover, .okr__blog-pin-card:focus-visible { transform: none; }
+}
+
 @media (max-width: 720px) {
   .okr__portfolio-section {
     margin-bottom: 34px;
