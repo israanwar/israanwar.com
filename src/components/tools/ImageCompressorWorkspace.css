@@ -1,0 +1,176 @@
+/* Image Compressor — scoped additions only. Everything reuses the existing
+   .okr__tool-* / .okr__field / .okr__btn system (colors, radii, spacing,
+   type) already defined in landing.css/light-theme.css; nothing here
+   redefines a design-system token, so it can be deleted without touching
+   any other tool. */
+
+.okr__compressor-body {
+  padding: clamp(22px, 3vw, 32px);
+}
+
+.okr__compressor-settings {
+  display: grid;
+  grid-template-columns: minmax(160px, 220px) minmax(200px, 1fr);
+  gap: 18px 24px;
+  align-items: end;
+  padding-bottom: 22px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--okr-line);
+}
+
+.okr__compressor-format,
+.okr__compressor-quality { margin-bottom: 0; }
+
+.okr__compressor-hint {
+  margin: 0;
+  padding-bottom: 2px;
+  color: var(--okr-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .okr__compressor-settings { grid-template-columns: 1fr; }
+}
+
+.okr__compressor-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.okr__compressor-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--okr-line);
+  border-radius: 14px;
+  background: var(--okr-card-surface, #fff);
+  transition: border-color 160ms ease;
+}
+
+.okr__compressor-row[data-status="error"] {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.okr__compressor-thumb {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--okr-bg-2, #f5f1eb);
+  color: var(--okr-dim);
+}
+
+.okr__compressor-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.okr__compressor-info { min-width: 0; }
+
+.okr__compressor-name {
+  margin: 0;
+  overflow: hidden;
+  color: var(--okr-text);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.okr__compressor-meta {
+  margin: 2px 0 0;
+  color: var(--okr-muted);
+  font-size: 12px;
+}
+
+.okr__compressor-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 0 0;
+  font-size: 12.5px;
+}
+
+.okr__compressor-status--busy { color: var(--okr-muted); }
+.okr__compressor-status--error { color: #ef4444; }
+.okr__compressor-status--done { color: var(--okr-text); font-weight: 600; }
+
+.okr__compressor-savings {
+  padding: 2px 7px;
+  border-radius: 999px;
+  color: #ffffff;
+  background: var(--okr-primary-2);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.okr__compressor-bar {
+  position: relative;
+  width: min(220px, 100%);
+  height: 5px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(55, 31, 35, 0.1);
+}
+
+.okr__compressor-bar-before,
+.okr__compressor-bar-after {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+}
+
+.okr__compressor-bar-before { width: 100%; background: rgba(55, 31, 35, 0.1); }
+.okr__compressor-bar-after { background: var(--okr-primary-2); }
+
+.okr__compressor-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.okr__compressor-row-actions .okr__btn {
+  min-width: 0;
+  padding: 9px 14px;
+  font-size: 12.5px;
+}
+
+.okr__compressor-remove {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--okr-line);
+  border-radius: 10px;
+  color: var(--okr-dim);
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease;
+}
+
+.okr__compressor-remove:hover,
+.okr__compressor-remove:focus-visible {
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.35);
+  outline: none;
+}
+
+@media (max-width: 560px) {
+  .okr__compressor-row {
+    grid-template-columns: 48px 1fr;
+  }
+  .okr__compressor-row-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+  .okr__compressor-thumb { width: 48px; height: 48px; }
+}
+
+/* .is-spinning is already defined globally (landing.css) for the other
+   tools' spinners — reused as-is here, nothing to redeclare. */

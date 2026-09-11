@@ -1,0 +1,497 @@
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
+
+const KEY = "okr:lang";
+const DEFAULT_LANG = "en";
+const LANGS = new Set(["id", "en"]);
+
+const T = {
+  id: {
+    // Nav
+    nav_home: "Home", nav_about: "Tentang", nav_services: "Layanan",
+    nav_store: "Store", nav_blog: "Blog", nav_contact: "Kontak", nav_portfolio: "Portfolio", nav_tools: "Tools",
+    // Common
+    cta_whatsapp: "WhatsApp",
+    action_back: "Kembali",
+    site_description: "Strategi, desain, teknologi, dan AI direkayasa menjadi sistem yang lebih tajam untuk mengubah wawasan awal menjadi momentum bisnis yang terukur.",
+    // Landing
+    section_services: "Layanan",
+    section_process: "Proses",
+    section_journal: "Jurnal",
+    section_journal_all: "Semua artikel",
+    section_all_services: "Semua layanan",
+    section_journal_title: "Catatan terbaru.",
+    section_services_head: "Semua yang Anda butuhkan,",
+    section_services_head_2: "di satu meja.",
+    section_cases_title: "Hasil nyata.",
+    process_detail_label: "Di dalam tahap",
+    process_points_label: "Poin penting",
+    // Blog
+    blog_title: "Blog",
+    blog_subtitle: "Catatan, tutorial, dan riset dari israanwar.",
+    blog_empty: "Belum ada artikel yang dipublikasikan.",
+    blog_back: "Kembali ke blog",
+    blog_search: "Cari artikel, topik, atau tag...",
+    blog_sort_label: "Urutkan",
+    blog_sort_newest: "Terbaru",
+    blog_sort_oldest: "Terlama",
+    blog_sort_popular: "Paling banyak dibaca",
+    blog_sort_most_read: "Paling banyak dibaca",
+    blog_sort_least_read: "Paling sedikit dibaca",
+    blog_all: "Semua",
+    blog_categories_label: "Kategori blog",
+    blog_category_kicker: "// KATEGORI",
+    blog_journal_kicker: "// JURNAL",
+    blog_no_match: "Tidak ada artikel yang cocok.",
+    blog_showing: "Menampilkan {start}-{end} dari {total} artikel",
+    blog_showing_query: "Menampilkan {start}-{end} dari {total} artikel untuk \"{query}\"",
+    blog_no_match_query: "Tidak ada artikel yang cocok dengan \"{query}\".",
+    blog_no_articles_category: "Belum ada artikel di {category}.",
+    blog_view_all_articles: "Lihat semua artikel",
+    blog_sidebar_categories: "Kategori",
+    blog_sidebar_latest: "Artikel Terbaru",
+    blog_sidebar_about_title: "Tentang Isra Anwar",
+    blog_sidebar_about_body: "Hub pengetahuan untuk web, SEO, workflow AI, dan strategi bisnis digital bagi personal brand dan bisnis.",
+    blog_sidebar_cta: "Konsultasi gratis",
+    blog_references: "Referensi",
+    blog_related_reading: "Bacaan Terkait",
+    blog_min_read: "{count} menit baca",
+    blog_read_count: "{count} kali dibaca",
+    blog_search_aria: "Cari artikel",
+    blog_pagination: "Paginasi blog",
+    // Store
+    store_eyebrow: "Store",
+    store_title: "Produk digital.",
+    store_subtitle: "Ebook, guideline, metode kerja, dan template — hasil rangkuman workflow yang dipakai sehari-hari.",
+    store_empty: "Belum ada item di store.",
+    store_search: "Cari item…",
+    store_no_match: "Tidak ada item yang cocok.",
+    store_back: "Kembali ke store",
+    store_add: "Tambah ke keranjang",
+    store_added: "Ditambahkan",
+    store_buy_now: "Beli sekarang",
+    store_sold: "{count} terjual",
+    store_rating: "Rating {rating}",
+    store_all: "Semua",
+    store_sort_label: "Urutkan",
+    store_sort_featured: "Unggulan",
+    store_sort_sold_desc: "Paling banyak dibeli",
+    store_sort_sold_asc: "Paling sedikit dibeli",
+    store_sort_rating_desc: "Rating tertinggi",
+    store_sort_rating_asc: "Rating terendah",
+    store_sort_price_asc: "Harga: Rendah ke Tinggi",
+    store_sort_price_desc: "Harga: Tinggi ke Rendah",
+    store_sort_name_asc: "Nama: A-Z",
+    store_categories_label: "Kategori produk",
+    store_items_found: "{count} item ditemukan",
+    store_showing: "Menampilkan {start}-{end} dari {total} item",
+    store_in_category: "di {category}",
+    store_show: "Tampilkan",
+    store_products_per_page: "Produk per halaman",
+    store_search_aria: "Cari produk",
+    store_pagination: "Paginasi store",
+    // Services
+    services_eyebrow: "Layanan",
+    services_head: "Semua yang Anda butuhkan, di satu meja.",
+    services_subtitle: "Layanan digital end-to-end untuk personal brand dan bisnis — dari desain, kode, hingga strategi konten.",
+    services_empty: "Belum ada layanan.",
+    services_all: "Semua layanan",
+    services_detail: "DETAIL →",
+    services_deliverables: "Yang Anda dapatkan",
+    services_cta_title: "Tertarik dengan layanan ini?",
+    services_cta_body: "Ngobrol dulu, gratis. Kita bahas kebutuhan spesifik Anda.",
+    services_cta_button: "Konsultasi via WhatsApp",
+    services_page_title: "Layanan digital enterprise.",
+    services_page_subtitle: "12 kategori layanan yang saling terhubung dan {count} layanan spesialis untuk brand, bisnis, founder, dan tim yang membutuhkan strategi, eksekusi, serta pertumbuhan digital yang terukur dalam satu sistem.",
+    services_count_label: "{count} layanan",
+    services_explore: "JELAJAHI",
+    services_menu: "MENU LAYANAN",
+    services_focused_count: "{count} layanan fokus.",
+    services_details: "DETAIL",
+    // Portfolio
+    portfolio_empty_title: "Portfolio",
+    portfolio_empty_body: "Portfolio masih kosong. Admin bisa mengisi via Admin → Pages → tab Portfolio.",
+    portfolio_print: "Cetak / Simpan PDF",
+    portfolio_values_label: "Nilai kami",
+    portfolio_positioning: "Positioning",
+    portfolio_consultant_focus: "Fokus Konsultan",
+    portfolio_role: "Peran",
+    portfolio_consulting_projects: "Proyek Konsultasi",
+    portfolio_selected_work: "Karya Terpilih",
+    portfolio_project_portfolio: "Portfolio Proyek",
+    // Cart
+    cart_title: "Keranjang",
+    cart_empty: "Keranjang Anda kosong.",
+    cart_see_store: "Lihat store",
+    cart_summary: "Ringkasan",
+    cart_subtotal: "Subtotal",
+    cart_total: "Total",
+    cart_checkout: "Lanjut checkout",
+    cart_continue: "Lanjut belanja",
+    cart_remove: "Hapus",
+    cart_title_remove: "Hapus produk",
+    cart_aria: "Keranjang",
+    qty_label: "Jumlah",
+    qty_decrease: "Kurangi jumlah",
+    qty_increase: "Tambah jumlah",
+    // Checkout
+    checkout_title: "Checkout",
+    checkout_customer: "Detail pemesan",
+    checkout_name: "Nama lengkap",
+    checkout_email: "Email",
+    checkout_phone: "No. HP / WhatsApp",
+    checkout_address: "Alamat pengiriman",
+    checkout_notes: "Catatan (opsional)",
+    checkout_address_placeholder: "Untuk produk digital, cukup tulis: 'Digital (kirim ke email di atas)'.",
+    checkout_payment_title: "Metode pembayaran: QRIS",
+    checkout_payment_note: "Setelah membuat pesanan, Anda akan diarahkan ke halaman scan QRIS + notifikasi admin otomatis.",
+    checkout_summary: "Pesanan Anda",
+    checkout_submit: "Buat pesanan",
+    checkout_processing: "Memproses…",
+    checkout_terms: "Dengan klik \"Buat pesanan\", Anda setuju dengan syarat & ketentuan kami.",
+    err_min_chars: "Min {n} karakter.",
+    err_invalid_email: "Format email tidak valid.",
+    err_invalid_phone: "Format nomor tidak valid.",
+    // Order confirmation
+    order_success: "Pesanan berhasil dibuat!",
+    order_number: "Nomor pesanan",
+    order_payment: "Pembayaran",
+    order_scan_qris: "Scan QRIS",
+    order_merchant: "Merchant",
+    order_nmid: "NMID",
+    order_amount: "Total yang harus dibayar",
+    order_copy: "Copy",
+    order_copied: "Copied",
+    order_how_to_pay: "Cara pembayaran",
+    order_steps_1: "Buka aplikasi bank/e-wallet yang mendukung QRIS (GoPay, OVO, DANA, ShopeePay, BCA Mobile, dll).",
+    order_steps_2: "Pilih menu Scan QRIS / Pay.",
+    order_steps_3: "Scan QR di atas, masukkan nominal.",
+    order_steps_4: "Selesaikan pembayaran.",
+    order_steps_5: "Klik tombol Saya sudah bayar agar admin mencocokkan transaksi di GoPay Merchant.",
+    order_steps_6: "Admin akan verifikasi dari aplikasi GoPay Merchant & mengirim link download / detail order dalam 1×24 jam.",
+    order_detail: "Detail pesanan",
+    order_admin_notified: "Notifikasi admin sudah terkirim otomatis",
+    order_admin_notified_note: "Kami sudah membuka WhatsApp admin dengan detail pesanan Anda. Kalau tidak terbuka (popup blocker), klik tombol di bawah untuk kirim ulang.",
+    order_notify_wa: "Notify admin WhatsApp",
+    order_notify_email: "Notify admin Email",
+    order_send_proof: "Saya sudah bayar",
+    order_back_home: "Kembali ke beranda",
+    order_qris_missing_title: "QRIS belum tersedia",
+    order_qris_missing_body: "Kami akan mengirim QR ke WhatsApp Anda. Klik tombol di bawah.",
+    order_qris_request_wa: "Minta QRIS via WA",
+    // Contact
+    contact_send: "Kirim pesan",
+    contact_success: "Pesan Anda terkirim! Kami balas maksimal 1×24 jam.",
+    contact_name: "Nama",
+    contact_email: "Email",
+    contact_phone: "No. HP (opsional)",
+    contact_subject: "Subjek",
+    contact_subject_ph: "Misal: Konsultasi SEO",
+    contact_message: "Pesan",
+    contact_sending: "Mengirim…",
+    contact_info: "Info kontak",
+    contact_label_email: "Email",
+    contact_label_wa: "WhatsApp",
+    contact_label_loc: "Lokasi",
+    contact_label_hours: "Jam kerja",
+    // Footer
+    foot_menu: "Menu",
+    foot_legal: "Legal",
+    foot_contact: "Kontak",
+    foot_privacy: "Kebijakan Privasi",
+    foot_terms: "Syarat & Ketentuan",
+    foot_legal_label: "Legal",
+    foot_updated: "Terakhir diperbarui:",
+    foot_rights: "Seluruh hak cipta dilindungi.",
+    pagination_previous: "Sebelumnya",
+    pagination_next: "Berikutnya",
+    nav_open_menu: "Buka menu navigasi",
+    nav_close_menu: "Tutup menu navigasi",
+    // 404
+    nf_title: "Halaman tidak ditemukan.",
+    nf_body: "URL ini belum tersedia atau sudah dipindahkan.",
+    nf_action: "Kembali ke beranda",
+    // Landing fallbacks
+    hero_cta_primary: "Konsultasi",
+    hero_cta_secondary: "Lihat semua layanan",
+    cta_wa_button: "Hubungi via WhatsApp",
+    // Meta
+    lang_switch: "Bahasa",
+  },
+  en: {
+    nav_home: "Home", nav_about: "About", nav_services: "Services",
+    nav_store: "Store", nav_blog: "Blog", nav_contact: "Contact", nav_portfolio: "Portfolio", nav_tools: "Tools",
+    cta_whatsapp: "WhatsApp",
+    action_back: "Back",
+    site_description: "Strategy, design, technology, and AI engineered into sharper systems that turn early insight into measurable business momentum.",
+    section_services: "Services",
+    section_process: "Process",
+    section_journal: "Journal",
+    section_journal_all: "All articles",
+    section_all_services: "All services",
+    section_journal_title: "Latest notes.",
+    section_services_head: "Everything you need,",
+    section_services_head_2: "in one place.",
+    section_cases_title: "Real results.",
+    process_detail_label: "Inside the stage",
+    process_points_label: "Key points",
+    blog_title: "Blog",
+    blog_subtitle: "Notes, tutorials, and research from israanwar.",
+    blog_empty: "No articles published yet.",
+    blog_back: "Back to blog",
+    blog_search: "Search articles, topics, or tags...",
+    blog_sort_label: "Sort by",
+    blog_sort_newest: "Newest",
+    blog_sort_oldest: "Oldest",
+    blog_sort_popular: "Most read",
+    blog_sort_most_read: "Most read",
+    blog_sort_least_read: "Least read",
+    blog_all: "All",
+    blog_categories_label: "Blog categories",
+    blog_category_kicker: "// CATEGORY",
+    blog_journal_kicker: "// JOURNAL",
+    blog_no_match: "No matching articles.",
+    blog_showing: "Showing {start}-{end} of {total} articles",
+    blog_showing_query: "Showing {start}-{end} of {total} articles for \"{query}\"",
+    blog_no_match_query: "No articles match \"{query}\".",
+    blog_no_articles_category: "No articles in {category} yet.",
+    blog_view_all_articles: "View all articles",
+    blog_sidebar_categories: "Categories",
+    blog_sidebar_latest: "Latest Articles",
+    blog_sidebar_about_title: "About Isra Anwar",
+    blog_sidebar_about_body: "A knowledge hub for web, SEO, AI workflow, and digital business strategy for personal brands and businesses.",
+    blog_sidebar_cta: "Free Consultation",
+    blog_references: "References",
+    blog_related_reading: "Related Reading",
+    blog_min_read: "{count} min read",
+    blog_read_count: "{count} reads",
+    blog_search_aria: "Search articles",
+    blog_pagination: "Blog pagination",
+    store_eyebrow: "Store",
+    store_title: "Digital goods.",
+    store_subtitle: "Ebooks, guidelines, playbooks, and templates — distilled from workflows I use daily.",
+    store_empty: "No items in store yet.",
+    store_search: "Search items…",
+    store_no_match: "No matching items.",
+    store_back: "Back to store",
+    store_add: "Add to cart",
+    store_added: "Added",
+    store_buy_now: "Buy now",
+    store_sold: "{count} sold",
+    store_rating: "Rating {rating}",
+    store_all: "All",
+    store_sort_label: "Sort by",
+    store_sort_featured: "Featured",
+    store_sort_sold_desc: "Best selling",
+    store_sort_sold_asc: "Least bought",
+    store_sort_rating_desc: "Highest rating",
+    store_sort_rating_asc: "Lowest rating",
+    store_sort_price_asc: "Price: Low to High",
+    store_sort_price_desc: "Price: High to Low",
+    store_sort_name_asc: "Name: A-Z",
+    store_categories_label: "Product categories",
+    store_items_found: "{count} items found",
+    store_showing: "Showing {start}-{end} of {total} items",
+    store_in_category: "in {category}",
+    store_show: "Show",
+    store_products_per_page: "Products per page",
+    store_search_aria: "Search products",
+    store_pagination: "Store pagination",
+    services_eyebrow: "Services",
+    services_head: "Everything you need, in one place.",
+    services_subtitle: "End-to-end digital services for personal brands and businesses — from design and code to content strategy.",
+    services_empty: "No services yet.",
+    services_all: "All services",
+    services_detail: "DETAILS →",
+    services_deliverables: "What you get",
+    services_cta_title: "Interested in this service?",
+    services_cta_body: "Let's talk — it's free. We'll discuss your specific needs.",
+    services_cta_button: "Consult via WhatsApp",
+    services_page_title: "Enterprise digital services.",
+    services_page_subtitle: "12 connected service categories and {count} specialist services for brands, businesses, founders, and teams that need strategy, execution, and measurable digital growth in one system.",
+    services_count_label: "{count} services",
+    services_explore: "EXPLORE",
+    services_menu: "SERVICE MENU",
+    services_focused_count: "{count} focused services.",
+    services_details: "DETAILS",
+    portfolio_empty_title: "Portfolio",
+    portfolio_empty_body: "Portfolio is empty. Admin can fill it via Admin → Pages → Portfolio tab.",
+    portfolio_print: "Print / Save PDF",
+    portfolio_values_label: "Our values",
+    portfolio_positioning: "Positioning",
+    portfolio_consultant_focus: "Consultant Focus",
+    portfolio_role: "Role",
+    portfolio_consulting_projects: "Consulting Projects",
+    portfolio_selected_work: "Selected work",
+    portfolio_project_portfolio: "Project Portfolio",
+    cart_title: "Cart",
+    cart_empty: "Your cart is empty.",
+    cart_see_store: "Browse store",
+    cart_summary: "Summary",
+    cart_subtotal: "Subtotal",
+    cart_total: "Total",
+    cart_checkout: "Proceed to checkout",
+    cart_continue: "Continue shopping",
+    cart_remove: "Remove",
+    cart_title_remove: "Remove product",
+    cart_aria: "Cart",
+    qty_label: "Qty",
+    qty_decrease: "Decrease quantity",
+    qty_increase: "Increase quantity",
+    checkout_title: "Checkout",
+    checkout_customer: "Your details",
+    checkout_name: "Full name",
+    checkout_email: "Email",
+    checkout_phone: "Phone / WhatsApp",
+    checkout_address: "Shipping address",
+    checkout_notes: "Notes (optional)",
+    checkout_address_placeholder: "For digital goods, you can just write: 'Digital (send to email above)'.",
+    checkout_payment_title: "Payment method: QRIS",
+    checkout_payment_note: "After placing the order, you'll be redirected to the QRIS scan page and admin will be notified automatically.",
+    checkout_summary: "Your order",
+    checkout_submit: "Place order",
+    checkout_processing: "Processing…",
+    checkout_terms: "By clicking \"Place order\", you agree to our terms and conditions.",
+    err_min_chars: "Min {n} characters.",
+    err_invalid_email: "Invalid email format.",
+    err_invalid_phone: "Invalid phone format.",
+    order_success: "Order placed successfully!",
+    order_number: "Order number",
+    order_payment: "Payment",
+    order_scan_qris: "Scan QRIS",
+    order_merchant: "Merchant",
+    order_nmid: "NMID",
+    order_amount: "Total to pay",
+    order_copy: "Copy",
+    order_copied: "Copied",
+    order_how_to_pay: "How to pay",
+    order_steps_1: "Open a QRIS-capable bank/e-wallet app (GoPay, OVO, DANA, ShopeePay, BCA Mobile, etc).",
+    order_steps_2: "Choose Scan QRIS / Pay.",
+    order_steps_3: "Scan the QR above, enter the amount.",
+    order_steps_4: "Complete the payment.",
+    order_steps_5: "Click I have paid so admin can match the transaction in GoPay Merchant.",
+    order_steps_6: "Admin will verify it from the GoPay Merchant app & send download link / order details within 24 hours.",
+    order_detail: "Order details",
+    order_admin_notified: "Admin has been notified automatically",
+    order_admin_notified_note: "We already opened admin WhatsApp with your order details. If it didn't open (popup blocker), click the button below to resend.",
+    order_notify_wa: "Notify admin WhatsApp",
+    order_notify_email: "Notify admin Email",
+    order_send_proof: "I have paid",
+    order_back_home: "Back to home",
+    order_qris_missing_title: "QRIS not available yet",
+    order_qris_missing_body: "We'll send the QR to your WhatsApp. Click the button below.",
+    order_qris_request_wa: "Request QRIS via WA",
+    contact_send: "Send message",
+    contact_success: "Your message has been sent! We'll reply within 24 hours.",
+    contact_name: "Name",
+    contact_email: "Email",
+    contact_phone: "Phone (optional)",
+    contact_subject: "Subject",
+    contact_subject_ph: "e.g. SEO consultation",
+    contact_message: "Message",
+    contact_sending: "Sending…",
+    contact_info: "Contact info",
+    contact_label_email: "Email",
+    contact_label_wa: "WhatsApp",
+    contact_label_loc: "Location",
+    contact_label_hours: "Hours",
+    foot_menu: "Menu",
+    foot_legal: "Legal",
+    foot_contact: "Contact",
+    foot_privacy: "Privacy Policy",
+    foot_terms: "Terms of Service",
+    foot_legal_label: "Legal",
+    foot_updated: "Last updated:",
+    foot_rights: "All rights reserved.",
+    pagination_previous: "Previous",
+    pagination_next: "Next",
+    nav_open_menu: "Open navigation menu",
+    nav_close_menu: "Close navigation menu",
+    nf_title: "Page not found.",
+    nf_body: "This URL doesn't exist or has been moved.",
+    nf_action: "Back to home",
+    hero_cta_primary: "Consult",
+    hero_cta_secondary: "View all services",
+    cta_wa_button: "Contact via WhatsApp",
+    lang_switch: "Language",
+  },
+};
+
+const I18nContext = createContext(null);
+
+// One-time migrations: reset default ke "en" untuk browser lama yang sudah
+// menyimpan "id" karena default sebelumnya adalah Indonesia.
+const MIGRATION_KEY = "okr:migrated:lang:v2";
+const PUBLIC_EN_MIGRATION_KEY = "okr:migrated:lang:v3";
+
+function normalizeLang(value) {
+  return LANGS.has(value) ? value : DEFAULT_LANG;
+}
+
+function initialLang() {
+  try {
+    // Both one-time migrations must resolve in the same call. The old code
+    // `return`ed right after the v2 migration, so on a brand-new visitor's
+    // very first page load the v3 migration below never ran — it only fired
+    // on their *second* page load, and by then could stomp a language the
+    // user had already deliberately picked (toggle to "id", hard-reload ->
+    // silently reset to "en"). Running both against one `effective` value
+    // fixes that without changing what either migration is meant to do.
+    let effective = localStorage.getItem(KEY);
+
+    if (localStorage.getItem(MIGRATION_KEY) !== "1") {
+      if (!effective || effective === "id") {
+        effective = DEFAULT_LANG;
+        localStorage.setItem(KEY, effective);
+      }
+      localStorage.setItem(MIGRATION_KEY, "1");
+    }
+
+    if (localStorage.getItem(PUBLIC_EN_MIGRATION_KEY) !== "1") {
+      if (effective === "id") {
+        effective = DEFAULT_LANG;
+        localStorage.setItem(KEY, effective);
+      }
+      localStorage.setItem(PUBLIC_EN_MIGRATION_KEY, "1");
+    }
+
+    return normalizeLang(effective);
+  } catch {
+    return DEFAULT_LANG;
+  }
+}
+
+export function I18nProvider({ children }) {
+  const location = useLocation();
+  const [lang, setLang] = useState(initialLang);
+  useEffect(() => {
+    const nextLang = normalizeLang(lang);
+    try {
+      localStorage.setItem(KEY, nextLang);
+    } catch {
+      // Ignore storage failures; document language still updates below.
+    }
+    document.documentElement.lang = location.pathname.startsWith("/admin") ? "id" : nextLang;
+  }, [lang, location.pathname]);
+
+  // t(key, params?) — support {var} interpolation
+  const t = useCallback((key, params) => {
+    const raw = T[lang]?.[key] ?? T.en[key] ?? T.id[key] ?? key;
+    if (!params) return raw;
+    return raw.replace(/\{(\w+)\}/g, (_, k) => params[k] ?? "");
+  }, [lang]);
+  const toggle = useCallback(() => setLang((l) => (l === "id" ? "en" : "id")), []);
+
+  // I18nProvider re-renders on every route change (it reads useLocation()) —
+  // memoize the context value so components consuming useI18n() only
+  // re-render when the language actually changes, not on every navigation.
+  const value = useMemo(() => ({ lang, setLang, toggle, t }), [lang, toggle, t]);
+
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+}
+
+export function useI18n() {
+  const ctx = useContext(I18nContext);
+  if (!ctx) throw new Error("useI18n must be inside <I18nProvider>");
+  return ctx;
+}

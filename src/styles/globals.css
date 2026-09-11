@@ -1,0 +1,321 @@
+/* Minimal reset. Colors/fonts/backgrounds set per scope (.okr / .wpx). */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  background: #000;
+  /* Use `clip` instead of `hidden` so we don't create a scroll container,
+     which would otherwise break `position: sticky` for descendants (sidebar,
+     topbar, edit-page aside). Clip has the same horizontal-clipping effect. */
+  overflow-x: clip;
+  /* The prerendered HTML puts real content inside #root for crawlers (see
+     scripts/prerender.mjs), then main.jsx clears it and mounts the real
+     app. Scroll anchoring tries to keep whatever's near the viewport top
+     visually stable across layout changes — with a full-page swap that
+     size, and every route's real content still arriving as data loads in,
+     it has picked the wrong anchor and jumped the page to the bottom on
+     first load. There is nothing here worth anchoring around; every
+     height change is us replacing content on purpose. */
+  overflow-anchor: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: #000;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+img, svg, video { display: block; max-width: 100%; }
+
+.okr__search-field {
+  position: relative;
+}
+
+.okr__search-icon {
+  position: absolute;
+  z-index: 1;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(174, 180, 186, 0.68);
+  pointer-events: none;
+}
+
+.okr__glass-input,
+.okr__glass-select {
+  height: 44px;
+  /* 16px minimum on mobile to prevent iOS auto-zoom on focus.
+     Downsized to 14px on tablet+ via media query below. */
+  font-size: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 12px;
+  background: #0d0d0d;
+  color: var(--okr-text);
+  outline: none;
+  box-shadow: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.okr__glass-input {
+  width: 100%;
+  padding: 0 16px 0 44px;
+}
+
+.okr__glass-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  min-width: 136px;
+  padding: 0 42px 0 16px;
+  line-height: 1;
+}
+
+.okr__glass-input::placeholder {
+  color: rgba(238, 240, 246, 0.43);
+}
+
+@media (min-width: 768px) {
+  .okr__glass-input,
+  .okr__glass-select { font-size: 14px; }
+}
+
+.okr__glass-input:focus,
+.okr__glass-select:focus {
+  border-color: rgba(174, 180, 186, 0.54);
+  box-shadow:
+    0 0 0 3px rgba(86, 99, 111, 0.16);
+}
+
+.okr__control-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.okr__control-search {
+  flex: 1 1 320px;
+  min-width: 260px;
+}
+
+.okr__control-sort-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--okr-muted);
+  font-size: 13px;
+}
+
+.okr__control-select-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.okr__control-select-chevron {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  color: var(--okr-muted);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.okr__rail-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border: 1px solid var(--okr-line-strong, rgba(255, 255, 255, 0.1));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--okr-text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.okr__rail-chip:hover,
+.okr__rail-chip:focus-visible,
+.okr__rail-chip:active {
+  border-color: rgba(174, 180, 186, 0.34);
+  background: rgba(255, 255, 255, 0.04);
+  outline: none;
+}
+
+.okr__rail-chip.is-active {
+  border-color: var(--okr-touch-glass-border, rgba(255, 255, 255, 0.18));
+  background: var(--okr-touch-glass, rgba(29, 33, 37, 0.36));
+  color: var(--okr-text, #eef0f6);
+  box-shadow: var(--okr-touch-glass-shadow, inset 0 1px 0 rgba(255, 255, 255, 0.2));
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .okr__glass-input,
+  .okr__glass-select {
+    height: 38px;
+    border-radius: 9px;
+    font-size: 14px;
+  }
+
+  .okr__glass-input {
+    padding-left: 38px;
+  }
+
+  .okr__search-icon {
+    left: 13px;
+    width: 15px;
+    height: 15px;
+  }
+
+  .okr__control-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .okr__control-search {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .okr__control-sort-label {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+    justify-items: stretch;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+
+  .okr__control-select-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .okr__control-select-wrap .okr__glass-select {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.okr__category-rail-wrap {
+  --rail-fade-bg: color-mix(in srgb, var(--okr-bg, #070809) 76%, transparent);
+  position: relative;
+}
+
+.okr__category-rail-wrap::before,
+.okr__category-rail-wrap::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 10px;
+  width: 34px;
+  pointer-events: none;
+}
+
+.okr__category-rail-wrap::before {
+  left: 0;
+  background: linear-gradient(90deg, var(--rail-fade-bg), transparent);
+}
+
+.okr__category-rail-wrap::after {
+  right: 0;
+  background: linear-gradient(270deg, var(--rail-fade-bg), transparent);
+}
+
+.okr__category-rail {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  padding: 0 2px 10px;
+  scrollbar-color: rgba(174, 180, 186, 0.48) rgba(255, 255, 255, 0.05);
+  scrollbar-width: thin;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+  .okr__category-rail-wrap::before,
+  .okr__category-rail-wrap::after {
+    bottom: 6px;
+    width: 12px;
+    opacity: 0.62;
+  }
+
+  .okr__category-rail {
+    gap: 6px;
+    padding-bottom: 6px;
+    scrollbar-width: none;
+  }
+
+  .okr__category-rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .okr__rail-chip {
+    min-height: 30px;
+    padding: 6px 10px;
+    font-size: 11.5px;
+    letter-spacing: 0;
+  }
+
+  .okr__category-rail-wrap {
+    margin-bottom: 18px !important;
+  }
+}
+
+.okr__category-rail::-webkit-scrollbar {
+  height: 6px;
+}
+
+.okr__category-rail::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.045);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.okr__category-rail::-webkit-scrollbar-thumb {
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.28), rgba(174, 180, 186, 0.48), rgba(86, 99, 111, 0.34)),
+    rgba(255, 255, 255, 0.1);
+  background-clip: padding-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 2px 8px rgba(86, 99, 111, 0.14);
+}
+
+.okr__category-rail::-webkit-scrollbar-thumb:hover {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.36), rgba(201, 205, 209, 0.58), rgba(86, 99, 111, 0.42)),
+    rgba(255, 255, 255, 0.14);
+  background-clip: padding-box;
+}

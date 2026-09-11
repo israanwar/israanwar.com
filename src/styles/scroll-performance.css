@@ -1,0 +1,54 @@
+/* Scroll performance overrides.
+
+   Keep this file small and late in the public CSS cascade. The visual system
+   stays intact, but manual scrolling must not continuously repaint fixed
+   backgrounds, dozens of reveal targets, or large blurred Aurora layers. */
+
+.okr {
+  /* A fixed multi-gradient background repaints across the full page on some
+     Safari/Chromium GPU combinations. The dedicated fixed Aurora layer
+     already provides the stationary visual backdrop. */
+  background-attachment: scroll !important;
+}
+
+/* Scroll-linked reveals make every marked card participate in each scroll
+   tick. Content remains visually identical in its settled state, while the
+   hero's independent entrance animation is intentionally preserved. */
+.okr .okr__reveal {
+  animation: none !important;
+  animation-timeline: auto !important;
+  opacity: 1 !important;
+  transform: none !important;
+  will-change: auto !important;
+}
+
+/* A hovered spotlight can otherwise remain blended over a card while a
+   trackpad/wheel scroll is in progress. Temporarily hiding it removes an
+   unnecessary compositing layer and it returns as soon as scrolling stops. */
+.okr.is-scrolling .okr__spotlight::after {
+  opacity: 0 !important;
+  transition: none !important;
+}
+
+/* The canvas is already skipped at this range. Keep the CSS Aurora alive,
+   but let its gradients supply their own softness instead of applying large
+   full-viewport blur and blend passes on every animation frame. */
+@media (max-width: 1180px), (hover: none), (pointer: coarse) {
+  .okr__aurora::before,
+  .okr__aurora::after {
+    filter: none !important;
+    mix-blend-mode: normal !important;
+    will-change: transform;
+  }
+
+  .okr__aurora-grain {
+    opacity: 0.14;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr__aurora::before,
+  .okr__aurora::after {
+    animation: none !important;
+  }
+}

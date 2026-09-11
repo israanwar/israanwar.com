@@ -1,0 +1,63 @@
+.okr-logo,
+.okr-mark {
+  color: currentColor;
+}
+
+.okr-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+  min-width: max-content;
+  line-height: 1;
+}
+
+.okr-logo__mark-image,
+.okr-mark {
+  display: block;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+.okr-logo__mark-image {
+  width: 42px;
+  height: 42px;
+}
+
+.okr-mark {
+  width: 34px;
+  height: 34px;
+}
+
+.okr-logo__wordmark {
+  color: currentColor;
+  font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .okr-logo {
+    gap: 8px;
+  }
+
+  .okr-logo__mark-image {
+    width: 36px;
+    height: 36px;
+  }
+
+  .okr-logo__wordmark {
+    font-size: 16px;
+    letter-spacing: 0.11em;
+  }
+
+  .okr-mark {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+}

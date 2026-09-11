@@ -1,0 +1,226 @@
+.okr__post-share {
+  --okr-share-line: var(--okr-line, rgba(55, 31, 35, 0.14));
+  --okr-share-ink: var(--okr-text, #20181b);
+  --okr-share-muted: var(--okr-muted, #74686c);
+  margin-top: 46px;
+  padding: 25px 0 0;
+  border-top: 1px solid var(--okr-share-line);
+}
+
+.okr__post-share-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 0.58fr);
+  align-items: end;
+  gap: 10px 32px;
+  margin-bottom: 17px;
+}
+
+.okr__post-share-eyebrow {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--okr-primary-2, #c95732);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.okr__post-share h2 {
+  margin: 0;
+  color: var(--okr-share-ink);
+  font-size: clamp(22px, 3vw, 28px);
+  letter-spacing: -0.05em;
+  line-height: 1;
+}
+
+.okr__post-share-intro > p:last-child {
+  margin: 0;
+  color: var(--okr-share-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.okr__post-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.okr__post-share-actions li {
+  flex: 0 0 40px;
+}
+
+.okr__post-share-button {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-height: 40px;
+  place-items: center;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--okr-share-line);
+  border-radius: 10px;
+  background: transparent;
+  box-shadow: none;
+  color: var(--okr-share-ink);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+
+.okr__post-share-button svg {
+  position: relative;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.okr__post-share-button span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.okr__post-share-button:is(:hover, :focus-visible) {
+  z-index: 2;
+  outline: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 9px 22px rgba(55, 31, 35, 0.14);
+  background: #20181b;
+  color: #fff;
+  filter: none;
+  transform: translateY(-2px);
+}
+
+.okr__post-share-button:focus-visible {
+  outline: 3px solid rgba(201, 87, 50, 0.34);
+  outline-offset: 3px;
+}
+
+.okr__post-share-button:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.okr__post-share-button--copy.is-copied {
+  border-color: #c95732;
+  background: #c95732;
+  color: #fff;
+}
+
+.okr__post-share-notice {
+  min-height: 1.3rem;
+  margin: 12px 0 0;
+  color: var(--okr-share-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.okr__post-share--compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+  margin: 0 0 28px;
+  padding: 0;
+  border: 0;
+}
+
+.okr__post-share--compact .okr__post-share-intro {
+  display: block;
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.okr__post-share--compact .okr__post-share-eyebrow,
+.okr__post-share--compact .okr__post-share-intro > p:last-child {
+  display: none;
+}
+
+.okr__post-share--compact h2 {
+  color: var(--okr-share-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.okr__post-share--compact .okr__post-share-actions {
+  display: flex;
+  flex: 1 1 28rem;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.okr__post-share--compact .okr__post-share-actions li {
+  flex: 0 0 36px;
+}
+
+.okr__post-share--compact .okr__post-share-button {
+  min-height: 36px;
+  border-radius: 10px;
+}
+
+.okr__post-share--compact .okr__post-share-button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.okr__post-share--compact .okr__post-share-notice {
+  flex: 1 0 100%;
+  min-height: 0;
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .okr__post-share {
+    margin-top: 42px;
+    padding-top: 25px;
+  }
+
+  .okr__post-share-intro {
+    grid-template-columns: 1fr;
+    gap: 9px;
+    margin-bottom: 18px;
+  }
+
+  .okr__post-share-actions li {
+    flex-basis: 36px;
+  }
+
+  .okr__post-share-button {
+    min-height: 36px;
+    border-radius: 9px;
+  }
+
+  .okr__post-share-button svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .okr__post-share--compact .okr__post-share-actions {
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr__post-share-button {
+    transition: none;
+  }
+}

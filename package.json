@@ -1,0 +1,39 @@
+{
+  "name": "israanwar-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "prebuild": "node scripts/generate-blog-social-images.mjs && node scripts/generate-sitemap.mjs",
+    "build": "vite build",
+    "postbuild": "node scripts/prerender.mjs",
+    "preview": "vite preview --host 0.0.0.0",
+    "sitemap": "node scripts/generate-sitemap.mjs",
+    "social:images": "node scripts/generate-blog-social-images.mjs",
+    "prerender": "node scripts/prerender.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.2.8",
+    "@fontsource/plus-jakarta-sans": "^5.2.8",
+    "@jsquash/jpeg": "^1.6.0",
+    "@jsquash/oxipng": "^2.3.0",
+    "@jsquash/webp": "^1.5.0",
+    "@supabase/supabase-js": "^2.112.1",
+    "@tiptap/pm": "^3.29.2",
+    "@tiptap/react": "^3.29.2",
+    "@tiptap/starter-kit": "^3.29.2",
+    "@vitejs/plugin-react": "^5.0.0",
+    "lucide-react": "^0.468.0",
+    "pica": "^10.0.3",
+    "qrcode": "^1.5.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.18.2",
+    "typescript": "^5.7.2",
+    "vite": "^8.0.16"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.4"
+  }
+}

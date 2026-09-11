@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Proses kreatif Isra Anwar">
+  <rect width="640" height="360" fill="#0d0b10"/>
+  <rect x="70" y="62" width="500" height="236" rx="32" fill="#151218"/>
+  <rect x="112" y="104" width="100" height="152" rx="18" fill="#584048"/>
+  <rect x="250" y="104" width="100" height="152" rx="18" fill="#ff73ad"/>
+  <rect x="388" y="104" width="100" height="152" rx="18" fill="#f43f8f"/>
+  <path d="M215 180h30M353 180h30" stroke="#9d174d" stroke-width="12" stroke-linecap="round"/>
+  <path d="m232 162 20 18-20 18M370 162l20 18-20 18" fill="none" stroke="#9d174d" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

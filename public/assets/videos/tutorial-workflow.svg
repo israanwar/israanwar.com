@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Tutorial workflow kreatif">
+  <rect width="640" height="360" fill="#0d0b10"/>
+  <rect x="62" y="56" width="516" height="248" rx="30" fill="#341426"/>
+  <rect x="100" y="92" width="180" height="28" rx="14" fill="#ff73ad"/>
+  <rect x="100" y="142" width="340" height="16" rx="8" fill="#dfbec8" opacity=".8"/>
+  <rect x="100" y="176" width="250" height="16" rx="8" fill="#dfbec8" opacity=".56"/>
+  <rect x="100" y="224" width="94" height="46" rx="23" fill="#f43f8f"/>
+  <path d="M426 135v90l78-45-78-45Z" fill="#fff"/>
+</svg>

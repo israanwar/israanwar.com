@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Disable native scroll restoration before the browser lays out the
+         document. Doing this inside React is too late on a hard reload: the
+         browser can restore the old position while lazy route chunks load. -->
+    <script>
+      (() => {
+        if ("scrollRestoration" in window.history) {
+          window.history.scrollRestoration = "manual";
+        }
+
+        const resetInitialScroll = () => {
+          if (window.location.hash) return;
+          window.scrollTo(0, 0);
+          document.documentElement.scrollTop = 0;
+          if (document.body) document.body.scrollTop = 0;
+        };
+
+        resetInitialScroll();
+        window.addEventListener("pageshow", resetInitialScroll, { once: true });
+      })();
+    </script>
+    <!-- Pinch-zoom and double-tap-zoom are intentionally left enabled —
+         locking them site-wide is a real accessibility regression (WCAG
+         1.4.4 Resize Text) for anyone who needs to zoom to read. Accidental
+         double-tap-zoom on buttons/links is handled per-element instead via
+         `touch-action: manipulation` (see the mobile perf pass in
+         landing.css), which is the targeted fix without taking zoom away
+         from the rest of the page. `viewport-fit=cover` keeps safe-area
+         insets working for notched devices. -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="Isra Anwar is a digital consulting studio for web development, SEO, AI workflow, and content strategy."
+    />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <!-- Google Search Console ownership verification. Persistent — don't
+         remove even after GSC confirms; Google occasionally re-verifies. -->
+    <meta name="google-site-verification" content="UJTNUNBhPjrvQm-Dsgpd-LqWwDq3x-egnE2fhYlUlEs" />
+    <!-- Theme color per color-scheme so the mobile browser chrome matches the
+         page. Dark comes first because that is the site's canonical look. -->
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
+    <meta name="color-scheme" content="dark" />
+    <!-- iOS mobile web-app polish: standalone display + status-bar styling
+         when the user adds the site to Home Screen. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Isra Anwar" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Isra Anwar" />
+    <meta property="og:title" content="Isra Anwar" />
+    <meta
+      property="og:description"
+      content="Digital consulting for web development, SEO, AI workflow, and content strategy."
+    />
+    <meta property="og:url" content="https://www.israanwar.com/" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Isra Anwar" />
+    <meta
+      name="twitter:description"
+      content="Digital consulting for web development, SEO, AI workflow, and content strategy."
+    />
+    <link rel="canonical" href="https://www.israanwar.com/" />
+    <link rel="alternate" hreflang="id" href="https://www.israanwar.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://www.israanwar.com/" />
+    <link rel="icon" type="image/png" href="/assets/brand/favicon-ia-v2.png?v=20260911-ia-v2" sizes="512x512" />
+    <link rel="apple-touch-icon" href="/assets/brand/favicon-ia-v2.png?v=20260911-ia-v2" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- Wordmark font — Archivo Black (mendekati Styrene A / Anthropic vibe).
+         dns-prefetch is a cheap belt-and-braces alongside preconnect for the
+         narrow mobile browsers (older iOS Safari) that don't ack preconnect
+         until later in parse. -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet" />
+    <title>Isra Anwar</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

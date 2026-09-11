@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Env — never commit secrets. Netlify/GitHub Actions secrets hold prod values.
+.env
+.env.local
+.env.*.local
+
+# Local caches / scratch
+.tmp-visual-check/
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tmp
+*.temp
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Supabase local
+supabase/.branches
+supabase/.temp
+
+# Test / QA tooling artifacts (not part of the shipped site)
+test-results/
+playwright-report/
+blob-report/
+coverage/
+audit-*.jpg
+audit-*.png
+design-qa*.jpg
+design-qa*.png
+design-qa*.md
+identity-audit-*.jpg
+identity-audit-*.png
+
+# Local dev-tool configuration (machine/session-specific, not project source)
+.claude/
+.mcp.json
+.stitch/
+
+# Credentials / keys — defensive net, none currently expected in this project
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+id_rsa*

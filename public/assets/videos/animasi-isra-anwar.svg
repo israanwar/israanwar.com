@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Animasi Isra Anwar">
+  <rect width="640" height="360" fill="#0d0b10"/>
+  <rect x="52" y="46" width="536" height="268" rx="34" fill="#151218"/>
+  <circle cx="195" cy="176" r="64" fill="#ff4fa3" opacity=".42"/>
+  <circle cx="425" cy="144" r="82" fill="#dd6ea9" opacity=".38"/>
+  <path d="M286 126v108l94-54-94-54Z" fill="#fff"/>
+  <rect x="94" y="278" width="210" height="14" rx="7" fill="#ffb0cc" opacity=".74"/>
+</svg>

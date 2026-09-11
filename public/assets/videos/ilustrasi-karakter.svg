@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Ilustrasi karakter eksklusif">
+  <rect width="640" height="360" fill="#0d0b10"/>
+  <rect x="58" y="48" width="524" height="264" rx="34" fill="#211f24"/>
+  <circle cx="320" cy="132" r="62" fill="#f43f8f"/>
+  <rect x="244" y="194" width="152" height="86" rx="42" fill="#a60060"/>
+  <path d="M254 126c28-42 104-42 132 0" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="294" cy="138" r="8" fill="#fff"/>
+  <circle cx="346" cy="138" r="8" fill="#fff"/>
+</svg>

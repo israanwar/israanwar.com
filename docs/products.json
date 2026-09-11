@@ -1,0 +1,849 @@
+[
+  {
+    "slug": "tpl-notion-freelancer-os",
+    "name": "Notion Freelancer OS",
+    "category": "Templates",
+    "price": 38700,
+    "description": "Workspace Notion lengkap untuk freelancer: klien, proyek, invoice, timesheet, dan knowledge base. Siap fork."
+  },
+  {
+    "slug": "tpl-excel-financial-dashboard",
+    "name": "Excel Financial Dashboard 2026",
+    "category": "Templates",
+    "price": 44700,
+    "description": "Dashboard keuangan bisnis Excel: cashflow, P&L, budget vs actual, forecasting. Auto-formula, siap isi."
+  },
+  {
+    "slug": "tpl-ppt-pitch-deck-investor",
+    "name": "PowerPoint Pitch Deck Investor",
+    "category": "Templates",
+    "price": 29700,
+    "description": "Template pitch deck 20 slide berformat naratif: problem, solution, market, model, traction, ask."
+  },
+  {
+    "slug": "tpl-canva-instagram-feed-kit",
+    "name": "Canva Instagram Feed Kit (30)",
+    "category": "Templates",
+    "price": 23700,
+    "description": "30 template feed & carousel Instagram original untuk personal brand & UMKM. Format Canva, tinggal edit."
+  },
+  {
+    "slug": "tpl-word-proposal-konsultan",
+    "name": "Word Proposal Konsultan Pro",
+    "category": "Templates",
+    "price": 26700,
+    "description": "Template proposal jasa konsultan siap pakai: cover, executive summary, scope, timeline, investasi."
+  },
+  {
+    "slug": "ebook-blueprint-seo-2026",
+    "name": "Blueprint SEO 2026",
+    "category": "Ebooks",
+    "price": 44700,
+    "description": "120 halaman panduan SEO on-page + technical + off-page 2026. Checklist actionable, tanpa jargon."
+  },
+  {
+    "slug": "ebook-ai-workflow-handbook",
+    "name": "AI Workflow Handbook",
+    "category": "Ebooks",
+    "price": 38700,
+    "description": "Template praktis workflow AI untuk research, drafting, dan quality control. 40+ prompt siap pakai."
+  },
+  {
+    "slug": "ebook-personal-branding-2026",
+    "name": "Personal Branding Blueprint",
+    "category": "Ebooks",
+    "price": 47700,
+    "description": "Bangun personal brand tahan lama: positioning, content pillar, distribution, monetization."
+  },
+  {
+    "slug": "ebook-freelance-financial-playbook",
+    "name": "Freelance Financial Playbook",
+    "category": "Ebooks",
+    "price": 35700,
+    "description": "Kelola keuangan freelancer: pricing, pajak, tabungan darurat, dan pipeline income yang stabil."
+  },
+  {
+    "slug": "ebook-linkedin-growth-guide",
+    "name": "LinkedIn Growth Guide",
+    "category": "Ebooks",
+    "price": 29700,
+    "description": "Strategi tumbuh di LinkedIn tanpa spam: content pillar, posting cadence, network building."
+  },
+  {
+    "slug": "guideline-design-system-starter",
+    "name": "Design System Starter",
+    "category": "Guidelines",
+    "price": 59700,
+    "description": "Fondasi design system: token warna, typography, spacing, komponen dasar. Figma + Markdown."
+  },
+  {
+    "slug": "guideline-landing-page-framework",
+    "name": "Landing Page Framework",
+    "category": "Guidelines",
+    "price": 53700,
+    "description": "Struktur landing high-conversion + 12 wireframe pattern. Cocok untuk SaaS, jasa, digital product."
+  },
+  {
+    "slug": "guideline-remote-work-sop",
+    "name": "Remote Work Best Practice",
+    "category": "Guidelines",
+    "price": 44700,
+    "description": "Panduan tim remote: async communication, meeting rhythm, docs first, dan performance ritual."
+  },
+  {
+    "slug": "guideline-client-onboarding",
+    "name": "Client Onboarding Playbook",
+    "category": "Guidelines",
+    "price": 53700,
+    "description": "Alur onboarding klien jasa dari kontrak → kickoff → deliverable → billing yang bikin klien puas."
+  },
+  {
+    "slug": "guideline-content-style-guide",
+    "name": "Content Style Guide Template",
+    "category": "Guidelines",
+    "price": 38700,
+    "description": "Template style guide konten: tone of voice, terminologi, format, aturan editorial."
+  },
+  {
+    "slug": "prompt-500-chatgpt-business",
+    "name": "500 Prompt Bisnis ChatGPT",
+    "category": "Prompt Collections",
+    "price": 44700,
+    "description": "500 prompt siap pakai kategori: marketing, sales, ops, HR, produk. Format modular, mudah dimodifikasi."
+  },
+  {
+    "slug": "prompt-seo-content-100",
+    "name": "100 Prompt SEO Content Writing",
+    "category": "Prompt Collections",
+    "price": 29700,
+    "description": "Prompt research keyword, outline, drafting, dan optimasi on-page. Optimized untuk GPT-4/Claude."
+  },
+  {
+    "slug": "prompt-design-branding",
+    "name": "Prompt Pack: Design & Branding",
+    "category": "Prompt Collections",
+    "price": 26700,
+    "description": "Prompt untuk brief brand, moodboard, naming, tagline, dan kritik desain. Cocok untuk designer solo."
+  },
+  {
+    "slug": "prompt-educator-trainer",
+    "name": "Prompt Pack: Educator & Trainer",
+    "category": "Prompt Collections",
+    "price": 23700,
+    "description": "Prompt untuk susun kurikulum, lesson plan, kuis, dan feedback siswa berbasis AI."
+  },
+  {
+    "slug": "prompt-marketing-automation",
+    "name": "Prompt Pack: Marketing Automation",
+    "category": "Prompt Collections",
+    "price": 35700,
+    "description": "Prompt untuk automasi email sequence, ad copy, retargeting message, dan nurture flow."
+  },
+  {
+    "slug": "checklist-prelaunch-website",
+    "name": "Pre-Launch Website Checklist (100)",
+    "category": "Checklists",
+    "price": 17700,
+    "description": "100 item wajib cek sebelum launch: SEO, performance, security, konten, analytics, legal."
+  },
+  {
+    "slug": "checklist-technical-seo-audit",
+    "name": "Technical SEO Audit Checklist",
+    "category": "Checklists",
+    "price": 14700,
+    "description": "Checklist audit teknis: crawlability, indexing, sitemap, robots, canonical, structured data."
+  },
+  {
+    "slug": "checklist-product-launch",
+    "name": "Product Launch Marketing Checklist",
+    "category": "Checklists",
+    "price": 20700,
+    "description": "Timeline & task 8 minggu sebelum launch produk digital. Include copy, ads, PR, email."
+  },
+  {
+    "slug": "checklist-daily-productivity",
+    "name": "Daily & Weekly Productivity Checklist",
+    "category": "Checklists",
+    "price": 11700,
+    "description": "Ritual pagi, weekly review, dan daily focus session — bentuk kartu cetak & digital."
+  },
+  {
+    "slug": "checklist-content-publishing-qa",
+    "name": "Content Publishing QA Checklist",
+    "category": "Checklists",
+    "price": 14700,
+    "description": "Checklist QA sebelum publish: fakta, tone, SEO, aksesibilitas, image, meta, distribusi."
+  },
+  {
+    "slug": "workbook-positioning-brand",
+    "name": "Workbook Positioning Brand Diri",
+    "category": "Workbooks",
+    "price": 38700,
+    "description": "Latihan 7 sesi untuk menemukan positioning brand personal yang jelas & bisa diingat."
+  },
+  {
+    "slug": "workbook-90-day-content-plan",
+    "name": "Workbook 90-Day Content Plan",
+    "category": "Workbooks",
+    "price": 44700,
+    "description": "Bangun content plan 90 hari dari topical research, pillar, dan calendar. Berformat workbook cetak."
+  },
+  {
+    "slug": "workbook-life-goals-vision",
+    "name": "Workbook Life Goals & Vision",
+    "category": "Workbooks",
+    "price": 29700,
+    "description": "Refleksi + goal setting berbasis nilai personal. Framework OKR untuk hidup, bukan cuma kerja."
+  },
+  {
+    "slug": "workbook-startup-validation",
+    "name": "Workbook Startup Validation",
+    "category": "Workbooks",
+    "price": 53700,
+    "description": "Uji ide startup dari problem → solution → market fit dalam 4 minggu terstruktur."
+  },
+  {
+    "slug": "workbook-freelance-rate-calc",
+    "name": "Workbook Freelance Rate Calculator",
+    "category": "Workbooks",
+    "price": 26700,
+    "description": "Hitung tarif per jam / project fee freelancer berdasarkan biaya, target income, dan value."
+  },
+  {
+    "slug": "planner-daily-digital-2026",
+    "name": "Daily Digital Planner 2026",
+    "category": "Planners",
+    "price": 23700,
+    "description": "Planner harian format iPad / Notability. 365 halaman terlink, satu klik navigasi."
+  },
+  {
+    "slug": "planner-weekly-deep-work",
+    "name": "Weekly Deep Work Planner",
+    "category": "Planners",
+    "price": 17700,
+    "description": "Weekly planner fokus deep work: time-block, energy tracking, weekly review."
+  },
+  {
+    "slug": "planner-monthly-content",
+    "name": "Monthly Content Planner",
+    "category": "Planners",
+    "price": 20700,
+    "description": "Planner konten bulanan: theme, pillar, format, channel, publishing date, KPI."
+  },
+  {
+    "slug": "planner-annual-business",
+    "name": "Annual Business Planner",
+    "category": "Planners",
+    "price": 44700,
+    "description": "Planner tahunan bisnis: goal, OKR, quarterly review, financial target, roadmap."
+  },
+  {
+    "slug": "planner-habit-goal-bundle",
+    "name": "Habit + Goal Planner Bundle",
+    "category": "Planners",
+    "price": 29700,
+    "description": "Kombinasi habit tracker + goal setting kit format digital dan cetak."
+  },
+  {
+    "slug": "worksheet-business-model-canvas",
+    "name": "Worksheet Business Model Canvas",
+    "category": "Worksheets",
+    "price": 17700,
+    "description": "BMC + Value Proposition Canvas siap isi. Format A3 print + Figma editable."
+  },
+  {
+    "slug": "worksheet-customer-persona",
+    "name": "Worksheet Customer Persona",
+    "category": "Worksheets",
+    "price": 14700,
+    "description": "3 template persona: demografis, psikografis, jobs-to-be-done. Include contoh kasus."
+  },
+  {
+    "slug": "worksheet-swot-analysis",
+    "name": "Worksheet SWOT + PESTLE Analysis",
+    "category": "Worksheets",
+    "price": 14700,
+    "description": "SWOT + PESTLE + Porter 5 Forces. Format worksheet 1 halaman, langsung print & isi."
+  },
+  {
+    "slug": "worksheet-research-methodology",
+    "name": "Worksheet Research Methodology",
+    "category": "Worksheets",
+    "price": 23700,
+    "description": "Worksheet metodologi riset kuantitatif + kualitatif. Cocok untuk skripsi / tesis."
+  },
+  {
+    "slug": "worksheet-seo-keyword-mapping",
+    "name": "Worksheet SEO Keyword Mapping",
+    "category": "Worksheets",
+    "price": 20700,
+    "description": "Mapping keyword ke intent, cluster, dan page. Spreadsheet siap pakai."
+  },
+  {
+    "slug": "framework-4c-marketing",
+    "name": "Framework 4C Marketing Model",
+    "category": "Frameworks",
+    "price": 53700,
+    "description": "Alternatif 4P: Customer, Cost, Convenience, Communication. Template + case study."
+  },
+  {
+    "slug": "framework-personal-branding-pyramid",
+    "name": "Framework Personal Branding Pyramid",
+    "category": "Frameworks",
+    "price": 59700,
+    "description": "Pyramid model dari core values → positioning → offer → distribution → community."
+  },
+  {
+    "slug": "framework-ai-adoption-roadmap",
+    "name": "Framework AI Adoption Roadmap",
+    "category": "Frameworks",
+    "price": 74700,
+    "description": "Roadmap adopsi AI untuk tim kecil: audit process → pilot → scale → govern."
+  },
+  {
+    "slug": "framework-okr-setup-kit",
+    "name": "Framework OKR Setup Kit",
+    "category": "Frameworks",
+    "price": 44700,
+    "description": "Kit setup OKR dari nol: template, guide fasilitasi, cadence review, common pitfalls."
+  },
+  {
+    "slug": "framework-content-pillar",
+    "name": "Framework Content Pillar System",
+    "category": "Frameworks",
+    "price": 53700,
+    "description": "System membangun pillar konten yang saling terhubung untuk topical authority."
+  },
+  {
+    "slug": "playbook-content-ops",
+    "name": "Content Ops Playbook",
+    "category": "Playbooks",
+    "price": 74700,
+    "description": "SOP editorial end-to-end: research → outline → draft → review → publish → distribusi."
+  },
+  {
+    "slug": "playbook-seo-audit",
+    "name": "SEO Audit Playbook",
+    "category": "Playbooks",
+    "price": 65700,
+    "description": "Framework audit SEO 12 langkah + spreadsheet template + report deliverable siap kirim klien."
+  },
+  {
+    "slug": "playbook-product-launch",
+    "name": "Product Launch Playbook",
+    "category": "Playbooks",
+    "price": 89700,
+    "description": "Playbook 90-day launch: pre-launch, launch week, post-launch retention loop."
+  },
+  {
+    "slug": "playbook-customer-retention",
+    "name": "Customer Retention Ops Playbook",
+    "category": "Playbooks",
+    "price": 80700,
+    "description": "Cohort analysis, churn triggers, win-back sequence, dan referral engine."
+  },
+  {
+    "slug": "playbook-cold-outreach-b2b",
+    "name": "Cold Outreach B2B Playbook",
+    "category": "Playbooks",
+    "price": 68700,
+    "description": "Strategi cold email + LinkedIn DM yang etis dan converting. Include 30 template."
+  },
+  {
+    "slug": "blueprint-saas-mvp-90d",
+    "name": "Blueprint SaaS MVP dalam 90 Hari",
+    "category": "Blueprints",
+    "price": 104700,
+    "description": "Blueprint minggu-per-minggu bangun SaaS MVP: validation, tech stack, pricing, launch."
+  },
+  {
+    "slug": "blueprint-personal-brand-website",
+    "name": "Blueprint Personal Brand Website",
+    "category": "Blueprints",
+    "price": 74700,
+    "description": "Arsitektur & konten website personal brand: sitemap, wireframe, copy framework."
+  },
+  {
+    "slug": "blueprint-ecommerce-growth-loop",
+    "name": "Blueprint Ecommerce Growth Loop",
+    "category": "Blueprints",
+    "price": 119700,
+    "description": "Loop growth ecommerce: paid → email → retention → referral. Include metric dashboard."
+  },
+  {
+    "slug": "blueprint-ai-agency-from-zero",
+    "name": "Blueprint AI Agency dari Nol",
+    "category": "Blueprints",
+    "price": 149700,
+    "description": "Bangun AI agency dari 0 klien ke 6 klien retainer: positioning, service ladder, delivery."
+  },
+  {
+    "slug": "blueprint-digital-product-launch",
+    "name": "Blueprint Digital Product Launch",
+    "category": "Blueprints",
+    "price": 83700,
+    "description": "Launch produk digital pertama: validasi, produksi, pricing, funnel, distribution."
+  },
+  {
+    "slug": "sop-content-team-editorial",
+    "name": "SOP Content Team Editorial",
+    "category": "SOP",
+    "price": 59700,
+    "description": "SOP tim konten: role, workflow status, deliverable format, review rubric."
+  },
+  {
+    "slug": "sop-customer-support-ticketing",
+    "name": "SOP Customer Support Ticketing",
+    "category": "SOP",
+    "price": 53700,
+    "description": "SOP tiket support: kategorisasi, SLA, escalation, template respons standar."
+  },
+  {
+    "slug": "sop-client-project-kickoff",
+    "name": "SOP Client Project Kickoff",
+    "category": "SOP",
+    "price": 44700,
+    "description": "Prosedur kickoff proyek klien: agenda, dokumen, timeline, roles & responsibility."
+  },
+  {
+    "slug": "sop-social-media-publishing",
+    "name": "SOP Social Media Publishing",
+    "category": "SOP",
+    "price": 38700,
+    "description": "SOP produksi & publish konten social: approval flow, brand guardrail, crisis playbook."
+  },
+  {
+    "slug": "sop-onboarding-remote-employee",
+    "name": "SOP Onboarding Karyawan Remote",
+    "category": "SOP",
+    "price": 59700,
+    "description": "SOP 30-60-90 hari onboarding karyawan remote: tools, ritual, milestone, feedback."
+  },
+  {
+    "slug": "swipe-100-email-subject",
+    "name": "Swipe: 100 High-Converting Email Subject",
+    "category": "Swipe Files",
+    "price": 26700,
+    "description": "100 subject line email marketing terbukti dari berbagai industri. Kategori + benchmark rate."
+  },
+  {
+    "slug": "swipe-50-landing-hero-copy",
+    "name": "Swipe: 50 Landing Page Hero Copy",
+    "category": "Swipe Files",
+    "price": 29700,
+    "description": "50 hook + subhook + CTA landing page dari SaaS, jasa, digital product ternama."
+  },
+  {
+    "slug": "swipe-cta-buttons-200",
+    "name": "Swipe: 200 CTA Button Copy",
+    "category": "Swipe Files",
+    "price": 23700,
+    "description": "200 variasi CTA button dengan konteks penggunaan (sales, signup, download, dst)."
+  },
+  {
+    "slug": "swipe-cold-dm-outreach",
+    "name": "Swipe: Cold DM & Outreach Message",
+    "category": "Swipe Files",
+    "price": 35700,
+    "description": "Template DM LinkedIn/Instagram/Email yang tidak spammy dan tetap converting."
+  },
+  {
+    "slug": "swipe-ad-copy-library",
+    "name": "Swipe: Ad Copy Library (Meta + Google)",
+    "category": "Swipe Files",
+    "price": 44700,
+    "description": "Library ad copy Meta Ads + Google Ads yang teruji, dikelompokkan per objective."
+  },
+  {
+    "slug": "bizdoc-kontrak-freelance-bundle",
+    "name": "Kontrak Freelance Bundle (5)",
+    "category": "Business Documents",
+    "price": 44700,
+    "description": "5 template kontrak freelance: NDA, service agreement, retainer, revisi, terminasi."
+  },
+  {
+    "slug": "bizdoc-invoice-quotation-pro",
+    "name": "Invoice & Quotation Pro",
+    "category": "Business Documents",
+    "price": 26700,
+    "description": "Template invoice, quotation, dan receipt profesional. Word, Excel, dan PDF fillable."
+  },
+  {
+    "slug": "bizdoc-proposal-konsultan",
+    "name": "Proposal Konsultan Bisnis",
+    "category": "Business Documents",
+    "price": 35700,
+    "description": "Template proposal konsultan bisnis lengkap: scope, methodology, timeline, investasi."
+  },
+  {
+    "slug": "bizdoc-mou-kerja-sama",
+    "name": "MoU Kerja Sama Bisnis",
+    "category": "Business Documents",
+    "price": 29700,
+    "description": "Template MoU (memorandum of understanding) untuk berbagai skema kerja sama."
+  },
+  {
+    "slug": "bizdoc-business-plan-lengkap",
+    "name": "Business Plan Template Lengkap",
+    "category": "Business Documents",
+    "price": 53700,
+    "description": "Business plan 40 halaman dengan model kanvas, proyeksi keuangan, dan pitch deck."
+  },
+  {
+    "slug": "research-proposal-skripsi",
+    "name": "Template Proposal Skripsi & Tesis",
+    "category": "Research Resources",
+    "price": 44700,
+    "description": "Template proposal skripsi/tesis format APA & sesuai panduan kampus umum di Indonesia."
+  },
+  {
+    "slug": "research-kuesioner-kit",
+    "name": "Instrumen Penelitian: Kuesioner Kit",
+    "category": "Research Resources",
+    "price": 38700,
+    "description": "Kit kuesioner: skala Likert, semantic differential, uji validitas & reliabilitas."
+  },
+  {
+    "slug": "research-coding-sheet-kualitatif",
+    "name": "Coding Sheet Analisis Kualitatif",
+    "category": "Research Resources",
+    "price": 29700,
+    "description": "Template coding sheet untuk analisis tematik & konten. Include contoh koding."
+  },
+  {
+    "slug": "research-analisis-spss-r",
+    "name": "Template Analisis Data SPSS & R",
+    "category": "Research Resources",
+    "price": 53700,
+    "description": "Template & script analisis: uji beda, korelasi, regresi, PLS-SEM. Include tutorial."
+  },
+  {
+    "slug": "research-systematic-review-toolkit",
+    "name": "Systematic Review Toolkit",
+    "category": "Research Resources",
+    "price": 59700,
+    "description": "Toolkit systematic literature review: protocol PRISMA, data extraction, quality assessment."
+  },
+  {
+    "slug": "mkt-plan-12-bulan",
+    "name": "Marketing Plan 12 Bulan Template",
+    "category": "Marketing Resources",
+    "price": 53700,
+    "description": "Marketing plan tahunan: audit, positioning, strategy, channel plan, budget, KPI."
+  },
+  {
+    "slug": "mkt-campaign-planner-multichannel",
+    "name": "Campaign Planner Multi-Channel",
+    "category": "Marketing Resources",
+    "price": 44700,
+    "description": "Planner kampanye multi-channel: brief, timeline, asset, distribution, measurement."
+  },
+  {
+    "slug": "mkt-content-editorial-calendar",
+    "name": "Content Editorial Calendar",
+    "category": "Marketing Resources",
+    "price": 38700,
+    "description": "Editorial calendar 12 bulan dengan theme, pillar, format, channel, dan performance tracking."
+  },
+  {
+    "slug": "mkt-analytics-dashboard",
+    "name": "Marketing Analytics Dashboard",
+    "category": "Marketing Resources",
+    "price": 59700,
+    "description": "Dashboard analytics marketing multi-source: GA4, Meta Ads, Google Ads, email. Google Sheet + Looker."
+  },
+  {
+    "slug": "mkt-persona-kit",
+    "name": "Persona Marketing Kit",
+    "category": "Marketing Resources",
+    "price": 44700,
+    "description": "Kit persona marketing: template B2C & B2B, interview script, empathy map, JTBD."
+  },
+  {
+    "slug": "brand-strategy-workbook",
+    "name": "Brand Strategy Workbook",
+    "category": "Branding Resources",
+    "price": 74700,
+    "description": "Workbook membangun brand strategy: core values, positioning, personality, brand story."
+  },
+  {
+    "slug": "brand-guideline-template",
+    "name": "Brand Guideline Template Editable",
+    "category": "Branding Resources",
+    "price": 59700,
+    "description": "Template brand guideline 30 halaman editable Figma: logo, warna, tipografi, tone."
+  },
+  {
+    "slug": "brand-voice-tone-kit",
+    "name": "Brand Voice & Tone Kit",
+    "category": "Branding Resources",
+    "price": 44700,
+    "description": "Kit mendefinisikan voice & tone: worksheet, contoh do/don't, applied writing examples."
+  },
+  {
+    "slug": "brand-logo-presentation-deck",
+    "name": "Logo Presentation Deck Template",
+    "category": "Branding Resources",
+    "price": 53700,
+    "description": "Template deck presentasi logo ke klien: konsep, moodboard, mockup, rationale."
+  },
+  {
+    "slug": "brand-rebranding-playbook",
+    "name": "Rebranding Playbook",
+    "category": "Branding Resources",
+    "price": 89700,
+    "description": "Playbook rebranding lengkap: audit, strategy, execution, launch, internal alignment."
+  },
+  {
+    "slug": "prod-habit-tracker-notion",
+    "name": "Habit Tracker Notion 2026",
+    "category": "Productivity Resources",
+    "price": 23700,
+    "description": "Habit tracker Notion dengan streak, analytics, dan integrasi weekly review."
+  },
+  {
+    "slug": "prod-goal-tracker-okr",
+    "name": "Goal Tracker OKR System",
+    "category": "Productivity Resources",
+    "price": 29700,
+    "description": "System tracking OKR pribadi & tim: cascade goal, check-in, scoring."
+  },
+  {
+    "slug": "prod-project-planner-kanban",
+    "name": "Project Planner Kanban Pro",
+    "category": "Productivity Resources",
+    "price": 26700,
+    "description": "Project planner Kanban lengkap: backlog, sprint, retrospective, capacity."
+  },
+  {
+    "slug": "prod-life-dashboard-notion",
+    "name": "Life Dashboard Notion",
+    "category": "Productivity Resources",
+    "price": 35700,
+    "description": "Dashboard hidup Notion: goal, habit, budget, journal, reading list dalam satu tempat."
+  },
+  {
+    "slug": "prod-weekly-review-template",
+    "name": "Weekly Review Template",
+    "category": "Productivity Resources",
+    "price": 17700,
+    "description": "Template weekly review 4 kuadran: pencapaian, blocker, insight, prioritas minggu depan."
+  },
+  {
+    "slug": "print-kalender-minimalis-2026",
+    "name": "Kalender Cetak Minimalis 2026",
+    "category": "Printables",
+    "price": 11700,
+    "description": "Kalender cetak A4 minimalis 12 bulan + weekly view. PDF siap print."
+  },
+  {
+    "slug": "print-jurnal-morning-pages",
+    "name": "Jurnal Cetak Morning Pages",
+    "category": "Printables",
+    "price": 14700,
+    "description": "Jurnal morning pages 90 hari + prompt refleksi. Format cetak A5."
+  },
+  {
+    "slug": "print-planner-weekly-a5",
+    "name": "Planner Cetak Weekly (A5)",
+    "category": "Printables",
+    "price": 17700,
+    "description": "Weekly planner A5 dengan time-block, priority, dan reflection section."
+  },
+  {
+    "slug": "print-worksheet-focus-day",
+    "name": "Worksheet Cetak Focus Day",
+    "category": "Printables",
+    "price": 11700,
+    "description": "1 halaman cetak untuk merancang focus day: MIT, deep work block, energy check."
+  },
+  {
+    "slug": "print-habit-tracker-set",
+    "name": "Habit Tracker Printable Set",
+    "category": "Printables",
+    "price": 14700,
+    "description": "Set habit tracker cetak: daily, weekly, monthly. 12 layout berbeda."
+  },
+  {
+    "slug": "bundle-freelancer-complete-kit",
+    "name": "Bundle: Freelancer Complete Kit",
+    "category": "Digital Bundles",
+    "price": 149700,
+    "description": "30+ template & guide freelancer: kontrak, invoice, proposal, workflow, Notion OS. Hemat 60%."
+  },
+  {
+    "slug": "bundle-content-creator-starter",
+    "name": "Bundle: Content Creator Starter Pack",
+    "category": "Digital Bundles",
+    "price": 104700,
+    "description": "Toolkit content creator: content planner, template feed, prompt collection, review template."
+  },
+  {
+    "slug": "bundle-seo-professional-toolkit",
+    "name": "Bundle: SEO Professional Toolkit",
+    "category": "Digital Bundles",
+    "price": 179700,
+    "description": "Bundle profesional SEO: ebook, audit framework, checklist, worksheet, dashboard."
+  },
+  {
+    "slug": "bundle-small-business-ops",
+    "name": "Bundle: Small Business Ops Bundle",
+    "category": "Digital Bundles",
+    "price": 134700,
+    "description": "Operating bundle UKM: SOP, invoice, proposal, marketing plan, dashboard keuangan."
+  },
+  {
+    "slug": "bundle-ai-workflow-mastery",
+    "name": "Bundle: AI Workflow Mastery",
+    "category": "Digital Bundles",
+    "price": 164700,
+    "description": "Bundle penguasaan AI workflow: ebook, prompt pack, framework adopsi, playbook implementasi."
+  },
+  {
+    "slug": "modul-google-adsense",
+    "name": "Modul Google Adsense",
+    "category": "Modul",
+    "price": 59700,
+    "description": "Menghasilkan uang melalui Google Adsense, dari riset niche, approval, set iklan, dan SEO basic."
+  },
+  {
+    "slug": "modul-tunecore-soundon",
+    "name": "Modul Tunecore & SoundOn",
+    "category": "Modul",
+    "price": 53700,
+    "description": "Monetisasi musik melalui Spotify, Apple Music, YouTube, dan platform digital lainnya."
+  },
+  {
+    "slug": "modul-ternak-blog",
+    "name": "Modul Ternak Blog",
+    "category": "Modul",
+    "price": 74700,
+    "description": "Membangun blog dari A–Z hingga jadi aset digital yang menghasilkan pendapatan pasif."
+  },
+  {
+    "slug": "modul-seo-copywriting",
+    "name": "Modul Teknik Menulis SEO (SEO Copywriting)",
+    "category": "Modul",
+    "price": 59700,
+    "description": "Menulis artikel yang ramah Google sekaligus menarik pembaca — struktur, keyword, hook."
+  },
+  {
+    "slug": "modul-social-media-marketing",
+    "name": "Modul Social Media Marketing (SMM)",
+    "category": "Modul",
+    "price": 68700,
+    "description": "Strategi branding & penjualan lewat media sosial: content pillar, posting cadence, engagement loop."
+  },
+  {
+    "slug": "modul-search-engine-marketing",
+    "name": "Modul Search Engine Marketing (Google, Meta, TikTok, AI Ads)",
+    "category": "Modul",
+    "price": 89700,
+    "description": "Kuasai Google Ads, Meta Ads, TikTok Ads, YouTube Ads, dan AI Ads dari setup, targeting, hingga scaling."
+  },
+  {
+    "slug": "modul-affiliate-marketing",
+    "name": "Modul Affiliate Marketing",
+    "category": "Modul",
+    "price": 59700,
+    "description": "Dapatkan komisi dengan mempromosikan produk orang lain — niche selection, funnel, tracking."
+  },
+  {
+    "slug": "modul-email-marketing",
+    "name": "Modul Email Marketing",
+    "category": "Modul",
+    "price": 53700,
+    "description": "Bangun database pelanggan dan konversi dengan email funnel: opt-in, sequence, segmentation, deliverability."
+  },
+  {
+    "slug": "modul-copywriting-content-marketing",
+    "name": "Modul Copywriting & Content Marketing",
+    "category": "Modul",
+    "price": 65700,
+    "description": "Seni menulis konten dan iklan yang menjual — headline, body copy, CTA, storytelling framework."
+  },
+  {
+    "slug": "modul-desain-branding-digital-strategist",
+    "name": "Modul Desain, Branding Digital & Digital Strategist",
+    "category": "Modul",
+    "price": 74700,
+    "description": "Membangun identitas visual & strategi digital yang konsisten: brand system, tone, roadmap channel."
+  },
+  {
+    "slug": "modul-ecommerce-marketplace",
+    "name": "Modul E-Commerce & Marketplace",
+    "category": "Modul",
+    "price": 74700,
+    "description": "Strategi sukses jualan di Shopee, Tokopedia, TikTok Shop, dan toko online mandiri (custom store)."
+  },
+  {
+    "slug": "modul-ai-tools-digital-business",
+    "name": "Modul AI Tools for Digital Business",
+    "category": "Modul",
+    "price": 68700,
+    "description": "Menggunakan AI untuk mempercepat kerja & bisnis online — dari research, copywriting, hingga automation."
+  },
+  {
+    "slug": "modul-backlink-building",
+    "name": "Modul Backlink Building",
+    "category": "Modul",
+    "price": 53700,
+    "description": "Strategi membangun backlink berkualitas untuk SEO — outreach, guest post, PBN awareness, disavow."
+  },
+  {
+    "slug": "modul-social-media-optimization",
+    "name": "Modul Social Media Optimization (SMO)",
+    "category": "Modul",
+    "price": 53700,
+    "description": "Optimasi akun media sosial agar lebih maksimal menjangkau audiens — bio, hashtag, timing, algoritma."
+  },
+  {
+    "slug": "modul-seo-a-z",
+    "name": "Modul Search Engine Optimization (SEO) A–Z",
+    "category": "Modul",
+    "price": 89700,
+    "description": "Belajar SEO lengkap dari dasar hingga advanced — on-page, off-page, technical, konten, analytics."
+  },
+  {
+    "slug": "modul-google-adsense-advanced",
+    "name": "Modul Google Adsense – Advanced Mode",
+    "category": "Modul",
+    "price": 74700,
+    "description": "Optimasi lanjutan untuk scaling income Adsense — RPM, ad placement A/B, konten evergreen, kebijakan."
+  },
+  {
+    "slug": "modul-blogging-platform",
+    "name": "Modul Blogging (WordPress, Blogger, Wix, dll.)",
+    "category": "Modul",
+    "price": 59700,
+    "description": "Panduan lengkap platform blogging populer — install, tema, plugin, migrasi, dan optimasi konten."
+  },
+  {
+    "slug": "modul-ai-prompting",
+    "name": "Modul AI Prompting",
+    "category": "Modul",
+    "price": 59700,
+    "description": "Kuasai seni membuat prompt AI yang efektif (teks & visual) — framework, pattern, iterasi."
+  },
+  {
+    "slug": "modul-business-automation",
+    "name": "Modul Business Automation",
+    "category": "Modul",
+    "price": 74700,
+    "description": "Fokus pada penggunaan tools dan software untuk mengotomatisasi pekerjaan-pekerjaan digital."
+  },
+  {
+    "slug": "modul-youtube-monetization",
+    "name": "Modul Video Content & YouTube Monetization",
+    "category": "Modul",
+    "price": 74700,
+    "description": "Cara membuat channel YouTube & monetisasinya — niche, konten, thumbnail, algoritma, AdSense YT."
+  },
+  {
+    "slug": "modul-digital-sales-funnel",
+    "name": "Modul Digital Sales Funnel & Automation",
+    "category": "Modul",
+    "price": 89700,
+    "description": "Membangun alur penjualan otomatis dengan funnel & tools — awareness, lead, nurture, close, retention."
+  }
+]

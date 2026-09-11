@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Isra Anwar Journal</title>
+  <desc id="description">A dark editorial social card for Isra Anwar articles.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07090d"/>
+      <stop offset="0.54" stop-color="#11152c"/>
+      <stop offset="1" stop-color="#150b25"/>
+    </linearGradient>
+    <radialGradient id="violetGlow" cx="0" cy="0" r="1" gradientTransform="translate(908 126) rotate(132) scale(510 580)">
+      <stop stop-color="#6d4cf5" stop-opacity=".88"/>
+      <stop offset=".48" stop-color="#5e3fd9" stop-opacity=".22"/>
+      <stop offset="1" stop-color="#5e3fd9" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pinkGlow" cx="0" cy="0" r="1" gradientTransform="translate(202 570) rotate(-33) scale(420 340)">
+      <stop stop-color="#ff2d95" stop-opacity=".52"/>
+      <stop offset="1" stop-color="#ff2d95" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" fill="none" stroke="#d8d0dd" stroke-opacity=".065"/>
+    </pattern>
+    <filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <ellipse cx="910" cy="126" rx="250" ry="190" fill="#6d4cf5" fill-opacity=".34" filter="url(#blur)"/>
+  <ellipse cx="205" cy="588" rx="240" ry="145" fill="#ff2d95" fill-opacity=".23" filter="url(#blur)"/>
+  <rect width="1200" height="630" fill="url(#violetGlow)"/>
+  <rect width="1200" height="630" fill="url(#pinkGlow)"/>
+
+  <g transform="translate(76 69) scale(.9)" fill="#d8d0dd">
+    <path d="M10 8h9v48h-9z"/>
+    <path fill-rule="evenodd" d="M30 56 43 8h10l13 48h-9.5l-2.7-10H42.2l-2.7 10H30Zm14.4-18h7.2L48 24.6 44.4 38Z"/>
+  </g>
+  <text x="156" y="108" fill="#f2eff5" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700" letter-spacing="2">israanwar.com</text>
+  <text x="79" y="209" fill="#c4b8ff" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" letter-spacing="4.2">Isra Anwar Journal</text>
+
+  <text x="78" y="332" fill="#f7f5fa" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" letter-spacing="-3.2">Ideas with a</text>
+  <text x="78" y="413" fill="#f7f5fa" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" letter-spacing="-3.2">commercial edge.</text>
+  <rect x="81" y="464" width="84" height="6" rx="3" fill="#ff2d95"/>
+  <text x="78" y="532" fill="#c9ccd6" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="400">Web systems · search visibility · AI integration</text>
+
+  <g transform="translate(916 338)" fill="none" stroke="#eeeaff" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="94" cy="94" r="88" stroke-width="2" stroke-opacity=".56"/>
+    <circle cx="94" cy="94" r="58" stroke-width="2" stroke-opacity=".28"/>
+    <path d="M57 122 94 70l55-50-27 64Z" fill="#eeeaff" fill-opacity=".86" stroke="none"/>
+    <path d="M100 70 149 20l-31 58Z" fill="#6d4cf5" stroke="none"/>
+    <circle cx="94" cy="94" r="18" fill="#efeafd" stroke="none"/>
+    <circle cx="94" cy="94" r="8" fill="#6537d8" stroke="none"/>
+  </g>
+  <text x="78" y="586" fill="#8e95a7" font-family="Arial, Helvetica, sans-serif" font-size="15" letter-spacing="1.4">STRATEGY · DESIGN · TECHNOLOGY</text>
+</svg>

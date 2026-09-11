@@ -1,0 +1,3 @@
+-- Remote migration history placeholder.
+-- The original migration exists in the linked Supabase project's migration table,
+-- but was not present in this local project checkout.

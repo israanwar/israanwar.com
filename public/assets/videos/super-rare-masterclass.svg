@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Super Rare masterclass">
+  <rect width="640" height="360" fill="#0d0b10"/>
+  <rect x="64" y="54" width="512" height="252" rx="34" fill="#211f24"/>
+  <path d="M320 82 360 158 444 172 384 232 398 316 320 276 242 316 256 232 196 172 280 158 320 82Z" fill="#ffd166"/>
+  <circle cx="320" cy="198" r="46" fill="#fff" opacity=".92"/>
+  <path d="M306 172v52l45-26-45-26Z" fill="#f43f8f"/>
+</svg>

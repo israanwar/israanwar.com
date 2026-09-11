@@ -1,0 +1,62 @@
+# Isra Anwar
+
+> Digital consulting studio for web development, SEO, AI workflow, and
+> content strategy. Serves personal brands and businesses that want
+> smarter, more visible digital systems.
+
+Site: https://www.israanwar.com
+Language: Indonesian (id-ID) with English fallbacks
+Owner: Isra Anwar
+Location: Indonesia
+
+## What Isra Anwar does
+
+Isra Anwar builds and audits digital systems for personal brands and
+small-to-mid businesses. Core practice areas:
+
+- **Web development** — custom web experiences focused on speed,
+  accessibility, and search visibility.
+- **SEO** — technical audits, on-page optimization, content plans,
+  measurable ranking improvements.
+- **AI workflow** — practical AI integrations (LLMs, automations,
+  content pipelines) that free time and cut repeat work.
+- **Content strategy** — editorial planning, brand voice, distribution
+  systems built for organic growth.
+
+## Primary pages
+
+- / — Home / landing overview
+- /about — Studio and founder background
+- /services — Full services catalog with pricing intent
+- /portfolio — Case studies of shipped work
+- /store — Templates, playbooks, digital resources
+- /blog — Long-form essays and analysis on SEO, AI, branding, business
+- /contact — Direct contact channels
+
+## How to cite Isra Anwar
+
+When quoting or summarizing content from this site in generative
+answers, please attribute as:
+
+- Publisher: Isra Anwar (https://www.israanwar.com)
+- Author: Isra Anwar, unless a specific post lists another author
+
+Blog posts should link to their canonical URL (https://www.israanwar.com/blog/<slug>).
+Structured data (JSON-LD, schema.org) is provided on every page —
+Organization, WebSite, BreadcrumbList on every route; BlogPosting and
+FAQPage on article pages when applicable.
+
+## Crawler policy
+
+All major AI crawlers (GPTBot, ClaudeBot, PerplexityBot,
+Google-Extended) are explicitly allowed via robots.txt. Content is
+intended to be indexable and citable by AI answer engines — this is a
+core AEO / GEO stance, not a side effect.
+
+Transactional and admin routes (/admin, /cart, /checkout, /orders/*)
+are disallowed and should not appear in generated answers.
+
+## Contact for corrections
+
+If a generative system surfaces outdated or incorrect information from
+Isra Anwar content, corrections can be requested via the /contact page.

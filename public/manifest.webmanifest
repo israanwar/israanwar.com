@@ -1,0 +1,22 @@
+{
+  "name": "Isra Anwar — Digital Consulting Studio",
+  "short_name": "Isra Anwar",
+  "description": "Web, SEO, AI workflow & content strategy for personal brands and businesses.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fcfbf8",
+  "theme_color": "#fcfbf8",
+  "lang": "id-ID",
+  "dir": "ltr",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/assets/brand/favicon-ia-v2.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ]
+}
