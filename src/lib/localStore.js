@@ -1135,6 +1135,77 @@ function ensureSeed() {
     }
     localStorage.setItem("okr:migrated:portfolio:projects:v11", "1");
   }
+  if (localStorage.getItem("okr:migrated:portfolio:projects:v12") !== "1") {
+    const existing = read(KEYS.pages, {}) ?? {};
+    const portfolio = existing.portfolio ?? {};
+    const consulting = Array.isArray(portfolio.consulting) ? portfolio.consulting : [];
+    let changed = false;
+    const nextConsulting = consulting
+      .filter((item) => {
+        const org = String(item.org ?? "").trim();
+        const keep = !/^PT Manufakt(?:or|ur) Kreasi Sejahtera$/i.test(org);
+        if (!keep) changed = true;
+        return keep;
+      })
+      .map((item) => {
+        if (String(item.org ?? "").trim() !== "PT Tri Ariesta Dinamika (TADCO)") return item;
+        const nextItem = {
+          ...item,
+          year: "2024-Now",
+          role: "Web Development & IT Consultant",
+          desc: "Web development and IT consulting for reliable, maintainable websites and practical business systems.",
+        };
+        if (JSON.stringify(nextItem) !== JSON.stringify(item)) changed = true;
+        return nextItem;
+      });
+    if (changed) {
+      existing.portfolio = { ...portfolio, consulting: nextConsulting, updated_at: now() };
+      write(KEYS.pages, existing);
+    }
+    localStorage.setItem("okr:migrated:portfolio:projects:v12", "1");
+  }
+  if (localStorage.getItem("okr:migrated:portfolio:projects:v13") !== "1") {
+    const existing = read(KEYS.pages, {}) ?? {};
+    const portfolio = existing.portfolio ?? {};
+    const consulting = Array.isArray(portfolio.consulting) ? portfolio.consulting : [];
+    const tadcoIndex = consulting.findIndex(
+      (item) => String(item.org ?? "").trim() === "PT Tri Ariesta Dinamika (TADCO)"
+    );
+    if (tadcoIndex !== -1 && tadcoIndex !== 1) {
+      const nextConsulting = consulting.slice();
+      const [tadco] = nextConsulting.splice(tadcoIndex, 1);
+      nextConsulting.splice(1, 0, tadco);
+      existing.portfolio = { ...portfolio, consulting: nextConsulting, updated_at: now() };
+      write(KEYS.pages, existing);
+    }
+    localStorage.setItem("okr:migrated:portfolio:projects:v13", "1");
+  }
+  if (localStorage.getItem("okr:migrated:portfolio:certifications:v1") !== "1") {
+    const existing = read(KEYS.pages, {}) ?? {};
+    const portfolio = existing.portfolio ?? {};
+    if (!(portfolio.certifications?.length)) {
+      existing.portfolio = {
+        ...portfolio,
+        certifications: PAGES_SEED.portfolio.certifications,
+        updated_at: now(),
+      };
+      write(KEYS.pages, existing);
+    }
+    localStorage.setItem("okr:migrated:portfolio:certifications:v1", "1");
+  }
+  if (localStorage.getItem("okr:migrated:portfolio:certifications:v2") !== "1") {
+    const existing = read(KEYS.pages, {}) ?? {};
+    const portfolio = existing.portfolio ?? {};
+    if (!(portfolio.training_workshops?.length)) {
+      existing.portfolio = {
+        ...portfolio,
+        training_workshops: PAGES_SEED.portfolio.training_workshops,
+        updated_at: now(),
+      };
+      write(KEYS.pages, existing);
+    }
+    localStorage.setItem("okr:migrated:portfolio:certifications:v2", "1");
+  }
   // Services seed (v5 = shorter category summaries + long service detail pages)
   if (localStorage.getItem("okr:seeded:services:v5") !== "1") {
     const LEGACY_SERVICE_SLUGS = new Set([
@@ -1180,8 +1251,8 @@ function ensureSeed() {
     localStorage.setItem("okr:seeded:services:v3", "1");
   }
 
-  // Store items seed (versioned — v16 = natural price tails + entry modules from 9k)
-  if (localStorage.getItem("okr:seeded:store:v16") !== "1") {
+  // Store items seed (versioned — v17 = requested final prices for selected modules)
+  if (localStorage.getItem("okr:seeded:store:v17") !== "1") {
     // Slug legacy dari seed v1 (kategori lama "Metode Kerja", "Template") — dibuang
     const LEGACY_SLUGS = new Set([
       "metode-content-ops-playbook",
@@ -1219,6 +1290,7 @@ function ensureSeed() {
         };
       });
     write(KEYS.products, [...merged, ...userAdded]);
+    localStorage.setItem("okr:seeded:store:v17", "1");
     localStorage.setItem("okr:seeded:store:v16", "1");
     localStorage.setItem("okr:seeded:store:v15", "1");
     localStorage.setItem("okr:seeded:store:v14", "1");
@@ -1262,7 +1334,7 @@ export function coverSvg(product) {
   return generateStoreCover(product);
 }
 
-const STORE_MAX_PRICE = 799000;
+const STORE_MAX_PRICE = 999000;
 
 const STORE_PRICE_INCREASE_RULES = {
   "Templates":              { factor: 0.28, min: 20000,  max: 70000 },
@@ -1304,7 +1376,7 @@ const STORE_FINAL_PRICE_OVERRIDES = {
   "modul-seo-copywriting": 47000,
   "modul-email-marketing": 64000,
   "modul-backlink-building": 73000,
-  "modul-tunecore-soundon": 96000,
+  "modul-tunecore-soundon": 389000,
   "modul-social-media-marketing": 121000,
   "modul-desain-branding-digital-strategist": 136000,
   "modul-copywriting-content-marketing": 158000,
@@ -1318,7 +1390,7 @@ const STORE_FINAL_PRICE_OVERRIDES = {
   "modul-seo-a-z": 391000,
   "modul-digital-sales-funnel": 486000,
   "modul-search-engine-marketing": 587000,
-  "modul-google-adsense-advanced": 698000,
+  "modul-google-adsense-advanced": 989000,
 };
 
 const STORE_PRICE_INCREASE_OVERRIDES = {
@@ -2312,22 +2384,16 @@ This policy may be updated at any time. The latest version will always be availa
     experience: [],
     consulting: [
       {
-        year: "2022-Now",
-        role: "IT Consultant & Digital Strategist",
-        org: "PT Tri Ariesta Dinamika (TADCO)",
-        desc: "IT systems consultation, digital strategy, web development, SEO, and online visibility improvement.",
-      },
-      {
-        year: "2022-Now",
-        role: "Digital Strategist Consultant",
-        org: "PT Manufaktor Kreasi Sejahtera",
-        desc: "Digital marketing direction, content strategy, campaign planning, and performance optimization.",
-      },
-      {
         year: "2023-Now",
         role: "AdSense, SEO & Website Development Consultant",
         org: "PT Cipta Jasa Digital",
         desc: "Web development advisory, SEO architecture, content monetization, and Google AdSense optimization.",
+      },
+      {
+        year: "2024-Now",
+        role: "Web Development & IT Consultant",
+        org: "PT Tri Ariesta Dinamika (TADCO)",
+        desc: "Web development and IT consulting for reliable, maintainable websites and practical business systems.",
       },
       {
         year: "2024-Now",
@@ -2373,7 +2439,134 @@ This policy may be updated at any time. The latest version will always be availa
       },
     ],
     education: [],
-    certifications: [],
+    certifications: [
+      {
+        slug: "anthropic",
+        name: "Anthropic",
+        logo: "/assets/brand-logos/anthropic.svg",
+        items: [
+          { name: "Claude 101", url: "https://verify.skilljar.com/c/nuevewitxf89" },
+          { name: "Claude Code 101", url: "https://verify.skilljar.com/c/fhtkrxhzqhxc" },
+          { name: "Claude Cowork", url: "https://academy.claude.com/verify/031c71a72121835abc8b66d1ba1c6c14" },
+          { name: "AI Capabilities and Limitations", url: "https://academy.claude.com/verify/9f76d33420da71607a1dff2bbc9c3183" },
+          { name: "Building with the Claude API", url: "https://academy.claude.com/verify/737ef965805e087af65b72c28b57b8ab" },
+        ],
+      },
+      {
+        slug: "openai",
+        name: "OpenAI",
+        logo: "/assets/brand-logos/openai.svg",
+        items: [
+          { name: "OpenAI Academy — Agents and Workflows", url: "https://academy.openai.com/home/certificate/vrllcwxs89" },
+          { name: "OpenAI Academy — Applied AI Foundations", url: "https://academy.openai.com/home/certificate/hgila7fxlo" },
+        ],
+      },
+      {
+        slug: "google",
+        name: "Google",
+        logo: "/assets/brand-logos/google.svg",
+        items: [
+          { name: "Google Analytics", url: "https://skillshop.credential.net/29adf04b-326a-4d42-ac16-765f7ee7a0bb#acc.JmcydX6U" },
+          { name: "Grow Your Monetization with Google Ad Manager", url: "https://skillshop.credential.net/b6fbba7a-31c6-48a9-9a5d-192a4bcae472#acc.QBfDIdjt" },
+        ],
+      },
+      {
+        slug: "ahrefs",
+        name: "Ahrefs",
+        logo: "/assets/brand-logos/ahrefs.svg",
+        items: [
+          { name: "Certified in Ahrefs Marketing Platform", url: "https://ahrefs.com/academy/certificate/97dcdd8085c04f8aa6e45cf7767bb6b6" },
+        ],
+      },
+      {
+        slug: "semrush",
+        name: "Semrush",
+        logo: "/assets/brand-logos/semrush.svg",
+        items: [
+          { name: "Semrush AI Search Operating System", url: "https://static.semrush.com/academy/certificates/2325cb8d30/isra-anwar_37.pdf" },
+          { name: "AI Visibility Essentials with Semrush", url: "https://static.semrush.com/academy/certificates/e26bbacddc/isra-anwar_25.pdf" },
+          { name: "Technical SEO and AI Search Essentials with Semrush", url: "https://static.semrush.com/academy/certificates/1ed4632abf/isra-anwar_25.pdf" },
+        ],
+      },
+      {
+        slug: "linkedin",
+        name: "LinkedIn",
+        logo: "/assets/brand-logos/linkedin.svg",
+        items: [
+          { name: "LinkedIn Marketing Measurement Certification", url: "https://training.marketing.linkedin.com/verify/yffmqqh862i5" },
+          { name: "LinkedIn Content and Creative Design Certification", url: "https://training.marketing.linkedin.com/verify/xu4q9q7ivaya" },
+          { name: "LinkedIn Marketing Strategy Certification", url: "https://training.marketing.linkedin.com/verify/vr83zspwu2fk" },
+        ],
+      },
+      {
+        slug: "apple",
+        name: "Apple",
+        logo: "/assets/brand-logos/apple.svg",
+        items: [
+          { name: "Apple Ads Certified", url: "https://certification-ads.apple.com/certificate/EpppzS2EvG" },
+        ],
+      },
+      {
+        slug: "spotify",
+        name: "Spotify",
+        logo: "/assets/brand-logos/spotify.svg",
+        items: [
+          { name: "Spotify Advertising Fundamentals Certification", url: "https://advertisingacademy.byspotify.com/student/award/7S5tCgaHTZBdpDHAo1Rh9eWg" },
+          { name: "Spotify Advertising Strategy & Planning Certification", url: "https://advertisingacademy.byspotify.com/student/award/HbjLmcPaH3oqpDMmBFYag7Rz" },
+          { name: "Spotify Advertising Media Buying", url: "https://advertisingacademy.byspotify.com/student/award/5fT4p7ZwBd2Ncg6zqvJ54umm" },
+        ],
+      },
+      {
+        slug: "amazon",
+        name: "Amazon",
+        logo: "/assets/brand-logos/amazon.svg",
+        items: [
+          { name: "Amazon Ads Programmatic Solutions Advanced Certification", url: "https://advertising.amazon.com/academy/certificates/b09f2050-bbcd-461c-8a7b-c9a8cc21a385" },
+          { name: "The Brand Builder — Amazon Ads", url: "https://advertising.amazon.com/academy/certificates/d8407a9b-68c9-4af4-a9b7-ab5bca92e782" },
+          { name: "The Performance Expert — Amazon Ads", url: "https://advertising.amazon.com/academy/certificates/3899eabd-213f-4862-a87a-8f9b670fc2c1" },
+        ],
+      },
+      {
+        slug: "meta",
+        name: "Meta",
+        logo: "/assets/brand-logos/meta.svg",
+        items: [
+          { name: "Opportunity Score: Experimentally Proven Recommendations to Help Improve Your Campaign Performance", url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/meta-opportunity-score.png" },
+          { name: "Meta Advertising Standards and Brand Safety", url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/meta-advertising-standards.png" },
+          { name: "Data Privacy and Policies at Meta", url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/meta-data-privacy.png" },
+          { name: "Advertising Solutions and AI", url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/meta-advertising-ai.png" },
+          { name: "Campaign Evaluation and Measurement Strategies", url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/meta-campaign-evaluation.png" },
+          { name: "Business Management Tools and Ads Resources", url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/meta-business-tools.png" },
+          { name: "Advertising Solutions Across the Marketing Funnel", url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/meta-advertising-funnel.png" },
+        ],
+      },
+      {
+        slug: "ibm",
+        name: "IBM",
+        logo: "/assets/brand-logos/ibm.svg",
+        items: [
+          { name: "Design an AI-Supported Marketing Campaign (IBM SkillsBuild)", url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/ibm-ai-marketing-campaign.jpg" },
+        ],
+      },
+    ],
+    // Separate from `certifications` on purpose: that array also feeds the
+    // Portfolio page's "Certified by" logo marquee (one entry per brand
+    // logo), and these three don't have a single brand mark to show there.
+    // Only the homepage credentials board reads this field.
+    training_workshops: [
+      {
+        name: "Implementasi Data Science dalam Sepak Bola — Shift Talks (Shift Academy x Ruang Taktik), 2022",
+        url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/shift-talks-data-science.png",
+      },
+      {
+        name: "Cara Mudah Membuat Situs untuk Bisnis Anda — Google x Gapura Digital, 2019",
+        url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/google-gapura-cara-membuat-situs.png",
+      },
+      {
+        name: "Tips Membuat Situs Bisnis yang Efektif — Google x Gapura Digital, 2019",
+        url: "https://github.com/israanwar/israanwar/raw/main/assets/certifications/google-gapura-tips-situs-bisnis.png",
+      },
+    ],
     tools: [
       "Ahrefs",
       "SEMrush",

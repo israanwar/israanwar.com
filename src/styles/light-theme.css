@@ -98,8 +98,12 @@
 }
 
 .okr__mobile-menu {
-  background: #fffdf9;
+  background: #ffffff;
   color: #20181b;
+}
+
+.okr__mobile-menu-kicker {
+  font-size: 28px;
 }
 
 .okr__mobile-menu-kicker,
@@ -125,6 +129,7 @@
 
 .okr__mobile-navlink {
   color: rgba(32, 24, 27, 0.62);
+  font-size: 32px;
 }
 
 .okr__foot-social a:hover,
@@ -706,6 +711,199 @@
   .okr__header,
   .okr :is(.okr__card, .okr__post, .okr__case, .okr__product) {
     transition: none !important;
+  }
+}
+
+/* Store — compact marketplace card system */
+.okr .okr__products--artifact {
+  align-items: stretch;
+  gap: clamp(14px, 1.7vw, 20px) !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.okr .okr__products--artifact > .okr__artifact-card {
+  background: #fff !important;
+  border: 1px solid rgba(31, 24, 27, .12) !important;
+  border-radius: 7px !important;
+  box-shadow: 0 12px 32px rgba(31, 24, 27, .075) !important;
+  min-height: 0 !important;
+  min-width: 0;
+  overflow: hidden !important;
+  transform: translateY(0);
+  transition: border-color .3s ease, box-shadow .3s ease, transform .3s cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+.okr .okr__products--artifact > .okr__artifact-card::before,
+.okr .okr__products--artifact > .okr__artifact-card::after {
+  display: none !important;
+}
+
+.okr .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible) {
+  border-color: rgba(211, 88, 49, .3) !important;
+  box-shadow: 0 18px 40px rgba(31, 24, 27, .11) !important;
+  transform: translateY(-4px) !important;
+}
+
+.okr .okr__products--artifact .okr__product-img {
+  aspect-ratio: 4 / 3 !important;
+  background: #fffaf6 !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(31, 24, 27, .09) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  overflow: hidden;
+}
+
+.okr .okr__products--artifact .okr__product-img img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.okr .okr__products--artifact .okr__product-body {
+  gap: 7px !important;
+  padding: 14px 15px 16px !important;
+}
+
+.okr .okr__products--artifact .okr__artifact-card-edition {
+  color: rgba(31, 24, 27, .52) !important;
+  font-size: 7.5px !important;
+  letter-spacing: .11em !important;
+  line-height: 1.25 !important;
+  margin: 0 0 2px !important;
+}
+
+.okr .okr__products--artifact .okr__product-cat {
+  font-size: 8px !important;
+  letter-spacing: .12em !important;
+  line-height: 1.25 !important;
+  margin: 0 !important;
+}
+
+.okr .okr__products--artifact .okr__product-name {
+  display: -webkit-box !important;
+  font-size: clamp(16px, 1.35vw, 19px) !important;
+  font-weight: 600 !important;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  min-height: 3.6em;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
+.okr .okr__products--artifact .okr__product-proof {
+  border: 0 !important;
+  flex-wrap: nowrap;
+  font-size: 10px !important;
+  gap: 4px !important;
+  line-height: 1.2 !important;
+  margin: 1px 0 0 !important;
+  min-width: 0;
+  padding: 0 !important;
+}
+
+.okr .okr__products--artifact .okr__product-stars {
+  flex: 0 0 auto;
+  gap: 1px !important;
+}
+
+.okr .okr__products--artifact .okr__product-stars svg {
+  height: 10px !important;
+  width: 10px !important;
+}
+
+.okr .okr__products--artifact .okr__product-sold {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.okr .okr__products--artifact .okr__product-price {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  letter-spacing: -.025em !important;
+  line-height: 1.15 !important;
+  margin-top: 2px !important;
+}
+
+@media (max-width: 1100px) {
+  .okr .okr__products--artifact {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .okr .okr__products--artifact {
+    gap: 10px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .okr .okr__products--artifact > .okr__artifact-card {
+    border-radius: 6px !important;
+  }
+
+  .okr .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible) {
+    transform: translateY(-2px) !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-img {
+    aspect-ratio: 4 / 3 !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-body {
+    gap: 5px !important;
+    padding: 9px 10px 11px !important;
+  }
+
+  .okr .okr__products--artifact .okr__artifact-card-edition {
+    display: none !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-cat {
+    font-size: 7.5px !important;
+    letter-spacing: .1em !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-name {
+    font-size: clamp(12px, 3.1vw, 13.5px) !important;
+    line-height: 1.24 !important;
+    min-height: 3.72em;
+  }
+
+  .okr .okr__products--artifact .okr__product-proof {
+    font-size: 8.5px !important;
+    gap: 3px !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-stars svg {
+    height: 9px !important;
+    width: 9px !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-price {
+    font-size: 15px !important;
+    line-height: 1.15 !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .okr .okr__products--artifact {
+    gap: 8px !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-body {
+    padding: 8px 8px 10px !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-name {
+    font-size: 12px !important;
+  }
+
+  .okr .okr__products--artifact .okr__product-rating {
+    display: none;
   }
 }
 
@@ -1902,5 +2100,115 @@
   .okr__stage-scene.is-active .okr__stage-points li {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* Final store typography lock: keep marketplace titles comfortably readable. */
+.okr .okr__products--artifact > .okr__artifact-card .okr__product-name {
+  line-height: 1.2 !important;
+}
+
+@media (max-width: 760px) {
+  .okr .okr__products--artifact > .okr__artifact-card .okr__product-name {
+    line-height: 1.24 !important;
+  }
+}
+
+/* Portfolio consulting cards: keep the white surface and ink unchanged.
+   Interaction is communicated by depth and restrained movement only. */
+.okr .okr__portfolio-consult-card {
+  transition:
+    transform 420ms cubic-bezier(.16, 1, .3, 1),
+    box-shadow 420ms cubic-bezier(.16, 1, .3, 1) !important;
+}
+
+.okr .okr__portfolio-consult-card:is(:hover, :focus-visible, :focus-within, :active) {
+  background: #ffffff !important;
+  border-color: rgba(55, 31, 35, 0.11) !important;
+  box-shadow:
+    0 34px 72px rgba(55, 31, 35, 0.15),
+    0 10px 26px rgba(55, 31, 35, 0.08) !important;
+  transform: translate3d(0, -8px, 0) scale(1.012);
+}
+
+.okr .okr__portfolio-consult-card:is(:hover, :focus-visible, :focus-within, :active)::before {
+  opacity: 0 !important;
+}
+
+.okr .okr__portfolio-consult-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-title {
+  color: #20181b;
+  font-style: normal;
+}
+
+/* Same icon treatment as the Services cards: white tile, thin orange
+   border, orange glyph — replaces the old solid-orange/black-glyph tile
+   inherited from landing.css's dark-theme-era .okr__card-icon rule. */
+.okr .okr__portfolio-consult-card .okr__portfolio-card-icon {
+  background: #ffffff !important;
+  border: 1px solid rgba(217, 106, 47, 0.24) !important;
+  border-radius: 16px !important;
+  color: #b84e2c;
+}
+
+.okr .okr__portfolio-consult-card:is(:hover, :focus-visible, :focus-within, :active) .okr__portfolio-card-icon {
+  background: #ffffff !important;
+  border-color: rgba(217, 106, 47, 0.24) !important;
+  border-radius: 16px !important;
+  color: #b84e2c;
+  transform: none !important;
+}
+
+@media (hover: none) {
+  .okr .okr__portfolio-consult-card:active {
+    transform: translate3d(0, -4px, 0) scale(1.006);
+  }
+}
+
+/* Services cards keep exactly the same surface, border, type, and icon
+   treatment in every interaction state. Depth is the only emphasis. */
+.okr .okr__service-card {
+  transition:
+    transform 420ms cubic-bezier(.16, 1, .3, 1),
+    box-shadow 420ms cubic-bezier(.16, 1, .3, 1) !important;
+}
+
+.okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) {
+  background: #ffffff !important;
+  border-color: rgba(55, 31, 35, 0.11) !important;
+  box-shadow:
+    0 34px 76px rgba(55, 31, 35, 0.15),
+    0 10px 28px rgba(55, 31, 35, 0.08) !important;
+  transform: translate3d(0, -8px, 0) scale(1.01);
+}
+
+.okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active)::before {
+  opacity: 0 !important;
+}
+
+.okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active)::after {
+  transform: scaleX(0.18) !important;
+}
+
+.okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-title {
+  color: #20181b !important;
+  font-style: normal;
+}
+
+.okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-icon {
+  background: #ffffff !important;
+  border-color: rgba(217, 106, 47, 0.24) !important;
+  border-radius: 16px !important;
+  color: #b84e2c;
+  transform: none !important;
+}
+
+.okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-link,
+.okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-link svg {
+  color: #b84e2c;
+}
+
+@media (hover: none) {
+  .okr .okr__cards > .okr__service-card:active {
+    transform: translate3d(0, -4px, 0) scale(1.005);
   }
 }

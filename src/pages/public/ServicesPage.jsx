@@ -1,16 +1,12 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Code2, Search, Sparkles, FileText, Settings, BarChart3, Zap, Wrench, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { useLiveServices } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeServiceCardItems } from "../../lib/serviceI18n";
-
-const ICON_MAP = {
-  code: Code2, search: Search, sparkles: Sparkles, "file-text": FileText,
-  settings: Settings, "bar-chart": BarChart3, zap: Zap, wrench: Wrench,
-};
+import { getServiceCategoryIcon } from "../../lib/serviceIcons";
 
 export function ServicesPage() {
   const { lang, t } = useI18n();
@@ -43,7 +39,7 @@ export function ServicesPage() {
             ) : (
               <div className="okr__cards okr__cards--services okr__cards--services-catalog">
                 {categories.map((s, i) => {
-                  const Icon = ICON_MAP[s.icon] || Sparkles;
+                  const Icon = getServiceCategoryIcon(s.slug);
                   const cardIndex = String(i + 1).padStart(2, "0");
                   return (
                     <Link

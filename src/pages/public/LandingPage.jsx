@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { ArrowRight, ExternalLink, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { useLiveSettings, useLiveHomepage, useLivePosts } from "../../hooks/usePageData";
+import { useLiveSettings, useLiveHomepage, useLivePosts, useLivePage } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
-import { localizeHomepage, localizeSiteDescription } from "../../lib/pageI18n";
+import { localizeHomepage, localizePage, localizeSiteDescription } from "../../lib/pageI18n";
 import { useLandingEffects, useProcessScrollStory } from "../../hooks/useLandingEffects";
 import { PostCard } from "../../components/blog/PostCard";
 
@@ -120,12 +121,231 @@ function ScrollRevealTitle({ text }) {
   );
 }
 
+// Slow, continuous px/ms drift for the auto-scrolling credential carousel —
+// deliberately gentle ("bergerak otomatis perlahan"), same speed on every
+// device (mobile just also gets scroll-snap + native touch momentum).
+const CERTSTRIP_SPEED = 0.026;
+
+// Issuer cards show only the brand logo — click opens a modal listing that
+// issuer's certificates. Only real certification issuers belong here —
+// `providers` is `portfolio.certifications`, already exactly that list.
+function CertificationsStrip({ providers, t }) {
+  const [activeSlug, setActiveSlug] = useState(null);
+  const trackRef = useRef(null);
+  const dragRef = useRef({ dragging: false, startX: 0, startScroll: 0, moved: false });
+  // Refs, not state: read every animation frame, so they must never trigger
+  // a re-render on their own — hovering/dragging updates them directly.
+  const hoveringRef = useRef(false);
+  const interactingRef = useRef(false);
+  const pausedRef = useRef(false);
+
+  const active = providers?.find((p) => p.slug === activeSlug) || null;
+  const loopedProviders = providers?.length ? [...providers, ...providers] : [];
+
+  function syncPaused() {
+    pausedRef.current = hoveringRef.current || interactingRef.current;
+  }
+
+  // The auto-scroll loop itself. Runs once per mount; reads live refs each
+  // frame rather than closing over state, so hover/drag never need to
+  // restart the effect. Duplicating the provider list once and wrapping
+  // scrollLeft past the halfway point is what makes the loop seamless.
+  //
+  // `pos` is a plain JS float, not `track.scrollLeft` read back each frame
+  // — the browser rounds scrollLeft to whole device pixels, so at this
+  // speed (a fraction of a px per frame) reading it back as the basis for
+  // the next increment loses that fraction every single frame and the
+  // strip never moves at all. Keeping the "true" position in `pos` and
+  // only writing it out fixes that; resyncing `pos` from the DOM while
+  // paused means resuming continues from wherever a manual drag left it.
+  useEffect(() => {
+    if (!providers?.length) return undefined;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+    let rafId;
+    let last = performance.now();
+    let pos = trackRef.current ? trackRef.current.scrollLeft : 0;
+    function step(now) {
+      const dt = now - last;
+      last = now;
+      const track = trackRef.current;
+      if (!track) {
+        rafId = requestAnimationFrame(step);
+        return;
+      }
+      if (pausedRef.current) {
+        pos = track.scrollLeft;
+      } else {
+        const half = track.scrollWidth / 2;
+        if (half > 0) {
+          pos += CERTSTRIP_SPEED * dt;
+          if (pos >= half) pos -= half;
+          track.scrollLeft = pos;
+        }
+      }
+      rafId = requestAnimationFrame(step);
+    }
+    rafId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafId);
+  }, [providers]);
+
+  // Defensive cleanup only — the drag listeners below are normally removed
+  // in onWindowPointerUp the instant the mouse is released.
+  useEffect(() => () => {
+    window.removeEventListener("pointermove", onWindowPointerMove);
+    window.removeEventListener("pointerup", onWindowPointerUp);
+  }, []);
+
+  useEffect(() => {
+    if (!active) return undefined;
+    function onKeyDown(e) {
+      if (e.key === "Escape") setActiveSlug(null);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [active]);
+
+  if (!providers?.length) return null;
+
+  function handleMouseEnter() {
+    hoveringRef.current = true;
+    syncPaused();
+  }
+  function handleMouseLeave() {
+    hoveringRef.current = false;
+    syncPaused();
+  }
+  // Any pointer going down — mouse or touch — pauses the auto-scroll for
+  // as long as the user is actually interacting with the strip.
+  function onPointerDown(e) {
+    interactingRef.current = true;
+    syncPaused();
+    if (e.pointerType !== "mouse" || !trackRef.current) return;
+    // Native touch/pen scrolling already works on an overflow-x:auto strip
+    // — this only adds click-and-drag for mouse users, who have no native
+    // way to drag-scroll. `moved` suppresses the click-to-open-modal that
+    // would otherwise fire right after a drag release. Deliberately NOT
+    // using setPointerCapture: capturing the pointer on the track
+    // redirects every subsequent pointerup (and the click the browser
+    // synthesizes from it) to the track itself instead of the card
+    // underneath the cursor — so a plain, no-drag click would never reach
+    // the card's onClick at all. window-level listeners (added only while
+    // a drag is in progress) keep the drag responsive even if the cursor
+    // leaves the strip's bounds mid-gesture, without that side effect.
+    dragRef.current = { dragging: true, startX: e.clientX, startScroll: trackRef.current.scrollLeft, moved: false };
+    window.addEventListener("pointermove", onWindowPointerMove);
+    window.addEventListener("pointerup", onWindowPointerUp);
+  }
+  // Touch releases end on the track itself (no window listener involved
+  // for non-mouse pointers), so this is what un-pauses after a swipe.
+  function onPointerUpOrCancel(e) {
+    if (e.pointerType === "mouse") return;
+    interactingRef.current = false;
+    syncPaused();
+  }
+  function onWindowPointerMove(e) {
+    const state = dragRef.current;
+    if (!state.dragging || !trackRef.current) return;
+    const dx = e.clientX - state.startX;
+    if (Math.abs(dx) > 4) state.moved = true;
+    trackRef.current.scrollLeft = state.startScroll - dx;
+  }
+  function onWindowPointerUp() {
+    dragRef.current.dragging = false;
+    interactingRef.current = false;
+    syncPaused();
+    window.removeEventListener("pointermove", onWindowPointerMove);
+    window.removeEventListener("pointerup", onWindowPointerUp);
+  }
+  function handleCardClick(e, slug) {
+    if (dragRef.current.moved) {
+      e.preventDefault();
+      return;
+    }
+    setActiveSlug(slug);
+  }
+
+  return (
+    <>
+      <div
+        className="okr__certstrip"
+        ref={trackRef}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUpOrCancel}
+        onPointerCancel={onPointerUpOrCancel}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {loopedProviders.map((provider, i) => (
+          <button
+            key={`${provider.slug}-${i}`}
+            type="button"
+            className="okr__certstrip-card"
+            onClick={(e) => handleCardClick(e, provider.slug)}
+            aria-label={`${provider.name} — ${t("section_certs_view")}`}
+            tabIndex={i < providers.length ? 0 : -1}
+            aria-hidden={i < providers.length ? undefined : true}
+          >
+            <img src={provider.logo} alt="" aria-hidden="true" draggable={false} />
+          </button>
+        ))}
+      </div>
+
+      {active && typeof document !== "undefined" && createPortal(
+        // Portal straight into <body>: several ancestor sections use
+        // `contain: layout paint style`, which turns them into a
+        // containing block for position:fixed descendants and would trap
+        // a same-tree modal instead of letting it cover the viewport.
+        <div className="okr__cert-overlay" onClick={() => setActiveSlug(null)}>
+          <div
+            className="okr__cert-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label={active.name}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="okr__cert-panel-close"
+              onClick={() => setActiveSlug(null)}
+              aria-label={t("portfolio_cert_close")}
+            >
+              <X size={18} />
+            </button>
+            <div className="okr__cert-panel-head">
+              <img src={active.logo} alt="" aria-hidden="true" className="okr__cert-panel-logo" />
+              <div className="okr__cert-panel-headcopy">
+                <span className="okr__cert-panel-eyebrow">
+                  {t("section_certs_count", { count: active.items.length })}
+                </span>
+                <h3 className="okr__cert-panel-title">{active.name}</h3>
+              </div>
+            </div>
+            <ul className="okr__cert-panel-list">
+              {active.items.map((item) => (
+                <li key={item.name}>
+                  <a href={item.url} target="_blank" rel="noopener noreferrer">
+                    <span>{item.name}</span>
+                    <ExternalLink size={14} aria-hidden="true" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+}
+
 export function LandingPage() {
   const { lang, t } = useI18n();
   const settings = useLiveSettings();
   const rawSections = useLiveHomepage();
   const sections = localizeHomepage(rawSections, lang);
   const posts = useLivePosts({ status: "published" }).slice(0, 6);
+  const rawPortfolio = useLivePage("portfolio");
+  const portfolio = useMemo(() => localizePage(rawPortfolio, lang), [rawPortfolio, lang]);
 
   const hero = sections.hero ?? {};
   const heroLeadWordCount = String(hero.title_line1 || "")
@@ -361,6 +581,19 @@ export function LandingPage() {
                     </article>
                   ))}
                 </div>
+              </div>
+            </section>
+          )}
+
+          {portfolio.certifications?.length > 0 && (
+            <section className="okr__section okr__certs-section" id="certifications">
+              <div className="okr__wrap">
+                <div className="okr__section-topbar okr__reveal">
+                  <div className="okr__section-head">
+                    <h2 className="okr__h2">{t("section_certs_head")}</h2>
+                  </div>
+                </div>
+                <CertificationsStrip providers={portfolio.certifications} t={t} />
               </div>
             </section>
           )}

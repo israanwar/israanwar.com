@@ -1,16 +1,12 @@
 import { useMemo } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ArrowLeft, MessageCircle, Check, Code2, Search, Sparkles, FileText, Settings, BarChart3, Zap, Wrench } from "lucide-react";
+import { ArrowLeft, MessageCircle, Check } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { useLiveServiceState, useLiveServices, useLiveSettings } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeServiceCardItem, localizeServiceItem } from "../../lib/serviceI18n";
-
-const ICON_MAP = {
-  code: Code2, search: Search, sparkles: Sparkles, "file-text": FileText,
-  settings: Settings, "bar-chart": BarChart3, zap: Zap, wrench: Wrench,
-};
+import { getServiceChildIcon } from "../../lib/serviceIcons";
 
 export function ServiceDetailPage() {
   const { lang, t } = useI18n();
@@ -48,7 +44,6 @@ export function ServiceDetailPage() {
 
   if (!s || s.status !== "active") return <Navigate to="/services" replace />;
 
-  const Icon = ICON_MAP[s.icon] || Sparkles;
   const waMsg = encodeURIComponent(
     lang === "id"
       ? `Halo, saya tertarik dengan ${s.name} di israanwar.com. Mohon kirimkan informasi lebih lanjut.`
@@ -61,15 +56,12 @@ export function ServiceDetailPage() {
   return (
     <>
       <Seo title={`${s.name} — Services israanwar`} description={s.description ?? s.body} />
-              <section className="okr__section" style={{ paddingTop: 100 }}>
-          <div className="okr__wrap" style={{ maxWidth: 900 }}>
-            <Link to={backTo} className="okr__link" style={{ marginBottom: 24, display: "inline-flex" }}>
+      <section className="okr__section" style={{ paddingTop: 100 }}>
+        <div className="okr__wrap" style={{ maxWidth: 900 }}>
+            <Link to={backTo} className="okr__link okr__service-detail-back">
               <ArrowLeft size={14} /> {backLabel}
             </Link>
 
-            <div className="okr__card-icon" style={{ marginBottom: 20, marginTop: 24 }}>
-              <Icon size={22} strokeWidth={2} />
-            </div>
             {parentCategory && (
               <Link to={`/services/${parentCategory.slug}`} className="okr__service-parent">
                 {parentCategory.name}
@@ -100,7 +92,7 @@ export function ServiceDetailPage() {
                 </div>
                 <div className="okr__cards okr__cards--services okr__service-child-grid">
                   {childServices.map((child, i) => {
-                    const ChildIcon = ICON_MAP[child.icon] || Sparkles;
+                    const ChildIcon = getServiceChildIcon(i, child.parent_slug);
                     const childIndex = String(i + 1).padStart(2, "0");
                     return (
                       <Link

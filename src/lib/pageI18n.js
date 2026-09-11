@@ -226,6 +226,8 @@ const TEXT_ID = {
   "A compact portfolio of web, SEO, content, monetization, and digital growth projects handled as a consultant.": "Portfolio ringkas berisi proyek web, SEO, konten, monetisasi, dan pertumbuhan digital yang ditangani sebagai konsultan.",
   "IT Consultant & Digital Strategist": "IT Consultant & Digital Strategist",
   "IT systems consultation, digital strategy, web development, SEO, and online visibility improvement.": "Konsultasi sistem IT, strategi digital, pengembangan website, SEO, dan peningkatan visibilitas online.",
+  "Web Development & IT Consultant": "Web Development & IT Consultant",
+  "Web development and IT consulting for reliable, maintainable websites and practical business systems.": "Web development dan konsultasi IT untuk website yang andal, mudah dipelihara, serta sistem bisnis yang praktis.",
   "Digital Strategist Consultant": "Digital Strategist Consultant",
   "Digital marketing direction, content strategy, campaign planning, and performance optimization.": "Arah digital marketing, strategi konten, perencanaan campaign, dan optimasi performa.",
   "AdSense, SEO & Website Development Consultant": "AdSense, SEO & Website Development Consultant",
