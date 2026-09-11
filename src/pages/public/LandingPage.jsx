@@ -138,6 +138,10 @@ function CertificationsStrip({ providers, t }) {
   const hoveringRef = useRef(false);
   const interactingRef = useRef(false);
   const pausedRef = useRef(false);
+  // Used only to detect when a real touch-driven native scroll has gone
+  // idle after a `pointercancel` (see onPointerUpOrCancel below).
+  const scrollIdleTimeoutRef = useRef(null);
+  const scrollIdleListenerRef = useRef(null);
 
   const active = providers?.find((p) => p.slug === activeSlug) || null;
   const loopedProviders = providers?.length ? [...providers, ...providers] : [];
@@ -193,6 +197,7 @@ function CertificationsStrip({ providers, t }) {
   useEffect(() => () => {
     window.removeEventListener("pointermove", onWindowPointerMove);
     window.removeEventListener("pointerup", onWindowPointerUp);
+    clearScrollIdleWatch();
   }, []);
 
   useEffect(() => {
@@ -245,10 +250,53 @@ function CertificationsStrip({ providers, t }) {
     window.addEventListener("pointermove", onWindowPointerMove);
     window.addEventListener("pointerup", onWindowPointerUp);
   }
+  function clearScrollIdleWatch() {
+    const track = trackRef.current;
+    if (track && scrollIdleListenerRef.current) {
+      track.removeEventListener("scroll", scrollIdleListenerRef.current);
+    }
+    scrollIdleListenerRef.current = null;
+    if (scrollIdleTimeoutRef.current) {
+      clearTimeout(scrollIdleTimeoutRef.current);
+      scrollIdleTimeoutRef.current = null;
+    }
+  }
+  // A real finger-driven swipe on a touch device fires `pointercancel`,
+  // not `pointerup` — the browser cancels the pointer the moment it
+  // decides the gesture is native scrolling, i.e. right as the swipe
+  // *starts*, not when it ends. Resuming the auto-scroll loop right there
+  // (as a plain pointerup/pointercancel handler would) means the RAF loop
+  // starts overwriting scrollLeft again while the user is still actively
+  // dragging — fighting the swipe in real time and making the strip feel
+  // impossible to drag. Instead, stay paused and watch the track's own
+  // `scroll` events go quiet (debounced) before resuming, so the loop
+  // only takes back over once the user's swipe/momentum has truly settled.
+  function watchForScrollIdle() {
+    const track = trackRef.current;
+    if (!track) return;
+    clearScrollIdleWatch();
+    function onScroll() {
+      if (scrollIdleTimeoutRef.current) clearTimeout(scrollIdleTimeoutRef.current);
+      scrollIdleTimeoutRef.current = setTimeout(() => {
+        clearScrollIdleWatch();
+        interactingRef.current = false;
+        syncPaused();
+      }, 150);
+    }
+    scrollIdleListenerRef.current = onScroll;
+    track.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
   // Touch releases end on the track itself (no window listener involved
-  // for non-mouse pointers), so this is what un-pauses after a swipe.
+  // for non-mouse pointers), so this is what un-pauses after a swipe —
+  // except pointercancel, which means native scrolling just took over
+  // (see watchForScrollIdle above).
   function onPointerUpOrCancel(e) {
     if (e.pointerType === "mouse") return;
+    if (e.type === "pointercancel") {
+      watchForScrollIdle();
+      return;
+    }
     interactingRef.current = false;
     syncPaused();
   }
