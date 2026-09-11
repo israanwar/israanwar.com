@@ -2237,18 +2237,6 @@
   transform: scale(1.4);
 }
 /* The "spotlight" — a soft glow anchored to the card, not the pointer. */
-.okr__certstrip-card::before {
-  content: "";
-  position: absolute;
-  inset: -18px -10px auto -10px;
-  height: 56px;
-  background: radial-gradient(60% 100% at 50% 100%, rgba(184, 78, 44, 0.22), transparent 75%);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 180ms ease;
-}
-.okr__certstrip-card > img { position: relative; z-index: 1; }
-
 @media (hover: hover) {
   .okr__certstrip-card:hover {
     opacity: 1;
@@ -2256,7 +2244,6 @@
     border-color: rgba(184, 78, 44, 0.34);
     box-shadow: 0 20px 40px rgba(55, 31, 35, 0.14), 0 6px 14px rgba(55, 31, 35, 0.07);
   }
-  .okr__certstrip-card:hover::before { opacity: 1; }
   @supports selector(.okr__certstrip:has(button:hover)) {
     .okr__certstrip:has(.okr__certstrip-card:hover) .okr__certstrip-card:not(:hover) {
       opacity: 0.55;
