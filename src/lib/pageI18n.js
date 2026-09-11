@@ -170,7 +170,7 @@ const TEXT_ID = {
   "We reply within 24 hours on business days.": "Kami membalas maksimal 24 jam pada hari kerja.",
 
   "// Isra Anwar · Indonesia": "// Isra Anwar · Indonesia",
-  "// MADE TO OUTTHINK THE DEFAULT.": "// MADE TO OUTTHINK THE DEFAULT.",
+  "// MADE TO OUTTHINK THE DEFAULT.": "// DIBUAT UNTUK MELAMPAUI STANDAR.",
   "+13 years": "+13 tahun",
   "Design, code &": "Desain, kode &",
   "strategy at the speed of AI": "strategi secepat AI",
