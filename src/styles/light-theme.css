@@ -286,6 +286,17 @@
   color: #20181b;
 }
 
+/* "All articles" (homepage Latest notes section) — landing.css's
+   `.okr__home .okr__link--glass:hover, :focus-visible` sets color to
+   white (#ffffff), a dark-theme leftover; on this section's white
+   background that's the text disappearing on tap/hover. `:active` was
+   missing from that rule too, so it's added here for completeness. */
+.okr__home .okr__link--glass:hover,
+.okr__home .okr__link--glass:focus-visible,
+.okr__home .okr__link--glass:active {
+  color: #b84e2c;
+}
+
 /* The service detail page's long description body (ServiceText in
    ServiceDetailPage.jsx) — landing.css's rule was still the old dark-theme
    color (near-white, contrast ~1.1 on this white background — effectively
@@ -315,15 +326,15 @@
   color: #20181b;
 }
 
-.okr .okr__cards > .okr__card:is(:hover, :focus-within),
+.okr .okr__cards > .okr__card:is(:hover, :focus-within, :active),
 .okr .okr__service-card:is(:hover, :focus-visible, :focus-within, :active),
-.okr .okr__editorial-card:is(:hover, :focus-within),
-.okr .okr__artifact-card:is(:hover, :focus-within),
-.okr .okr__products > .okr__product:is(:hover, :focus-within),
-.okr__process-card:is(:hover, :focus-visible),
-.okr__case:is(:hover, :focus-within),
-.okr__post:is(:hover, :focus-within),
-.okr__product:is(:hover, :focus-within) {
+.okr .okr__editorial-card:is(:hover, :focus-within, :active),
+.okr .okr__artifact-card:is(:hover, :focus-within, :active),
+.okr .okr__products > .okr__product:is(:hover, :focus-within, :active),
+.okr__process-card:is(:hover, :focus-visible, :active),
+.okr__case:is(:hover, :focus-within, :active),
+.okr__post:is(:hover, :focus-within, :active),
+.okr__product:is(:hover, :focus-within, :active) {
   background: #fffaf5 !important;
   border-color: rgba(201, 87, 50, 0.4) !important;
   box-shadow: 0 24px 62px rgba(122, 64, 42, 0.11) !important;
@@ -1001,7 +1012,7 @@
   transform: none !important;
 }
 
-.okr__home .okr__process-card:is(:hover, :focus-visible, .is-active) {
+.okr__home .okr__process-card:is(:hover, :focus-visible, :active, .is-active) {
   background: transparent !important;
   border-top-color: #c95732 !important;
   box-shadow: none !important;
@@ -1092,7 +1103,7 @@
   display: none !important;
 }
 
-.okr .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible) {
+.okr .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible, :active) {
   border-color: rgba(211, 88, 49, .3) !important;
   box-shadow: 0 18px 40px rgba(31, 24, 27, .11) !important;
   transform: translateY(-4px) !important;
@@ -1199,7 +1210,7 @@
     border-radius: 6px !important;
   }
 
-  .okr .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible) {
+  .okr .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible, :active) {
     transform: translateY(-2px) !important;
   }
 
@@ -1284,7 +1295,7 @@
   transition: box-shadow 320ms cubic-bezier(.16, 1, .3, 1), transform 320ms cubic-bezier(.16, 1, .3, 1) !important;
 }
 
-.okr .okr__editorial-card:is(:hover, :focus-within) {
+.okr .okr__editorial-card:is(:hover, :focus-within, :active) {
   background-color: #ffffff !important;
   border-color: rgba(52, 40, 42, 0.18) !important;
   box-shadow: 0 24px 44px rgba(49, 35, 31, 0.12) !important;
@@ -2031,7 +2042,7 @@
     width: 100%;
   }
 
-  .okr__process-section--story .okr__process-card:is(:hover, :focus-visible, .is-active) {
+  .okr__process-section--story .okr__process-card:is(:hover, :focus-visible, :active, .is-active) {
     border-color: rgba(201, 87, 50, 0.48) !important;
     opacity: 1;
     transform: translate3d(0, -8px, 0) !important;
@@ -2222,7 +2233,7 @@
   transition: opacity 420ms ease, transform 620ms cubic-bezier(.16, 1, .3, 1);
 }
 
-.okr__stage-nav-item:is(:hover, :focus-visible) {
+.okr__stage-nav-item:is(:hover, :focus-visible, :active) {
   color: #4a4143;
   opacity: .82;
   outline: none;
@@ -2733,5 +2744,49 @@
   .okr__services-row,
   .okr__services-all-btn {
     transition: none;
+  }
+}
+
+/* Mobile card audit — the Services catalog card (measured at ~426px tall
+   on a 390px-wide viewport, over half the screen) was the worst offender:
+   several stacked `min-height: clamp(300–330px, ...)` rules from earlier
+   design eras all still apply at this width (the clamp's vw component
+   shrinks but its px floor doesn't), stacked on top of an icon, a long
+   uncapped description, and full-size spacing that were themselves never
+   tuned down for a narrow screen. `!important` matches the specificity
+   these stacked rules already use. */
+@media (max-width: 640px) {
+  .okr .okr__service-card {
+    min-height: 0 !important;
+    padding: 18px !important;
+  }
+  .okr .okr__service-card .okr__card-icon {
+    width: 44px !important;
+    height: 44px !important;
+    margin: 12px 0 12px !important;
+  }
+  .okr .okr__service-card .okr__card-title {
+    font-size: 21px !important;
+    max-width: none !important;
+    margin-bottom: 6px !important;
+  }
+  .okr .okr__service-card .okr__service-count {
+    margin-bottom: 8px !important;
+  }
+  .okr .okr__service-card .okr__card-body {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    margin-bottom: 12px !important;
+  }
+  .okr .okr__portfolio-consult-card {
+    padding: 18px !important;
+  }
+  .okr .okr__portfolio-consult-card .okr__card-body {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
 }
