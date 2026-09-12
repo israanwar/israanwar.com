@@ -45,8 +45,21 @@
 /* Touch/hover feedback on the mark — hovering (or tapping, via :active)
    anywhere over the logo lifts it with a small scale + tilt. Keyboard
    focus is handled separately since focus lands on the wrapping
-   `<Link className="okr__brand">` in the header, outside this element. */
-.okr-logo:hover .okr-logo__mark-image,
+   `<Link className="okr__brand">` in the header, outside this element.
+
+   `:hover` is gated behind `(hover: hover)` — a real mouse can leave the
+   element to clear it, but a touchscreen has no such event, so most mobile
+   browsers just leave `:hover` matched after a tap until something else is
+   tapped. Left ungated, that's exactly the "logo tilts and never comes
+   back" bug: the finger lifts, `:active` correctly clears, but the still-
+   matching `:hover` keeps the tilt applied indefinitely. `:active` (clears
+   on touchend) and `:focus-visible` stay unconditional. */
+@media (hover: hover) {
+  .okr-logo:hover .okr-logo__mark-image,
+  .okr__logo-badge:hover .okr-mark {
+    transform: scale(1.12) rotate(-4deg);
+  }
+}
 .okr-logo:active .okr-logo__mark-image,
 .okr__brand:focus-visible .okr-logo__mark-image {
   transform: scale(1.12) rotate(-4deg);
@@ -59,7 +72,6 @@
 .okr__logo-badge .okr-mark {
   transition: transform 220ms cubic-bezier(.16, 1, .3, 1);
 }
-.okr__logo-badge:hover .okr-mark,
 .okr__logo-badge:active .okr-mark,
 .okr__brand:focus-visible .okr-mark {
   transform: scale(1.12) rotate(-4deg);

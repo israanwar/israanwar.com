@@ -19,7 +19,18 @@
         };
 
         resetInitialScroll();
-        window.addEventListener("pageshow", resetInitialScroll, { once: true });
+        // A real browser-chrome reload (not just Playwright's CDP-driven
+        // one) can still restore the old scroll position at points later
+        // than head-parse time — some engines do it around DOMContentLoaded
+        // or `load`, after the SPA's own lazy route chunk has started
+        // growing the page. Re-applying at each of these points, plus on
+        // every bfcache restore (not just the first), closes that gap
+        // without fighting a reader who has since scrolled on purpose —
+        // ScrollToTop's own intent-detection (wheel/touch/pointer/key)
+        // still wins the moment any of those fire.
+        document.addEventListener("DOMContentLoaded", resetInitialScroll, { once: true });
+        window.addEventListener("load", resetInitialScroll, { once: true });
+        window.addEventListener("pageshow", resetInitialScroll);
       })();
     </script>
     <!-- Pinch-zoom and double-tap-zoom are intentionally left enabled —
