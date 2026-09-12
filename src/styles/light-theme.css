@@ -98,8 +98,15 @@
   border-color: rgba(55, 31, 35, 0.14);
 }
 
+/* Small static dot-grid texture instead of an animated particle field —
+   plain CSS (no WebGL/JS), so it's cheap, never janky, and reads as a
+   quiet decorative texture rather than something competing with the nav
+   links for attention. Brand orange at low opacity, on the menu's own
+   white background. */
 .okr__mobile-menu {
-  background: #ffffff;
+  background-color: #ffffff;
+  background-image: radial-gradient(rgba(184, 78, 44, 0.22) 1px, transparent 1.5px);
+  background-size: 22px 22px;
   color: #20181b;
 }
 
