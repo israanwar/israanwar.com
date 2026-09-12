@@ -8,7 +8,7 @@ import { useLiveSettings, useLiveProductsExist, useLiveCart } from "../../hooks/
 import { useI18n } from "../../lib/i18n";
 import { localizeSiteDescription } from "../../lib/pageI18n";
 import { LangThemeSwitcher } from "./LangThemeSwitcher";
-import { IsraAnwarLogo, IsraAnwarMark } from "../brand/IsraAnwarLogo";
+import { IsraAnwarMark } from "../brand/IsraAnwarLogo";
 import { FooterParticles } from "./FooterParticles";
 import { NewsletterForm } from "../marketing/NewsletterForm";
 import "../../styles/landing.css";
@@ -167,11 +167,9 @@ export function SiteHeader({ settings }) {
         <div className="okr__wrap okr__nav">
           <Link className="okr__brand" to="/" onClick={() => setMenuOpen(false)}>
             <span className="okr__logo-badge">
-              <IsraAnwarLogo
-                name={settings.site_name || "israanwar"}
-                markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png"
-              />
+              <IsraAnwarMark decorative markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png" />
             </span>
+            <span className="okr__brand-wordmark">{settings.site_name || "Isra Anwar"}</span>
           </Link>
           <nav className="okr__navlinks" aria-label="Primary">
             {nav.map((item) => (
@@ -293,11 +291,9 @@ export function SiteFooter({ settings }) {
             <div className="okr__footer-brand-col">
               <div className="okr__foot-brand">
                 <span className="okr__logo-badge">
-                  <IsraAnwarLogo
-                    name={settings.site_name || "israanwar"}
-                    markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png"
-                  />
+                  <IsraAnwarMark decorative markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png" />
                 </span>
+                <span className="okr__brand-wordmark">{settings.site_name || "Isra Anwar"}</span>
               </div>
               <p className="okr__foot-desc">{description}</p>
               <div className="okr__foot-social">

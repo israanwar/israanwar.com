@@ -718,24 +718,31 @@
   padding: 6px;
   flex-shrink: 0;
 }
-/* A legacy footer-only rule (landing.css, `.okr__foot-brand .okr-logo`)
-   stretches .okr-logo to clamp(220px, 26vw, 340px) — sized for the old
-   wordmark-visible footer layout. Inside this 38px badge that pushed the
-   mark image far outside the visible square (flex child wider than its
-   container, left-aligned by default). Force it back to shrink-to-fit. */
-.okr__logo-badge .okr-logo {
-  width: auto;
-}
-.okr__logo-badge .okr-logo__mark-image {
-  /* Explicit pixels, not percentage — .okr-logo (the parent span) is
-     width:auto/min-width:max-content (shrink-to-fit), so a percentage
-     here is indeterminate and the browser falls back to the image's
-     native intrinsic size (800x800), blowing the badge open. */
+/* Header/footer render just the mark (IsraAnwarMark) inside this badge —
+   explicit pixels, not percentage, since a bare <img> has no shrink-to-fit
+   parent to size against and would otherwise fall back to its native
+   intrinsic size (800x800), blowing the badge open. */
+.okr__logo-badge .okr-mark {
   width: 26px;
   height: 26px;
 }
-.okr__logo-badge .okr-logo__wordmark {
-  display: none;
+
+/* The "Isra Anwar" wordmark sitting next to the badge (header + footer).
+   Font is set further below — the `.okr__header *, .okr__footer * { ...
+   !important }` Poppins override needs to come after this rule to win by
+   source order (same trick already used for .okr-logo__wordmark). */
+.okr__brand-wordmark {
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.92);
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .okr__brand-wordmark {
+    font-size: 17px;
+  }
 }
 
 .okr__header .okr__navlink,
@@ -810,7 +817,7 @@
     height: 34px;
     border-radius: 10px;
   }
-  .okr__logo-badge .okr-logo__mark-image {
+  .okr__logo-badge .okr-mark {
     width: 22px;
     height: 22px;
   }
@@ -1548,6 +1555,14 @@
   font-weight: 400;
   letter-spacing: 0;
   text-transform: uppercase;
+}
+
+/* Hidepolis — a rounded geometric sans that echoes the "iA" mark's own
+   angular-but-friendly shapes, unlike the header/footer's generic Poppins.
+   Declared in IsraAnwarLogo.css, loaded globally via that component's
+   import (see .okr__brand-wordmark, above). */
+.okr__brand-wordmark {
+  font-family: "Hidepolis", sans-serif !important;
 }
 
 @media (max-width: 720px) {

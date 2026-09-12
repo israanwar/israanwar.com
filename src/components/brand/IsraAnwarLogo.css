@@ -52,6 +52,19 @@
   transform: scale(1.12) rotate(-4deg);
 }
 
+/* Header/footer render a bare IsraAnwarMark (no wrapping .okr-logo span)
+   inside the badge, so it needs its own transition + the same hover/tap
+   lift as above — mirrored here rather than reusing the .okr-logo__mark-image
+   selectors, which don't match this markup. */
+.okr__logo-badge .okr-mark {
+  transition: transform 220ms cubic-bezier(.16, 1, .3, 1);
+}
+.okr__logo-badge:hover .okr-mark,
+.okr__logo-badge:active .okr-mark,
+.okr__brand:focus-visible .okr-mark {
+  transform: scale(1.12) rotate(-4deg);
+}
+
 /* The "Isra Anwar" wordmark next to the mark is intentionally hidden —
    the mark alone is the logo now. Kept in the markup (not removed from
    IsraAnwarLogo.jsx) so the accessible name on the parent
@@ -78,12 +91,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .okr-logo__mark-image {
+  .okr-logo__mark-image,
+  .okr__logo-badge .okr-mark {
     transition: none;
   }
   .okr-logo:hover .okr-logo__mark-image,
   .okr-logo:active .okr-logo__mark-image,
-  .okr__brand:focus-visible .okr-logo__mark-image {
+  .okr__brand:focus-visible .okr-logo__mark-image,
+  .okr__logo-badge:hover .okr-mark,
+  .okr__logo-badge:active .okr-mark,
+  .okr__brand:focus-visible .okr-mark {
     transform: none;
   }
 }

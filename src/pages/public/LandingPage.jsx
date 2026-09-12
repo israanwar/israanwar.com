@@ -667,7 +667,17 @@ export function LandingPage() {
               <div className="okr__wrap">
                 <div className="okr__section-topbar okr__reveal">
                   <div className="okr__section-head">
-                    <h2 className="okr__h2">{t("section_certs_head")}</h2>
+                    <AnimatedHeadline
+                      as="h2"
+                      text={t("section_certs_head")}
+                      /* `okr__hero-title--stagger` is what the assemble-letters
+                         glyph-scatter CSS (light-theme.css) is scoped to — it's
+                         just an animation-enabling flag (no sizing of its own),
+                         reused here to get the exact same letter-assemble
+                         effect as the hero title, not a hero-specific look. */
+                      className="okr__h2 okr__hero-title--stagger"
+                      assembleLetters
+                    />
                   </div>
                 </div>
                 <CertificationsStrip providers={portfolio.certifications} t={t} />

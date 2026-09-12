@@ -2,11 +2,11 @@ import "./IsraAnwarLogo.css";
 
 const IA_MARK_SRC = "/assets/brand/israanwar-mark-ia-v2.png";
 
-export function IsraAnwarMark({ className = "", title = "Isra Anwar", decorative = false }) {
+export function IsraAnwarMark({ className = "", title = "Isra Anwar", decorative = false, markSrc = IA_MARK_SRC }) {
   return (
     <img
       className={`okr-mark ${className}`.trim()}
-      src={IA_MARK_SRC}
+      src={markSrc}
       alt={decorative ? "" : `${title} mark`}
       aria-hidden={decorative ? "true" : undefined}
       draggable="false"
