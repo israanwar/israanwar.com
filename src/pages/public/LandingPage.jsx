@@ -116,7 +116,14 @@ function ScrollRevealTitle({ text }) {
           style={{ "--word-index": index }}
           aria-hidden="true"
         >
-          {word}{index < words.length - 1 ? " " : ""}
+          {/* Letters get the same hover/tap touch effect as elsewhere
+              (.okr__letter-touch) — this is purely additive, the outer
+              word span (and its --word-index) still drives the existing
+              scroll-scrubbed reveal untouched. */}
+          {Array.from(word).map((glyph, glyphIndex) => (
+            <span className="okr__letter-touch" key={`${index}-${glyphIndex}`}>{glyph}</span>
+          ))}
+          {index < words.length - 1 ? " " : ""}
         </span>
       ))}
     </h2>
@@ -557,10 +564,17 @@ export function LandingPage() {
                       <span className="okr__eyebrow okr__reveal">{t("section_process")}</span>
                       <ScrollRevealTitle text={process.title} />
                     </div>
-                    <p className="okr__process-intro-copy">
-                      {lang === "id"
+                    <p
+                      className="okr__process-intro-copy"
+                      aria-label={lang === "id"
                         ? "Proses menyeluruh yang mengubah ide menjadi hasil nyata."
                         : "A clear, end-to-end process to turn ideas into real outcomes."}
+                    >
+                      <span aria-hidden="true">
+                        {lang === "id"
+                          ? renderTouchLetters("Proses menyeluruh yang mengubah ide menjadi hasil nyata.", "processsub")
+                          : renderTouchLetters("A clear, end-to-end process to turn ideas into real outcomes.", "processsub")}
+                      </span>
                     </p>
                   </div>
                   <div className="okr__stage-theatre">
