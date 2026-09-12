@@ -14,10 +14,10 @@ export function IsraAnwarMark({ className = "", title = "Isra Anwar", decorative
   );
 }
 
-export function IsraAnwarLogo({ name = "Isra Anwar", className = "" }) {
+export function IsraAnwarLogo({ name = "Isra Anwar", className = "", markSrc = IA_MARK_SRC }) {
   return (
     <span className={`okr-logo ${className}`.trim()} aria-label={name} role="img">
-      <img className="okr-logo__mark-image" src={IA_MARK_SRC} alt="" aria-hidden="true" draggable="false" />
+      <img className="okr-logo__mark-image" src={markSrc} alt="" aria-hidden="true" draggable="false" />
       <span className="okr-logo__wordmark" aria-hidden="true">Isra Anwar</span>
     </span>
   );

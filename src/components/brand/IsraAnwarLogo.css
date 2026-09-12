@@ -1,3 +1,15 @@
+/* Hidepolis — used only for the "Isra Anwar" wordmark next to the logo
+   mark. Personal-use font; license cleared by the site owner for this
+   use before implementation (see public/assets/fonts/). Regular weight
+   only, so it's never used for anything but this short wordmark. */
+@font-face {
+  font-family: "Hidepolis";
+  src: url("/assets/fonts/hidepolis-regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 .okr-logo,
 .okr-mark {
   color: currentColor;
@@ -43,7 +55,8 @@
 /* The "Isra Anwar" wordmark next to the mark is intentionally hidden —
    the mark alone is the logo now. Kept in the markup (not removed from
    IsraAnwarLogo.jsx) so the accessible name on the parent
-   `role="img"` span is unaffected. */
+   `role="img"` span is unaffected. Briefly tried showing it again in
+   the Hidepolis font; reverted — disliked visually. */
 .okr-logo__wordmark {
   display: none;
 }

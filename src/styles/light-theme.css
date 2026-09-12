@@ -55,6 +55,7 @@
   display: none;
 }
 
+
 .okr__header {
   background: rgba(255, 255, 255, 0.96);
   border-bottom: 1px solid rgba(55, 31, 35, 0.09);
@@ -433,24 +434,153 @@
   --rail-fade-bg: rgba(252, 251, 248, 0.88);
 }
 
+/* Full-bleed flush dark footer — no floating card, no rounded corners, no
+   side margin, matching the header treatment exactly (same correction:
+   "harus fix dan full ke samping kiri kanan"). The background/overflow
+   clip for the watermark now live on this full-width element; .okr__wrap
+   inside still centers the actual content to the site's max content width,
+   same as every other section — only the visual background is edge-to-edge. */
 .okr__footer {
-  /* Was #f4eee7 (tan) — unified with the rest of the white canvas. */
-  background: #ffffff !important;
-  border-top: 1px solid rgba(55, 31, 35, 0.1) !important;
-  color: #33282c;
+  position: relative;
+  overflow: hidden;
+  background: #101012 !important;
+  border-top: none !important;
+  color: rgba(255, 255, 255, 0.7);
+  /* Top value absorbs what used to be the (now-removed) card's own inner
+     top padding too, so the content sits the same comfortable distance
+     from the edge as before, just without the nested wrapper. */
+  padding-block: clamp(56px, 9vw, 104px) clamp(40px, 6vw, 72px);
 }
 
-.okr__foot-title,
+/* ==========================================================================
+   Footer content wrapper — used to carry the card look (rounded, bordered,
+   shadowed); now just a plain layout box, dark background lives on
+   .okr__footer above so it's full-bleed instead of floating.
+   ========================================================================== */
+.okr__footer-card {
+  position: relative;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.okr__foot-social {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+/* A much older dark-theme-era rule (.okr__foot-social a, landing.css) still
+   matches these same <a> tags with !important on background/border/
+   border-radius/box-shadow. Scoping under .okr__footer-card pushes ours to
+   (0,2,1), higher than that rule's (0,1,1), so it wins outright even
+   though both carry !important. */
+.okr__footer-card .okr__foot-social-link {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+.okr__footer-card .okr__foot-social-link:hover,
+.okr__footer-card .okr__foot-social-link:focus-visible {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  transform: translateY(-2px);
+}
+
+.okr__footer-divider {
+  margin-top: clamp(28px, 4vw, 44px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.okr__foot-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  /* Snug against the divider above — was 22px on both sides, leaving a
+     visibly loose gap under the line. */
+  padding: 14px 0 22px;
+  font-size: 13px;
+  position: relative;
+  z-index: 1;
+}
+.okr__foot-bottom-links {
+  display: flex;
+  gap: 8px 20px;
+  flex-wrap: wrap;
+}
+.okr__foot-bottom-links a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(255, 255, 255, 0.3);
+}
+.okr__foot-bottom-links a:hover,
+.okr__foot-bottom-links a:focus-visible {
+  color: #ffffff;
+  text-decoration-color: currentColor;
+}
+
+/* Giant, very faint "Isra Anwar" watermark — decorative, cropped by the
+   card's own bottom edge (overflow:hidden above), same idea as the Graphy
+   reference. aria-hidden + pointer-events:none since it carries no info. */
+.okr__footer-watermark {
+  display: block;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.78;
+  font-size: clamp(90px, 15vw, 220px);
+  color: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
+  user-select: none;
+  pointer-events: none;
+  margin: clamp(4px, 1.5vw, 12px) 0 0 clamp(-6px, -0.6vw, -2px);
+  transform: translateY(30%);
+}
+
+@media (max-width: 720px) {
+  .okr__foot-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .okr__footer-watermark {
+    font-size: 20vw;
+  }
+}
+
+/* landing.css groups .okr__foot-title into a shared `.okr :is(...)` rule
+   with .okr__eyebrow/.okr__kicker (color: var(--okr-card-accent), i.e.
+   orange) — specificity (0,2,0), higher than a plain `.okr__foot-title`
+   (0,1,0), so it always won regardless of file order. Scoping under
+   .okr__footer-card matches that specificity and wins on load order. */
+.okr__footer-card .okr__foot-title {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .okr__foot-contact-link,
 .okr__foot-list a,
-.okr__foot-bottom {
-  color: #65585d;
+.okr__foot-bottom,
+.okr__foot-desc {
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .okr__foot-contact-link:hover,
+.okr__foot-contact-link:focus-visible,
 .okr__foot-list a:hover,
 .okr__foot-list a:focus-visible {
-  color: #b84e2c;
+  color: #ffffff;
 }
 
 .okr__scroll-progress {
@@ -510,10 +640,135 @@
   background: #ffffff;
 }
 
+/* ==========================================================================
+   Dark header bar (reference: a dark nav with a white logo badge and a
+   plain white/black control cluster). Flush against the top edge — no
+   floating margin, no rounded pill, no gap to the page below — per
+   explicit correction ("tidak boleh ada celah sama sekali, header harus
+   benar-benar fix"). Deliberately colorless — no orange anywhere in this
+   component, including the logo mark's accent. Only the header/nav reads
+   dark; the rest of the page stays the light theme.
+   ========================================================================== */
 .okr__header {
-  background: rgba(255, 255, 255, 0.98);
-  border-bottom-color: rgba(17, 17, 17, 0.1);
+  background: #101012;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: none;
+}
+
+.okr__header::before {
+  display: none;
+}
+
+.okr__header .okr__brand {
+  color: #ffffff;
+}
+
+/* White chip around the mark, same idea as a logo badge on a dark bar —
+   the mark's own ink (#20181b, near-black) reads perfectly on white
+   without needing to recolor it. */
+.okr__logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: #ffffff;
+  padding: 6px;
+  flex-shrink: 0;
+}
+/* A legacy footer-only rule (landing.css, `.okr__foot-brand .okr-logo`)
+   stretches .okr-logo to clamp(220px, 26vw, 340px) — sized for the old
+   wordmark-visible footer layout. Inside this 38px badge that pushed the
+   mark image far outside the visible square (flex child wider than its
+   container, left-aligned by default). Force it back to shrink-to-fit. */
+.okr__logo-badge .okr-logo {
+  width: auto;
+}
+.okr__logo-badge .okr-logo__mark-image {
+  /* Explicit pixels, not percentage — .okr-logo (the parent span) is
+     width:auto/min-width:max-content (shrink-to-fit), so a percentage
+     here is indeterminate and the browser falls back to the image's
+     native intrinsic size (800x800), blowing the badge open. */
+  width: 26px;
+  height: 26px;
+}
+.okr__logo-badge .okr-logo__wordmark {
+  display: none;
+}
+
+.okr__header .okr__navlink,
+.okr__header .okr__lang-toggle,
+.okr__header .okr__cart-link,
+.okr__header .okr__mobile-menu-btn {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* The actual visible "pill" backdrop on hover/active isn't these elements'
+   own `background` — it's a shared `::before` pseudo-element (landing.css)
+   painted behind them with `background: var(--okr-touch-glass)`, a pale
+   cream color meant for the white theme. Overriding `background` on the
+   link itself (as a first pass here did) left that cream backdrop showing
+   through unchanged, so white hover/active text sat on a pale cream pill
+   — unreadable. Overriding the pseudo-element directly is what actually
+   controls what renders. */
+.okr__header .okr__navlink::before,
+.okr__header .okr__cart-link::before,
+.okr__header .okr__lang-toggle::before,
+.okr__header .okr__mobile-menu-btn::before {
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: none;
+}
+
+.okr__header .okr__navlink:hover,
+.okr__header .okr__navlink:focus-visible,
+.okr__header .okr__navlink.is-active {
+  /* This rule's non-header counterpart near the top of this file sets a
+     literal `background: #fff6ed` (cream) directly on the link itself —
+     a second, separate source of the same cream color beyond the
+     `::before` pseudo-element above. Both have to be overridden. */
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.okr__header .okr__lang-toggle,
+.okr__header .okr__cart-link,
+.okr__header .okr__mobile-menu-btn {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.okr__header .okr__lang-toggle:hover,
+.okr__header .okr__lang-toggle:focus-visible,
+.okr__header .okr__lang-toggle:active,
+.okr__header .okr__cart-link:hover,
+.okr__header .okr__cart-link:focus-visible,
+.okr__header .okr__cart-link:active,
+.okr__header .okr__mobile-menu-btn:hover,
+.okr__header .okr__mobile-menu-btn:focus-visible,
+.okr__header .okr__mobile-menu-btn:active {
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+}
+
+/* Cart badge count — was the shared orange accent; white-on-dark instead. */
+.okr__header .okr__cart-count {
+  background: #ffffff;
+  color: #101012;
+}
+
+@media (max-width: 560px) {
+  .okr__logo-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .okr__logo-badge .okr-logo__mark-image {
+    width: 22px;
+    height: 22px;
+  }
 }
 
 .okr__hero {
@@ -530,6 +785,28 @@
 .okr__hero .okr__wrap {
   margin-inline: auto;
   max-width: var(--okr-max);
+}
+
+/* Centered hero content: kicker, headline, subtitle, and CTA row all sit
+   in the middle instead of aligned left. Kicker/title/sub are inline-level
+   or block elements with a max-width, so text-align + auto side-margins
+   center them; the CTA row is flex, so it needs justify-content instead. */
+.okr__hero .okr__wrap {
+  text-align: center;
+}
+.okr__hero .okr__hero-title,
+.okr__hero .okr__hero-sub {
+  margin-left: auto;
+  margin-right: auto;
+}
+.okr__hero .okr__hero-cta {
+  justify-content: center;
+  /* .okr__hero-cta--sequenced sets width:fit-content, so the row hugs the
+     button instead of stretching full-width — center it as a block via
+     auto side-margins, not just justify-content (which has nothing to
+     center inside a box already sized to its own content). */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .okr .okr__home .okr__hero-title {
@@ -1120,6 +1397,19 @@
   font-family: var(--okr-font-brand) !important;
 }
 
+/* Poppins — header and footer only, per explicit request ("gunakan untuk
+   header dan footer saja dulu"). Has to come after the `.okr *` catch-all
+   right above (same 0,1,0 specificity — that rule wins ties by being later
+   in the file, so this has to be later still, not just carry !important
+   on its own — this is the same mechanism the earlier nav-font and
+   Hidepolis attempts needed). Rest of the site keeps --okr-font-brand. */
+.okr__header,
+.okr__header *,
+.okr__footer,
+.okr__footer * {
+  font-family: "Poppins", ui-sans-serif, system-ui, sans-serif !important;
+}
+
 .okr :is(
   h1,
   h2,
@@ -1148,7 +1438,7 @@
 }
 
 .okr .okr__home .okr__hero-title {
-  font-size: clamp(64px, 6.6vw, 108px);
+  font-size: clamp(72px, 7.6vw, 122px);
   font-weight: 700 !important;
   letter-spacing: -0.055em !important;
   line-height: 0.98;
@@ -1217,7 +1507,7 @@
 
 @media (max-width: 720px) {
   .okr .okr__home .okr__hero-title {
-    font-size: clamp(48px, 14vw, 70px);
+    font-size: clamp(52px, 15.5vw, 78px);
     letter-spacing: -0.055em !important;
     line-height: 1;
   }

@@ -164,7 +164,12 @@ export function SiteHeader({ settings }) {
       <header className="okr__header">
         <div className="okr__wrap okr__nav">
           <Link className="okr__brand" to="/" onClick={() => setMenuOpen(false)}>
-            <IsraAnwarLogo name={settings.site_name || "israanwar"} />
+            <span className="okr__logo-badge">
+              <IsraAnwarLogo
+                name={settings.site_name || "israanwar"}
+                markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png"
+              />
+            </span>
           </Link>
           <nav className="okr__navlinks" aria-label="Primary">
             {nav.map((item) => (
@@ -280,76 +285,99 @@ export function SiteFooter({ settings }) {
   return (
     <footer className="okr__footer">
       <div className="okr__wrap">
-        <div className="okr__footer-grid">
-          <div className="okr__footer-brand-col">
-            <div className="okr__foot-brand">
-              <IsraAnwarLogo name={settings.site_name || "israanwar"} />
+        <div className="okr__footer-card">
+          <div className="okr__footer-grid">
+            <div className="okr__footer-brand-col">
+              <div className="okr__foot-brand">
+                <span className="okr__logo-badge">
+                  <IsraAnwarLogo
+                    name={settings.site_name || "israanwar"}
+                    markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png"
+                  />
+                </span>
+              </div>
+              <p className="okr__foot-desc">{description}</p>
+              <div className="okr__foot-social">
+                {settings.social_twitter && (
+                  <a className="okr__foot-social-link" href={settings.social_twitter} target="_blank" rel="noreferrer" aria-label="X (Twitter)">
+                    <X size={16} aria-hidden="true" />
+                  </a>
+                )}
+                {settings.social_instagram && (
+                  <a className="okr__foot-social-link" href={settings.social_instagram} target="_blank" rel="noreferrer" aria-label="Instagram">
+                    <Instagram size={16} aria-hidden="true" />
+                  </a>
+                )}
+                {settings.social_linkedin && (
+                  <a className="okr__foot-social-link" href={settings.social_linkedin} target="_blank" rel="noreferrer" aria-label="LinkedIn">
+                    <Linkedin size={16} aria-hidden="true" />
+                  </a>
+                )}
+                {settings.social_github && (
+                  <a className="okr__foot-social-link" href={settings.social_github} target="_blank" rel="noreferrer" aria-label="GitHub">
+                    <Github size={16} aria-hidden="true" />
+                  </a>
+                )}
+              </div>
             </div>
-            <p className="okr__foot-desc">{description}</p>
-          </div>
 
-          <div className="okr__footer-col okr__footer-col--menu">
-            <div className="okr__foot-title">{t("foot_menu")}</div>
-            <ul className="okr__foot-list">
-              <li><Link to="/">{t("nav_home")}</Link></li>
-              <li><Link to="/about">{t("nav_about")}</Link></li>
-              <li><Link to="/services">{t("nav_services")}</Link></li>
-              <li><Link to="/portfolio">{t("nav_portfolio")}</Link></li>
-              <li><Link to="/tools">{t("nav_tools")}</Link></li>
-              <li><Link to="/store">{t("nav_store")}</Link></li>
-              <li><Link to="/blog">{t("nav_blog")}</Link></li>
-              <li><Link to="/contact">{t("nav_contact")}</Link></li>
-            </ul>
-          </div>
+            <div className="okr__footer-col okr__footer-col--menu">
+              <div className="okr__foot-title">{t("foot_menu")}</div>
+              <ul className="okr__foot-list">
+                <li><Link to="/">{t("nav_home")}</Link></li>
+                <li><Link to="/about">{t("nav_about")}</Link></li>
+                <li><Link to="/services">{t("nav_services")}</Link></li>
+                <li><Link to="/portfolio">{t("nav_portfolio")}</Link></li>
+                <li><Link to="/tools">{t("nav_tools")}</Link></li>
+                <li><Link to="/store">{t("nav_store")}</Link></li>
+                <li><Link to="/blog">{t("nav_blog")}</Link></li>
+                <li><Link to="/contact">{t("nav_contact")}</Link></li>
+              </ul>
+            </div>
 
-          <div className="okr__footer-col okr__footer-col--legal">
-            <div className="okr__foot-title">{t("foot_legal")}</div>
-            <ul className="okr__foot-list">
-              <li><Link to="/privacy">{t("foot_privacy")}</Link></li>
-              <li><Link to="/terms">{t("foot_terms")}</Link></li>
-              <li><Link to="/sitemap">Sitemap</Link></li>
-            </ul>
-          </div>
+            <div className="okr__footer-col okr__footer-col--legal">
+              <div className="okr__foot-title">{t("foot_legal")}</div>
+              <ul className="okr__foot-list">
+                <li><Link to="/privacy">{t("foot_privacy")}</Link></li>
+                <li><Link to="/terms">{t("foot_terms")}</Link></li>
+                <li><Link to="/sitemap">Sitemap</Link></li>
+              </ul>
+            </div>
 
-          <div className="okr__footer-col okr__footer-col--contact">
-            <div className="okr__foot-title">{t("foot_contact")}</div>
-            <div className="okr__foot-contact">
-              {settings.email && (
-                <a
-                  className="okr__foot-contact-link"
-                  href={`mailto:${settings.email}`}
-                  aria-label={`${t("contact_label_email")} Isra Anwar`}
-                  title={t("contact_label_email")}
-                >
-                  <Mail size={17} aria-hidden="true" /> {t("contact_label_email")}
-                </a>
-              )}
-              {settings.whatsapp_number && (
-                <a className="okr__foot-contact-link" href={settings.whatsapp_url || `https://wa.me/${settings.whatsapp_number}`} target="_blank" rel="noreferrer">
-                  <MessageCircle size={16} /> WhatsApp
-                </a>
-              )}
-              {settings.social_instagram && (
-                <a className="okr__foot-contact-link" href={settings.social_instagram} target="_blank" rel="noreferrer">
-                  <Instagram size={16} /> Instagram
-                </a>
-              )}
-              {settings.social_linkedin && (
-                <a className="okr__foot-contact-link" href={settings.social_linkedin} target="_blank" rel="noreferrer">
-                  <Linkedin size={16} /> LinkedIn
-                </a>
-              )}
-              {settings.social_github && (
-                <a className="okr__foot-contact-link" href={settings.social_github} target="_blank" rel="noreferrer">
-                  <Github size={16} /> GitHub
-                </a>
-              )}
+            <div className="okr__footer-col okr__footer-col--contact">
+              <div className="okr__foot-title">{t("foot_contact")}</div>
+              <div className="okr__foot-contact">
+                {settings.email && (
+                  <a
+                    className="okr__foot-contact-link"
+                    href={`mailto:${settings.email}`}
+                    aria-label={`${t("contact_label_email")} Isra Anwar`}
+                    title={t("contact_label_email")}
+                  >
+                    <Mail size={17} aria-hidden="true" /> {t("contact_label_email")}
+                  </a>
+                )}
+                {settings.whatsapp_number && (
+                  <a className="okr__foot-contact-link" href={settings.whatsapp_url || `https://wa.me/${settings.whatsapp_number}`} target="_blank" rel="noreferrer">
+                    <MessageCircle size={16} /> WhatsApp
+                  </a>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="okr__foot-bottom">
-          <span>© {new Date().getFullYear()} {settings.site_name || "Isra Anwar"}. {t("foot_rights")}</span>
+          <div className="okr__footer-divider" role="presentation" />
+
+          <div className="okr__foot-bottom">
+            <span className="okr__foot-bottom-copy">© {new Date().getFullYear()} {settings.site_name || "Isra Anwar"}. {t("foot_rights")}</span>
+            <div className="okr__foot-bottom-links">
+              <Link to="/privacy">{t("foot_privacy")}</Link>
+              <Link to="/terms">{t("foot_terms")}</Link>
+              <Link to="/sitemap">Sitemap</Link>
+            </div>
+          </div>
+
+          <span className="okr__footer-watermark" aria-hidden="true">Isra Anwar</span>
         </div>
       </div>
     </footer>
