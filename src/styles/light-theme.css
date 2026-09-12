@@ -490,11 +490,33 @@
   transition: color 150ms ease, border-color 150ms ease, background 150ms ease, transform 150ms ease;
 }
 .okr__footer-card .okr__foot-social-link:hover,
-.okr__footer-card .okr__foot-social-link:focus-visible {
+.okr__footer-card .okr__foot-social-link:focus-visible,
+.okr__footer-card .okr__foot-social-link:active {
+  /* :active needed separately — a still-live landing.css rule
+     (.okr__foot-social a:hover/:focus-visible/:active) sets
+     color: var(--okr-text) (near-black) on tap, which on this dark card
+     made the icon disappear the instant it was touched. */
   color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.4) !important;
   background: rgba(255, 255, 255, 0.12) !important;
+}
+.okr__footer-card .okr__foot-social-link:hover,
+.okr__footer-card .okr__foot-social-link:focus-visible {
   transform: translateY(-2px);
+}
+
+/* The link's own background above is only half the picture — a separate
+   `::before` pseudo-element (landing.css, `.okr__foot-social a::before`)
+   sits behind it, painted with the same pale cream (`--okr-touch-glass`)
+   used everywhere else in this cascade, and flips to opacity:1 on the
+   exact same hover/focus-visible/active states. Since the link's own
+   background above is semi-transparent, that opaque cream showed through
+   and blended into a washed-out peach — the "kabur" (faded/blurry) icon
+   reported. Overriding this pseudo-element's background directly is what
+   actually fixes it, same technique already used for .okr__foot-list a. */
+.okr__footer-card .okr__foot-social-link::before {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: none;
 }
 
 .okr__footer-divider {
@@ -532,21 +554,40 @@
   text-decoration-color: currentColor;
 }
 
-/* Giant, very faint "Isra Anwar" watermark — decorative, cropped by the
-   card's own bottom edge (overflow:hidden above), same idea as the Graphy
-   reference. aria-hidden + pointer-events:none since it carries no info. */
+/* Giant, very faint "Isra Anwar" watermark — purely decorative background,
+   spanning the full footer width again (not boxed inside the grid
+   columns), same look as the original version. Positioned after the
+   copyright row in the DOM but visually behind it (z-index), pushed down
+   far enough via `bottom` that its top edge still clears the copyright
+   row above — tuned for this current larger font-size specifically since
+   a bigger glyph needs a bigger negative offset to keep the same
+   clearance. aria-hidden + pointer-events:none since it carries no info. */
 .okr__footer-watermark {
+  position: absolute;
+  /* Centered, not left-aligned — left:50% + translateX(-50%) instead of a
+     fixed left offset. At 13vw the text ("Isra Anwar", this weight/
+     letter-spacing) measures roughly 5.25x its own font-size, so
+     font-size = 13vw renders at ~68vw wide — sits inside the site's own
+     content margin instead of bleeding to the viewport edges, and is
+     never cropped by .okr__footer's overflow:hidden on either side. */
+  left: 50%;
+  transform: translateX(-50%);
+  /* Flat pixel value, not clamp(-X, -Yvw, -Z) — that pattern had the min/max
+     arguments backwards (min > max numerically), which makes clamp() always
+     resolve to the first argument and silently never respond to viewport
+     width at all. Kept simple here instead of re-deriving a correct
+     three-value clamp. */
+  bottom: -95px;
+  z-index: 0;
   display: block;
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 0.78;
-  font-size: clamp(90px, 15vw, 220px);
+  font-size: clamp(70px, 13vw, 200px);
   color: rgba(255, 255, 255, 0.05);
   white-space: nowrap;
   user-select: none;
   pointer-events: none;
-  margin: clamp(4px, 1.5vw, 12px) 0 0 clamp(-6px, -0.6vw, -2px);
-  transform: translateY(30%);
 }
 
 @media (max-width: 720px) {
@@ -556,7 +597,12 @@
     gap: 10px;
   }
   .okr__footer-watermark {
-    font-size: 20vw;
+    /* Same ~5.25x width-to-font-size ratio as above, scaled down to match
+       the smaller desktop size. */
+    font-size: 13vw;
+    /* Smaller glyph here needs a smaller offset too, or it's pushed
+       entirely below the visible area and never shows at all. */
+    bottom: -65px;
   }
 }
 
@@ -578,9 +624,30 @@
 
 .okr__foot-contact-link:hover,
 .okr__foot-contact-link:focus-visible,
+.okr__foot-contact-link:active,
 .okr__foot-list a:hover,
-.okr__foot-list a:focus-visible {
+.okr__foot-list a:focus-visible,
+.okr__foot-list a:active {
+  /* :active included — landing.css's own :active rules for both of these
+     set color: var(--okr-text) (near-black), the exact bug found on the
+     footer social icons and header nav on tap. */
   color: #ffffff;
+}
+
+/* Same bug as the header nav pill, this time on the footer's Menu/Legal
+   links: the visible hover/focus backdrop isn't the link's own
+   `background` (already forced transparent elsewhere) — it's a shared
+   `::before` pseudo-element (landing.css) painted with a pale cream color
+   meant for the white theme, plus an orange-tinted border-color. White
+   text landed on that cream backdrop and was unreadable. */
+.okr__footer-card .okr__foot-list a::before {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: none;
+}
+.okr__footer-card .okr__foot-list a:hover,
+.okr__footer-card .okr__foot-list a:focus-visible,
+.okr__footer-card .okr__foot-list a:active {
+  border-color: transparent;
 }
 
 .okr__scroll-progress {
@@ -722,11 +789,15 @@
 
 .okr__header .okr__navlink:hover,
 .okr__header .okr__navlink:focus-visible,
+.okr__header .okr__navlink:active,
 .okr__header .okr__navlink.is-active {
   /* This rule's non-header counterpart near the top of this file sets a
      literal `background: #fff6ed` (cream) directly on the link itself —
      a second, separate source of the same cream color beyond the
-     `::before` pseudo-element above. Both have to be overridden. */
+     `::before` pseudo-element above. Both have to be overridden. `:active`
+     is included for the same reason found on the footer social icons:
+     landing.css's own `.okr__navlink:active` rule sets
+     color: var(--okr-text) (near-black), invisible on this dark bar. */
   background: rgba(255, 255, 255, 0.14);
   border-color: rgba(255, 255, 255, 0.22);
   box-shadow: none;
@@ -2501,5 +2572,149 @@
 @media (hover: none) {
   .okr .okr__cards > .okr__service-card:active {
     transform: translate3d(0, -4px, 0) scale(1.005);
+  }
+}
+
+/* ==========================================================================
+   Homepage Services section — one big white card, horizontal service rows.
+   Deliberately new/self-contained class names (not reusing .okr__card or
+   .okr__eyebrow) so this doesn't inherit unrelated styling from the many
+   stacked design eras elsewhere in this file — same approach the footer
+   redesign used, for the same reason. Fresh site colors only, no imitation
+   of the reference video's brand palette.
+   ========================================================================== */
+.okr__services-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid var(--okr-glass-border);
+  border-radius: 32px;
+  padding: clamp(28px, 4vw, 56px) clamp(20px, 4vw, 56px);
+  box-shadow: 0 24px 60px rgba(55, 31, 35, 0.06);
+}
+
+.okr__services-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px 32px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+
+.okr__services-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--okr-muted);
+  white-space: nowrap;
+  padding-top: 4px;
+}
+.okr__services-eyebrow span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.okr__services-headline {
+  margin: 0;
+  font-size: clamp(22px, 2.6vw, 32px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--okr-text);
+  max-width: 620px;
+}
+
+/* The list clips to the card's own radius so a hover row's full-bleed
+   background never squares off past the card's rounded corners. */
+.okr__services-list {
+  display: flex;
+  flex-direction: column;
+  margin-inline: calc(-1 * clamp(20px, 4vw, 56px));
+  border-radius: 0 0 calc(32px - 1px) calc(32px - 1px);
+  overflow: hidden;
+}
+
+.okr__services-row {
+  display: grid;
+  grid-template-columns: 32px 1fr 20px;
+  align-items: center;
+  gap: 16px;
+  padding: 20px clamp(20px, 4vw, 56px);
+  border-bottom: 1px solid var(--okr-glass-border);
+  text-decoration: none;
+  color: inherit;
+  background: transparent;
+  /* Exactly what the brief asks for — background swap only, nothing else. */
+  transition: background-color 150ms ease;
+}
+.okr__services-list a.okr__services-row:last-child {
+  border-bottom: none;
+}
+.okr__services-row:hover,
+.okr__services-row:focus-visible {
+  background: #f3f1ee;
+  outline: none;
+}
+.okr__services-row:active {
+  background: #ece9e4;
+}
+
+.okr__services-row-index {
+  font-size: 14px;
+  color: var(--okr-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.okr__services-row-name {
+  font-size: clamp(17px, 2vw, 23px);
+  font-weight: 500;
+  color: var(--okr-text);
+  overflow-wrap: anywhere;
+}
+
+.okr__services-row-arrow {
+  color: var(--okr-text);
+  justify-self: end;
+  flex-shrink: 0;
+}
+
+.okr__services-all-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  margin: clamp(24px, 3vw, 40px) auto 0;
+  padding: 14px 30px;
+  border-radius: 999px;
+  background: #101012;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  transition: background-color 150ms ease;
+}
+.okr__services-all-btn:hover,
+.okr__services-all-btn:focus-visible {
+  background: #000000;
+}
+
+@media (max-width: 640px) {
+  .okr__services-top {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .okr__services-row {
+    grid-template-columns: 26px 1fr 18px;
+    gap: 10px;
+    padding-block: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr__services-row,
+  .okr__services-all-btn {
+    transition: none;
   }
 }

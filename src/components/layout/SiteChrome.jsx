@@ -364,19 +364,19 @@ export function SiteFooter({ settings }) {
                 )}
               </div>
             </div>
+
           </div>
 
           <div className="okr__footer-divider" role="presentation" />
 
           <div className="okr__foot-bottom">
             <span className="okr__foot-bottom-copy">© {new Date().getFullYear()} {settings.site_name || "Isra Anwar"}. {t("foot_rights")}</span>
-            <div className="okr__foot-bottom-links">
-              <Link to="/privacy">{t("foot_privacy")}</Link>
-              <Link to="/terms">{t("foot_terms")}</Link>
-              <Link to="/sitemap">Sitemap</Link>
-            </div>
           </div>
 
+          {/* Back to spanning the full footer width (not boxed inside the
+              grid columns) per explicit request — kept far enough below
+              via `bottom` that it still can't reach up into the copyright
+              row above it. */}
           <span className="okr__footer-watermark" aria-hidden="true">Isra Anwar</span>
         </div>
       </div>

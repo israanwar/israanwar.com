@@ -184,7 +184,7 @@ const TEXT_ID = {
   "Building smarter digital systems for stronger visibility, efficient operations, and sustainable business growth.": "Kami membangun sistem digital yang lebih cerdas untuk memperkuat visibilitas, mengefisienkan operasional, dan mendorong pertumbuhan bisnis berkelanjutan.",
   "Strategy, design, technology, and AI engineered into sharper systems that turn early insight into measurable business momentum.": "Strategi, desain, teknologi, dan AI direkayasa menjadi sistem yang lebih tajam untuk mengubah wawasan awal menjadi momentum bisnis yang terukur.",
   "Consult": "Konsultasi",
-  "View all services": "Lihat semua layanan",
+  "Discuss your project": "Diskusikan proyek Anda",
   "Ready to build a stronger digital foundation?": "Siap membangun fondasi digital yang lebih kuat?",
   "Let's talk — it's free. We'll discuss the direction that makes most sense for your brand.": "Ngobrol dulu, gratis. Kita bahas arah yang paling masuk akal untuk brand Anda.",
   "Contact via WhatsApp": "Hubungi via WhatsApp",

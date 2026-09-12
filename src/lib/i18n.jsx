@@ -226,7 +226,7 @@ const T = {
     nf_action: "Kembali ke beranda",
     // Landing fallbacks
     hero_cta_primary: "Konsultasi",
-    hero_cta_secondary: "Lihat semua layanan",
+    hero_cta_secondary: "Diskusikan proyek Anda",
     cta_wa_button: "Hubungi via WhatsApp",
     // Meta
     lang_switch: "Bahasa",
@@ -437,7 +437,7 @@ const T = {
     nf_body: "This URL doesn't exist or has been moved.",
     nf_action: "Back to home",
     hero_cta_primary: "Consult",
-    hero_cta_secondary: "View all services",
+    hero_cta_secondary: "Discuss your project",
     cta_wa_button: "Contact via WhatsApp",
     lang_switch: "Language",
   },

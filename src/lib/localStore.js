@@ -202,7 +202,7 @@ function ensureSeed() {
       title_line2: "before the market moves.",
       subtitle: HERO_SUBTITLE,
       cta_primary_label: "Consult",
-      cta_secondary_label: "View all services",
+      cta_secondary_label: "Discuss your project",
     },
     cta: {
       title: "Ready to build a stronger digital foundation?",
@@ -383,6 +383,22 @@ function ensureSeed() {
       });
     }
     localStorage.setItem("okr:migrated:homepage:v3", "1");
+  }
+  // v5 = hero secondary CTA copy "View all services" -> "Discuss your
+  // project" (kept non-destructive: only touches it if still on the old
+  // default, so a manual admin edit is never overwritten).
+  if (localStorage.getItem("okr:migrated:homepage:v5") !== "1") {
+    const h = read(KEYS.homepage, {}) ?? {};
+    if (h.hero?.cta_secondary_label === "View all services") {
+      write(KEYS.homepage, {
+        ...h,
+        hero: {
+          ...(h.hero ?? {}),
+          cta_secondary_label: HOMEPAGE_DEFAULT.hero.cta_secondary_label,
+        },
+      });
+    }
+    localStorage.setItem("okr:migrated:homepage:v5", "1");
   }
   if (!read(KEYS.posts)) write(KEYS.posts, []);
   // v6 = PHASE 2 SEO fields (category, focus_keyword, meta_title, canonical_path,

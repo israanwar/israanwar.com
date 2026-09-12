@@ -4,9 +4,10 @@ import { ArrowRight, ExternalLink, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { useLiveSettings, useLiveHomepage, useLivePosts, useLivePage } from "../../hooks/usePageData";
+import { useLiveSettings, useLiveHomepage, useLivePosts, useLivePage, useLiveServices } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeHomepage, localizePage, localizeSiteDescription } from "../../lib/pageI18n";
+import { localizeServiceCardItems } from "../../lib/serviceI18n";
 import { useLandingEffects, useProcessScrollStory } from "../../hooks/useLandingEffects";
 import { BlogPinCard } from "../../components/blog/BlogPinCard";
 
@@ -404,6 +405,14 @@ export function LandingPage() {
   const posts = useLivePosts({ status: "published" }).slice(0, 6);
   const rawPortfolio = useLivePage("portfolio");
   const portfolio = useMemo(() => localizePage(rawPortfolio, lang), [rawPortfolio, lang]);
+  // Real, navigable service categories (same source ServicesPage.jsx uses) —
+  // capped at 8 for the homepage row list, per spec ("maksimal 8 service
+  // utama jika datanya lebih banyak").
+  const rawServiceCategories = useLiveServices({ status: "active" });
+  const serviceCategories = useMemo(() => {
+    const categories = rawServiceCategories.filter((s) => s.kind === "category");
+    return localizeServiceCardItems(categories, lang).slice(0, 8);
+  }, [rawServiceCategories, lang]);
 
   const hero = sections.hero ?? {};
   const heroLeadWordCount = String(hero.title_line1 || "")
@@ -417,7 +426,6 @@ export function LandingPage() {
   const heroSequence = useHeroSequence(heroSubtitle);
   const cta = sections.cta ?? {};
   const process = sections.process ?? { title: "", items: [] };
-  const services = sections.services ?? { items: [] };
   const cases = sections.cases ?? { title: t("section_cases_title"), items: [] };
   const processItems = process.items ?? [];
   const processSectionRef = useRef(null);
@@ -493,31 +501,36 @@ export function LandingPage() {
             </div>
           </section>
 
-          {services.items?.length > 0 && (
-            <section className="okr__section" id="services">
+          {serviceCategories.length > 0 && (
+            <section className="okr__section okr__services-section" id="services">
               <div className="okr__wrap">
-                <div className="okr__section-topbar okr__reveal">
-                  <div className="okr__section-head">
-                    <span className="okr__eyebrow">{t("section_services")}</span>
-                    <h2 className="okr__h2">{t("section_services_head")}<br />{t("section_services_head_2")}</h2>
+                <div className="okr__services-card okr__reveal">
+                  <div className="okr__services-top">
+                    <span className="okr__services-eyebrow">
+                      <span aria-hidden="true">•</span> Our services
+                    </span>
+                    <h2 className="okr__services-headline">
+                      Everything your business needs to grow
+                      <br />
+                      under one roof.
+                    </h2>
                   </div>
-                </div>
-                <div className="okr__cards okr__cards--services">
-                  {services.items.map((s, i) => (
-                    <article
-                      key={i}
-                      className="okr__card okr__service-card okr__spotlight okr__reveal"
-                      data-card-index={String(i + 1).padStart(2, "0")}
-                      style={{ "--reveal-delay": `${Math.min(i, 5) * 60}ms` }}
-                    >
-                      <div className="okr__service-card-meta" aria-hidden="true">
-                        <span>{String(i + 1).padStart(2, "0")}</span>
-                        <span>{t("section_services")}</span>
-                      </div>
-                      <h3 className="okr__card-title">{s.title}</h3>
-                      <p className="okr__card-body">{s.body}</p>
-                    </article>
-                  ))}
+                  <div className="okr__services-list">
+                    {serviceCategories.map((s, i) => (
+                      <Link
+                        key={s.id}
+                        to={`/services/${s.slug}`}
+                        className="okr__services-row"
+                      >
+                        <span className="okr__services-row-index">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="okr__services-row-name">{s.name}</span>
+                        <ArrowRight className="okr__services-row-arrow" size={18} strokeWidth={1.5} aria-hidden="true" />
+                      </Link>
+                    ))}
+                  </div>
+                  <Link to="/services" className="okr__services-all-btn">
+                    All Services
+                  </Link>
                 </div>
               </div>
             </section>
