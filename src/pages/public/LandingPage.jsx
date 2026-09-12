@@ -112,7 +112,12 @@ function ScrollRevealTitle({ text }) {
       {words.map((word, index) => (
         <span
           key={`${word}-${index}`}
-          className="okr__scroll-word"
+          // Last word carries the same orange accent every other heading's
+          // tail portion gets (AnimatedHeadline's `is-grad`) — this title
+          // has its own dedicated scroll-ink color animation instead of
+          // AnimatedHeadline, so it needs its own highlight class rather
+          // than reusing `.okr__word.is-grad` directly.
+          className={`okr__scroll-word${index === words.length - 1 ? " is-highlight" : ""}`}
           style={{ "--word-index": index }}
           aria-hidden="true"
         >

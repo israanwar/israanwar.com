@@ -933,6 +933,14 @@
   display: inline;
 }
 
+/* Same orange accent as every other heading's tail portion (AnimatedHeadline's
+   `is-grad`, #b84e2c) — !important since a running `okrWordInk` animation
+   (below) sets `color` every frame and would otherwise win over a plain
+   declaration regardless of source order. */
+.okr__scroll-word.is-highlight {
+  color: #b84e2c !important;
+}
+
 @supports (animation-timeline: view()) {
   .okr__scroll-word {
     animation: okrWordInk linear both;
@@ -945,11 +953,28 @@
   .okr__scroll-word:nth-child(3) { animation-range: entry 16% cover 58%; }
   .okr__scroll-word:nth-child(4) { animation-range: entry 24% cover 66%; }
   .okr__scroll-word:nth-child(5) { animation-range: entry 32% cover 74%; }
+
+  .okr__scroll-word.is-highlight {
+    animation: okrWordInkHighlight linear both;
+    animation-range: entry 0% cover 42%;
+    animation-timeline: view(block);
+  }
+  .okr__scroll-word.is-highlight:nth-child(2) { animation-range: entry 8% cover 50%; }
+  .okr__scroll-word.is-highlight:nth-child(3) { animation-range: entry 16% cover 58%; }
+  .okr__scroll-word.is-highlight:nth-child(4) { animation-range: entry 24% cover 66%; }
+  .okr__scroll-word.is-highlight:nth-child(5) { animation-range: entry 32% cover 74%; }
 }
 
 @keyframes okrWordInk {
   from { color: #c9c9c6; }
   to { color: #151515; }
+}
+
+/* Same scroll-scrubbed reveal as okrWordInk, just settling on orange
+   instead of near-black for the highlighted (last) word. */
+@keyframes okrWordInkHighlight {
+  from { color: #c9c9c6; }
+  to { color: #b84e2c; }
 }
 
 .okr__process-intro-copy {
