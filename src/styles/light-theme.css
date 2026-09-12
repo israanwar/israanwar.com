@@ -572,55 +572,11 @@
   text-decoration-color: currentColor;
 }
 
-/* Giant, very faint "Isra Anwar" watermark — purely decorative background,
-   spanning the full footer width again (not boxed inside the grid
-   columns), same look as the original version. Positioned after the
-   copyright row in the DOM but visually behind it (z-index), pushed down
-   far enough via `bottom` that its top edge still clears the copyright
-   row above — tuned for this current larger font-size specifically since
-   a bigger glyph needs a bigger negative offset to keep the same
-   clearance. aria-hidden + pointer-events:none since it carries no info. */
-.okr__footer-watermark {
-  position: absolute;
-  /* Centered, not left-aligned — left:50% + translateX(-50%) instead of a
-     fixed left offset. At 13vw the text ("Isra Anwar", this weight/
-     letter-spacing) measures roughly 5.25x its own font-size, so
-     font-size = 13vw renders at ~68vw wide — sits inside the site's own
-     content margin instead of bleeding to the viewport edges, and is
-     never cropped by .okr__footer's overflow:hidden on either side. */
-  left: 50%;
-  transform: translateX(-50%);
-  /* Flat pixel value, not clamp(-X, -Yvw, -Z) — that pattern had the min/max
-     arguments backwards (min > max numerically), which makes clamp() always
-     resolve to the first argument and silently never respond to viewport
-     width at all. Kept simple here instead of re-deriving a correct
-     three-value clamp. */
-  bottom: -95px;
-  z-index: 0;
-  display: block;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 0.78;
-  font-size: clamp(70px, 13vw, 200px);
-  color: rgba(255, 255, 255, 0.05);
-  white-space: nowrap;
-  user-select: none;
-  pointer-events: none;
-}
-
 @media (max-width: 720px) {
   .okr__foot-bottom {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-  }
-  .okr__footer-watermark {
-    /* Same ~5.25x width-to-font-size ratio as above, scaled down to match
-       the smaller desktop size. */
-    font-size: 13vw;
-    /* Smaller glyph here needs a smaller offset too, or it's pushed
-       entirely below the visible area and never shows at all. */
-    bottom: -65px;
   }
 }
 
