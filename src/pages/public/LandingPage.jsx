@@ -425,7 +425,6 @@ export function LandingPage() {
     ? siteDescription
     : hero.subtitle;
   const heroSequence = useHeroSequence(heroSubtitle);
-  const cta = sections.cta ?? {};
   const process = sections.process ?? { title: "", items: [] };
   const cases = sections.cases ?? { title: t("section_cases_title"), items: [] };
   const processItems = process.items ?? [];
@@ -676,12 +675,6 @@ export function LandingPage() {
             </section>
           )}
 
-          <section className="okr__wrap" id="contact">
-            <div className="okr__cta okr__reveal">
-              <h3>{cta.title}</h3>
-              <p>{cta.subtitle}</p>
-            </div>
-          </section>
       </div>
     </>
   );
