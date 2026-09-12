@@ -10,6 +10,7 @@ import { localizeSiteDescription } from "../../lib/pageI18n";
 import { LangThemeSwitcher } from "./LangThemeSwitcher";
 import { IsraAnwarLogo, IsraAnwarMark } from "../brand/IsraAnwarLogo";
 import { FooterParticles } from "./FooterParticles";
+import { NewsletterForm } from "../marketing/NewsletterForm";
 import "../../styles/landing.css";
 import "../../styles/light-theme.css";
 
@@ -686,6 +687,16 @@ function AuroraBackdrop() {
   );
 }
 
+function NewsletterBand() {
+  return (
+    <div className="okr__newsletter-band">
+      <div className="okr__wrap">
+        <NewsletterForm source="footer" variant="band" />
+      </div>
+    </div>
+  );
+}
+
 export function SiteChrome({ children, settings: providedSettings }) {
   // Selalu baca live settings — override kalau parent kasih.
   const liveSettings = useLiveSettings();
@@ -694,6 +705,7 @@ export function SiteChrome({ children, settings: providedSettings }) {
     <div className="okr">
       <SiteHeader settings={settings} />
       {children}
+      <NewsletterBand />
       <SiteFooter settings={settings} />
     </div>
   );

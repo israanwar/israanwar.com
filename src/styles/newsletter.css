@@ -1,0 +1,244 @@
+/* Shared newsletter subscribe form (NewsletterForm.jsx) — used both in the
+   footer (dark, full-width row) and at the end of blog posts (light card).
+   Brand colors only: black/near-black default with the site's orange
+   (#b84e2c / hover #c95732) as the single accent, matching every other
+   primary CTA on the site (hero "Discuss your project", "All Services"). */
+
+.okr__newsletter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.okr__newsletter-copy {
+  flex: 1 1 360px;
+  min-width: 0;
+}
+
+.okr__newsletter-kicker {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b84e2c;
+  margin-bottom: 8px;
+}
+
+.okr__newsletter-title {
+  margin: 0;
+  font-size: clamp(18px, 2.1vw, 22px);
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.okr__newsletter-subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 46ch;
+}
+
+.okr__newsletter-form {
+  flex: 0 1 420px;
+  min-width: 280px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.okr__newsletter-field {
+  display: flex;
+  align-items: stretch;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid;
+  transition: border-color 0.2s ease;
+}
+
+.okr__newsletter-field:focus-within {
+  border-color: #b84e2c;
+}
+
+.okr__newsletter-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  padding: 13px 4px 13px 20px;
+}
+
+.okr__newsletter-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  border-radius: 999px;
+  margin: 4px;
+  padding: 9px 18px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #20181b;
+  color: #ffffff;
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.okr__newsletter-btn:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.okr__newsletter-btn-fill {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #c95732;
+  transform: translateX(-100%);
+  transition: transform 320ms ease;
+  pointer-events: none;
+}
+
+.okr__newsletter-btn:hover .okr__newsletter-btn-fill,
+.okr__newsletter-btn:focus-visible .okr__newsletter-btn-fill,
+.okr__newsletter-btn:active .okr__newsletter-btn-fill {
+  transform: translateX(0);
+}
+
+.okr__newsletter-btn:hover,
+.okr__newsletter-btn:focus-visible,
+.okr__newsletter-btn:active {
+  color: #ffffff;
+}
+
+.okr__newsletter-btn-label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.okr__newsletter-error {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: #ff8a65;
+}
+
+.okr__newsletter-success {
+  flex: 0 1 420px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #7ed9a8;
+}
+
+/* --- Band variant: a full-bleed strip placed above the footer (not inside
+   it) — its own light section between the page content and the dark
+   footer bar, so it reads as a distinct "before you go" moment rather
+   than another row of footer chrome. */
+.okr__newsletter-band {
+  background: #f5f1eb;
+  border-top: 1px solid rgba(32, 24, 27, 0.08);
+  padding-block: clamp(32px, 5vw, 48px);
+}
+
+.okr__newsletter--band .okr__newsletter-title {
+  color: #20181b;
+}
+
+.okr__newsletter--band .okr__newsletter-subtitle {
+  color: var(--okr-muted);
+}
+
+.okr__newsletter--band .okr__newsletter-field {
+  border-color: rgba(32, 24, 27, 0.16);
+  background: #ffffff;
+}
+
+.okr__newsletter--band .okr__newsletter-input {
+  color: #20181b;
+}
+
+.okr__newsletter--band .okr__newsletter-input::placeholder {
+  color: rgba(32, 24, 27, 0.4);
+}
+
+.okr__newsletter--band .okr__newsletter-success {
+  color: #2f9e63;
+}
+
+.okr__newsletter--band .okr__newsletter-error {
+  color: #c0392b;
+}
+
+/* --- Blog variant: a light, self-contained card since it sits mid-article
+   on the page's white background rather than inside dark chrome. */
+.okr__newsletter--blog {
+  margin: 56px 0 0;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid rgba(32, 24, 27, 0.1);
+  background: #fdf9f4;
+}
+
+.okr__newsletter--blog .okr__newsletter-title {
+  color: #20181b;
+}
+
+.okr__newsletter--blog .okr__newsletter-subtitle {
+  color: var(--okr-muted);
+}
+
+.okr__newsletter--blog .okr__newsletter-field {
+  border-color: rgba(32, 24, 27, 0.16);
+  background: #ffffff;
+}
+
+.okr__newsletter--blog .okr__newsletter-input {
+  color: #20181b;
+}
+
+.okr__newsletter--blog .okr__newsletter-input::placeholder {
+  color: rgba(32, 24, 27, 0.4);
+}
+
+.okr__newsletter--blog .okr__newsletter-success {
+  color: #2f9e63;
+}
+
+.okr__newsletter--blog .okr__newsletter-error {
+  color: #c0392b;
+}
+
+@media (max-width: 640px) {
+  .okr__newsletter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+  .okr__newsletter-copy,
+  .okr__newsletter-form,
+  .okr__newsletter-success {
+    /* `flex-basis` becomes a *height* once the container switches to
+       `flex-direction: column` above — the 360px/420px basis values set
+       for the desktop row layout were stretching each stacked block to
+       that height instead of sizing to content. */
+    max-width: none;
+    flex-basis: auto;
+  }
+  .okr__newsletter--blog {
+    padding: 24px 20px;
+  }
+}

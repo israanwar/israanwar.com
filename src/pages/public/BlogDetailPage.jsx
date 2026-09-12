@@ -4,6 +4,7 @@ import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { useLivePostState, useLivePosts } from "../../hooks/usePageData";
 import { RenderTiptap } from "../../components/blog/RenderTiptap";
 import { PostShareBar } from "../../components/blog/PostShareBar";
+import { NewsletterForm } from "../../components/marketing/NewsletterForm";
 import { ArrowLeft } from "lucide-react";
 import { useI18n } from "../../lib/i18n";
 import { formatPostReadCount, getPostReadCount } from "../../lib/blogMetrics";
@@ -87,6 +88,8 @@ export function BlogDetailPage() {
               socialImage={socialImage}
               lang={lang}
             />
+
+            <NewsletterForm source="blog" variant="blog" className="okr__reveal" />
 
             {faqs.length > 0 && (
               <section style={{ marginTop: 56, paddingTop: 32, borderTop: "1px solid var(--okr-border, rgba(255,255,255,0.08))" }}>

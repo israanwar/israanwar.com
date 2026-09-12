@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { NavLink, Outlet, Link } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Image as ImageIcon, Settings, Users, Home, LogOut, Sliders,
-  ShoppingBag, Package, Briefcase, FileEdit, Inbox,
+  ShoppingBag, Package, Briefcase, FileEdit, Inbox, Mail,
 } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { contactsData } from "../lib/supabaseData";
@@ -16,6 +16,7 @@ const NAV = [
   { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { to: "/admin/services", label: "Services", icon: Briefcase },
   { to: "/admin/contacts", label: "Contacts", icon: Inbox, badge: "contacts" },
+  { to: "/admin/newsletter", label: "Newsletter", icon: Mail },
   { to: "/admin/homepage", label: "Homepage", icon: Sliders },
   { to: "/admin/pages", label: "Pages", icon: FileEdit },
   { to: "/admin/media", label: "Media", icon: ImageIcon },

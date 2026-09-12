@@ -42,6 +42,7 @@ const AdminSettingsPage = lazyNamed(() => import("../pages/admin/AdminSettingsPa
 const AdminServicesPage = lazyNamed(() => import("../pages/admin/AdminServicesPage"), "AdminServicesPage");
 const AdminServiceEditPage = lazyNamed(() => import("../pages/admin/AdminServiceEditPage"), "AdminServiceEditPage");
 const AdminContactsPage = lazyNamed(() => import("../pages/admin/AdminContactsPage"), "AdminContactsPage");
+const AdminNewsletterPage = lazyNamed(() => import("../pages/admin/AdminNewsletterPage"), "AdminNewsletterPage");
 const AdminPagesPage = lazyNamed(() => import("../pages/admin/AdminPagesPage"), "AdminPagesPage");
 
 function RouteFallback() {
@@ -98,6 +99,7 @@ export function AppRoutes() {
             <Route path="/admin/services" element={<AdminServicesPage />} />
             <Route path="/admin/services/:id" element={<AdminServiceEditPage />} />
             <Route path="/admin/contacts" element={<AdminContactsPage />} />
+            <Route path="/admin/newsletter" element={<AdminNewsletterPage />} />
             <Route path="/admin/homepage" element={<AdminHomepagePage />} />
             <Route path="/admin/pages" element={<AdminPagesPage />} />
             <Route path="/admin/media" element={<AdminMediaPage />} />

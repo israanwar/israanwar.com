@@ -22,6 +22,7 @@ const KEYS = {
   services: "okr:services",
   contacts: "okr:contacts",
   pages: "okr:pages",
+  newsletter: "okr:newsletter",
 };
 
 const HERO_HEADLINE = "Build what conventional minds miss before the market moves.";
@@ -2297,6 +2298,26 @@ export const contactsRepo = {
   },
   delete(id) { write(KEYS.contacts, read(KEYS.contacts, []).filter((c) => c.id !== id)); },
   unreadCount() { return read(KEYS.contacts, []).filter((c) => c.status === "new").length; },
+};
+
+// -------------- newsletter (footer/blog subscribe forms) --------------
+export const newsletterRepo = {
+  list() { return read(KEYS.newsletter, []).sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? "")); },
+  create(payload) {
+    const list = read(KEYS.newsletter, []);
+    const email = String(payload.email ?? "").trim().toLowerCase();
+    const existing = list.find((s) => String(s.email ?? "").trim().toLowerCase() === email);
+    if (existing) {
+      if (existing.status === "unsubscribed") {
+        existing.status = "subscribed"; existing.updated_at = now();
+        write(KEYS.newsletter, list);
+      }
+      return existing;
+    }
+    const item = { id: uid(), created_at: now(), status: "subscribed", ...payload, email };
+    list.push(item); write(KEYS.newsletter, list); return item;
+  },
+  delete(id) { write(KEYS.newsletter, read(KEYS.newsletter, []).filter((s) => s.id !== id)); },
 };
 
 // -------------- pages (about, contact, privacy, terms) --------------

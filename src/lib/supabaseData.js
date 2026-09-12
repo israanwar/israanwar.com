@@ -9,6 +9,7 @@ import {
   mediaRepo,
   usersRepo,
   contactsRepo,
+  newsletterRepo,
   ordersRepo,
   ORDER_STATUS,
 } from "./localStore";
@@ -163,6 +164,16 @@ function contactPayload(contact) {
     phone: data.phone ?? null,
     subject: data.subject ?? null,
     message: data.message ?? null,
+    data,
+  };
+}
+
+function newsletterPayload(sub) {
+  const data = clone(sub) ?? {};
+  return {
+    status: data.status ?? "subscribed",
+    email: String(data.email ?? "").trim().toLowerCase(),
+    source: data.source ?? null,
     data,
   };
 }
@@ -620,6 +631,37 @@ export const contactsData = {
       if (error) throw error;
       emitRemoteChange("contacts");
     }, () => contactsRepo.delete(id));
+  },
+};
+
+export const newsletterData = {
+  async list() {
+    return tryRemote(async () => {
+      const { data, error } = await supabase.from("newsletter_subscribers").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return localFirstList((data ?? []).map(rowToItem), newsletterRepo.list());
+    }, () => newsletterRepo.list());
+  },
+  async create(payload) {
+    return tryRemote(async () => {
+      const { data, error } = await supabase.from("newsletter_subscribers")
+        .insert(newsletterPayload(payload)).select("*").single();
+      if (error) {
+        // 23505 = unique_violation (email already subscribed) — not a real
+        // failure, just report it as already-on-the-list instead of an error.
+        if (error.code === "23505") return { alreadySubscribed: true };
+        throw error;
+      }
+      emitRemoteChange("newsletter_subscribers");
+      return rowToItem(data);
+    }, () => newsletterRepo.create(payload));
+  },
+  async delete(id) {
+    return tryRemote(async () => {
+      const { error } = await supabase.from("newsletter_subscribers").delete().eq("id", id);
+      if (error) throw error;
+      emitRemoteChange("newsletter_subscribers");
+    }, () => newsletterRepo.delete(id));
   },
 };
 
