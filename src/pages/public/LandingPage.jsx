@@ -623,7 +623,12 @@ export function LandingPage() {
                 <div className="okr__section-topbar okr__reveal">
                   <div className="okr__section-head">
                     <span className="okr__eyebrow">{t("section_journal")}</span>
-                    <h2 className="okr__h2">{t("section_journal_title")}</h2>
+                    <AnimatedHeadline
+                      as="h2"
+                      text={t("section_journal_title")}
+                      className="okr__h2 okr__hero-title--stagger"
+                      assembleLetters
+                    />
                   </div>
                   <Link className="okr__link okr__link--glass" to="/blog">
                     {t("section_journal_all")} <ArrowRight size={15} />
@@ -641,7 +646,12 @@ export function LandingPage() {
           {cases.items?.length > 0 && (
             <section className="okr__section">
               <div className="okr__wrap">
-                <h2 className="okr__h2 okr__reveal">{cases.title}</h2>
+                <AnimatedHeadline
+                  as="h2"
+                  text={cases.title}
+                  className="okr__h2 okr__reveal okr__hero-title--stagger"
+                  assembleLetters
+                />
                 <div className="okr__cases">
                   {cases.items.map((c, i) => (
                     <article

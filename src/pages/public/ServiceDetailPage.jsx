@@ -69,8 +69,9 @@ export function ServiceDetailPage() {
             )}
             <AnimatedHeadline
               text={s.name}
-              className="okr__h2 okr__detail-title"
+              className="okr__h2 okr__detail-title okr__hero-title--stagger"
               highlightLast={1}
+              assembleLetters
               style={{ margin: "0 0 12px" }}
             />
             {s.tagline && (
@@ -87,7 +88,12 @@ export function ServiceDetailPage() {
                 <div className="okr__section-topbar" style={{ marginBottom: 28 }}>
                   <div>
                     <span className="okr__eyebrow">// {t("services_menu")}</span>
-                    <h2 className="okr__service-section-title">{t("services_focused_count", { count: childServices.length })}</h2>
+                    <AnimatedHeadline
+                      as="h2"
+                      text={t("services_focused_count", { count: childServices.length })}
+                      className="okr__service-section-title okr__hero-title--stagger"
+                      assembleLetters
+                    />
                   </div>
                 </div>
                 <div className="okr__cards okr__cards--services okr__service-child-grid">

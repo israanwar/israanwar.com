@@ -64,7 +64,7 @@ export function SitemapPage() {
             </nav>
 
             <span className="okr__eyebrow">// SITEMAP</span>
-            <AnimatedHeadline text="Peta situs" className="okr__h2" highlightLast={1} style={{ marginBottom: 16 }} />
+            <AnimatedHeadline text="Peta situs" className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters style={{ marginBottom: 16 }} />
             <p style={{ color: "var(--okr-muted)", maxWidth: 640, marginTop: 8, marginBottom: 40, fontSize: 16, lineHeight: 1.6 }}>
               Daftar lengkap {totalPosts} artikel di {activeCategories} kategori aktif, plus halaman utama dan legal.
               Halaman ini juga tersedia dalam format XML di{" "}
@@ -76,9 +76,13 @@ export function SitemapPage() {
 
             {/* Static pages */}
             <section style={{ marginBottom: 56 }}>
-              <h2 style={{ fontSize: 14, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--okr-muted)", marginBottom: 20 }}>
-                Halaman utama
-              </h2>
+              <AnimatedHeadline
+                as="h2"
+                text="Halaman utama"
+                className="okr__hero-title--stagger"
+                assembleLetters
+                style={{ fontSize: 14, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--okr-muted)", marginBottom: 20 }}
+              />
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 10 }}>
                 {staticPages.map((p) => (
                   <li key={p.path}>
@@ -95,9 +99,13 @@ export function SitemapPage() {
             </section>
 
             <section style={{ marginBottom: 56 }}>
-              <h2 style={{ fontSize: 14, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--okr-muted)", marginBottom: 20 }}>
-                Tools aktif ({TOOLS_TOTAL_COUNT})
-              </h2>
+              <AnimatedHeadline
+                as="h2"
+                text={`Tools aktif (${TOOLS_TOTAL_COUNT})`}
+                className="okr__hero-title--stagger"
+                assembleLetters
+                style={{ fontSize: 14, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--okr-muted)", marginBottom: 20 }}
+              />
               {TOOLS_CATALOG.map((category) => (
                 <div key={category.slug} style={{ marginBottom: 28 }}>
                   <h3 style={{ margin: "0 0 12px", fontSize: 18 }}>{category.name}</h3>
@@ -116,9 +124,13 @@ export function SitemapPage() {
 
             {/* Blog articles grouped by category */}
             <section>
-              <h2 style={{ fontSize: 14, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--okr-muted)", marginBottom: 20 }}>
-                Artikel blog per kategori
-              </h2>
+              <AnimatedHeadline
+                as="h2"
+                text="Artikel blog per kategori"
+                className="okr__hero-title--stagger"
+                assembleLetters
+                style={{ fontSize: 14, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--okr-muted)", marginBottom: 20 }}
+              />
 
               {grouped.map(({ category, posts }) => (
                 <section

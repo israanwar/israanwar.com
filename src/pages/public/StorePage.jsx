@@ -88,7 +88,7 @@ export function StorePage() {
               <section className="okr__section okr__page-hero">
           <div className="okr__wrap">
             <span className="okr__eyebrow">{t("store_eyebrow")}</span>
-            <AnimatedHeadline text={t("store_title")} className="okr__h2" highlightFrom={1} />
+            <AnimatedHeadline text={t("store_title")} className="okr__h2 okr__hero-title--stagger" highlightFrom={1} assembleLetters />
             <p style={{ color: "var(--okr-muted)", maxWidth: 640, marginTop: 20, marginBottom: 40 }}>
               {t("store_subtitle")}
             </p>

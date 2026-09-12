@@ -15,7 +15,7 @@ export function TermsPage() {
               <section className="okr__section okr__page-hero">
           <div className="okr__wrap" style={{ maxWidth: 780 }}>
             <span className="okr__eyebrow">{t("foot_legal_label")}</span>
-            <AnimatedHeadline text={p.title || t("foot_terms")} className="okr__h2" highlightLast={1} style={{ marginTop: 20 }} />
+            <AnimatedHeadline text={p.title || t("foot_terms")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters style={{ marginTop: 20 }} />
             {p.updated && (
               <p style={{ color: "var(--okr-dim)", fontSize: 14, marginTop: 12 }}>
                 {t("foot_updated")} {p.updated}

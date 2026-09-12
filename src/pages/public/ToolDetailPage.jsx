@@ -6,6 +6,7 @@ import {
   ShieldCheck, Sparkles, UploadCloud,
 } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
+import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { ImageCompressorWorkspace } from "../../components/tools/ImageCompressorWorkspace";
 import { ImageResizerWorkspace } from "../../components/tools/ImageResizerWorkspace";
 import { getToolBySlug, TOOLS } from "../../data/toolsCatalog";
@@ -49,7 +50,7 @@ export function ToolDetailPage() {
         <div className="okr__wrap">
           <Link to="/tools" className="okr__tool-back"><ArrowLeft size={16} /> All tools</Link>
           <span className="okr__kicker">// {tool.category}</span>
-          <h1>{tool.name}</h1>
+          <AnimatedHeadline as="h1" text={tool.name} className="okr__hero-title--stagger" assembleLetters />
           <p>{tool.description}</p>
           <div className="okr__tool-privacy-chip"><ShieldCheck size={16} /> Runs locally in your browser</div>
         </div>
@@ -68,7 +69,7 @@ export function ToolDetailPage() {
           <div className="okr__tool-explainer">
             <div>
               <span className="okr__tools-overline">HOW IT WORKS</span>
-              <h2>One task. Three clear steps.</h2>
+              <AnimatedHeadline as="h2" text="One task. Three clear steps." className="okr__hero-title--stagger" assembleLetters />
             </div>
             <ol>
               <li><span>01</span><div><strong>Provide the input</strong><p>{tool.kind === "image" ? "Choose a supported image from your device." : "Enter the information the tool needs."}</p></div></li>
@@ -79,7 +80,7 @@ export function ToolDetailPage() {
 
           {related.length > 0 && (
             <section className="okr__tool-related">
-              <div className="okr__tools-section-heading"><div><span className="okr__tools-overline">KEEP WORKING</span><h2>Related tools</h2></div></div>
+              <div className="okr__tools-section-heading"><div><span className="okr__tools-overline">KEEP WORKING</span><AnimatedHeadline as="h2" text="Related tools" className="okr__hero-title--stagger" assembleLetters /></div></div>
               <div className="okr__tool-related-grid">
                 {related.map((item) => <Link key={item.slug} to={`/tools/${item.slug}`}><strong>{item.name}</strong><span>{item.description}</span></Link>)}
               </div>
@@ -196,7 +197,7 @@ function ImageWorkspace({ tool }) {
             <div className="okr__image-preview"><img src={output?.url || preview} alt="Selected preview" /></div>
             <div className="okr__image-controls">
               <span className="okr__tools-overline">SELECTED FILE</span>
-              <h2>{file.name}</h2>
+              <AnimatedHeadline as="h2" text={file.name} className="okr__hero-title--stagger" assembleLetters />
               <p>{formatBytes(file.size)} · {dimensions.width} × {dimensions.height}px</p>
               {config.compress && <RangeField label="Output quality" value={quality} onChange={setQuality} suffix="%" />}
               {config.resize && (
@@ -351,7 +352,7 @@ function GradientGenerator() {
 }
 
 function SocialSizeGuide() {
-  return <div className="okr__size-guide"><div className="okr__size-guide-head"><FileImage size={28} /><div><h2>Common working canvas sizes</h2><p>Use these as practical starting points. Platform requirements can change.</p></div></div><div className="okr__size-table">{SOCIAL_SIZES.map(([name, size, ratio]) => <div key={name}><strong>{name}</strong><span>{size}px</span><small>{ratio}</small></div>)}</div></div>;
+  return <div className="okr__size-guide"><div className="okr__size-guide-head"><FileImage size={28} /><div><AnimatedHeadline as="h2" text="Common working canvas sizes" className="okr__hero-title--stagger" assembleLetters /><p>Use these as practical starting points. Platform requirements can change.</p></div></div><div className="okr__size-table">{SOCIAL_SIZES.map(([name, size, ratio]) => <div key={name}><strong>{name}</strong><span>{size}px</span><small>{ratio}</small></div>)}</div></div>;
 }
 
 function Field({ label, textarea = false, ...props }) {

@@ -4,6 +4,7 @@ import {
   Check, Copy, Clock, X, Download, ShoppingBag, FileImage, ChevronRight, RefreshCw,
 } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
+import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { ORDER_STATUS } from "../../lib/localStore";
 import { ordersData, productsData } from "../../lib/supabaseData";
 import { useLiveSettings } from "../../hooks/usePageData";
@@ -382,7 +383,7 @@ function WaitingView({ order, L }) {
       }}>
         <Clock size={34} />
       </div>
-      <h2 style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 700 }}>{L.waiting_title}</h2>
+      <AnimatedHeadline as="h2" text={L.waiting_title} className="okr__hero-title--stagger" assembleLetters style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 700 }} />
       <p style={{ color: "var(--okr-muted)", margin: "0 0 20px", fontSize: 15, lineHeight: 1.6 }}>
         {L.waiting_body}
       </p>
@@ -432,7 +433,7 @@ function PaidView({ order, L }) {
       }}>
         <Check size={34} />
       </div>
-      <h2 style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 700 }}>{L.paid_title}</h2>
+      <AnimatedHeadline as="h2" text={L.paid_title} className="okr__hero-title--stagger" assembleLetters style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 700 }} />
       <p style={{ color: "var(--okr-muted)", margin: "0 0 24px", fontSize: 15, lineHeight: 1.6 }}>
         {L.paid_body}
       </p>
@@ -492,7 +493,7 @@ function RejectedView({ order, L, onChanged }) {
       }}>
         <X size={34} />
       </div>
-      <h2 style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 700 }}>{L.rejected_title}</h2>
+      <AnimatedHeadline as="h2" text={L.rejected_title} className="okr__hero-title--stagger" assembleLetters style={{ margin: "0 0 8px", fontSize: 22, fontWeight: 700 }} />
       <p style={{ color: "var(--okr-muted)", margin: "0 0 16px", fontSize: 15, lineHeight: 1.6 }}>
         {L.rejected_body}
       </p>

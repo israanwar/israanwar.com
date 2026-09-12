@@ -17,7 +17,7 @@ export function CartPage() {
       <Seo title={`${t("cart_title")} — israanwar`} description={t("cart_title")} noindex />
               <section className="okr__section okr__page-hero">
           <div className="okr__wrap">
-            <AnimatedHeadline text={t("cart_title")} className="okr__h2" highlightLast={1} />
+            <AnimatedHeadline text={t("cart_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
 
             {rows.length === 0 ? (
               <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--okr-muted)" }}>

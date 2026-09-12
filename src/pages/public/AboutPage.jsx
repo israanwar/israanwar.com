@@ -15,7 +15,7 @@ export function AboutPage() {
               <section className="okr__section okr__page-hero">
             <div className="okr__wrap" style={{ maxWidth: 900 }}>
             {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}
-            <AnimatedHeadline text={p.hero_title} className="okr__h2" highlightFrom={3} />
+            <AnimatedHeadline text={p.hero_title} className="okr__h2 okr__hero-title--stagger" highlightFrom={3} assembleLetters />
             {p.hero_subtitle && (
               <p className="okr__page-hero-lead">
                 {p.hero_subtitle}
@@ -27,9 +27,13 @@ export function AboutPage() {
         {p.story_title && (
           <section className="okr__section" style={{ paddingTop: 0 }}>
             <div className="okr__wrap" style={{ maxWidth: 780 }}>
-              <h2 style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 24 }}>
-                {p.story_title}
-              </h2>
+              <AnimatedHeadline
+                as="h2"
+                text={p.story_title}
+                className="okr__hero-title--stagger"
+                assembleLetters
+                style={{ fontSize: "clamp(28px, 4vw, 40px)", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 24 }}
+              />
               <p style={{ color: "var(--okr-muted)", fontSize: 17, lineHeight: 1.75, whiteSpace: "pre-wrap" }}>
                 {p.story_body}
               </p>

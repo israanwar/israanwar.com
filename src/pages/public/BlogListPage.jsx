@@ -131,7 +131,7 @@ export function BlogListPage({ initialCategorySlug = null }) {
 
             {/* Hero */}
             <span className="okr__eyebrow">{heroKicker}</span>
-            <AnimatedHeadline text={heroTitle} className="okr__h2" highlightLast={1} style={{ marginBottom: 16 }} />
+            <AnimatedHeadline text={heroTitle} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters style={{ marginBottom: 16 }} />
             <p style={{ color: "var(--okr-muted)", maxWidth: 720, marginTop: 8, marginBottom: 40, fontSize: 16, lineHeight: 1.6 }}>
               {heroSubtitle}
             </p>

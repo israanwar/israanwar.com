@@ -44,8 +44,9 @@ export function ToolsPage() {
               <span className="okr__kicker">// TOOLS · {TOOLS_TOTAL_COUNT} LIVE</span>
               <AnimatedHeadline
                 text="Useful by design. Private by default."
-                className="okr__hero-title"
+                className="okr__hero-title okr__hero-title--stagger"
                 highlightLast={3}
+                assembleLetters
               />
               <p className="okr__hero-sub">
                 Convert images, build campaign links, generate metadata, and finish small digital tasks without friction. Every tool shown here works now.
@@ -78,7 +79,7 @@ export function ToolsPage() {
                 <div className="okr__tools-section-heading">
                   <div>
                     <span className="okr__tools-overline">START HERE</span>
-                    <h2 id="popular-tools-title">Popular tools</h2>
+                    <AnimatedHeadline as="h2" id="popular-tools-title" text="Popular tools" className="okr__hero-title--stagger" assembleLetters />
                   </div>
                   <p>Fast, focused, and ready to use.</p>
                 </div>
@@ -107,7 +108,7 @@ export function ToolsPage() {
                   <div className="okr__tools-section-heading">
                     <div>
                       <span className="okr__tools-overline">{String(group.tools.length).padStart(2, "0")} ACTIVE</span>
-                      <h2>{group.name}</h2>
+                      <AnimatedHeadline as="h2" text={group.name} className="okr__hero-title--stagger" assembleLetters />
                     </div>
                     <p>{group.description}</p>
                   </div>
@@ -121,7 +122,7 @@ export function ToolsPage() {
             {visibleGroups.length === 0 && (
               <div className="okr__tools-empty">
                 <Search size={30} />
-                <h2>No tool found</h2>
+                <AnimatedHeadline as="h2" text="No tool found" className="okr__hero-title--stagger" assembleLetters />
                 <p>Try a broader search or browse all categories.</p>
                 <button className="okr__btn okr__btn--primary" onClick={() => { setQuery(""); setCategory("all"); }}>Show all tools</button>
               </div>
@@ -130,7 +131,7 @@ export function ToolsPage() {
             <aside className="okr__tools-open-source">
               <div>
                 <span className="okr__tools-overline">OPEN SOURCE FOUNDATION</span>
-                <h2>Transparent tools, shaped for IsraAnwar.</h2>
+                <AnimatedHeadline as="h2" text="Transparent tools, shaped for IsraAnwar." className="okr__hero-title--stagger" assembleLetters />
               </div>
               <p>
                 The utility architecture is informed by the MIT-licensed utils.live project. The interface and product experience are purpose-built for this website.

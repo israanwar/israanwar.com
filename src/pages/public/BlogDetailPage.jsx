@@ -63,8 +63,9 @@ export function BlogDetailPage() {
             )}
             <AnimatedHeadline
               text={post.title}
-              className="okr__h2 okr__detail-title"
+              className="okr__h2 okr__detail-title okr__hero-title--stagger"
               highlightLast={1}
+              assembleLetters
               style={{ margin: "8px 0 20px" }}
             />
             <p style={{ color: "var(--okr-muted)", fontSize: 15, marginBottom: 32, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>

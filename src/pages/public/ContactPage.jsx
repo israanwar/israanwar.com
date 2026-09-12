@@ -45,7 +45,7 @@ export function ContactPage() {
               <section className="okr__section okr__page-hero">
           <div className="okr__wrap">
             {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}
-            <AnimatedHeadline text={p.hero_title} className="okr__h2" highlightLast={1} style={{ marginTop: 20 }} />
+            <AnimatedHeadline text={p.hero_title} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters style={{ marginTop: 20 }} />
             {p.hero_subtitle && (
               <p style={{ color: "var(--okr-muted)", fontSize: 18, lineHeight: 1.6, marginTop: 24, maxWidth: 640 }}>
                 {p.hero_subtitle}

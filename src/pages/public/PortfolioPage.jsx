@@ -43,7 +43,7 @@ export function PortfolioPage() {
                   <section className="okr__section" style={{ paddingTop: 140, paddingBottom: 100 }}>
             <div className="okr__wrap" style={{ maxWidth: 640, textAlign: "center" }}>
               {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}
-              <AnimatedHeadline text={t("portfolio_empty_title")} className="okr__h2" highlightLast={1} style={{ marginTop: 20 }} />
+              <AnimatedHeadline text={t("portfolio_empty_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters style={{ marginTop: 20 }} />
               <p style={{ color: "var(--okr-muted)", marginTop: 20, fontSize: 16, lineHeight: 1.6 }}>
                 {t("portfolio_empty_body")}
               </p>
@@ -65,8 +65,9 @@ export function PortfolioPage() {
               {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}
               <AnimatedHeadline
                 text={p.hero_title || t("portfolio_empty_title")}
-                className="okr__hero-title"
+                className="okr__hero-title okr__hero-title--stagger"
                 highlightLast={1}
+                assembleLetters
                 style={{ marginTop: 24, maxWidth: 920 }}
               />
               {p.hero_subtitle && (
@@ -114,9 +115,12 @@ function PortfolioSection({ eyebrow, title, children }) {
             {eyebrow}
           </div>
           {title && (
-            <h2 className="okr__portfolio-heading">
-              {title}
-            </h2>
+            <AnimatedHeadline
+              as="h2"
+              text={title}
+              className="okr__portfolio-heading okr__hero-title--stagger"
+              assembleLetters
+            />
           )}
         </div>
         <div className="okr__portfolio-rule" />

@@ -90,8 +90,9 @@ export function StoreItemPage() {
                 {displayProduct.category && <div className="okr__product-cat">{displayProduct.category}</div>}
                 <AnimatedHeadline
                   text={displayProduct.name}
-                  className="okr__h2 okr__detail-title"
+                  className="okr__h2 okr__detail-title okr__hero-title--stagger"
                   highlightLast={1}
+                  assembleLetters
                   style={{ margin: "8px 0 16px" }}
                 />
                 <ProductSocialProof product={displayProduct} variant="detail" />

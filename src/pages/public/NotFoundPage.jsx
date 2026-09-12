@@ -10,7 +10,7 @@ export function NotFoundPage() {
               <section className="okr__section" style={{ textAlign: "center" }}>
           <div className="okr__wrap">
             <span className="okr__eyebrow">404</span>
-            <AnimatedHeadline text={t("nf_title")} className="okr__h2" highlightLast={1} />
+            <AnimatedHeadline text={t("nf_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
             <p style={{ color: "var(--okr-muted)", marginTop: 20, marginBottom: 32 }}>
               {t("nf_body")}
             </p>
