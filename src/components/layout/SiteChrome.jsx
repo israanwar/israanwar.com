@@ -9,6 +9,7 @@ import { useI18n } from "../../lib/i18n";
 import { localizeSiteDescription } from "../../lib/pageI18n";
 import { LangThemeSwitcher } from "./LangThemeSwitcher";
 import { IsraAnwarLogo, IsraAnwarMark } from "../brand/IsraAnwarLogo";
+import { FooterParticles } from "./FooterParticles";
 import "../../styles/landing.css";
 import "../../styles/light-theme.css";
 
@@ -284,6 +285,7 @@ export function SiteFooter({ settings }) {
   const description = localizeSiteDescription(settings.description, lang, settings.description_id) || t("site_description");
   return (
     <footer className="okr__footer">
+      <FooterParticles />
       <div className="okr__wrap">
         <div className="okr__footer-card">
           <div className="okr__footer-grid">

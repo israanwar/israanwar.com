@@ -440,6 +440,24 @@
    clip for the watermark now live on this full-width element; .okr__wrap
    inside still centers the actual content to the site's max content width,
    same as every other section — only the visual background is edge-to-edge. */
+/* Quiet WebGL particle field behind the footer content (FooterParticles.jsx).
+   z-index:-1 (not 0) is deliberate: .okr__wrap right below it is a plain,
+   non-positioned static element with no z-index of its own, which paints
+   *in front of* z-index:0 positioned siblings but *behind* negative ones —
+   so -1 is what actually keeps this under the text/links without also
+   having to touch .okr__wrap's own stacking. */
+.okr__footer-particles {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.okr__footer-particles canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .okr__footer {
   position: relative;
   overflow: hidden;
@@ -2607,7 +2625,10 @@
   gap: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--okr-muted);
+  /* Brand orange, not muted gray — this is homepage content (not the
+     header/footer chrome, which stays monochrome per its own separate
+     request), so it keeps the site's usual accent identity. */
+  color: var(--okr-primary-2);
   white-space: nowrap;
   padding-top: 4px;
 }

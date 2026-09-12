@@ -10,6 +10,7 @@ import { localizeHomepage, localizePage, localizeSiteDescription } from "../../l
 import { localizeServiceCardItems } from "../../lib/serviceI18n";
 import { useLandingEffects, useProcessScrollStory } from "../../hooks/useLandingEffects";
 import { BlogPinCard } from "../../components/blog/BlogPinCard";
+import "../../styles/home-services-motion.css";
 
 const DEFAULT_HERO_SUBTITLES = new Set([
   "web, seo, ai workflow & content strategy for personal brands and businesses.",
@@ -509,10 +510,12 @@ export function LandingPage() {
                     <span className="okr__services-eyebrow">
                       <span aria-hidden="true">•</span> Our services
                     </span>
-                    <h2 className="okr__services-headline">
-                      Everything your business needs to grow
-                      <br />
-                      under one roof.
+                    <h2 className="okr__services-headline" aria-label="Everything your business needs to grow under one roof.">
+                      <span aria-hidden="true">
+                        {renderTouchLetters("Everything your business needs to grow", "serviceshead1")}
+                        <br />
+                        {renderTouchLetters("under one roof.", "serviceshead2")}
+                      </span>
                     </h2>
                   </div>
                   <div className="okr__services-list">
@@ -524,12 +527,16 @@ export function LandingPage() {
                       >
                         <span className="okr__services-row-index">{String(i + 1).padStart(2, "0")}</span>
                         <span className="okr__services-row-name">{s.name}</span>
-                        <ArrowRight className="okr__services-row-arrow" size={18} strokeWidth={1.5} aria-hidden="true" />
+                        <span className="okr__services-row-arrow" aria-hidden="true">
+                          <ArrowRight className="okr__services-row-arrow-icon okr__services-row-arrow-icon--front" size={18} strokeWidth={1.5} />
+                          <ArrowRight className="okr__services-row-arrow-icon okr__services-row-arrow-icon--back" size={18} strokeWidth={1.5} />
+                        </span>
                       </Link>
                     ))}
                   </div>
                   <Link to="/services" className="okr__services-all-btn">
-                    All Services
+                    <span className="okr__services-all-btn-fill" aria-hidden="true" />
+                    <span className="okr__services-all-btn-label">All Services</span>
                   </Link>
                 </div>
               </div>

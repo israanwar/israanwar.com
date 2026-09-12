@@ -1,0 +1,164 @@
+/* Homepage Our Services motion, measured from the supplied reference video
+   and its original live component. This file only overrides interaction. */
+
+.okr__services-card .okr__services-list {
+  gap: 0;
+}
+
+.okr__services-card .okr__services-row {
+  --services-row-inline-pad: clamp(20px, 4vw, 56px);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 4px;
+  background: transparent !important;
+  transition:
+    padding-left 400ms ease,
+    padding-right 400ms ease;
+}
+
+/* In the reference, this is one field—not a line followed by a second layer.
+   Its resting 1% height reads as a hairline, then the same field grows upward. */
+.okr__services-card .okr__services-row::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 1%;
+  border-radius: 4px;
+  background: #e5e9eb;
+  transition: height 600ms ease;
+  pointer-events: none;
+}
+
+.okr__services-card .okr__services-row:hover,
+.okr__services-card .okr__services-row:focus-visible {
+  padding-right: calc(var(--services-row-inline-pad) + 24px);
+  padding-left: calc(var(--services-row-inline-pad) + 24px);
+}
+
+.okr__services-card .okr__services-row:hover::before,
+.okr__services-card .okr__services-row:focus-visible::before {
+  height: 100%;
+}
+
+.okr__services-card .okr__services-row > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* The original uses two equal arrows in a clipped flex track. Both move by
+   170%, causing the visible arrow to leave while its twin replaces it. */
+.okr__services-card .okr__services-row-arrow {
+  position: relative;
+  display: flex;
+  width: 24px;
+  height: 18px;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-end;
+  justify-self: end;
+  overflow: hidden;
+  color: var(--okr-text);
+}
+
+.okr__services-card .okr__services-row-arrow-icon {
+  position: static;
+  display: block;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 16px;
+  transform: translateX(0);
+  transition: transform 800ms ease;
+}
+
+.okr__services-card .okr__services-row:hover .okr__services-row-arrow-icon,
+.okr__services-card .okr__services-row:focus-visible .okr__services-row-arrow-icon {
+  transform: translateX(170%);
+}
+
+/* The CTA keeps its black pill. A separate gray field rises from the bottom
+   while the label transitions to black, matching the reference interaction. */
+.okr__services-card .okr__services-all-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #000000;
+  color: #ffffff;
+  transition: color 400ms ease;
+}
+
+.okr__services-card .okr__services-all-btn-fill {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  height: 0;
+  /* Same touch color as the hero's "Discuss your project" button
+     (.okr__btn--primary:hover — #c95732), not the reference's gray. */
+  background: #c95732;
+  transition: height 400ms ease;
+  pointer-events: none;
+}
+
+.okr__services-card .okr__services-all-btn-label {
+  position: relative;
+  z-index: 1;
+}
+
+.okr__services-card .okr__services-all-btn:hover,
+.okr__services-card .okr__services-all-btn:focus-visible {
+  /* Text stays white — matches how "Discuss your project" keeps white
+     text once its background turns orange on hover. */
+  color: #ffffff;
+  background: #000000;
+}
+
+.okr__services-card .okr__services-all-btn:hover .okr__services-all-btn-fill,
+.okr__services-card .okr__services-all-btn:focus-visible .okr__services-all-btn-fill {
+  height: 100%;
+}
+
+.okr__services-card .okr__services-all-btn:active {
+  color: #ffffff;
+  background: #000000;
+}
+
+@media (hover: none) {
+  .okr__services-card .okr__services-row {
+    transition-duration: 180ms;
+  }
+
+  .okr__services-card .okr__services-row::before {
+    height: 0;
+    transition-duration: 180ms;
+  }
+
+  .okr__services-card .okr__services-row:active {
+    padding-right: var(--services-row-inline-pad);
+    padding-left: var(--services-row-inline-pad);
+  }
+
+  .okr__services-card .okr__services-row:active::before {
+    height: 100%;
+  }
+
+  .okr__services-card .okr__services-row:active .okr__services-row-arrow-icon {
+    transform: translateX(170%);
+    transition-duration: 240ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr__services-card .okr__services-row,
+  .okr__services-card .okr__services-row::before,
+  .okr__services-card .okr__services-row-arrow-icon,
+  .okr__services-card .okr__services-all-btn,
+  .okr__services-card .okr__services-all-btn-fill {
+    transition: none !important;
+  }
+}
