@@ -19,28 +19,52 @@ function download(filename, text, mime = "text/csv") {
   URL.revokeObjectURL(url);
 }
 
-// Minimal RFC4180-ish CSV parser — handles quoted fields, embedded commas,
-// and escaped `""` quotes (matches the quoting toCsv() above produces).
-// Not a full CSV spec implementation, but round-trips everything this page
-// exports itself, which is the only supported import path.
+// Excel with an Indonesian (or most non-US) regional format saves CSV with
+// `;` as the field separator instead of `,` — because `,` is the decimal
+// separator there. Detect whichever of , / ; / tab actually separates
+// fields on the header line (outside quotes), so a file re-saved by Excel
+// still imports correctly instead of silently parsing as one giant column.
+function detectDelimiter(text) {
+  const firstLine = (text.split(/\r\n|\r|\n/)[0] ?? "");
+  let best = ",";
+  let bestCount = -1;
+  for (const candidate of [",", ";", "\t"]) {
+    let count = 0;
+    let inQuotes = false;
+    for (const ch of firstLine) {
+      if (ch === '"') inQuotes = !inQuotes;
+      else if (ch === candidate && !inQuotes) count++;
+    }
+    if (count > bestCount) { bestCount = count; best = candidate; }
+  }
+  return bestCount > 0 ? best : ",";
+}
+
+// Minimal RFC4180-ish CSV parser — handles quoted fields, embedded
+// delimiters, and escaped `""` quotes (matches the quoting toCsv() above
+// produces). Not a full CSV spec implementation, but round-trips everything
+// this page exports itself, plus whatever a spreadsheet app re-saves it as
+// (comma or semicolon delimited, with or without a UTF-8 BOM).
 function parseCsv(text) {
+  const clean = text.replace(/^﻿/, ""); // strip BOM, Excel adds this on save
+  const delimiter = detectDelimiter(clean);
   const rows = [];
   let row = [];
   let field = "";
   let inQuotes = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i];
+  for (let i = 0; i < clean.length; i++) {
+    const c = clean[i];
     if (inQuotes) {
       if (c === '"') {
-        if (text[i + 1] === '"') { field += '"'; i++; }
+        if (clean[i + 1] === '"') { field += '"'; i++; }
         else inQuotes = false;
       } else field += c;
     } else if (c === '"') {
       inQuotes = true;
-    } else if (c === ",") {
+    } else if (c === delimiter) {
       row.push(field); field = "";
     } else if (c === "\n" || c === "\r") {
-      if (c === "\r" && text[i + 1] === "\n") i++;
+      if (c === "\r" && clean[i + 1] === "\n") i++;
       row.push(field); field = "";
       rows.push(row); row = [];
     } else {
