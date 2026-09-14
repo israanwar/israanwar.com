@@ -1,13 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Plus, Trash2, Edit, Search, Download, Copy, Check } from "lucide-react";
+import { Plus, Trash2, Edit, Search, Download, Copy, Check, Upload } from "lucide-react";
 import { productsData } from "../../lib/supabaseData";
 
 function toCsv(rows) {
   const esc = (s) => `"${String(s ?? "").replace(/"/g, `""`)}"`;
-  const header = ["No", "Kategori", "Nama", "Slug", "Harga", "Rating", "Terjual", "Status", "Deskripsi"];
+  const header = ["No", "Kategori", "Nama", "Slug", "Harga", "Rating", "Terjual", "Status", "Deskripsi", "Download URL"];
   const lines = [header.join(","),
-    ...rows.map((r, i) => [i + 1, esc(r.category), esc(r.name), r.slug, r.price ?? 0, r.rating ?? "", r.sold_count ?? "", r.status, esc(r.description)].join(","))];
+    ...rows.map((r, i) => [i + 1, esc(r.category), esc(r.name), r.slug, r.price ?? 0, r.rating ?? "", r.sold_count ?? "", r.status, esc(r.description), esc(r.download_url)].join(","))];
   return lines.join("\n");
 }
 function download(filename, text, mime = "text/csv") {
@@ -19,16 +19,95 @@ function download(filename, text, mime = "text/csv") {
   URL.revokeObjectURL(url);
 }
 
+// Minimal RFC4180-ish CSV parser — handles quoted fields, embedded commas,
+// and escaped `""` quotes (matches the quoting toCsv() above produces).
+// Not a full CSV spec implementation, but round-trips everything this page
+// exports itself, which is the only supported import path.
+function parseCsv(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else inQuotes = false;
+      } else field += c;
+    } else if (c === '"') {
+      inQuotes = true;
+    } else if (c === ",") {
+      row.push(field); field = "";
+    } else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); field = "";
+      rows.push(row); row = [];
+    } else {
+      field += c;
+    }
+  }
+  if (field !== "" || row.length) { row.push(field); rows.push(row); }
+  if (!rows.length) return [];
+  const header = rows[0].map((h) => h.trim());
+  return rows.slice(1).filter((r) => r.some((c) => c !== "")).map((r) => {
+    const obj = {};
+    header.forEach((h, idx) => { obj[h] = r[idx] ?? ""; });
+    return obj;
+  });
+}
+
 export function AdminStorePage() {
   const [items, setItems] = useState([]);
   const [q, setQ] = useState("");
   const [cat, setCat] = useState("All");
   const [copied, setCopied] = useState(false);
+  const [importBusy, setImportBusy] = useState(false);
+  const [importResult, setImportResult] = useState(null);
+  const fileInputRef = useRef(null);
 
   async function load() {
     setItems(await productsData.list());
   }
   useEffect(() => { load(); }, []);
+
+  // Bulk-import Download URL (and other CSV-carried fields) by matching on
+  // `slug` — the counterpart to Export CSV above. Lets Isra fill in real
+  // file links for many products at once in a spreadsheet instead of
+  // opening each product's edit page individually. Only non-empty cells
+  // overwrite existing values; unmatched slugs are reported, never silently
+  // dropped.
+  async function handleImportFile(e) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file later
+    if (!file) return;
+    setImportBusy(true);
+    setImportResult(null);
+    try {
+      const text = await file.text();
+      const rows = parseCsv(text);
+      const bySlug = new Map(items.map((it) => [it.slug, it]));
+      let updated = 0;
+      let unchanged = 0;
+      const notFound = [];
+      for (const row of rows) {
+        const slug = (row.Slug || row.slug || "").trim();
+        const newUrl = (row["Download URL"] ?? row.download_url ?? "").trim();
+        if (!slug || !newUrl) continue;
+        const item = bySlug.get(slug);
+        if (!item) { notFound.push(slug); continue; }
+        if ((item.download_url ?? "") === newUrl) { unchanged++; continue; }
+        await productsData.update(item.id, { download_url: newUrl });
+        updated++;
+      }
+      setImportResult({ updated, unchanged, notFound });
+      if (updated > 0) await load();
+    } catch (err) {
+      setImportResult({ error: err.message ?? "Gagal membaca file." });
+    } finally {
+      setImportBusy(false);
+    }
+  }
 
   const categories = useMemo(() => {
     const set = new Set(items.map((i) => i.category).filter(Boolean));
@@ -79,10 +158,45 @@ export function AdminStorePage() {
         >
           <Download size={14} /> Export JSON
         </button>
+        <button
+          type="button"
+          className="wpx__btn wpx__btn--secondary"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={importBusy}
+          title="Import kolom Download URL (dan lainnya) dari CSV hasil Export CSV — cocokkan lewat Slug"
+        >
+          <Upload size={14} /> {importBusy ? "Mengimpor…" : "Import CSV"}
+        </button>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,text/csv"
+          onChange={handleImportFile}
+          style={{ display: "none" }}
+        />
         <Link className="wpx__btn wpx__btn--primary" to="/admin/store/new">
           <Plus size={14} /> Tambah item
         </Link>
       </div>
+
+      {importResult && (
+        <div
+          className={`wpx__notice wpx__notice--${importResult.error ? "error" : "success"}`}
+          role="status"
+        >
+          {importResult.error ? (
+            <>Gagal import: {importResult.error}</>
+          ) : (
+            <>
+              Import selesai — {importResult.updated} produk diupdate, {importResult.unchanged} tidak berubah
+              {importResult.notFound.length > 0 && (
+                <> , {importResult.notFound.length} slug tidak ditemukan ({importResult.notFound.slice(0, 5).join(", ")}{importResult.notFound.length > 5 ? ", …" : ""})</>
+              )}
+              .
+            </>
+          )}
+        </div>
+      )}
 
       <div style={{ display: "flex", gap: 12, marginBottom: 16, flexWrap: "wrap" }}>
         <div style={{ position: "relative", flex: 1, minWidth: 220 }}>
