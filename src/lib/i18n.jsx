@@ -237,6 +237,14 @@ const T = {
     hero_cta_primary: "Konsultasi",
     hero_cta_secondary: "Diskusikan proyek Anda",
     cta_wa_button: "Hubungi via WhatsApp",
+    // Chat widget
+    chat_open_label: "Buka chat",
+    chat_close_label: "Tutup chat",
+    chat_title: "Balao",
+    chat_greeting: "Halo, aku Balao! Tanya-tanya aja soal layanan, tools, blog, portofolio, atau cara ngehubungin kita.",
+    chat_placeholder: "Tulis pertanyaan Anda…",
+    chat_send: "Kirim",
+    chat_sending: "Mengetik…",
     // Meta
     lang_switch: "Bahasa",
   },
@@ -456,6 +464,13 @@ const T = {
     hero_cta_primary: "Consult",
     hero_cta_secondary: "Discuss your project",
     cta_wa_button: "Contact via WhatsApp",
+    chat_open_label: "Open chat",
+    chat_close_label: "Close chat",
+    chat_title: "Balao",
+    chat_greeting: "Hey, I'm Balao! Ask me anything about our services, tools, blog, portfolio, or how to reach us.",
+    chat_placeholder: "Type your question…",
+    chat_send: "Send",
+    chat_sending: "Typing…",
     lang_switch: "Language",
   },
 };

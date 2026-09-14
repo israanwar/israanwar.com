@@ -11,6 +11,7 @@ import { LangThemeSwitcher } from "./LangThemeSwitcher";
 import { IsraAnwarMark } from "../brand/IsraAnwarLogo";
 import { FooterParticles } from "./FooterParticles";
 import { NewsletterForm } from "../marketing/NewsletterForm";
+import { SiteChatWidget } from "../chat/SiteChatWidget";
 import "../../styles/landing.css";
 import "../../styles/light-theme.css";
 
@@ -703,6 +704,7 @@ export function SiteChrome({ children, settings: providedSettings }) {
       {children}
       <NewsletterBand />
       <SiteFooter settings={settings} />
+      <SiteChatWidget />
     </div>
   );
 }

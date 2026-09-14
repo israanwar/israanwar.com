@@ -96,7 +96,7 @@
 .okr::after {
   display: none;
 }
-.okr > :not(.okr__aurora):not(.okr__header):not(.okr__mobile-menu):not(.okr__scroll-progress) {
+.okr > :not(.okr__aurora):not(.okr__header):not(.okr__mobile-menu):not(.okr__scroll-progress):not(.okr__chat) {
   position: relative;
   z-index: 1;
 }

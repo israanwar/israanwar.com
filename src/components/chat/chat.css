@@ -1,0 +1,243 @@
+/* Floating AI chat widget — brand colors only (black/near-black + the
+   site's orange accent), consistent with every other primary CTA. Fixed
+   positioning so it floats above page content on every route.
+   `.okr__chat` also needs a `:not(.okr__chat)` exclusion in landing.css's
+   `.okr > :not(...)` rule (same reasoning already documented there for
+   `.okr__mobile-menu`) — otherwise that rule forces `position: relative`
+   onto this direct child of `.okr` and `position: fixed` never applies,
+   leaving the widget sitting in normal document flow near the bottom of
+   the page instead of floating over it. */
+.okr__chat {
+  position: fixed;
+  right: clamp(16px, 4vw, 28px);
+  bottom: clamp(16px, 4vw, 28px);
+  z-index: 200;
+}
+
+.okr__chat-trigger {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 999px;
+  background: #20181b;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 14px 32px rgba(32, 24, 27, 0.28);
+  transition: background 200ms ease, transform 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .okr__chat-trigger:hover {
+    background: #c95732;
+    transform: translateY(-2px);
+  }
+}
+
+.okr__chat-trigger:active,
+.okr__chat-trigger:focus-visible {
+  background: #c95732;
+  outline: none;
+}
+
+.okr__chat-panel {
+  position: absolute;
+  right: 0;
+  bottom: 68px;
+  width: min(360px, calc(100vw - 32px));
+  height: min(520px, calc(100dvh - 120px));
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(32, 24, 27, 0.1);
+  box-shadow: 0 28px 68px rgba(32, 24, 27, 0.22);
+  overflow: hidden;
+}
+
+.okr__chat-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 14px 16px;
+  background: #20181b;
+  color: #ffffff;
+  flex: 0 0 auto;
+}
+
+.okr__chat-panel-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: #c95732;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.okr__chat-panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.okr__chat-panel-close {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.okr__chat-panel-close:hover,
+.okr__chat-panel-close:focus-visible,
+.okr__chat-panel-close:active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  outline: none;
+}
+
+.okr__chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fdf9f4;
+}
+
+.okr__chat-bubble {
+  max-width: 84%;
+  padding: 10px 13px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.okr__chat-bubble--assistant {
+  align-self: flex-start;
+  background: #ffffff;
+  border: 1px solid rgba(32, 24, 27, 0.1);
+  color: #20181b;
+  border-bottom-left-radius: 4px;
+}
+
+.okr__chat-bubble--user {
+  align-self: flex-end;
+  background: #20181b;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.okr__chat-bubble--typing {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 14px;
+}
+
+.okr__chat-bubble--typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(32, 24, 27, 0.4);
+  animation: okrChatTypingDot 1000ms ease-in-out infinite;
+}
+
+.okr__chat-bubble--typing span:nth-child(2) { animation-delay: 150ms; }
+.okr__chat-bubble--typing span:nth-child(3) { animation-delay: 300ms; }
+
+@keyframes okrChatTypingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+
+.okr__chat-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid rgba(32, 24, 27, 0.1);
+  background: #ffffff;
+  flex: 0 0 auto;
+}
+
+.okr__chat-input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgba(32, 24, 27, 0.16);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 13.5px;
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.okr__chat-input:focus {
+  border-color: #b84e2c;
+}
+
+.okr__chat-send {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  background: #20181b;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 150ms ease, opacity 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.okr__chat-send:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.okr__chat-send:not(:disabled):active,
+.okr__chat-send:not(:disabled):focus-visible {
+  background: #c95732;
+  outline: none;
+}
+
+@media (hover: hover) {
+  .okr__chat-send:not(:disabled):hover {
+    background: #c95732;
+  }
+}
+
+@media (max-width: 480px) {
+  .okr__chat-panel {
+    right: -8px;
+    width: calc(100vw - 16px);
+    height: min(70dvh, 560px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr__chat-trigger,
+  .okr__chat-send,
+  .okr__chat-panel-close {
+    transition: none;
+  }
+  .okr__chat-bubble--typing span {
+    animation: none;
+    opacity: 0.8;
+  }
+}

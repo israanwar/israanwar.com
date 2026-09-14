@@ -40,14 +40,27 @@ const { TOOLS, TOOLS_CATALOG } = await import(
 );
 
 const SITE_URL = "https://www.israanwar.com";
+// SITE_NAME stays "Isra Anwar" — it only feeds the <title> tag suffix
+// ("Page Title | Isra Anwar"), which needs to stay short and readable in
+// a browser tab / search result blue link.
 const SITE_NAME = "Isra Anwar";
-const SOCIAL_SITE_NAME = "israanwar.com";
+// SITE_IDENTITY is the site's declared identity for search engines and AI
+// answer engines specifically — og:site_name and every schema.org "name"
+// field (Organization, WebSite, ProfessionalService) below, per explicit
+// request to use this instead of the personal name "Isra Anwar" there.
+const SITE_IDENTITY =
+  "Web Development & AI Integration, Branding & Marketing, SEO, AEO & GEO.";
+const SOCIAL_SITE_NAME = SITE_IDENTITY;
 const DEFAULT_DESCRIPTION =
   "Web, SEO, AI workflow & content strategy for personal brands and businesses.";
 
 // Settings context untuk schema builders (mirror struktur useLiveSettings).
+// site_name here only ever reaches buildOrganization/buildWebsite/
+// buildProfessionalService (see structuredData.js) — it's the search-engine
+// identity, not the client app's own site_name (that's a separate,
+// Supabase-backed value used for the footer/logo/copyright text).
 const settings = {
-  site_name: SITE_NAME,
+  site_name: SITE_IDENTITY,
   site_url: SITE_URL,
   description: DEFAULT_DESCRIPTION,
 };
