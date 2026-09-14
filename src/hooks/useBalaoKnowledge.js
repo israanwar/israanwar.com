@@ -37,8 +37,26 @@ export function useBalaoKnowledge() {
           .map((s) => s.name),
       }));
 
+    // Individual child services (e.g. "On-Page SEO", "Technical SEO" under
+    // Search Optimization) — kept separate from `categories` so Balao can
+    // answer a specific-service question with that service's own
+    // slug/tagline/description/deliverables instead of only the parent
+    // category's generic overview.
+    const services = rawServices
+      .filter((s) => s.kind === "service")
+      .map((s) => ({
+        slug: s.slug,
+        name: s.name,
+        parentSlug: s.parent_slug,
+        parentName: s.parent_name || "",
+        tagline: s.tagline || "",
+        description: s.description || s.body || "",
+        deliverables: Array.isArray(s.deliverables) ? s.deliverables : [],
+      }));
+
     return {
       categories,
+      services,
       tools: TOOLS_CATALOG,
       toolsTotalCount: TOOLS_TOTAL_COUNT,
       blogCategories: BLOG_CATEGORIES,

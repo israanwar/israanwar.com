@@ -55,6 +55,22 @@
   border: 1px solid rgba(32, 24, 27, 0.1);
   box-shadow: 0 28px 68px rgba(32, 24, 27, 0.22);
   overflow: hidden;
+  transition: width 200ms ease, height 200ms ease;
+}
+
+/* Expanded state switches to viewport-relative fixed insets instead of
+   growing from the same bottom-right anchor as the small panel — anchoring
+   a much taller panel from the bottom (as the small one does, tucked just
+   above the trigger button) pushes its own header past the top of the
+   viewport on anything but a tall screen. Fixed top+bottom insets with no
+   explicit height instead guarantee it always fits, at any viewport size. */
+.okr__chat-panel--expanded {
+  position: fixed;
+  top: clamp(16px, 4vh, 28px);
+  right: clamp(16px, 4vw, 28px);
+  bottom: clamp(16px, 4vh, 28px);
+  width: min(720px, calc(100vw - 32px));
+  height: auto;
 }
 
 .okr__chat-panel-header {
@@ -84,7 +100,9 @@
   flex: 1;
 }
 
-.okr__chat-panel-close {
+.okr__chat-panel-close,
+.okr__chat-panel-reset,
+.okr__chat-panel-expand {
   display: grid;
   place-items: center;
   width: 30px;
@@ -100,10 +118,30 @@
 
 .okr__chat-panel-close:hover,
 .okr__chat-panel-close:focus-visible,
-.okr__chat-panel-close:active {
+.okr__chat-panel-close:active,
+.okr__chat-panel-expand:hover,
+.okr__chat-panel-expand:focus-visible,
+.okr__chat-panel-expand:active,
+.okr__chat-panel-reset:not(:disabled):hover,
+.okr__chat-panel-reset:not(:disabled):focus-visible,
+.okr__chat-panel-reset:not(:disabled):active {
   background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
   outline: none;
+}
+
+.okr__chat-panel-reset:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* The expand toggle only makes sense once there's real extra screen room
+   to grow into — hidden below the breakpoint where the panel is already
+   forced near-fullscreen (see the max-width: 480px block further down). */
+@media (max-width: 480px) {
+  .okr__chat-panel-expand {
+    display: none;
+  }
 }
 
 .okr__chat-messages {
@@ -117,13 +155,71 @@
 }
 
 .okr__chat-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   max-width: 84%;
   padding: 10px 13px;
   border-radius: 14px;
   font-size: 13.5px;
   line-height: 1.5;
+}
+
+.okr__chat-bubble-text {
+  margin: 0;
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* The blinking caret shown after the reveal-in-progress text (see
+   startReveal() in SiteChatWidget.jsx) — the visible cue that Balao is
+   actively "typing" this answer, not just displaying a finished one. */
+.okr__chat-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: currentColor;
+  animation: okrChatCaretBlink 800ms step-end infinite;
+}
+
+@keyframes okrChatCaretBlink {
+  50% { opacity: 0; }
+}
+
+/* Only assistant bubbles render this (see SiteChatWidget.jsx) — a copy
+   affordance on the user's own message would be pointless. Sits flush to
+   the bubble's own bottom-right corner rather than a floating overlay, so
+   it never needs extra hit-testing against page scroll. */
+.okr__chat-copy {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.45;
+  cursor: pointer;
+  padding: 3px;
+  margin: -3px -4px -3px 0;
+  border-radius: 6px;
+  transition: opacity 150ms ease, background 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .okr__chat-copy:hover {
+    opacity: 0.9;
+    background: rgba(32, 24, 27, 0.08);
+  }
+}
+
+.okr__chat-copy:active,
+.okr__chat-copy:focus-visible {
+  opacity: 0.9;
+  background: rgba(32, 24, 27, 0.08);
+  outline: none;
 }
 
 .okr__chat-bubble--assistant {
@@ -143,12 +239,28 @@
 
 .okr__chat-bubble--typing {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   padding: 12px 14px;
 }
 
-.okr__chat-bubble--typing span {
+/* The staged status text (see THINKING_STAGE_KEYS in SiteChatWidget.jsx) —
+   muted so it doesn't read as an actual finished answer. */
+.okr__chat-thinking-text {
+  font-size: 12.5px;
+  color: rgba(32, 24, 27, 0.55);
+}
+
+.okr__chat-thinking-dots {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.okr__chat-thinking-dots span {
   width: 6px;
   height: 6px;
   border-radius: 999px;
@@ -156,12 +268,75 @@
   animation: okrChatTypingDot 1000ms ease-in-out infinite;
 }
 
-.okr__chat-bubble--typing span:nth-child(2) { animation-delay: 150ms; }
-.okr__chat-bubble--typing span:nth-child(3) { animation-delay: 300ms; }
+.okr__chat-thinking-dots span:nth-child(2) { animation-delay: 150ms; }
+.okr__chat-thinking-dots span:nth-child(3) { animation-delay: 300ms; }
 
 @keyframes okrChatTypingDot {
   0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
   30% { transform: translateY(-3px); opacity: 1; }
+}
+
+/* Document-attached / reading / error row, shown between the messages list
+   and the form only while there's something to show — see the conditional
+   render in SiteChatWidget.jsx. */
+.okr__chat-doc-bar {
+  padding: 8px 12px 0;
+  flex: 0 0 auto;
+  background: #ffffff;
+}
+
+.okr__chat-doc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(32, 24, 27, 0.06);
+  color: #20181b;
+  font-size: 12px;
+}
+
+.okr__chat-doc-chip--error {
+  background: rgba(184, 78, 44, 0.12);
+  color: #b84e2c;
+}
+
+.okr__chat-doc-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+}
+
+.okr__chat-doc-remove {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.okr__chat-doc-remove:hover,
+.okr__chat-doc-remove:focus-visible,
+.okr__chat-doc-remove:active {
+  opacity: 1;
+  outline: none;
+}
+
+.okr__chat-doc-spinner {
+  animation: okrChatSpin 900ms linear infinite;
+}
+
+@keyframes okrChatSpin {
+  to { transform: rotate(360deg); }
 }
 
 .okr__chat-form {
@@ -172,6 +347,44 @@
   border-top: 1px solid rgba(32, 24, 27, 0.1);
   background: #ffffff;
   flex: 0 0 auto;
+}
+
+.okr__chat-file-input {
+  display: none;
+}
+
+.okr__chat-upload {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(32, 24, 27, 0.16);
+  border-radius: 999px;
+  background: transparent;
+  color: #20181b;
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease, opacity 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.okr__chat-upload:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.okr__chat-upload:not(:disabled):active,
+.okr__chat-upload:not(:disabled):focus-visible {
+  border-color: #b84e2c;
+  color: #b84e2c;
+  outline: none;
+}
+
+@media (hover: hover) {
+  .okr__chat-upload:not(:disabled):hover {
+    border-color: #b84e2c;
+    color: #b84e2c;
+  }
 }
 
 .okr__chat-input {
@@ -233,11 +446,19 @@
 @media (prefers-reduced-motion: reduce) {
   .okr__chat-trigger,
   .okr__chat-send,
+  .okr__chat-upload,
+  .okr__chat-panel,
   .okr__chat-panel-close {
     transition: none;
   }
-  .okr__chat-bubble--typing span {
+  .okr__chat-thinking-dots span {
     animation: none;
     opacity: 0.8;
+  }
+  .okr__chat-doc-spinner {
+    animation: none;
+  }
+  .okr__chat-caret {
+    animation: none;
   }
 }

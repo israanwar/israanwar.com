@@ -24,6 +24,9 @@ const { BLOG_CATEGORIES } = await import(
 const { TOOLS } = await import(
   `file://${projectRoot}/src/data/toolsCatalog.js`
 );
+const { ISRA_ANWAR_SERVICES_SEED } = await import(
+  `file://${projectRoot}/src/data/serviceCatalog.js`
+);
 
 // Konfigurasi domain — sesuaikan kalau pindah host.
 const SITE_URL = "https://www.israanwar.com";
@@ -102,6 +105,31 @@ const toolEntries = TOOLS.map((tool) =>
   })
 );
 
+// Service category + individual service pages — these previously had no
+// sitemap entries at all (only /services itself did), matching the same
+// gap fixed in prerender.mjs (see its comment there for the full story).
+const serviceCategoryEntries = ISRA_ANWAR_SERVICES_SEED
+  .filter((s) => s.kind === "category")
+  .map((cat) =>
+    urlEntry({
+      loc: `${SITE_URL}/services/${cat.slug}`,
+      lastmod: today,
+      changefreq: "monthly",
+      priority: 0.7,
+    })
+  );
+
+const serviceEntries = ISRA_ANWAR_SERVICES_SEED
+  .filter((s) => s.kind === "service")
+  .map((svc) =>
+    urlEntry({
+      loc: `${SITE_URL}/services/${svc.slug}`,
+      lastmod: today,
+      changefreq: "monthly",
+      priority: 0.6,
+    })
+  );
+
 // Sort blog posts: newest first supaya crawler prioritas ke content baru.
 const sortedPosts = [...ISRA_ANWAR_BLOG_POSTS_SEED]
   .filter((p) => p.status === "published")
@@ -119,15 +147,17 @@ const postEntries = sortedPosts.map((p) =>
 const xml =
   `<?xml version="1.0" encoding="UTF-8"?>\n` +
   `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  [...staticEntries, ...toolEntries, ...categoryEntries, ...postEntries].join("\n") +
+  [...staticEntries, ...toolEntries, ...serviceCategoryEntries, ...serviceEntries, ...categoryEntries, ...postEntries].join("\n") +
   `\n</urlset>\n`;
 
 const outPath = resolve(projectRoot, "public/sitemap.xml");
 writeFileSync(outPath, xml, "utf8");
 
-const total = staticEntries.length + toolEntries.length + categoryEntries.length + postEntries.length;
+const total = staticEntries.length + toolEntries.length + serviceCategoryEntries.length + serviceEntries.length + categoryEntries.length + postEntries.length;
 console.log(`✓ sitemap.xml regenerated → ${total} URLs`);
 console.log(`  · ${staticEntries.length} static pages`);
 console.log(`  · ${toolEntries.length} working tools`);
+console.log(`  · ${serviceCategoryEntries.length} service categories`);
+console.log(`  · ${serviceEntries.length} individual services`);
 console.log(`  · ${categoryEntries.length} blog categories`);
 console.log(`  · ${postEntries.length} blog posts`);

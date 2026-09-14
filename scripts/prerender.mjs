@@ -237,6 +237,19 @@ function renderTiptapDoc(doc) {
   return doc.content.map(renderTiptapNode).join("\n");
 }
 
+// Service category/child `description` fields are plain text with blank
+// lines between paragraphs (see buildCategoryDescription/
+// buildServiceDescription in serviceCatalog.js) — not Tiptap JSON like blog
+// posts, so this is a simple paragraph splitter rather than renderTiptapNode.
+function renderPlainParagraphs(text) {
+  return String(text || "")
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => `<p>${xmlEsc(p)}</p>`)
+    .join("\n    ");
+}
+
 function fmtDateID(iso) {
   if (!iso) return "";
   const d = new Date(iso);
@@ -292,18 +305,19 @@ function renderBodyHtml(route) {
   </main>`;
   } else if (route.path === "/services") {
     // Real service catalog data (src/data/serviceCatalog.js) — one H2 +
-    // tagline + service list per category, not the full ~820-word body
-    // each individual service carries (that belongs on its own detail
-    // page, which isn't prerendered yet — see file-level TODO note).
+    // tagline + linked service list per category. Category and individual
+    // service names now link to their own real prerendered pages (see the
+    // route.serviceCategory / route.service branches below) instead of
+    // being plain text, now that those pages actually exist.
     const categories = ISRA_ANWAR_SERVICES_SEED.filter((s) => s.kind === "category");
     const sections = categories
       .map((cat) => {
         const services = ISRA_ANWAR_SERVICES_SEED
           .filter((s) => s.kind === "service" && s.parent_slug === cat.slug)
-          .map((s) => `<li>${xmlEsc(s.name)}</li>`)
+          .map((s) => `<li><a href="/services/${xmlEsc(s.slug)}">${xmlEsc(s.name)}</a></li>`)
           .join("\n        ");
         return `<section>
-        <h2>${xmlEsc(cat.name)}</h2>
+        <h2><a href="/services/${xmlEsc(cat.slug)}">${xmlEsc(cat.name)}</a></h2>
         <p>${xmlEsc(cat.tagline)}</p>
         <ul>
           ${services}
@@ -315,6 +329,42 @@ function renderBodyHtml(route) {
     <h1>${xmlEsc(route.h1 || route.title)}</h1>
     <p>${xmlEsc(route.description)}</p>
     ${sections}
+  </main>`;
+  } else if (route.serviceCategory) {
+    // Service category detail page (e.g. /services/search-optimization) —
+    // real category essay (category.description, the same ~300-word text
+    // ServicesPage.jsx would show) plus a linked list of every child
+    // service in it.
+    const cat = route.serviceCategory;
+    const children = ISRA_ANWAR_SERVICES_SEED
+      .filter((s) => s.kind === "service" && s.parent_slug === cat.slug)
+      .map((s) => `<li><a href="/services/${xmlEsc(s.slug)}">${xmlEsc(s.name)}</a></li>`)
+      .join("\n        ");
+    main = `<main>
+    <p><a href="/">Home</a> / <a href="/services">Services</a></p>
+    <h1>${xmlEsc(cat.name)}</h1>
+    <p>${xmlEsc(cat.tagline)}</p>
+    <article>${renderPlainParagraphs(cat.description)}</article>
+    <h2>Services in this category</h2>
+    <ul>
+      ${children}
+    </ul>
+  </main>`;
+  } else if (route.service) {
+    // Individual service detail page (e.g. /services/search-optimization-
+    // on-page-seo) — the real ~820-word description + deliverables every
+    // service carries in the catalog (src/data/serviceCatalog.js), the
+    // same content ServiceDetailPage.jsx renders for real visitors.
+    const { svc, category } = route.service;
+    const deliverables = (svc.deliverables || [])
+      .map((d) => `<li>${xmlEsc(d)}</li>`)
+      .join("\n        ");
+    main = `<main>
+    <p><a href="/">Home</a> / <a href="/services">Services</a>${category ? ` / <a href="/services/${xmlEsc(category.slug)}">${xmlEsc(category.name)}</a>` : ""}</p>
+    <h1>${xmlEsc(svc.name)}</h1>
+    <p>${xmlEsc(svc.tagline)}</p>
+    <article>${renderPlainParagraphs(svc.description)}</article>
+    ${deliverables ? `<h2>What's included</h2>\n    <ul>\n      ${deliverables}\n    </ul>` : ""}
   </main>`;
   } else if (route.path === "/tools") {
     // Mirrors TOOLS_CATALOG in toolsCatalog.js — same data, imported directly
@@ -586,6 +636,39 @@ TOOLS.forEach((tool) => {
   });
 });
 
+// Service category + individual service pages — these previously had no
+// prerendered file at all (only /services itself did), which meant every
+// /services/<slug> URL 404'd at the host level on a fresh load: no static
+// file existed for it, and there was no SPA-fallback rewrite configured
+// (see vercel.json) to hand it to the client-side router instead. Fixed on
+// both ends — this generates a real, fully-indexable page per slug, and
+// vercel.json now also covers any future gap the same way.
+const serviceCategories = ISRA_ANWAR_SERVICES_SEED.filter((s) => s.kind === "category");
+const serviceChildren = ISRA_ANWAR_SERVICES_SEED.filter((s) => s.kind === "service");
+
+serviceCategories.forEach((cat) => {
+  routes.push({
+    path: `/services/${cat.slug}`,
+    title: cat.name,
+    description: cat.tagline,
+    currentTitle: cat.name,
+    ogType: "website",
+    serviceCategory: cat,
+  });
+});
+
+serviceChildren.forEach((svc) => {
+  const category = serviceCategories.find((c) => c.slug === svc.parent_slug) || null;
+  routes.push({
+    path: `/services/${svc.slug}`,
+    title: svc.name,
+    description: svc.tagline,
+    currentTitle: svc.name,
+    ogType: "website",
+    service: { svc, category },
+  });
+});
+
 // Kategori pages — filter list per kategori.
 BLOG_CATEGORIES.forEach((c) => {
   routes.push({
@@ -629,6 +712,8 @@ publishedPosts.forEach((post, postIndex) => {
 let staticCount = 0;
 let categoryCount = 0;
 let postCount = 0;
+let serviceCategoryCount = 0;
+let serviceCount = 0;
 
 routes.forEach((route) => {
   const html = buildRouteHtml(route);
@@ -642,10 +727,14 @@ routes.forEach((route) => {
 
   if (route.article) postCount++;
   else if (route.path.startsWith("/blog/")) categoryCount++;
+  else if (route.serviceCategory) serviceCategoryCount++;
+  else if (route.service) serviceCount++;
   else staticCount++;
 });
 
 console.log(`✓ prerender complete → ${routes.length} HTML files`);
 console.log(`  · ${staticCount} static pages`);
+console.log(`  · ${serviceCategoryCount} service categories`);
+console.log(`  · ${serviceCount} individual services`);
 console.log(`  · ${categoryCount} blog categories`);
 console.log(`  · ${postCount} blog posts`);

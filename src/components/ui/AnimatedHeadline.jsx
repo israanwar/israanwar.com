@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { getGradientColor } from "../../lib/gradientText";
 
 export function AnimatedHeadline({
   as: Tag = "h1",
@@ -75,7 +76,7 @@ export function AnimatedHeadline({
                       "--word-i": wordIndex,
                       "--glyph-local": glyphInWord,
                       "--glyph-color": wordIndex >= highlightStart
-                        ? getWordGradientColor(glyphInWord, glyphs.length)
+                        ? getGradientColor(glyphInWord, glyphs.length)
                         : "#20181b",
                       "--scatter-x": `${[-96, 66, -52, 84, -72, 46, -62, 90][glyphIndex % 8]}px`,
                       "--scatter-y": `${[66, -74, 88, -48, -84, 56, -62, 78][glyphIndex % 8]}px`,
@@ -107,24 +108,6 @@ export function AnimatedHeadline({
       })}
     </Tag>
   );
-}
-
-function getWordGradientColor(index, total) {
-  const stops = [
-    { at: 0, color: [212, 103, 67] },
-    { at: 0.4, color: [155, 68, 47] },
-    { at: 1, color: [59, 37, 40] },
-  ];
-  const progress = total > 1 ? index / (total - 1) : 0;
-  const rightIndex = stops.findIndex((stop) => progress <= stop.at);
-  const right = stops[Math.max(rightIndex, 1)];
-  const left = stops[Math.max(rightIndex - 1, 0)];
-  const span = Math.max(right.at - left.at, Number.EPSILON);
-  const localProgress = (progress - left.at) / span;
-  const channels = left.color.map((channel, channelIndex) => (
-    Math.round(channel + (right.color[channelIndex] - channel) * localProgress)
-  ));
-  return `rgb(${channels.join(", ")})`;
 }
 
 function getHighlightStart({ highlightFrom, highlightLast, highlightRatio, wordTotal }) {
