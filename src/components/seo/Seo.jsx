@@ -126,7 +126,7 @@ export function Seo({
     upsertMeta('meta[name="description"]', { name: "description", content: metaDescription });
     upsertMeta('meta[name="robots"]', { name: "robots", content: robots });
     upsertMeta('meta[property="og:type"]', { property: "og:type", content: article?.post ? "article" : "website" });
-    upsertMeta('meta[property="og:site_name"]', { property: "og:site_name", content: getSocialSiteName() });
+    upsertMeta('meta[property="og:site_name"]', { property: "og:site_name", content: settings.site_name || getSocialSiteName() });
     upsertMeta('meta[property="og:title"]', { property: "og:title", content: shareTitle });
     upsertMeta('meta[property="og:description"]', { property: "og:description", content: metaDescription });
     upsertMeta('meta[property="og:url"]', { property: "og:url", content: canonicalUrl });

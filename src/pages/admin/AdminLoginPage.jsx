@@ -35,45 +35,47 @@ export function AdminLoginPage() {
   }
 
   return (
-    <div className="wpx-login">
-      <form className="wpx-login__card" onSubmit={submit}>
-        <div className="wpx-login__brand">
-          <IsraAnwarLogo name="israanwar" className="wpx-login__brand-logo" />
-          <h1 className="wpx-login__brand-title">Panel Admin</h1>
-          <p className="wpx-login__brand-sub">
-            Masuk untuk mengelola situs
-          </p>
-        </div>
+    <div className="wpx">
+      <div className="wpx-login">
+        <form className="wpx-login__card" onSubmit={submit}>
+          <div className="wpx-login__brand">
+            <IsraAnwarLogo name="israanwar" className="wpx-login__brand-logo" />
+            <h1 className="wpx-login__brand-title">Panel Admin</h1>
+            <p className="wpx-login__brand-sub">
+              Masuk untuk mengelola situs
+            </p>
+          </div>
 
-        {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
+          {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
 
-        <div className="wpx__field">
-          <label className="wpx__label">Email</label>
-          <input
-            className="wpx__input"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@israanwar.com"
-            required autoFocus
-          />
-        </div>
-        <div className="wpx__field">
-          <label className="wpx__label">Password</label>
-          <input
-            className="wpx__input"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Minimal 6 karakter"
-            required minLength={6}
-          />
-        </div>
+          <div className="wpx__field">
+            <label className="wpx__label">Email</label>
+            <input
+              className="wpx__input"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@israanwar.com"
+              required autoFocus
+            />
+          </div>
+          <div className="wpx__field">
+            <label className="wpx__label">Password</label>
+            <input
+              className="wpx__input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Minimal 6 karakter"
+              required minLength={6}
+            />
+          </div>
 
-        <button className="wpx-login__submit" type="submit" disabled={busy}>
-          {busy ? "Memproses…" : "Masuk"}
-        </button>
-      </form>
+          <button className="wpx-login__submit" type="submit" disabled={busy}>
+            {busy ? "Memproses…" : "Masuk"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
