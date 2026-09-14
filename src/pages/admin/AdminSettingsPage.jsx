@@ -339,7 +339,11 @@ export function AdminSettingsPage() {
                       border: "1px solid var(--border)",
                     }}>
                       <div style={{ fontSize: 11, color: "var(--primary)", letterSpacing: 2, marginBottom: 4, textTransform: "uppercase" }}>Preview QRIS nominal otomatis</div>
-                      <div style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 18, lineHeight: 1.5 }}>
+                      {/* This panel's background is a literal dark color (phone/scanner
+                          mockup, independent of the dashboard's light theme), so its text
+                          is hardcoded light rather than the var(--text*) tokens — those
+                          now mean "dark text for the light dashboard" everywhere else. */}
+                      <div style={{ fontSize: 12, color: "#a1a1aa", marginBottom: 18, lineHeight: 1.5 }}>
                         Scan preview ini untuk mengetes nominal Rp 149.000. Jangan scan gambar QRIS statis di kiri karena nominalnya memang kosong.
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: "auto 1fr", gap: 24, alignItems: "center" }}>
@@ -355,17 +359,17 @@ export function AdminSettingsPage() {
                             </div>
                           )}
                         </div>
-                        <div style={{ color: "var(--text)", fontSize: 13 }}>
-                          <div style={{ color: "var(--text-mute)", fontSize: 11, marginBottom: 4 }}>Merchant</div>
+                        <div style={{ color: "#ececf1", fontSize: 13 }}>
+                          <div style={{ color: "#71717a", fontSize: 11, marginBottom: 4 }}>Merchant</div>
                           <div style={{ fontWeight: 700, marginBottom: 10 }}>{data.qris_merchant_name || "—"}</div>
-                          <div style={{ color: "var(--text-mute)", fontSize: 11, marginBottom: 4 }}>NMID</div>
+                          <div style={{ color: "#71717a", fontSize: 11, marginBottom: 4 }}>NMID</div>
                           <div style={{ fontFamily: "monospace", marginBottom: 10 }}>{data.qris_nmid || "—"}</div>
-                          <div style={{ color: "var(--text-mute)", fontSize: 11, marginBottom: 4 }}>Terminal</div>
+                          <div style={{ color: "#71717a", fontSize: 11, marginBottom: 4 }}>Terminal</div>
                           <div style={{ fontFamily: "monospace", marginBottom: 10 }}>{data.qris_terminal_label || "—"}</div>
-                          <div style={{ color: "var(--text-mute)", fontSize: 11, marginBottom: 4 }}>Total</div>
+                          <div style={{ color: "#71717a", fontSize: 11, marginBottom: 4 }}>Total</div>
                           <div style={{ color: "var(--primary)", fontSize: 22, fontWeight: 700 }}>Rp {QRIS_PREVIEW_AMOUNT.toLocaleString("id-ID")}</div>
                           {dynamicQrisPreview && (
-                            <div style={{ color: "var(--text-mute)", fontSize: 11, marginTop: 10, lineHeight: 1.5 }}>
+                            <div style={{ color: "#71717a", fontSize: 11, marginTop: 10, lineHeight: 1.5 }}>
                               Mode QRIS: dinamis / amount embedded
                             </div>
                           )}

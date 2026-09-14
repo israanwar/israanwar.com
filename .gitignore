@@ -48,6 +48,11 @@ identity-audit-*.png
 .mcp.json
 .stitch/
 
+# Reference template dropped into the project folder for design lookup only
+# (admin dashboard reskin, Sept 2026) — never imported as a dependency, not
+# part of the app; kept out of the repo so its 34MB doesn't get committed.
+/AdminLTE-master/
+
 # Credentials / keys — defensive net, none currently expected in this project
 *.pem
 *.key
