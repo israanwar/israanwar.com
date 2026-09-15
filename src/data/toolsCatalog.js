@@ -30,6 +30,14 @@ export const TOOLS_CATALOG = [
     ],
   },
   {
+    slug: "business-tools",
+    name: "Business Tools",
+    description: "Create practical business documents directly in your browser.",
+    tools: [
+      { slug: "invoice-builder", name: "Invoice Builder", description: "Create polished, multi-page invoices and quotations with colour themes, local draft saving, and PDF, Word, Excel, CSV, or JSON export.", icon: "ReceiptText", kind: "business", popular: true },
+    ],
+  },
+  {
     slug: "creative-tools",
     name: "Creative Tools",
     description: "Practical helpers for colour and content production.",

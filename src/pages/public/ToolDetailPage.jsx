@@ -9,6 +9,7 @@ import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { ImageCompressorWorkspace } from "../../components/tools/ImageCompressorWorkspace";
 import { ImageResizerWorkspace } from "../../components/tools/ImageResizerWorkspace";
+import { InvoiceBuilderWorkspace } from "../../components/tools/InvoiceBuilderWorkspace";
 import { getToolBySlug, TOOLS } from "../../data/toolsCatalog";
 import {
   cleanCaption, contrastRatio, copyText, downloadText, escapeHtml, formatBytes,
@@ -64,6 +65,7 @@ export function ToolDetailPage() {
               : tool.kind === "image" && <ImageWorkspace tool={tool} />}
             {tool.kind === "generator" && <GeneratorWorkspace tool={tool} />}
             {tool.kind === "reference" && <SocialSizeGuide />}
+            {tool.slug === "invoice-builder" && <InvoiceBuilderWorkspace />}
           </div>
 
           <div className="okr__tool-explainer">
