@@ -11,24 +11,19 @@ import "../styles/public-lavender-theme.css";
  * navigation. Page components only return their content and slot into
  * `<Outlet />`, keeping navigation stable and transitions immediate.
  *
- * `Suspense` wraps the outlet so lazy-loaded route chunks show a subtle
- * loading placeholder instead of a blank flash while the JS is fetched.
+ * `Suspense` wraps the outlet so a lazy-loaded route chunk doesn't unmount
+ * the whole layout (header/SiteChrome) while it's fetched — only this
+ * fallback shows in the content area below the header.
+ *
+ * This is the in-flight state for a normal chunk fetch, not a failure, so
+ * it must stay visually silent (no "Loading..." text, no reload button) —
+ * same reasoning as RouteFallback in AppRoutes.jsx. A genuine chunk-load
+ * failure is retried once by importWithRetry (lazyWithRetry.js) and, if
+ * still failing, surfaces through RouteErrorBoundary instead of hanging
+ * here forever.
  */
 function PublicRouteFallback() {
-  return (
-    <section className="okr__section okr__page-hero">
-      <div className="okr__wrap" style={{ color: "var(--okr-muted)", textAlign: "center" }}>
-        <p>Loading...</p>
-        <button
-          type="button"
-          className="okr__btn okr__btn--ghost"
-          onClick={() => window.location.reload()}
-        >
-          Muat ulang
-        </button>
-      </div>
-    </section>
-  );
+  return <div style={{ minHeight: "60vh" }} aria-hidden="true" />;
 }
 
 export function PublicLayout() {
