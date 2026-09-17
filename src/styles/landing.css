@@ -676,7 +676,7 @@
      a quick pass: it wins over the plain-class light-theme overrides
      (higher specificity) whenever a link in the panel is hovered/focused.
      Matched to the menu's live Sun/dark background now — dim white for the
-     rest of the list, lavender (not the old brand orange) for the
+     rest of the list, lavender (not the old brand accent) for the
      hovered/active one. */
   @supports selector(.okr__mobile-menu-panel:has(.okr__mobile-navlink:hover)) {
     .okr__mobile-menu-panel:has(.okr__mobile-navlink:is(:hover, :focus-visible, :active)) .okr__mobile-navlink {
@@ -1643,8 +1643,8 @@
   box-shadow: none !important;
 }
 .okr__tools-command:focus-within {
-  border-color: rgba(201, 87, 50, 0.5);
-  box-shadow: var(--okr-touch-glass-shadow), 0 0 0 3px rgba(217, 106, 47, 0.14), 0 24px 64px rgba(0, 0, 0, 0.16);
+  border-color: rgba(111, 86, 179, 0.5);
+  box-shadow: var(--okr-touch-glass-shadow), 0 0 0 3px rgba(111, 86, 179, 0.14), 0 24px 64px rgba(0, 0, 0, 0.16);
 }
 .okr__tools-command kbd {
   padding: 6px 9px;
@@ -1713,7 +1713,7 @@
 .okr__tool-privacy-chip svg { color: var(--okr-primary-2); }
 .okr__tool-work-section { padding-top: 52px; }
 .okr__tool-workspace { min-height: 440px; border: 1px solid var(--okr-glass-border); border-radius: 22px; background: var(--okr-glass-bg); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 30px 80px rgba(0,0,0,.14); overflow: hidden; }
-.okr__tool-dropzone { display: grid; place-items: center; align-content: center; min-height: 440px; padding: 42px; text-align: center; cursor: pointer; background-image: radial-gradient(circle at 50% 0%, rgba(201,87,50,.11), transparent 42%); }
+.okr__tool-dropzone { display: grid; place-items: center; align-content: center; min-height: 440px; padding: 42px; text-align: center; cursor: pointer; background-image: radial-gradient(circle at 50% 0%, rgba(111,86,179,.11), transparent 42%); }
 .okr__tool-dropzone input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .okr__tool-drop-icon { display: grid; place-items: center; width: 68px; height: 68px; margin-bottom: 20px; border: 1px solid var(--okr-line); border-radius: 20px; color: var(--okr-primary-2); background: var(--okr-touch-glass); box-shadow: var(--okr-touch-glass-shadow); }
 .okr__tool-dropzone strong { color: var(--okr-text); font-size: clamp(20px, 3vw, 28px); }
@@ -1745,7 +1745,7 @@
 .okr__generator-output-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
 .okr__output-ready { display: inline-flex; align-items: center; gap: 5px; color: #71c598; font-size: 11px; }
 .okr__generator-output pre { flex: 1; min-height: 260px; margin: 0; padding: 20px; border: 1px solid var(--okr-line); border-radius: 12px; color: var(--okr-text); background: rgba(0,0,0,.18); font: 12px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; }
-.okr__tool-note { padding: 14px; border-left: 2px solid var(--okr-primary-2); color: var(--okr-muted); background: rgba(201,87,50,.055); font-size: 12px; line-height: 1.6; }
+.okr__tool-note { padding: 14px; border-left: 2px solid var(--okr-primary-2); color: var(--okr-muted); background: rgba(111,86,179,.055); font-size: 12px; line-height: 1.6; }
 .okr__color-field { display: grid; grid-template-columns: 48px 1fr; gap: 9px; }
 .okr__color-field input[type="color"] { width: 48px; height: 41px; padding: 3px; border: 1px solid var(--okr-line); border-radius: 8px; background: var(--okr-input-bg); }
 .okr__palette-preview { display: grid; grid-template-columns: repeat(5, 1fr); flex: 1; min-height: 320px; border-radius: 14px; overflow: hidden; }
@@ -2142,7 +2142,7 @@
 .okr__cert-panel-eyebrow {
   display: block;
   margin-bottom: 3px;
-  color: #b84e2c;
+  color: #6f56b3;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 10.5px;
   font-weight: 600;
@@ -2295,7 +2295,7 @@
   .okr__certstrip-card:hover {
     opacity: 1;
     transform: translateY(-4px) scale(1.03);
-    border-color: rgba(184, 78, 44, 0.34);
+    border-color: rgba(111, 86, 179, 0.34);
     box-shadow: 0 20px 40px rgba(55, 31, 35, 0.14), 0 6px 14px rgba(55, 31, 35, 0.07);
   }
   @supports selector(.okr__certstrip:has(button:hover)) {
@@ -2309,7 +2309,7 @@
   outline: 2px solid var(--okr-primary-2);
   outline-offset: 3px;
   transform: translateY(-4px) scale(1.03);
-  border-color: rgba(184, 78, 44, 0.34);
+  border-color: rgba(111, 86, 179, 0.34);
   box-shadow: 0 20px 40px rgba(55, 31, 35, 0.14), 0 6px 14px rgba(55, 31, 35, 0.07);
 }
 .okr__certstrip-card:focus-visible::before { opacity: 1; }
@@ -2379,7 +2379,7 @@
   font-size: 11px;
 }
 .okr__rail-chip.is-active .okr__rail-chip-count {
-  color: var(--okr-primary-2, #b84e2c);
+  color: var(--okr-primary-2, #6f56b3);
 }
 
 .okr__blog-pin-card {
@@ -2420,7 +2420,7 @@
   height: 12px;
   margin-left: -6px;
   border-radius: 999px;
-  background: var(--okr-primary-2, #b84e2c);
+  background: var(--okr-primary-2, #6f56b3);
   box-shadow: 0 2px 4px rgba(55, 31, 35, 0.3);
 }
 .okr__blog-pin-category {
@@ -2663,7 +2663,7 @@
   display: inline-flex;
   align-items: center;
   gap: 1px;
-  color: #f4b84a;
+  color: #8b76c9;
 }
 .okr__product-stars svg {
   flex: 0 0 auto;
@@ -2672,7 +2672,7 @@
   fill: currentColor;
 }
 .okr__product-stars .is-muted {
-  color: rgba(244, 184, 74, 0.34);
+  color: rgba(139, 118, 201, 0.34);
   fill: currentColor;
 }
 .okr__product-rating {
@@ -2902,7 +2902,7 @@
   font-size: 14px; margin-bottom: 20px;
 }
 .okr__pay-alert--pending {
-  /* Lavender, matching the site's own accent identity — was an amber
+  /* Lavender, matching the site's own accent identity — was an accent
      "warning" color that clashed with the rest of the UI. */
   background: rgba(215, 201, 255, 0.08);
   border: 1px solid rgba(215, 201, 255, 0.35);
@@ -5082,7 +5082,7 @@
 
 .okr__email-icon-link:hover,
 .okr__email-icon-link:focus-visible {
-  background: rgba(255, 181, 111, 0.1);
+  background: rgba(139, 118, 201, 0.1);
   color: var(--okr-text);
   outline: none;
   transform: translateY(-1px);
@@ -5689,23 +5689,23 @@
 .okr {
   --okr-bg: #080209;
   --okr-bg-2: #100511;
-  --okr-line: rgba(255, 219, 187, 0.10);
-  --okr-line-strong: rgba(255, 183, 116, 0.26);
-  --okr-text: #fff8ed;
-  --okr-logo-ink: #ffd59e;
+  --okr-line: rgba(215, 201, 255, 0.10);
+  --okr-line-strong: rgba(139, 118, 201, 0.26);
+  --okr-text: #f7f7f8;
+  --okr-logo-ink: #d7c9ff;
   --okr-muted: #bfb1bd;
   --okr-dim: #887685;
-  --okr-primary: #d84243;
-  --okr-primary-2: #ffae68;
+  --okr-primary: #6f56b3;
+  --okr-primary-2: #d7c9ff;
   --okr-cyan: #c73571;
   --okr-card-bg: #120813;
   --okr-input-bg: #100711;
   --okr-header-bg: rgba(10, 2, 10, 0.94);
   --okr-glass-bg: rgba(19, 6, 19, 0.92);
   --okr-glass-bg-hover: rgba(43, 10, 24, 0.96);
-  --okr-glass-border: rgba(255, 170, 104, 0.20);
+  --okr-glass-border: rgba(139, 118, 201, 0.20);
   --okr-touch-glass: rgba(83, 17, 37, 0.72);
-  --okr-touch-glass-border: rgba(255, 134, 79, 0.54);
+  --okr-touch-glass-border: rgba(139, 118, 201, 0.54);
   background: #080209;
 }
 
@@ -5723,12 +5723,12 @@
 
 .okr__header {
   background: rgba(10, 2, 10, 0.94);
-  border-bottom-color: rgba(255, 164, 96, 0.18);
+  border-bottom-color: rgba(139, 118, 201, 0.18);
   box-shadow: 0 18px 54px rgba(0, 0, 0, 0.38);
 }
 
 .okr__header::before {
-  background: rgba(255, 138, 76, 0.36);
+  background: rgba(139, 118, 201, 0.36);
 }
 
 .okr__navlink {
@@ -5739,17 +5739,17 @@
 .okr__navlink:hover,
 .okr__navlink:focus-visible,
 .okr__navlink.is-active {
-  border-color: rgba(255, 131, 75, 0.66);
-  color: #fff9ef;
+  border-color: rgba(139, 118, 201, 0.66);
+  color: #f7f7f8;
   font-style: normal;
-  box-shadow: 0 0 24px rgba(255, 80, 48, 0.14);
+  box-shadow: 0 0 24px rgba(139, 118, 201, 0.14);
 }
 
 .okr__lang-toggle,
 .okr__cart-link,
 .okr__mobile-menu-btn {
-  border-color: rgba(255, 184, 117, 0.25);
-  color: #fff8ed;
+  border-color: rgba(139, 118, 201, 0.25);
+  color: #f7f7f8;
 }
 
 .okr__hero {
@@ -5790,7 +5790,7 @@
 }
 
 .okr .okr__home .okr__hero-kicker {
-  color: #fff5e7 !important;
+  color: #f7f7f8 !important;
   font-size: 14px;
   letter-spacing: 0.22em;
   text-shadow: 0 2px 16px #000;
@@ -5805,7 +5805,7 @@
 }
 
 .okr__hero-title {
-  color: #fff9ef;
+  color: #f7f7f8;
   font-size: clamp(58px, 6.35vw, 94px);
   font-weight: 600;
   letter-spacing: -0.045em;
@@ -5816,8 +5816,8 @@
 
 .okr__headline--stagger .okr__word.is-grad {
   background: none;
-  color: #ffb55f;
-  text-shadow: 0 0 28px rgba(255, 95, 38, 0.42);
+  color: #d7c9ff;
+  text-shadow: 0 0 28px rgba(139, 118, 201, 0.42);
 }
 
 .okr__hero-sub {
@@ -5830,17 +5830,17 @@
 
 .okr__btn--primary {
   min-height: 56px;
-  border-color: rgba(255, 122, 65, 0.82);
+  border-color: rgba(139, 118, 201, 0.82);
   background: rgba(30, 5, 15, 0.88);
-  color: #fff9ef;
-  box-shadow: 0 0 28px rgba(255, 72, 42, 0.18);
+  color: #f7f7f8;
+  box-shadow: 0 0 28px rgba(139, 118, 201, 0.18);
 }
 
 .okr__btn--primary:hover,
 .okr__btn--primary:focus-visible {
-  border-color: #ffb066;
+  border-color: #d7c9ff;
   background: rgba(83, 13, 34, 0.94);
-  box-shadow: 0 0 34px rgba(255, 75, 40, 0.32);
+  box-shadow: 0 0 34px rgba(139, 118, 201, 0.32);
 }
 
 .okr__hero-process-bridge {
@@ -5852,13 +5852,13 @@
   grid-template-columns: auto auto;
   align-items: end;
   column-gap: 20px;
-  color: #fff8ed;
+  color: #f7f7f8;
   text-decoration: none;
 }
 
 .okr__hero-process-bridge span {
   grid-column: 1 / -1;
-  color: #ffb16c;
+  color: #d7c9ff;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.24em;
@@ -5874,13 +5874,13 @@
 }
 
 .okr__hero-process-bridge svg {
-  color: #ff9f5c;
+  color: #d7c9ff;
   transition: transform 280ms ease;
 }
 
 .okr__hero-process-bridge:hover strong,
 .okr__hero-process-bridge:focus-visible strong {
-  color: #ffc17d;
+  color: #d7c9ff;
 }
 
 .okr__hero-process-bridge:hover svg,
@@ -5902,11 +5902,11 @@
 .okr__home .okr__process-detail-points > span,
 .okr__home .okr__post-tags,
 .okr__home .okr__case-tags {
-  color: #f18b5c;
+  color: #d7c9ff;
 }
 
 .okr__h2 {
-  color: #fff7ea;
+  color: #f7f7f8;
   font-weight: 600;
   letter-spacing: -0.035em;
 }
@@ -5915,43 +5915,43 @@
 .okr .okr__cards > .okr__card,
 .okr .okr__products > .okr__product {
   background: #130713 !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 182, 119, 0.10), 0 22px 64px rgba(0, 0, 0, 0.32) !important;
+  box-shadow: inset 0 0 0 1px rgba(139, 118, 201, 0.10), 0 22px 64px rgba(0, 0, 0, 0.32) !important;
 }
 
 .okr .okr__home .okr__cards > .okr__card:is(:hover, :focus-within),
 .okr .okr__cards > .okr__card:is(:hover, :focus-within),
 .okr .okr__products > .okr__product:is(:hover, :focus-within) {
   background: #1b0817 !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 126, 71, 0.42), 0 24px 70px rgba(117, 13, 58, 0.24) !important;
+  box-shadow: inset 0 0 0 1px rgba(139, 118, 201, 0.42), 0 24px 70px rgba(117, 13, 58, 0.24) !important;
 }
 
 .okr__home .okr__card-title,
 .okr__home .okr__post-title,
 .okr__home .okr__case-title,
 .okr__step-title {
-  color: #fff8ed;
+  color: #f7f7f8;
 }
 
 .okr__home .okr__process-card {
   background: rgba(31, 6, 23, 0.72) !important;
-  border: 1px solid rgba(255, 173, 105, 0.11) !important;
+  border: 1px solid rgba(139, 118, 201, 0.11) !important;
   padding: clamp(18px, 2.5vw, 30px);
 }
 
 .okr__home .okr__process-card:is(:hover, :focus-visible, .is-active) {
   background: rgba(55, 9, 31, 0.88) !important;
-  border-color: rgba(255, 127, 69, 0.52) !important;
+  border-color: rgba(139, 118, 201, 0.52) !important;
 }
 
 .okr__home .okr__process-card.is-active .okr__step-title,
 .okr__home .okr__process-card.is-active .okr__step-n,
 .okr__home .okr__process-card:is(:hover, :focus-visible) .okr__step-title {
-  color: #ffae68;
+  color: #d7c9ff;
 }
 
 .okr__footer {
   background: #080209 !important;
-  border-top: 1px solid rgba(255, 169, 104, 0.12) !important;
+  border-top: 1px solid rgba(139, 118, 201, 0.12) !important;
 }
 
 @media (max-width: 900px) {
@@ -6755,16 +6755,16 @@
   --okr-font-display: "Cormorant Garamond", Georgia, serif;
   --okr-card-surface: #130713;
   --okr-card-surface-hover: #1b0817;
-  --okr-card-ink: #fff8ed;
+  --okr-card-ink: #f7f7f8;
   --okr-card-muted: rgba(239, 225, 232, 0.68);
   --okr-card-dim: rgba(239, 225, 232, 0.45);
-  --okr-card-accent: #f18b5c;
+  --okr-card-accent: #d7c9ff;
   --okr-system-bg: #120612;
   --okr-system-bg-raised: #180817;
-  --okr-system-line: rgba(255, 176, 109, 0.15);
-  --okr-system-line-hot: rgba(255, 126, 67, 0.58);
-  --okr-system-accent: #d84243;
-  --okr-system-accent-soft: #ffb36b;
+  --okr-system-line: rgba(139, 118, 201, 0.15);
+  --okr-system-line-hot: rgba(139, 118, 201, 0.58);
+  --okr-system-accent: #6f56b3;
+  --okr-system-accent-soft: #d7c9ff;
   --okr-system-cyan: #b72f72;
   --okr-system-muted: #aa929e;
   --okr-system-dim: #765f6c;
@@ -6795,9 +6795,9 @@
 
 .okr .okr__headline--stagger .okr__word.is-grad {
   background: none !important;
-  color: #ffb55f !important;
-  -webkit-text-fill-color: #ffb55f;
-  text-shadow: 0 0 28px rgba(255, 95, 38, 0.42);
+  color: #d7c9ff !important;
+  -webkit-text-fill-color: #d7c9ff;
+  text-shadow: 0 0 28px rgba(139, 118, 201, 0.42);
 }
 
 .okr .okr__home .okr__cards > .okr__card,
@@ -6806,8 +6806,8 @@
 .okr .okr__artifact-card,
 .okr .okr__products > .okr__product {
   background: #130713 !important;
-  border-color: rgba(255, 176, 109, 0.15) !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 182, 119, 0.08), 0 22px 64px rgba(0, 0, 0, 0.34) !important;
+  border-color: rgba(139, 118, 201, 0.15) !important;
+  box-shadow: inset 0 0 0 1px rgba(139, 118, 201, 0.08), 0 22px 64px rgba(0, 0, 0, 0.34) !important;
 }
 
 .okr .okr__home .okr__cards > .okr__card:is(:hover, :focus-within),
@@ -6816,14 +6816,14 @@
 .okr .okr__artifact-card:is(:hover, :focus-within),
 .okr .okr__products > .okr__product:is(:hover, :focus-within) {
   background: #1b0817 !important;
-  border-color: rgba(255, 126, 67, 0.58) !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 126, 71, 0.26), 0 28px 76px rgba(117, 13, 58, 0.24) !important;
+  border-color: rgba(139, 118, 201, 0.58) !important;
+  box-shadow: inset 0 0 0 1px rgba(139, 118, 201, 0.26), 0 28px 76px rgba(117, 13, 58, 0.24) !important;
 }
 
 .okr .okr__service-card::after,
 .okr .okr__editorial-card::after,
 .okr .okr__artifact-card::after {
-  background: #d84243;
+  background: #6f56b3;
 }
 
 @media (max-width: 720px) {
@@ -6841,32 +6841,32 @@
 .okr {
   --okr-bg: #0b0309;
   --okr-bg-2: #160813;
-  --okr-text: #fff8ec;
+  --okr-text: #f7f7f8;
   --okr-muted: #c8b5bd;
   --okr-dim: #8f737f;
-  --okr-line: rgba(255, 221, 184, 0.10);
-  --okr-line-strong: rgba(255, 175, 103, 0.28);
-  --okr-primary: #ce3f45;
-  --okr-primary-2: #ffb36d;
+  --okr-line: rgba(139, 118, 201, 0.10);
+  --okr-line-strong: rgba(139, 118, 201, 0.28);
+  --okr-primary: #6f56b3;
+  --okr-primary-2: #d7c9ff;
   --okr-card-bg: #1a0915;
   --okr-input-bg: #140710;
   --okr-glass-bg: #1a0915;
   --okr-glass-bg-hover: #25101d;
-  --okr-glass-border: rgba(255, 189, 128, 0.18);
+  --okr-glass-border: rgba(139, 118, 201, 0.18);
   --okr-touch-glass: #351222;
-  --okr-touch-glass-border: rgba(255, 139, 77, 0.56);
+  --okr-touch-glass-border: rgba(139, 118, 201, 0.56);
   --okr-card-surface: #1a0915;
   --okr-card-surface-hover: #25101d;
-  --okr-card-ink: #fff8ec;
+  --okr-card-ink: #f7f7f8;
   --okr-card-muted: #bda7b1;
   --okr-card-dim: #8f737f;
-  --okr-card-accent: #ef7d55;
+  --okr-card-accent: #d7c9ff;
   --okr-system-bg: #1a0915;
   --okr-system-bg-raised: #25101d;
-  --okr-system-line: rgba(255, 189, 128, 0.18);
-  --okr-system-line-hot: rgba(255, 128, 69, 0.64);
-  --okr-system-accent: #ce3f45;
-  --okr-system-accent-soft: #ffb36d;
+  --okr-system-line: rgba(139, 118, 201, 0.18);
+  --okr-system-line-hot: rgba(139, 118, 201, 0.64);
+  --okr-system-accent: #6f56b3;
+  --okr-system-accent-soft: #d7c9ff;
   --okr-system-cyan: #a92966;
   --okr-system-muted: #bda7b1;
   --okr-system-dim: #806875;
@@ -6875,7 +6875,7 @@
 
 .okr__page-hero {
   background: #160813;
-  border-bottom: 1px solid rgba(255, 178, 111, 0.14);
+  border-bottom: 1px solid rgba(139, 118, 201, 0.14);
   padding-top: clamp(64px, 8vw, 112px);
   padding-bottom: clamp(48px, 6vw, 82px);
 }
@@ -6883,19 +6883,19 @@
 .okr__page-hero .okr__h2,
 .okr__portfolio-page .okr__hero-title,
 .okr__tools-page .okr__hero-title {
-  color: #fff4df;
+  color: #f7f7f8;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 600;
   letter-spacing: -0.045em;
 }
 
 .okr :is(.okr__eyebrow, .okr__kicker, .okr__service-parent, .okr__card-link) {
-  color: #ef7d55;
+  color: #d7c9ff;
 }
 
 .okr__header {
   background: rgba(11, 3, 9, 0.96);
-  border-bottom-color: rgba(255, 181, 111, 0.16);
+  border-bottom-color: rgba(139, 118, 201, 0.16);
 }
 
 .okr__mobile-menu {
@@ -6906,7 +6906,7 @@
 .okr .okr__cards--services-catalog .okr__service-card,
 .okr .okr__service-child-grid .okr__service-card {
   background: #1a0915 !important;
-  border: 1px solid rgba(255, 189, 128, 0.18) !important;
+  border: 1px solid rgba(139, 118, 201, 0.18) !important;
   border-radius: 26px !important;
   min-height: clamp(300px, 25vw, 390px);
   padding: clamp(24px, 2.8vw, 34px) !important;
@@ -6915,7 +6915,7 @@
 
 .okr .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) {
   background: #25101d !important;
-  border-color: rgba(255, 128, 69, 0.64) !important;
+  border-color: rgba(139, 118, 201, 0.64) !important;
   box-shadow: 0 28px 74px rgba(74, 6, 34, 0.34) !important;
   transform: translate3d(0, -4px, 0);
 }
@@ -6929,9 +6929,9 @@
   align-items: center;
   align-self: flex-start;
   background: #3a1323 !important;
-  border: 1px solid rgba(255, 161, 91, 0.35) !important;
+  border: 1px solid rgba(139, 118, 201, 0.35) !important;
   border-radius: 16px !important;
-  color: #ffad68;
+  color: #d7c9ff;
   display: grid;
   height: 54px;
   margin: clamp(24px, 3vw, 38px) 0 24px;
@@ -6945,7 +6945,7 @@
 }
 
 .okr .okr__service-card .okr__card-title {
-  color: #fff4df;
+  color: #f7f7f8;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(30px, 3vw, 43px);
   font-weight: 600;
@@ -6964,15 +6964,15 @@
 }
 
 .okr .okr__service-card .okr__card-link {
-  border-top-color: rgba(255, 208, 164, 0.12);
-  color: #ffd6ae;
+  border-top-color: rgba(139, 118, 201, 0.12);
+  color: #d7c9ff;
 }
 
 .okr .okr__blog-grid--editorial .okr__blog-card,
 .okr .okr__journal--editorial .okr__post,
 .okr .okr__editorial-card {
   background: #1a0915 !important;
-  border: 1px solid rgba(255, 189, 128, 0.18) !important;
+  border: 1px solid rgba(139, 118, 201, 0.18) !important;
   border-radius: 26px !important;
   box-shadow: 0 24px 68px rgba(0, 0, 0, 0.26) !important;
   min-height: 390px;
@@ -6989,7 +6989,7 @@
 .okr .okr__blog-grid--editorial .okr__blog-card-cover {
   align-items: flex-start;
   aspect-ratio: auto !important;
-  background: #f0e2cf !important;
+  background: #f3efff !important;
   border: 0 !important;
   color: #3a111d;
   display: flex !important;
@@ -7001,7 +7001,7 @@
 }
 
 .okr__blog-card-edition {
-  color: #9c3d3c;
+  color: #6f56b3;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -7025,7 +7025,7 @@
 
 .okr .okr__editorial-card .okr__blog-card-title,
 .okr .okr__blog-grid--editorial .okr__blog-card-title {
-  color: #fff4df;
+  color: #f7f7f8;
   font-family: "Cormorant Garamond", Georgia, serif;
   font-size: clamp(23px, 2.3vw, 34px) !important;
   font-weight: 600;
@@ -7035,13 +7035,13 @@
 
 .okr .okr__editorial-card .okr__blog-card-meta,
 .okr .okr__blog-grid--editorial .okr__blog-card-meta {
-  border-top-color: rgba(255, 208, 164, 0.12);
+  border-top-color: rgba(139, 118, 201, 0.12);
   color: #9f858f;
 }
 
 .okr :is(.okr__panel, .okr__cta, .okr__process-detail) {
   background: #1a0915 !important;
-  border-color: rgba(255, 189, 128, 0.18) !important;
+  border-color: rgba(139, 118, 201, 0.18) !important;
   border-radius: 24px !important;
 }
 
@@ -7051,7 +7051,7 @@
 
 .okr__footer {
   background: #10040d !important;
-  border-top: 1px solid rgba(255, 181, 111, 0.16) !important;
+  border-top: 1px solid rgba(139, 118, 201, 0.16) !important;
 }
 
 @media (max-width: 760px) {

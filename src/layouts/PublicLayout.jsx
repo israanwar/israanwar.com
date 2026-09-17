@@ -17,7 +17,16 @@ import "../styles/public-lavender-theme.css";
 function PublicRouteFallback() {
   return (
     <section className="okr__section okr__page-hero">
-      <div className="okr__wrap" style={{ color: "var(--okr-muted)" }}>Loading...</div>
+      <div className="okr__wrap" style={{ color: "var(--okr-muted)", textAlign: "center" }}>
+        <p>Loading...</p>
+        <button
+          type="button"
+          className="okr__btn okr__btn--ghost"
+          onClick={() => window.location.reload()}
+        >
+          Muat ulang
+        </button>
+      </div>
     </section>
   );
 }

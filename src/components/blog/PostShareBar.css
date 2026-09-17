@@ -18,7 +18,7 @@
 .okr__post-share-eyebrow {
   grid-column: 1 / -1;
   margin: 0;
-  color: var(--okr-primary-2, #c95732);
+  color: var(--okr-primary-2, #6f56b3);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 10px;
   font-weight: 650;
@@ -108,7 +108,7 @@
 }
 
 .okr__post-share-button:focus-visible {
-  outline: 3px solid rgba(201, 87, 50, 0.34);
+  outline: 3px solid rgba(111, 86, 179, 0.34);
   outline-offset: 3px;
 }
 
@@ -117,8 +117,8 @@
 }
 
 .okr__post-share-button--copy.is-copied {
-  border-color: #c95732;
-  background: #c95732;
+  border-color: #6f56b3;
+  background: #6f56b3;
   color: #fff;
 }
 

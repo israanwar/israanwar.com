@@ -13,37 +13,34 @@
   --okr-logo-ink: #20181b;
   --okr-muted: #74686c;
   --okr-dim: #9a8f92;
-  /* Single canonical accent everywhere — the burnt orange from the IA mark
-     (public/assets/brand/israanwar-mark-ia-v2.png). Previously fragmented
-     into ~6 near-orange hexes (#a64035, #d96a2f, #b34736, #8c4039, #9b392f,
-     #8e322d…) across this file; consolidated so every accent role resolves
-     to the exact same value. */
-  --okr-primary: #b84e2c;
-  --okr-primary-2: #b84e2c;
-  --okr-cyan: #b84e2c;
+  /* Accessible lavender for light surfaces. Dark public surfaces override
+     these roles with the lighter #d7c9ff token below. */
+  --okr-primary: #6f56b3;
+  --okr-primary-2: #6f56b3;
+  --okr-cyan: #6f56b3;
   --okr-card-bg: #ffffff;
   --okr-input-bg: #ffffff;
   --okr-header-bg: #ffffff;
   --okr-glass-bg: #ffffff;
-  --okr-glass-bg-hover: #fff8f1;
+  --okr-glass-bg-hover: #faf8ff;
   --okr-glass-border: rgba(64, 37, 42, 0.13);
   --okr-glass-shadow: 0 20px 60px rgba(65, 41, 34, 0.08);
-  --okr-touch-glass: #fff4e8;
-  --okr-touch-glass-border: rgba(217, 106, 47, 0.34);
+  --okr-touch-glass: #f5f0ff;
+  --okr-touch-glass-border: rgba(111, 86, 179, 0.34);
   --okr-touch-glass-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
   --okr-card-surface: #ffffff;
-  --okr-card-surface-hover: #fffaf5;
+  --okr-card-surface-hover: #fcfaff;
   --okr-card-ink: #20181b;
   --okr-card-muted: #74686c;
   --okr-card-dim: #9a8f92;
-  --okr-card-accent: #b84e2c;
+  --okr-card-accent: #6f56b3;
   --okr-system-bg: #ffffff;
-  --okr-system-bg-raised: #fff8f1;
+  --okr-system-bg-raised: #faf8ff;
   --okr-system-line: rgba(64, 37, 42, 0.13);
-  --okr-system-line-hot: rgba(201, 87, 50, 0.56);
-  --okr-system-accent: #b84e2c;
-  --okr-system-accent-soft: #b84e2c;
-  --okr-system-cyan: #c95732;
+  --okr-system-line-hot: rgba(111, 86, 179, 0.56);
+  --okr-system-accent: #6f56b3;
+  --okr-system-accent-soft: #6f56b3;
+  --okr-system-cyan: #6f56b3;
   --okr-system-muted: #74686c;
   --okr-system-dim: #9a8f92;
   background: #ffffff;
@@ -63,7 +60,7 @@
 }
 
 .okr__header::before {
-  background: linear-gradient(90deg, transparent, rgba(217, 106, 47, 0.34), transparent);
+  background: linear-gradient(90deg, transparent, rgba(111, 86, 179, 0.34), transparent);
 }
 
 .okr-logo__wordmark {
@@ -85,10 +82,10 @@
 .okr__navlink:hover,
 .okr__navlink:focus-visible,
 .okr__navlink.is-active {
-  background: #fff6ed;
-  border-color: rgba(201, 87, 50, 0.42);
+  background: #f7f3ff;
+  border-color: rgba(111, 86, 179, 0.42);
   box-shadow: none;
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 .okr__lang-toggle,
@@ -179,7 +176,7 @@
 .okr__foot-social a:hover,
 .okr__foot-social a:focus-visible,
 .okr__foot-social a:active {
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 .okr__foot-contact-link svg {
@@ -194,8 +191,8 @@
 
 .okr__navlink-dropdown-item:hover,
 .okr__navlink-dropdown-item:focus-visible {
-  background: #fff6ed;
-  color: #b84e2c;
+  background: #f7f3ff;
+  color: #6f56b3;
 }
 
 /* The only intentionally dark surface is replaced by a warm editorial hero. */
@@ -207,8 +204,8 @@
 .okr__hero::before {
   inset: 0;
   background:
-    radial-gradient(circle at 88% 18%, rgba(217, 106, 47, 0.14), transparent 32%),
-    radial-gradient(circle at 72% 72%, rgba(140, 64, 57, 0.08), transparent 36%);
+    radial-gradient(circle at 88% 18%, rgba(111, 86, 179, 0.14), transparent 32%),
+    radial-gradient(circle at 72% 72%, rgba(111, 86, 179, 0.08), transparent 36%);
 }
 
 .okr__hero::after {
@@ -230,8 +227,8 @@
 }
 
 .okr .okr__headline--stagger .okr__word.is-grad {
-  color: #b84e2c !important;
-  -webkit-text-fill-color: #b84e2c !important;
+  color: #6f56b3 !important;
+  -webkit-text-fill-color: #6f56b3 !important;
   text-shadow: none;
 }
 
@@ -252,7 +249,7 @@
 
 .okr__hero-process-bridge span,
 .okr__hero-process-bridge svg {
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 .okr__btn--primary {
@@ -264,9 +261,15 @@
 
 .okr__btn--primary:hover,
 .okr__btn--primary:focus-visible {
-  background: #c95732;
-  border-color: #c95732;
-  box-shadow: 0 16px 36px rgba(201, 87, 50, 0.2);
+  /* Dark lavender is kept here (not the
+     light #d7c9ff used elsewhere) so the button's white text (unchanged
+     by this rule) stays readable; every page that actually renders this
+     button overrides it to the white/lavender+dark-text pattern anyway
+     (see .okr__home and public-lavender-theme.css), this is only the
+     shared fallback for whichever page doesn't. */
+  background: #362b4d;
+  border-color: #362b4d;
+  box-shadow: 0 16px 36px rgba(139, 118, 201, 0.22);
 }
 
 /* landing.css's .okr__btn--primary::before is a dark-theme "glass shine"
@@ -274,7 +277,7 @@
    sitting (via z-index:-1 inside the button's isolated stacking context)
    above the button's own background but below its text. That variable is
    #171717 in the dark theme — a subtle lightening a white label could
-   still sit on — but #fff8f1 here, so the hover state painted the button
+   still sit on — but #faf8ff here, so the hover state painted the button
    almost white *under* white text, making the label unreadable. This
    button already gets its hover color from the rule above, so the
    overlay is switched off rather than retuned. */
@@ -289,8 +292,8 @@
 
 .okr__btn--ghost:hover,
 .okr__btn--ghost:focus-visible {
-  background: #fff6ed;
-  border-color: rgba(201, 87, 50, 0.42);
+  background: #f7f3ff;
+  border-color: rgba(111, 86, 179, 0.42);
 }
 
 .okr__home,
@@ -302,7 +305,7 @@
 .okr__page-hero {
   /* Was #f6f1eb — a tan/cream alternating with the even sections' canvas.
      Unified to the same white so no section reads as a distinct 4th
-     "brand" hue; only text/accents carry orange now. */
+     accent hue; only text and interaction details carry lavender now. */
   background: #ffffff;
 }
 
@@ -322,7 +325,7 @@
 
 .okr :is(.okr__eyebrow, .okr__kicker, .okr__service-parent, .okr__card-link),
 .okr__home :is(.okr__eyebrow, .okr__kicker, .okr__process-detail-kicker, .okr__process-detail-points > span, .okr__post-tags, .okr__case-tags) {
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 .okr__service-parent:hover {
@@ -337,7 +340,7 @@
 .okr__home .okr__link--glass:hover,
 .okr__home .okr__link--glass:focus-visible,
 .okr__home .okr__link--glass:active {
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 /* The service detail page's long description body (ServiceText in
@@ -378,15 +381,15 @@
 .okr__case:is(:hover, :focus-within, :active),
 .okr__post:is(:hover, :focus-within, :active),
 .okr__product:is(:hover, :focus-within, :active) {
-  background: #fffaf5 !important;
-  border-color: rgba(201, 87, 50, 0.4) !important;
-  box-shadow: 0 24px 62px rgba(122, 64, 42, 0.11) !important;
+  background: #fcfaff !important;
+  border-color: rgba(111, 86, 179, 0.4) !important;
+  box-shadow: 0 24px 62px rgba(42, 29, 72, 0.11) !important;
 }
 
 .okr .okr__service-card .okr__card-icon {
   background: #ffffff !important;
-  border-color: rgba(217, 106, 47, 0.24) !important;
-  color: #b84e2c;
+  border-color: rgba(111, 86, 179, 0.24) !important;
+  color: #6f56b3;
 }
 
 .okr .okr__service-card .okr__card-title,
@@ -410,13 +413,13 @@
 .okr__card-link,
 .okr__link {
   border-color: rgba(55, 31, 35, 0.1);
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 .okr .okr__editorial-card .okr__blog-card-cover,
 .okr .okr__blog-grid--editorial .okr__blog-card-cover {
   /* Was #f1e4d4 (tan) — flattened to match the card body below it (#ffffff)
-     so the cover reads as one plain white surface with an orange label,
+     so the cover reads as one plain white surface with a lavender label,
      not a separate colored block. */
   background: #ffffff !important;
   border-bottom: 1px solid var(--okr-line) !important;
@@ -430,7 +433,7 @@
 
 .okr__blog-card-edition,
 .okr__blog-card-cover-category {
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 .okr .okr__editorial-card .okr__blog-card-meta,
@@ -466,8 +469,8 @@
 .okr input:focus,
 .okr textarea:focus,
 .okr select:focus {
-  border-color: rgba(201, 87, 50, 0.58);
-  box-shadow: 0 0 0 3px rgba(217, 106, 47, 0.12);
+  border-color: rgba(111, 86, 179, 0.58);
+  box-shadow: 0 0 0 3px rgba(111, 86, 179, 0.12);
 }
 
 .okr__rail-chip {
@@ -480,8 +483,8 @@
 .okr__rail-chip:focus-visible,
 .okr__rail-chip.is-active {
   background: #fff1e5;
-  border-color: rgba(201, 87, 50, 0.36);
-  color: #b84e2c;
+  border-color: rgba(111, 86, 179, 0.36);
+  color: #6f56b3;
 }
 
 .okr__category-rail-wrap {
@@ -645,7 +648,7 @@
 
 /* landing.css groups .okr__foot-title into a shared `.okr :is(...)` rule
    with .okr__eyebrow/.okr__kicker (color: var(--okr-card-accent), i.e.
-   orange) — specificity (0,2,0), higher than a plain `.okr__foot-title`
+   accent) — specificity (0,2,0), higher than a plain `.okr__foot-title`
    (0,1,0), so it always won regardless of file order. Scoping under
    .okr__footer-card matches that specificity and wins on load order. */
 .okr__footer-card .okr__foot-title {
@@ -675,7 +678,7 @@
    links: the visible hover/focus backdrop isn't the link's own
    `background` (already forced transparent elsewhere) — it's a shared
    `::before` pseudo-element (landing.css) painted with a pale cream color
-   meant for the white theme, plus an orange-tinted border-color. White
+   meant for the white theme, plus an accent-tinted border-color. White
    text landed on that cream backdrop and was unreadable. */
 .okr__footer-card .okr__foot-list a::before {
   background: rgba(255, 255, 255, 0.12);
@@ -688,7 +691,7 @@
 }
 
 .okr__scroll-progress {
-  background: #c95732;
+  background: #6f56b3;
 }
 
 /* Tool and checkout surfaces contain a few legacy hard-coded noir colors. */
@@ -749,7 +752,7 @@
    plain white/black control cluster). Flush against the top edge — no
    floating margin, no rounded pill, no gap to the page below — per
    explicit correction ("tidak boleh ada celah sama sekali, header harus
-   benar-benar fix"). Deliberately colorless — no orange anywhere in this
+   benar-benar fix"). Deliberately colorless — no accent anywhere in this
    component, including the logo mark's accent. Only the header/nav reads
    dark; the rest of the page stays the light theme.
    ========================================================================== */
@@ -875,7 +878,7 @@
 .okr__header .okr__navlink:focus-visible,
 .okr__header .okr__navlink:active {
   /* This rule's non-header counterpart near the top of this file sets a
-     literal `background: #fff6ed` (cream) directly on the link itself —
+     literal `background: #f7f3ff` (cream) directly on the link itself —
      a second, separate source of the same cream color beyond the
      `::before` pseudo-element above. Both have to be overridden. `:active`
      is included for the same reason found on the footer social icons:
@@ -933,7 +936,7 @@
   color: #ffffff;
 }
 
-/* Cart badge count — was the shared orange accent; white-on-dark instead. */
+/* Cart badge count — was the shared accent accent; white-on-dark instead. */
 .okr__header .okr__cart-count {
   background: #ffffff;
   color: #101012;
@@ -1020,7 +1023,7 @@
 }
 
 .okr__hero-brand-principles svg {
-  color: #b84e2c;
+  color: #6f56b3;
   margin-left: 8px;
 }
 
@@ -1061,12 +1064,12 @@
   display: inline;
 }
 
-/* Same orange accent as every other heading's tail portion (AnimatedHeadline's
-   `is-grad`, #b84e2c) — !important since a running `okrWordInk` animation
+/* Same lavender accent as every other heading's tail portion (AnimatedHeadline's
+   `is-grad`, #6f56b3) — !important since a running `okrWordInk` animation
    (below) sets `color` every frame and would otherwise win over a plain
    declaration regardless of source order. */
 .okr__scroll-word.is-highlight {
-  color: #b84e2c !important;
+  color: #6f56b3 !important;
 }
 
 @supports (animation-timeline: view()) {
@@ -1098,11 +1101,11 @@
   to { color: #151515; }
 }
 
-/* Same scroll-scrubbed reveal as okrWordInk, just settling on orange
+/* Same scroll-scrubbed reveal as okrWordInk, settling on lavender
    instead of near-black for the highlighted (last) word. */
 @keyframes okrWordInkHighlight {
   from { color: #c9c9c6; }
-  to { color: #b84e2c; }
+  to { color: #6f56b3; }
 }
 
 .okr__process-intro-copy {
@@ -1131,13 +1134,13 @@
 
 .okr__home .okr__process-card:is(:hover, :focus-visible, :active, .is-active) {
   background: transparent !important;
-  border-top-color: #c95732 !important;
+  border-top-color: #6f56b3 !important;
   box-shadow: none !important;
   color: #171717 !important;
 }
 
 .okr__home .okr__process-card .okr__step-n {
-  color: #b84e2c !important;
+  color: #6f56b3 !important;
 }
 
 .okr__home .okr__process-card .okr__step-title {
@@ -1221,7 +1224,7 @@
 }
 
 .okr .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible, :active) {
-  border-color: rgba(211, 88, 49, .3) !important;
+  border-color: rgba(111, 86, 179, .3) !important;
   box-shadow: 0 18px 40px rgba(31, 24, 27, .11) !important;
   transform: translateY(-4px) !important;
 }
@@ -1452,7 +1455,7 @@
 }
 
 .okr__blog-card-cover-category {
-  color: #b84e2c !important;
+  color: #6f56b3 !important;
   font-size: clamp(25px, 2.15vw, 35px) !important;
   font-weight: 700 !important;
   letter-spacing: -0.045em !important;
@@ -1497,7 +1500,7 @@
 }
 
 .okr .okr__editorial-card .okr__blog-card-title-link:focus-visible {
-  outline: 2px solid #c95732;
+  outline: 2px solid #6f56b3;
   outline-offset: 5px;
 }
 
@@ -1514,7 +1517,7 @@
 }
 
 .okr .okr__editorial-card .okr__blog-card-category {
-  color: #b84e2c !important;
+  color: #6f56b3 !important;
 }
 
 @media (max-width: 760px) {
@@ -1742,8 +1745,8 @@
 
 .okr .okr__hero {
   background-image:
-    linear-gradient(rgba(201, 87, 50, 0.045) 1.5px, transparent 1.5px),
-    linear-gradient(90deg, rgba(201, 87, 50, 0.045) 1.5px, transparent 1.5px) !important;
+    linear-gradient(rgba(111, 86, 179, 0.045) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(111, 86, 179, 0.045) 1.5px, transparent 1.5px) !important;
   background-position: center !important;
   background-size: 52px 52px, 52px 52px !important;
 }
@@ -1785,12 +1788,12 @@
 
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word.is-grad {
   background: none !important;
-  text-shadow: 0 0 38px rgba(201, 87, 50, 0.08);
+  text-shadow: 0 0 38px rgba(111, 86, 179, 0.08);
 }
 
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word.is-grad .okr__glyph {
   animation: none;
-  color: var(--glyph-color, #c95732) !important;
+  color: var(--glyph-color, #6f56b3) !important;
   -webkit-text-fill-color: currentColor !important;
 }
 
@@ -1829,17 +1832,17 @@
 @keyframes okrGlyphGatherAccent {
   0% {
     opacity: 0.12;
-    text-shadow: 0 0 0 rgba(201, 87, 50, 0);
+    text-shadow: 0 0 0 rgba(111, 86, 179, 0);
     transform: translate3d(var(--scatter-x), var(--scatter-y), 0) rotate(var(--scatter-r)) scale(0.86);
   }
   88% {
     opacity: 1;
-    text-shadow: 0 0 26px rgba(201, 87, 50, 0.2);
+    text-shadow: 0 0 26px rgba(111, 86, 179, 0.2);
     transform: translate3d(0, 0, 0) rotate(0deg) scale(1.018);
   }
   100% {
     opacity: 1;
-    text-shadow: 0 0 0 rgba(201, 87, 50, 0);
+    text-shadow: 0 0 0 rgba(111, 86, 179, 0);
     transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
   }
 }
@@ -1859,7 +1862,7 @@
 }
 
 .okr__hero-sub-output i {
-  background: #c95732;
+  background: #6f56b3;
   display: inline-block;
   height: 1.05em;
   margin-left: 3px;
@@ -1888,7 +1891,7 @@
 }
 
 .okr__hero-cta--sequenced::before {
-  border: 2px solid rgba(201, 87, 50, 0.72);
+  border: 2px solid rgba(111, 86, 179, 0.72);
   border-radius: 999px;
   content: "";
   inset: -5px;
@@ -2020,8 +2023,8 @@
 .okr__letter-touch.okr__touch-active,
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word:not(.is-grad) .okr__glyph:hover,
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word:not(.is-grad) .okr__glyph:active {
-  /* Site identity is lavender, not the old brand orange. This base rule
-     used to be #b84e2c with separate per-page lavender overrides layered
+  /* Site identity is lavender, not the old brand accent. This base rule
+     used to be #6f56b3 with separate per-page lavender overrides layered
      on top (light-theme.css's own .okr__home rule further down, and
      public-lavender-theme.css for every other page) — but both of those
      overrides only re-covered :hover/:active, never
@@ -2030,7 +2033,7 @@
      clears the instant a touch ends). So on an actual phone — where
      .okr__touch-active, not :active, is what's showing during that
      linger window — every one of those pages fell through to this base
-     rule and flashed orange right as you released a letter. Fixed at the
+     rule and flashed accent right as you released a letter. Fixed at the
      source instead of patching each override. */
   color: #d7c9ff !important;
 }
@@ -2072,7 +2075,7 @@
   }
 
   .okr__process-story-shell::before {
-    background: radial-gradient(circle, rgba(201, 87, 50, 0.14), transparent 68%);
+    background: radial-gradient(circle, rgba(111, 86, 179, 0.14), transparent 68%);
     border-radius: 999px;
     content: "";
     height: 420px;
@@ -2108,7 +2111,7 @@
   }
 
   .okr__process-status strong {
-    color: #b84e2c;
+    color: #6f56b3;
     font-size: 11px;
     font-weight: 700;
   }
@@ -2123,7 +2126,7 @@
   }
 
   .okr__process-rail > i {
-    background: #c95732;
+    background: #6f56b3;
     height: 2px;
     inset: -0.5px 0 auto;
     position: absolute;
@@ -2145,9 +2148,9 @@
   }
 
   .okr__process-rail > span.is-passed {
-    background: #c95732;
-    border-color: #c95732;
-    box-shadow: 0 0 0 5px rgba(201, 87, 50, 0.09);
+    background: #6f56b3;
+    border-color: #6f56b3;
+    box-shadow: 0 0 0 5px rgba(111, 86, 179, 0.09);
     transform: scale(1.15);
   }
 
@@ -2166,7 +2169,7 @@
   }
 
   .okr__process-section--story .okr__process-card::after {
-    background: #c95732;
+    background: #6f56b3;
     bottom: 0;
     content: "";
     height: 3px;
@@ -2179,7 +2182,7 @@
   }
 
   .okr__process-section--story .okr__process-card:is(:hover, :focus-visible, :active, .is-active) {
-    border-color: rgba(201, 87, 50, 0.48) !important;
+    border-color: rgba(111, 86, 179, 0.48) !important;
     opacity: 1;
     transform: translate3d(0, -8px, 0) !important;
   }
@@ -2215,7 +2218,7 @@
   }
 
   .okr__process-section--story .okr__process-detail::after {
-    color: rgba(201, 87, 50, 0.065);
+    color: rgba(111, 86, 179, 0.065);
     content: attr(data-stage);
     font-family: var(--okr-font-brand);
     font-size: clamp(150px, 19vw, 280px);
@@ -2310,7 +2313,7 @@
 }
 
 .okr .okr__process-section--story .okr__process-story-shell::before {
-  background: radial-gradient(circle, rgba(201, 87, 50, 0.105), transparent 68%);
+  background: radial-gradient(circle, rgba(111, 86, 179, 0.105), transparent 68%);
   height: clamp(360px, 38vw, 560px);
   right: -12vw;
   top: 26%;
@@ -2377,11 +2380,11 @@
 }
 
 .okr__stage-nav-item:focus-visible span {
-  text-shadow: 0 0 18px rgba(201, 87, 50, .28);
+  text-shadow: 0 0 18px rgba(111, 86, 179, .28);
 }
 
 .okr__stage-nav-item.is-active {
-  color: #b84e2c;
+  color: #6f56b3;
   opacity: 1;
   transform: translate3d(24px, 0, 0) scale(1.08);
 }
@@ -2410,7 +2413,7 @@
 }
 
 .okr__stage-scene::before {
-  color: rgba(201, 87, 50, .055);
+  color: rgba(111, 86, 179, .055);
   content: attr(data-stage-name);
   font-size: clamp(150px, 18vw, 290px);
   font-weight: 800;
@@ -2438,7 +2441,7 @@
 
 .okr__stage-kicker,
 .okr__stage-points > span {
-  color: #b84e2c;
+  color: #6f56b3;
   display: block;
   font-size: 10px;
   font-weight: 700;
@@ -2663,21 +2666,21 @@
   font-style: normal;
 }
 
-/* Same icon treatment as the Services cards: white tile, thin orange
-   border, orange glyph — replaces the old solid-orange/black-glyph tile
+/* Same icon treatment as the Services cards: white tile, thin lavender
+   border and lavender glyph
    inherited from landing.css's dark-theme-era .okr__card-icon rule. */
 .okr .okr__portfolio-consult-card .okr__portfolio-card-icon {
   background: #ffffff !important;
-  border: 1px solid rgba(217, 106, 47, 0.24) !important;
+  border: 1px solid rgba(111, 86, 179, 0.24) !important;
   border-radius: 16px !important;
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 .okr .okr__portfolio-consult-card:is(:hover, :focus-visible, :focus-within, :active) .okr__portfolio-card-icon {
   background: #ffffff !important;
-  border-color: rgba(217, 106, 47, 0.24) !important;
+  border-color: rgba(111, 86, 179, 0.24) !important;
   border-radius: 16px !important;
-  color: #b84e2c;
+  color: #6f56b3;
   transform: none !important;
 }
 
@@ -2719,15 +2722,15 @@
 
 .okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-icon {
   background: #ffffff !important;
-  border-color: rgba(217, 106, 47, 0.24) !important;
+  border-color: rgba(111, 86, 179, 0.24) !important;
   border-radius: 16px !important;
-  color: #b84e2c;
+  color: #6f56b3;
   transform: none !important;
 }
 
 .okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-link,
 .okr .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-link svg {
-  color: #b84e2c;
+  color: #6f56b3;
 }
 
 @media (hover: none) {
@@ -2768,7 +2771,7 @@
   gap: 8px;
   font-size: 14px;
   font-weight: 500;
-  /* Brand orange, not muted gray — this is homepage content (not the
+  /* Brand lavender, not muted gray — this is homepage content (not the
      header/footer chrome, which stays monochrome per its own separate
      request), so it keeps the site's usual accent identity. */
   color: var(--okr-primary-2);
@@ -3336,9 +3339,9 @@
   --okr-glass-bg-hover: #101010;
   --okr-glass-border: rgba(255, 255, 255, 0.14);
   --okr-touch-glass: #101010;
-  /* Every orange accent on the homepage (eyebrows, the services hover
+  /* Every lavender accent on the homepage (eyebrows, the services hover
      panel, tags, focus outlines, etc.) reads from these three variables
-     or from a hardcoded #b84e2c/#c95732 elsewhere in this file — the
+     or from a hardcoded #6f56b3/#6f56b3 elsewhere in this file — the
      hardcoded ones get their own .okr__home-scoped overrides below. */
   --okr-primary: #d7c9ff;
   --okr-primary-2: #d7c9ff;
@@ -3420,7 +3423,7 @@
 }
 
 /* No lavender background rule here (there used to be one, matching the
-   old orange it replaced): the actual visible touch/hover effect is the
+   old accent it replaced): the actual visible touch/hover effect is the
    light "#e5e9eb" panel from home-services-motion.css's ::before layer,
    which paints opaquely over this row's own background on desktop hover
    — but on touch devices the row's own background and that panel can
@@ -3448,10 +3451,10 @@
   background: #e7e7e9;
 }
 
-/* Every remaining orange accent that's hardcoded (not read from the
+/* Every remaining accent that's hardcoded (not read from the
    --okr-primary/--okr-primary-2/--okr-cyan variables overridden above)
    for elements that only exist on the homepage. Text-color pairings that
-   were tuned to sit on the old orange (white text, mostly) get a dark
+   were tuned to sit on the old accent (white text, mostly) get a dark
    pairing here too, for the same reason the services-row hover fix
    above needed one: a pale accent under white text is unreadable. */
 .okr .okr__home .okr__scroll-word.is-highlight {
@@ -3462,7 +3465,7 @@
   color: #d7c9ff;
 }
 
-/* .okr__eyebrow's own color is a hardcoded #b84e2c a few hundred lines up
+/* .okr__eyebrow's own color is a hardcoded #6f56b3 a few hundred lines up
    (not read from --okr-primary-2), so the variable override above doesn't
    reach it — it needs its own override like every other hardcoded spot. */
 .okr .okr__home .okr__eyebrow {

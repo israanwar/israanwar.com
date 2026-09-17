@@ -1,9 +1,8 @@
 /* Shared newsletter subscribe form (NewsletterForm.jsx) — used both in the
    footer (dark, full-width row) and at the end of blog posts (light card).
    Accent is #d7c9ff (lavender), matching the hero title's "before the
-   market moves." tail color — was the site's orange (#b84e2c / hover
-   #c95732) until requested to switch. Hover text on the fill/border pairs
-   below is dark, not white, since white doesn't read on this pale a fill. */
+   market moves." tail color. Hover text on the fill/border pairs below is
+   dark, not white, since white doesn't read on this pale a fill. */
 
 .okr__newsletter {
   display: flex;
@@ -117,8 +116,7 @@
 .okr__newsletter-btn:hover,
 .okr__newsletter-btn:focus-visible,
 .okr__newsletter-btn:active {
-  /* Was white — fine against the old orange fill, unreadable against this
-     pale lavender one. */
+  /* Dark ink maintains contrast against the pale lavender fill. */
   color: #20181b;
 }
 

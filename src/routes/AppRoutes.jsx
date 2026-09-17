@@ -1,9 +1,31 @@
-import { lazy, Suspense } from "react";
+import { Component, lazy, Suspense, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { RequireStaff, RequireAdmin } from "./RouteGuards";
+import { clearChunkReloadMarker, importWithRetry } from "./lazyWithRetry";
 
-function lazyNamed(loader, exportName) {
-  return lazy(() => loader().then((module) => ({ default: module[exportName] })));
+function RouteLoadSuccess({ component: LoadedComponent, componentProps }) {
+  useEffect(() => {
+    clearChunkReloadMarker();
+  }, []);
+
+  return <LoadedComponent {...componentProps} />;
+}
+
+function lazyNamed(loader, exportName, { marksRouteReady = true } = {}) {
+  return lazy(() => importWithRetry(loader).then((module) => {
+    const LoadedComponent = module[exportName];
+    if (!LoadedComponent) {
+      throw new Error(`Lazy module does not export ${exportName}`);
+    }
+
+    if (!marksRouteReady) return { default: LoadedComponent };
+
+    return {
+      default: function LoadedRoute(componentProps) {
+        return <RouteLoadSuccess component={LoadedComponent} componentProps={componentProps} />;
+      },
+    };
+  }));
 }
 
 const LandingPage = lazyNamed(() => import("../pages/public/LandingPage"), "LandingPage");
@@ -26,9 +48,9 @@ const CartPage = lazyNamed(() => import("../pages/public/CartPage"), "CartPage")
 const CheckoutPage = lazyNamed(() => import("../pages/public/CheckoutPage"), "CheckoutPage");
 const PaymentPage = lazyNamed(() => import("../pages/public/PaymentPage"), "PaymentPage");
 
-const PublicLayout = lazyNamed(() => import("../layouts/PublicLayout"), "PublicLayout");
+const PublicLayout = lazyNamed(() => import("../layouts/PublicLayout"), "PublicLayout", { marksRouteReady: false });
 const AdminLoginPage = lazyNamed(() => import("../pages/admin/AdminLoginPage"), "AdminLoginPage");
-const AdminLayout = lazyNamed(() => import("../layouts/AdminLayout"), "AdminLayout");
+const AdminLayout = lazyNamed(() => import("../layouts/AdminLayout"), "AdminLayout", { marksRouteReady: false });
 const AdminDashboardPage = lazyNamed(() => import("../pages/admin/AdminDashboardPage"), "AdminDashboardPage");
 const AdminPostsPage = lazyNamed(() => import("../pages/admin/AdminPostsPage"), "AdminPostsPage");
 const AdminPostEditPage = lazyNamed(() => import("../pages/admin/AdminPostEditPage"), "AdminPostEditPage");
@@ -47,16 +69,70 @@ const AdminPagesPage = lazyNamed(() => import("../pages/admin/AdminPagesPage"), 
 
 function RouteFallback() {
   return (
-    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "#8b8b94" }}>
-      Loading...
+    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "#8b8b94", textAlign: "center" }}>
+      <div>
+        <p>Loading...</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          style={{
+            padding: "10px 20px", borderRadius: 999, border: "1px solid currentColor",
+            background: "transparent", color: "inherit", cursor: "pointer", fontSize: 14,
+          }}
+        >
+          Muat ulang
+        </button>
+      </div>
     </div>
   );
 }
 
+// A persistent chunk failure after the one guarded reload, or any ordinary
+// application exception, remains visible and debuggable instead of being
+// hidden behind Suspense forever.
+class RouteErrorBoundary extends Component {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(error) {
+    console.error("Route failed to load:", error);
+  }
+
+  render() {
+    if (this.state.failed) {
+      return (
+        <div style={{
+          minHeight: "100vh", display: "grid", placeItems: "center", gap: 16,
+          textAlign: "center", color: "#8b8b94", padding: 24,
+        }}>
+          <div>
+            <p style={{ marginBottom: 16 }}>Halaman gagal dimuat. Periksa koneksi internet Anda.</p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              style={{
+                padding: "10px 20px", borderRadius: 999, border: "1px solid currentColor",
+                background: "transparent", color: "inherit", cursor: "pointer", fontSize: 14,
+              }}
+            >
+              Coba lagi
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export function AppRoutes() {
   return (
-    <Suspense fallback={<RouteFallback />}>
-      <Routes>
+    <RouteErrorBoundary>
+      <Suspense fallback={<RouteFallback />}>
+        <Routes>
         {/* Public */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<LandingPage />} />
@@ -110,7 +186,8 @@ export function AppRoutes() {
             </Route>
           </Route>
         </Route>
-      </Routes>
-    </Suspense>
+        </Routes>
+      </Suspense>
+    </RouteErrorBoundary>
   );
 }

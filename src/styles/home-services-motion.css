@@ -98,9 +98,9 @@
   left: 0;
   z-index: 0;
   height: 0;
-  /* Same touch color as the hero's "Discuss your project" button
-     (.okr__btn--primary:hover — #c95732), not the reference's gray. */
-  background: #c95732;
+  /* Same touch color as the hero's "Discuss your project" button:
+     the site's shared lavender interaction identity. */
+  background: #d7c9ff;
   transition: height 400ms ease;
   pointer-events: none;
 }
@@ -112,9 +112,9 @@
 
 .okr__services-card .okr__services-all-btn:hover,
 .okr__services-card .okr__services-all-btn:focus-visible {
-  /* Text stays white — matches how "Discuss your project" keeps white
-     text once its background turns orange on hover. */
-  color: #ffffff;
+  /* Text goes dark once the light lavender fill rises, matching the
+     accessible foreground pairing used by the primary CTA. */
+  color: #090909;
   background: #000000;
 }
 
@@ -124,7 +124,7 @@
 }
 
 .okr__services-card .okr__services-all-btn:active {
-  color: #ffffff;
+  color: #090909;
   background: #000000;
 }
 
@@ -170,7 +170,7 @@
 
   .okr__services-card .okr__services-all-btn:active,
   .okr__services-card .okr__services-all-btn.okr__touch-active {
-    color: #ffffff;
+    color: #090909;
     background: #000000;
   }
 

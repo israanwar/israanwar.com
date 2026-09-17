@@ -2,13 +2,13 @@
 // like "Build what conventional minds miss before the market moves." — see
 // AnimatedHeadline.jsx, the one consumer of this.
 const GRADIENT_STOPS = [
-  { at: 0, color: [212, 103, 67] },
-  { at: 0.4, color: [155, 68, 47] },
-  { at: 1, color: [59, 37, 40] },
+  { at: 0, color: [215, 201, 255] },
+  { at: 0.4, color: [139, 118, 201] },
+  { at: 1, color: [54, 43, 77] },
 ];
 
 // `index`/`total` describe one glyph's position within the word it's part
-// of (0-based index, word length) — the gradient runs orange-to-dark across
+// of (0-based index, word length) — the gradient runs lavender-to-dark across
 // each individual word, restarting for the next one, matching how
 // AnimatedHeadline has always applied it.
 function interpolate(stops, index, total) {

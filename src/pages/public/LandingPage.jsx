@@ -40,7 +40,7 @@ function ScrollRevealTitle({ text }) {
       {words.map((word, index) => (
         <span
           key={`${word}-${index}`}
-          // Last word carries the same orange accent every other heading's
+          // Last word carries the same lavender accent every other heading's
           // tail portion gets (AnimatedHeadline's `is-grad`) — this title
           // has its own dedicated scroll-ink color animation instead of
           // AnimatedHeadline, so it needs its own highlight class rather
