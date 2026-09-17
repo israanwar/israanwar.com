@@ -24,11 +24,10 @@ export function BlogDetailPage() {
   const readCount = usePostViewCount(post);
 
   if (loading && !post) {
-    return (
-      <section className="okr__section okr__page-hero okr__blog-detail-page">
-          <div className="okr__wrap" style={{ color: "var(--okr-muted)" }}>Loading…</div>
-        </section>
-    );
+    // In-flight data fetch, not a failure — stay visually silent, same
+    // reasoning as the route-chunk Suspense fallbacks (PublicLayout.jsx,
+    // AppRoutes.jsx). A minHeight avoids a layout jump once content lands.
+    return <section className="okr__section okr__page-hero okr__blog-detail-page" style={{ minHeight: "60vh" }} aria-hidden="true" />;
   }
 
   if (!post || post.status !== "published") return <Navigate to="/blog" replace />;

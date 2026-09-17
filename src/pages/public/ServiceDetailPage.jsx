@@ -35,11 +35,9 @@ export function ServiceDetailPage() {
   }, [isCategory, rawServices, s?.parent_slug, lang]);
 
   if (loading && !rawService) {
-    return (
-              <section className="okr__section okr__page-hero">
-          <div className="okr__wrap" style={{ color: "var(--okr-muted)" }}>Loading…</div>
-        </section>
-    );
+    // In-flight data fetch, not a failure — stay visually silent, same
+    // reasoning as the route-chunk Suspense fallbacks.
+    return <section className="okr__section okr__page-hero" style={{ minHeight: "60vh" }} aria-hidden="true" />;
   }
 
   if (!s || s.status !== "active") return <Navigate to="/services" replace />;
