@@ -598,6 +598,12 @@
     min-height: calc(100dvh - max(56px, env(safe-area-inset-top)) - max(36px, env(safe-area-inset-bottom)));
     display: flex;
     flex-direction: column;
+    /* Without this, flex's default `stretch` blows the "INDEX" kicker span
+       up into a full-width invisible block (flex items are always
+       block-level, and stretch fills the cross axis — width, in a column).
+       It then sits right where the absolute-positioned close button is,
+       and being later in paint order, silently eats its taps. */
+    align-items: flex-start;
     justify-content: flex-start;
     padding-top: clamp(72px, 9dvh, 104px);
   }
@@ -628,7 +634,7 @@
     background: transparent;
     font-size: 28px;
     font-weight: 600;
-    line-height: 1.15;
+    line-height: 1.08;
     letter-spacing: 0;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
@@ -636,8 +642,8 @@
   }
   .okr__mobile-navlink::before { content: none; }
   .okr__mobile-navlink svg {
-    width: 22px;
-    height: 22px;
+    width: 25px;
+    height: 25px;
     flex: 0 0 auto;
     color: currentColor;
   }
@@ -653,9 +659,17 @@
     outline: none;
     transform: translate3d(2px, 0, 0);
   }
+  /* Current-page indicator — deliberately NOT italic. At the old smaller
+     font-size, italic read as "this one's highlighted"; now that the type
+     is much bigger, an italic word just reads as a different typeface
+     rather than a status. An underline plus a bolder weight communicates
+     "you are here" without relying on a subtle style shift. */
   .okr__mobile-navlink.is-active {
     color: #d7c9ff;
-    font-style: italic;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 6px;
   }
 
   /* This :has() block sits behind an @supports gate, so it's easy to miss in
@@ -719,8 +733,8 @@
     font-size: 24px;
   }
   .okr__mobile-navlink svg {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
   }
 }
 

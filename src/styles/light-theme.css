@@ -121,14 +121,31 @@
   z-index: 0;
 }
 
-.okr__mobile-menu-close,
 .okr__mobile-menu-content {
   position: relative;
   z-index: 1;
 }
 
+/* Only z-index here, never `position` — the close button is
+   `position: absolute` (landing.css) with explicit top/right offsets to
+   pin it to the corner. Grouping it with `.okr__mobile-menu-content` above
+   used to also set `position: relative`, which reinterprets those same
+   top/right values as a shift from its in-flow position instead of an
+   absolute corner anchor — flinging the button almost entirely off the
+   left edge of the screen (unclickable) and shoving real menu content down
+   into the gap it left behind.
+   z-index is 2, one above `.okr__mobile-menu-content`'s 1: that content
+   div is a full-bleed block (it has to be, to hold the nav list), so its
+   top padding area geometrically overlaps this corner button even though
+   nothing is visibly drawn there — without outranking it, content's later
+   DOM position wins the stacking tie and silently eats every tap on the
+   button underneath it. */
+.okr__mobile-menu-close {
+  z-index: 2;
+}
+
 .okr__mobile-menu-kicker {
-  font-size: 28px;
+  font-size: 24px;
 }
 
 .okr__mobile-menu-kicker,
@@ -151,7 +168,11 @@
 
 .okr__mobile-navlink {
   color: rgba(255, 255, 255, 0.7);
-  font-size: 32px;
+  /* Fluid instead of a flat 32px so it actually varies by viewport (an
+     older fixed value here was shadowing landing.css's width/height
+     tiers entirely, since this file loads last) — clamps between 34
+     and 40px, scaling with viewport width in between. */
+  font-size: clamp(34px, 9vw, 40px);
 }
 
 .okr__foot-social a:hover,
