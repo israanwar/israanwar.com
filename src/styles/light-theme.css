@@ -170,9 +170,10 @@
   color: rgba(255, 255, 255, 0.7);
   /* Fluid instead of a flat 32px so it actually varies by viewport (an
      older fixed value here was shadowing landing.css's width/height
-     tiers entirely, since this file loads last) — clamps between 34
-     and 40px, scaling with viewport width in between. */
-  font-size: clamp(34px, 9vw, 40px);
+     tiers entirely, since this file loads last) — clamps between 61
+     and 72px (previous 34-40px range, +80% per request), scaling with
+     viewport width in between. */
+  font-size: clamp(61px, 16.2vw, 72px);
 }
 
 .okr__foot-social a:hover,
