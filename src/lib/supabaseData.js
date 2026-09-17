@@ -16,6 +16,7 @@ import {
 import { applyProductPriceDiscount, applyProductPriceDiscounts } from "./productPricing";
 import { normalizePortfolioProjects } from "./portfolioProjects";
 import { normalizePaymentSettings } from "./paymentSettings";
+import { POST_CONTENT_OVERRIDES } from "../data/postContentOverrides";
 
 const MEDIA_BUCKET = "israanwar-media";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -84,7 +85,9 @@ function productRowToItem(row) {
 // a UUID primary key. Admin routes must use the real row ID for reads/writes.
 export function postRowToItem(row) {
   const legacyId = row.data?.legacy_id || (!isUuid(row.data?.id) ? row.data?.id : null);
-  return { ...rowToItem(row), id: row.id, ...(legacyId ? { legacy_id: legacyId } : {}) };
+  const item = { ...rowToItem(row), id: row.id, ...(legacyId ? { legacy_id: legacyId } : {}) };
+  const override = POST_CONTENT_OVERRIDES[item.slug];
+  return override ? { ...item, ...override } : item;
 }
 
 function orderRowToItem(row) {
