@@ -1,8 +1,9 @@
 /* Shared newsletter subscribe form (NewsletterForm.jsx) — used both in the
    footer (dark, full-width row) and at the end of blog posts (light card).
-   Brand colors only: black/near-black default with the site's orange
-   (#b84e2c / hover #c95732) as the single accent, matching every other
-   primary CTA on the site (hero "Discuss your project", "All Services"). */
+   Accent is #d7c9ff (lavender), matching the hero title's "before the
+   market moves." tail color — was the site's orange (#b84e2c / hover
+   #c95732) until requested to switch. Hover text on the fill/border pairs
+   below is dark, not white, since white doesn't read on this pale a fill. */
 
 .okr__newsletter {
   display: flex;
@@ -23,7 +24,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #b84e2c;
+  color: #d7c9ff;
   margin-bottom: 8px;
 }
 
@@ -58,7 +59,7 @@
 }
 
 .okr__newsletter-field:focus-within {
-  border-color: #b84e2c;
+  border-color: #d7c9ff;
 }
 
 .okr__newsletter-input {
@@ -101,7 +102,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: #c95732;
+  background: #d7c9ff;
   transform: translateX(-100%);
   transition: transform 320ms ease;
   pointer-events: none;
@@ -116,7 +117,9 @@
 .okr__newsletter-btn:hover,
 .okr__newsletter-btn:focus-visible,
 .okr__newsletter-btn:active {
-  color: #ffffff;
+  /* Was white — fine against the old orange fill, unreadable against this
+     pale lavender one. */
+  color: #20181b;
 }
 
 .okr__newsletter-btn-label {
@@ -149,30 +152,46 @@
    footer bar, so it reads as a distinct "before you go" moment rather
    than another row of footer chrome. */
 .okr__newsletter-band {
-  background: #f5f1eb;
-  border-top: 1px solid rgba(32, 24, 27, 0.08);
+  background: #000000;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   padding-block: clamp(32px, 5vw, 48px);
 }
 
 .okr__newsletter--band .okr__newsletter-title {
-  color: #20181b;
+  color: #ffffff;
 }
 
 .okr__newsletter--band .okr__newsletter-subtitle {
-  color: var(--okr-muted);
+  color: #b0b0b5;
 }
 
 .okr__newsletter--band .okr__newsletter-field {
-  border-color: rgba(32, 24, 27, 0.16);
-  background: #ffffff;
+  border-color: rgba(255, 255, 255, 0.22);
+  background: #0c0c0d;
 }
 
 .okr__newsletter--band .okr__newsletter-input {
-  color: #20181b;
+  /* The global `.okr input { background: #ffffff }` reset (light-theme.css)
+     outranks this class alone on specificity, so without !important the
+     input silently rendered white — with white text and a barely-visible
+     placeholder on top of it, making the field unreadable/unusable. */
+  background: transparent !important;
+  color: #ffffff;
 }
 
 .okr__newsletter--band .okr__newsletter-input::placeholder {
-  color: rgba(32, 24, 27, 0.4);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.okr__newsletter--band .okr__newsletter-btn {
+  background: #ffffff;
+  color: #090909;
+}
+
+.okr__newsletter--band .okr__newsletter-btn:hover,
+.okr__newsletter--band .okr__newsletter-btn:focus-visible,
+.okr__newsletter--band .okr__newsletter-btn:active {
+  color: #20181b;
 }
 
 .okr__newsletter--band .okr__newsletter-success {

@@ -648,30 +648,31 @@
     transform: translate3d(2px, 0, 0);
   }
   .okr__mobile-navlink:active {
-    color: #777d85;
+    color: #d7c9ff;
     font-style: italic;
     outline: none;
     transform: translate3d(2px, 0, 0);
   }
   .okr__mobile-navlink.is-active {
-    color: #777d85;
+    color: #d7c9ff;
     font-style: italic;
   }
 
   /* This :has() block sits behind an @supports gate, so it's easy to miss in
      a quick pass: it wins over the plain-class light-theme overrides
-     (higher specificity) whenever a link in the panel is hovered/focused,
-     and was still tuned for the old dark full-bleed menu — near-white
-     text, invisible on the current white sheet. */
+     (higher specificity) whenever a link in the panel is hovered/focused.
+     Matched to the menu's live Sun/dark background now — dim white for the
+     rest of the list, lavender (not the old brand orange) for the
+     hovered/active one. */
   @supports selector(.okr__mobile-menu-panel:has(.okr__mobile-navlink:hover)) {
     .okr__mobile-menu-panel:has(.okr__mobile-navlink:is(:hover, :focus-visible, :active)) .okr__mobile-navlink {
-      color: rgba(32, 24, 27, 0.38);
+      color: rgba(255, 255, 255, 0.35);
     }
     .okr__mobile-menu-panel:has(.okr__mobile-navlink:is(:hover, :focus-visible, :active)) .okr__mobile-navlink:is(:hover, :focus-visible, :active) {
-      color: #b84e2c;
+      color: #d7c9ff;
     }
     .okr__mobile-menu-panel:has(.okr__mobile-navlink:is(:hover, :focus-visible, :active)) .okr__mobile-navlink:is(:active, .is-active) {
-      color: #b84e2c;
+      color: #d7c9ff;
     }
   }
 }
@@ -2112,6 +2113,15 @@
   height: 40px;
   object-fit: contain;
 }
+/* Ahrefs' mark is a thin lowercase "a" that fills its own viewBox about as
+   much as the others fill theirs, but reads visually lighter next to bold
+   marks at the same size in this larger, standalone panel display. This is
+   this panel's own optical correction — unrelated to the strip's now
+   perfectly-uniform icon slots below, which intentionally carry no
+   per-brand size hacks. */
+.okr__cert-panel-logo[src*="ahrefs"] {
+  transform: scale(1.4);
+}
 .okr__cert-panel-headcopy {
   min-width: 0;
 }
@@ -2185,7 +2195,7 @@
    ========================================================================== */
 .okr__certstrip {
   display: flex;
-  gap: 18px;
+  gap: 14px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -2199,42 +2209,72 @@
 .okr__certstrip:active { cursor: grabbing; }
 
 .okr__certstrip-card {
-  /* Square, not the old 132x84 wide tile: most issuer marks are roughly
-     square (or portrait, like LinkedIn/Amazon), so a wide box left them
-     small and off-center with a lot of dead space on either side. A
-     square box lets object-fit:contain use the full available size on
-     every logo consistently, whatever its native shape. */
+  /* Long enough to hold the brand name next to its mark (per request).
+     The icon sits in its own fixed square slot (see -icon below) so every
+     logo — square glyph or wide wordmark like IBM's — is judged inside an
+     identical box; only the visible NAME communicates which brand it is,
+     so no single mark can read as "bigger" than another. */
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex: 0 0 auto;
-  width: 128px;
-  height: 128px;
-  display: grid;
-  place-items: center;
-  padding: 24px;
+  width: 208px;
+  height: 60px;
+  padding: 0 18px;
   border: 1px solid var(--okr-glass-border);
-  border-radius: 20px;
+  border-radius: 14px;
   background: var(--okr-card-surface, #fff);
   box-shadow: 0 8px 20px rgba(55, 31, 35, 0.07);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   opacity: 0.94;
+  overflow: hidden;
   transition: transform 180ms cubic-bezier(.16, 1, .3, 1), box-shadow 180ms ease, border-color 150ms ease, opacity 180ms ease;
 }
-.okr__certstrip-card img {
-  max-width: 100%;
-  max-height: 100%;
+.okr__certstrip-card-icon {
+  /* A plain fixed-pixel box (not a percentage-sized child of a grid or an
+     absolutely positioned replaced element) — both of those hit real
+     Chromium sizing quirks (see the removed comments in git history) where
+     a percentage width/height on the <img> failed to resolve against the
+     intended box. A definite pixel-sized ancestor has no such ambiguity:
+     width/height:100% on the img always resolves against exactly this. */
+  position: relative;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+}
+.okr__certstrip-card-icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   pointer-events: none;
 }
-/* Ahrefs' mark is a thin lowercase "a" that fills its own viewBox about as
-   much as the others fill theirs, but reads visually smaller/lighter next
-   to bold, solid marks (Google's "G", the Apple silhouette) at the exact
-   same bounding-box size — a real difference in the source artwork, not a
-   sizing bug. Nudging it up is the same "optical sizing" correction type
-   designers apply by hand in any logo row like this. */
-.okr__certstrip-card img[src*="ahrefs"],
-.okr__cert-panel-logo[src*="ahrefs"] {
+/* IBM's mark is a wordmark at a ~2.7:1 aspect ratio — inside the same
+   square slot as every icon-shaped mark here, object-fit:contain leaves
+   it filling only about a third of the box's height, reading distinctly
+   smaller than the others even though the box itself is identical. The
+   card's own overflow:hidden keeps this safely clipped to the card, and
+   18px of left padding plus the 12px gap to the name give it room to
+   grow without touching either. */
+.okr__certstrip-card-icon img[src*="ibm"] {
   transform: scale(1.4);
+}
+.okr__certstrip-card-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  /* Not var(--okr-text): that resolves near-white in this dark theme, but
+     the card itself is force-kept white (light-theme.css) so every logo
+     mark stays legible — near-white text on that white card would repeat
+     the exact invisible-text bug already fixed elsewhere on this page. */
+  color: #20181b;
 }
 /* The "spotlight" — a soft glow anchored to the card, not the pointer. */
 @media (hover: hover) {
@@ -2283,9 +2323,18 @@
      entirely. Plain overflow-x:auto (no snap) is what actually stays
      draggable on real phones. */
   .okr__certstrip-card {
-    width: 100px;
-    height: 100px;
-    padding: 18px;
+    width: 176px;
+    height: 52px;
+    padding: 0 14px;
+    gap: 10px;
+    border-radius: 12px;
+  }
+  .okr__certstrip-card-icon {
+    width: 26px;
+    height: 26px;
+  }
+  .okr__certstrip-card-name {
+    font-size: 13px;
   }
 }
 
@@ -2839,9 +2888,11 @@
   font-size: 14px; margin-bottom: 20px;
 }
 .okr__pay-alert--pending {
-  background: rgba(245,158,11,0.08);
-  border: 1px solid rgba(245,158,11,0.35);
-  color: #fbbf24;
+  /* Lavender, matching the site's own accent identity — was an amber
+     "warning" color that clashed with the rest of the UI. */
+  background: rgba(215, 201, 255, 0.08);
+  border: 1px solid rgba(215, 201, 255, 0.35);
+  color: #d7c9ff;
 }
 
 /* Progress stepper */

@@ -53,6 +53,18 @@ identity-audit-*.png
 # part of the app; kept out of the repo so its 34MB doesn't get committed.
 /AdminLTE-master/
 
+# Abandoned 3D humanoid robot hero experiment (Sept 2026) — never shipped;
+# Home's hero now uses SunBackground.jsx (no GLB dependency) instead of the
+# retired OkkaRobotPointCloud.jsx. okka-fallback.jpg is NOT excluded — it's
+# still used as SunBackground's WebGL-unsupported fallback image.
+/public/assets/3d/isra-humanoid-robot.glb
+/public/assets/3d/okka-robot.glb
+/public/assets/OKKA_robot_complete_pack_v2/
+/scripts/build-humanoid-robot.mjs
+/scripts/build-isra-bust-blender.py
+/scripts/reconstruct-isra-face.py
+/scripts/refine-isra-bust.mjs
+
 # Credentials / keys — defensive net, none currently expected in this project
 *.pem
 *.key

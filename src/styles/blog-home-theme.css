@@ -1,0 +1,420 @@
+/* Blog visual identity: the same noir + lavender language used by Home.
+   This file is imported only by the public Blog routes so no other page is
+   repainted while Home/hero work continues independently. */
+
+.okr:has(.okr__blog-page),
+.okr:has(.okr__blog-detail-page) {
+  --okr-primary: #d7c9ff;
+  --okr-primary-2: #d7c9ff;
+  --okr-cyan: #d7c9ff;
+  --okr-card-accent: #d7c9ff;
+  --okr-system-accent: #d7c9ff;
+  --okr-system-accent-soft: #d7c9ff;
+  --okr-system-cyan: #d7c9ff;
+  --okr-system-line-hot: rgba(215, 201, 255, 0.56);
+  --okr-touch-glass: rgba(215, 201, 255, 0.12);
+  --okr-touch-glass-border: rgba(215, 201, 255, 0.52);
+  --okr-touch-glass-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  background: #000000;
+}
+
+.okr .okr__blog-page,
+.okr .okr__blog-detail-page {
+  --okr-bg: #000000;
+  --okr-bg-2: #000000;
+  --okr-line: rgba(255, 255, 255, 0.12);
+  --okr-line-strong: rgba(255, 255, 255, 0.22);
+  --okr-border: rgba(255, 255, 255, 0.12);
+  --okr-text: #f7f7f8;
+  --okr-muted: #b0b0b5;
+  --okr-dim: #85858d;
+  --okr-primary: #d7c9ff;
+  --okr-primary-2: #d7c9ff;
+  --okr-cyan: #d7c9ff;
+  --okr-card-bg: #08080b;
+  --okr-card-surface: #08080b;
+  --okr-card-surface-hover: #111016;
+  --okr-input-bg: #0b0b0e;
+  --okr-glass-bg: #08080b;
+  --okr-glass-bg-hover: #111016;
+  --okr-glass-border: rgba(255, 255, 255, 0.15);
+  --okr-touch-glass: rgba(215, 201, 255, 0.12);
+  --okr-touch-glass-border: rgba(215, 201, 255, 0.52);
+  --okr-touch-glass-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #000000 !important;
+  color: #f7f7f8;
+  color-scheme: dark;
+}
+
+/* Quiet ambient light echoes the hero without competing with the copy. */
+.okr .okr__blog-page::before,
+.okr .okr__blog-detail-page::before {
+  position: absolute;
+  z-index: -1;
+  top: -240px;
+  left: 50%;
+  width: min(1080px, 100vw);
+  height: 620px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(121, 88, 194, 0.16) 0%, rgba(71, 45, 124, 0.07) 42%, transparent 72%);
+  content: "";
+  pointer-events: none;
+}
+
+.okr .okr__blog-page > .okr__wrap,
+.okr .okr__blog-detail-page > .okr__wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.okr .okr__blog-page :is(.okr__h2, .okr__blog-pin-title),
+.okr .okr__blog-detail-page :is(.okr__h2, .okr__detail-title, h2, h3, h4) {
+  color: #f7f7f8 !important;
+}
+
+.okr .okr__blog-page .okr__headline--stagger .okr__word:not(.is-grad),
+.okr .okr__blog-page .okr__headline--stagger .okr__word:not(.is-grad) .okr__glyph,
+.okr .okr__blog-detail-page .okr__headline--stagger .okr__word:not(.is-grad),
+.okr .okr__blog-detail-page .okr__headline--stagger .okr__word:not(.is-grad) .okr__glyph {
+  color: #f7f7f8 !important;
+  -webkit-text-fill-color: #f7f7f8 !important;
+}
+
+.okr .okr__blog-page .okr__headline--stagger .okr__word.is-grad,
+.okr .okr__blog-page .okr__headline--stagger .okr__word.is-grad .okr__glyph,
+.okr .okr__blog-detail-page .okr__headline--stagger .okr__word.is-grad,
+.okr .okr__blog-detail-page .okr__headline--stagger .okr__word.is-grad .okr__glyph {
+  background: none !important;
+  color: #d7c9ff !important;
+  -webkit-text-fill-color: #d7c9ff !important;
+  text-shadow: none !important;
+}
+
+.okr .okr__blog-page :is(.okr__eyebrow, .okr__post-tags),
+.okr .okr__blog-detail-page :is(.okr__eyebrow, .okr__post-tags) {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__blog-page :is(.okr__glass-input, .okr__glass-select) {
+  background: #0b0b0e !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #f7f7f8 !important;
+  box-shadow: none;
+}
+
+.okr .okr__blog-page .okr__glass-input::placeholder {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.okr .okr__blog-page :is(.okr__glass-input, .okr__glass-select):focus {
+  border-color: rgba(215, 201, 255, 0.72) !important;
+  box-shadow: 0 0 0 3px rgba(215, 201, 255, 0.12);
+  outline: none;
+}
+
+.okr .okr__blog-page .okr__glass-select option {
+  background: #0b0b0e;
+  color: #f7f7f8;
+}
+
+.okr .okr__blog-page .okr__rail-chip {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #d4d4d8;
+}
+
+.okr .okr__blog-page .okr__rail-chip:is(:hover, :focus-visible) {
+  background: rgba(215, 201, 255, 0.1);
+  border-color: rgba(215, 201, 255, 0.58);
+  color: #ffffff;
+}
+
+.okr .okr__blog-page .okr__rail-chip.is-active {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #090909;
+}
+
+.okr .okr__blog-page .okr__rail-chip.is-active .okr__rail-chip-count {
+  color: #574d72;
+}
+
+.okr .okr__blog-page .okr__category-rail-wrap {
+  --rail-fade-bg: rgba(0, 0, 0, 0.92);
+}
+
+.okr .okr__blog-page .okr__blog-pin-card {
+  background: #08080b !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.42);
+  color: #f7f7f8;
+}
+
+.okr .okr__blog-page .okr__blog-pin-card:is(:hover, :focus-visible, :active) {
+  background: #111016 !important;
+  border-color: rgba(215, 201, 255, 0.68) !important;
+  box-shadow: 0 24px 58px rgba(42, 29, 72, 0.42), 0 0 0 1px rgba(215, 201, 255, 0.1);
+}
+
+.okr .okr__blog-page .okr__blog-pin-card:focus-visible {
+  outline-color: #d7c9ff;
+}
+
+.okr .okr__blog-page .okr__blog-pin-dot {
+  background: #d7c9ff;
+  box-shadow: 0 0 16px rgba(215, 201, 255, 0.52);
+}
+
+.okr .okr__blog-page .okr__blog-pin-category {
+  color: #d7c9ff;
+}
+
+.okr .okr__blog-page .okr__blog-pin-title {
+  color: #f7f7f8 !important;
+}
+
+.okr .okr__blog-page .okr__blog-pin-index {
+  color: #85858d;
+}
+
+.okr .okr__blog-page .okr__blog-sidebar aside > div {
+  background: #08080b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34);
+}
+
+.okr .okr__blog-page .okr__blog-sidebar aside > div:last-child {
+  background: linear-gradient(145deg, rgba(215, 201, 255, 0.1), rgba(8, 8, 11, 0.94)) !important;
+}
+
+.okr .okr__blog-page .okr__blog-sidebar a {
+  color: #f7f7f8 !important;
+}
+
+.okr .okr__blog-page .okr__blog-sidebar a:is(:hover, :focus-visible, :active) {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__blog-page .okr__blog-sidebar aside > div:last-child > a {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #090909 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.okr .okr__blog-page .okr__blog-sidebar aside > div:last-child > a:is(:hover, :focus-visible, :active) {
+  background: #d7c9ff !important;
+  border-color: #d7c9ff !important;
+  color: #090909 !important;
+}
+
+.okr .okr__blog-page button {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  background: transparent !important;
+  color: #f7f7f8 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.okr .okr__blog-page button:is(:hover, :focus-visible, :active),
+.okr .okr__blog-page button[aria-current="page"] {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #090909 !important;
+}
+
+.okr .okr__blog-page button:not(:disabled):is(:hover, :focus-visible, :active) {
+  box-shadow: 0 0 0 3px rgba(215, 201, 255, 0.12);
+}
+
+/* Article view */
+.okr .okr__blog-detail-page .okr__link {
+  color: #d7c9ff;
+}
+
+.okr .okr__blog-detail-page .okr__link:is(:hover, :focus-visible, :active) {
+  color: #ffffff;
+}
+
+.okr .okr__blog-detail-page .okr__prose {
+  color: #d4d4d8;
+}
+
+.okr .okr__blog-detail-page .okr__prose :is(h2, h3, strong) {
+  color: #f7f7f8;
+}
+
+.okr .okr__blog-detail-page .okr__prose a {
+  color: #d7c9ff;
+  text-decoration-color: rgba(215, 201, 255, 0.48);
+  text-underline-offset: 3px;
+}
+
+.okr .okr__blog-detail-page .okr__prose blockquote {
+  border-left-color: #d7c9ff;
+  background: rgba(215, 201, 255, 0.08);
+  color: #e4e4e7;
+}
+
+.okr .okr__blog-detail-page .okr__prose code {
+  background: #111016;
+  border: 1px solid rgba(215, 201, 255, 0.18);
+  color: #e8e0ff;
+}
+
+.okr .okr__blog-detail-page .okr__post-share {
+  --okr-share-line: rgba(255, 255, 255, 0.14);
+  --okr-share-ink: #f7f7f8;
+  --okr-share-muted: #b0b0b5;
+}
+
+.okr .okr__blog-detail-page .okr__post-share-eyebrow {
+  color: #d7c9ff;
+}
+
+.okr .okr__blog-detail-page .okr__post-share-button {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #f7f7f8;
+}
+
+.okr .okr__blog-detail-page .okr__post-share-button:is(:hover, :focus-visible, :active),
+.okr .okr__blog-detail-page .okr__post-share-button--copy.is-copied {
+  background: #d7c9ff;
+  border-color: #d7c9ff;
+  color: #090909;
+}
+
+.okr .okr__blog-detail-page .okr__post-share-button:focus-visible {
+  outline-color: rgba(215, 201, 255, 0.72);
+}
+
+.okr .okr__blog-detail-page .okr__newsletter--blog {
+  background: #08080b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 22px 54px rgba(0, 0, 0, 0.36);
+}
+
+.okr .okr__blog-detail-page .okr__newsletter--blog :is(.okr__newsletter-title, .okr__newsletter-subtitle) {
+  color: #f7f7f8;
+}
+
+.okr .okr__blog-detail-page .okr__newsletter--blog .okr__newsletter-subtitle {
+  color: #b0b0b5;
+}
+
+.okr .okr__blog-detail-page .okr__newsletter--blog .okr__newsletter-field {
+  background: #0b0b0e;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.okr .okr__blog-detail-page .okr__newsletter--blog .okr__newsletter-input {
+  background: transparent !important;
+  color: #ffffff;
+}
+
+.okr .okr__blog-detail-page .okr__newsletter--blog .okr__newsletter-input::placeholder {
+  color: rgba(255, 255, 255, 0.48);
+}
+
+.okr .okr__blog-detail-page .okr__newsletter--blog .okr__newsletter-btn {
+  background: #ffffff;
+  color: #090909;
+}
+
+.okr .okr__blog-detail-page .okr__newsletter--blog .okr__newsletter-btn-fill {
+  background: #d7c9ff;
+}
+
+.okr .okr__blog-detail-page details,
+.okr .okr__blog-detail-page .okr__post {
+  background: #08080b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #f7f7f8;
+  box-shadow: none !important;
+}
+
+.okr .okr__blog-detail-page details:is(:hover, :focus-within),
+.okr .okr__blog-detail-page .okr__post:is(:hover, :focus-visible, :focus-within) {
+  background: #111016 !important;
+  border-color: rgba(215, 201, 255, 0.58) !important;
+}
+
+.okr .okr__blog-detail-page details[open] summary > span:last-child {
+  color: #d7c9ff !important;
+}
+
+/* Shared controls live outside the route section. Keep their Blog-route
+   states in the same lavender identity without modifying the shared files. */
+.okr:has(.okr__blog-page) :is(a, button, input, select):focus-visible,
+.okr:has(.okr__blog-detail-page) :is(a, button, input, select):focus-visible {
+  outline-color: rgba(215, 201, 255, 0.78) !important;
+}
+
+.okr:has(.okr__blog-page) .okr__chat-trigger:is(:hover, :focus-visible, :active),
+.okr:has(.okr__blog-detail-page) .okr__chat-trigger:is(:hover, :focus-visible, :active),
+.okr:has(.okr__blog-page) .okr__chat-panel-icon,
+.okr:has(.okr__blog-detail-page) .okr__chat-panel-icon,
+.okr:has(.okr__blog-page) .okr__chat-send:not(:disabled):is(:hover, :focus-visible, :active),
+.okr:has(.okr__blog-detail-page) .okr__chat-send:not(:disabled):is(:hover, :focus-visible, :active) {
+  background: #d7c9ff !important;
+  color: #090909 !important;
+}
+
+.okr:has(.okr__blog-page) .okr__chat-upload:not(:disabled):is(:hover, :focus-visible, :active),
+.okr:has(.okr__blog-detail-page) .okr__chat-upload:not(:disabled):is(:hover, :focus-visible, :active),
+.okr:has(.okr__blog-page) .okr__chat-input:focus,
+.okr:has(.okr__blog-detail-page) .okr__chat-input:focus {
+  border-color: #d7c9ff !important;
+}
+
+.okr:has(.okr__blog-page) .okr__chat-upload:not(:disabled):is(:hover, :focus-visible, :active),
+.okr:has(.okr__blog-detail-page) .okr__chat-upload:not(:disabled):is(:hover, :focus-visible, :active) {
+  color: #7663aa !important;
+}
+
+.okr:has(.okr__blog-page) .okr__chat-doc-chip--error,
+.okr:has(.okr__blog-detail-page) .okr__chat-doc-chip--error {
+  background: rgba(215, 201, 255, 0.14) !important;
+  color: #7663aa !important;
+}
+
+.okr:has(.okr__blog-page) .okr__newsletter-error,
+.okr:has(.okr__blog-detail-page) .okr__newsletter-error {
+  color: #d7c9ff;
+}
+
+/* Preserve motion, but never blur identity, copy, or controls. */
+.okr .okr__blog-page :is(h1, h2, h3, p, a, button, span, li, img, svg),
+.okr .okr__blog-detail-page :is(h1, h2, h3, h4, p, a, button, span, li, img, svg) {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr .okr__blog-page *,
+  .okr .okr__blog-detail-page * {
+    scroll-behavior: auto !important;
+  }
+
+  .okr .okr__blog-page .okr__blog-pin-card,
+  .okr .okr__blog-detail-page .okr__post-share-button {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .okr .okr__blog-page::before,
+  .okr .okr__blog-detail-page::before {
+    top: -180px;
+    height: 460px;
+  }
+
+  .okr .okr__blog-detail-page .okr__newsletter--blog {
+    padding: 24px 20px;
+  }
+}

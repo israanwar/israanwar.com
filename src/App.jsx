@@ -36,11 +36,16 @@ function ScrollToTop() {
     let timer = 0;
     let observer = null;
 
+    const onPageShow = () => {
+      if (live) apply();
+    };
+
     const release = () => {
       live = false;
       observer?.disconnect();
       window.clearTimeout(timer);
       cancelAnimationFrame(frame);
+      window.removeEventListener("pageshow", onPageShow);
       INTENT_EVENTS.forEach((type) => window.removeEventListener(type, release));
     };
 
@@ -60,9 +65,19 @@ function ScrollToTop() {
     };
 
     if (apply()) return release;
-    frame = requestAnimationFrame(() => {
-      if (apply()) release();
-    });
+
+    // Native restoration can land after the first React layout effect. Pin
+    // the intended position through the browser's short restoration window;
+    // any real reader input immediately calls release(), so this never fights
+    // someone who deliberately starts scrolling.
+    const settleUntil = performance.now() + 1400;
+    const maintainIntent = (now) => {
+      if (!live) return;
+      const satisfied = apply();
+      if (targetId && satisfied) return release();
+      if (now < settleUntil) frame = requestAnimationFrame(maintainIntent);
+    };
+    frame = requestAnimationFrame(maintainIntent);
 
     const onGrow = () => {
       if (!live) return;
@@ -82,6 +97,7 @@ function ScrollToTop() {
 
     // Hard stop, so this can never end up fighting a reader on a long-lived page.
     timer = window.setTimeout(release, 8000);
+    window.addEventListener("pageshow", onPageShow);
     INTENT_EVENTS.forEach((type) =>
       window.addEventListener(type, release, { passive: true, once: true }),
     );

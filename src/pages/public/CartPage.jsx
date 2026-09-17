@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Trash2, ShoppingBag } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
+import { SunBackground } from "../../components/hero/SunBackground";
 import { cartRepo } from "../../lib/localStore";
 import { useLiveCart } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
@@ -10,16 +11,17 @@ import { resolveProductCover } from "../../lib/storePlaceholder";
 
 export function CartPage() {
   const { lang, t } = useI18n();
-  const { rows, total } = useLiveCart();
+  const { rows, total, itemCount } = useLiveCart();
 
   return (
     <>
       <Seo title={`${t("cart_title")} — israanwar`} description={t("cart_title")} noindex />
               <section className="okr__section okr__page-hero">
+            <SunBackground />
           <div className="okr__wrap">
             <AnimatedHeadline text={t("cart_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
 
-            {rows.length === 0 ? (
+            {itemCount === 0 ? (
               <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--okr-muted)" }}>
                 <ShoppingBag size={40} style={{ margin: "0 auto 16px", color: "var(--okr-dim)" }} />
                 <p>{t("cart_empty")}</p>

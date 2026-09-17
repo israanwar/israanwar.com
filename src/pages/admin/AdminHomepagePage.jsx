@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ExternalLink } from "lucide-react";
+import { Eye } from "lucide-react";
 import { getHomepageSections, updateSection } from "../../services/homepageService";
+import { AdminPreviewModal } from "../../components/admin/AdminPreviewModal";
 
 export function AdminHomepagePage() {
   const nav = useNavigate();
@@ -9,39 +10,60 @@ export function AdminHomepagePage() {
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const editVersion = useRef(0);
+  const changedSections = useRef(new Map());
 
   useEffect(() => { getHomepageSections().then(setData); }, []);
   if (!data) return <p>Loading…</p>;
 
   const setSection = (key, patch) => {
     setData((d) => ({ ...d, [key]: { ...(d[key] ?? {}), ...patch } }));
+    editVersion.current += 1;
+    changedSections.current.set(key, editVersion.current);
     setDirty(true);
   };
   const setSectionRaw = (key, val) => {
     setData((d) => ({ ...d, [key]: val }));
+    editVersion.current += 1;
+    changedSections.current.set(key, editVersion.current);
     setDirty(true);
   };
 
   async function save({ redirect = false } = {}) {
+    if (busy) return false;
+    const pending = [...changedSections.current.entries()];
     setBusy(true); setMsg(null);
     try {
-      for (const key of Object.keys(data)) {
+      for (const [key, version] of pending) {
         await updateSection(key, data[key] ?? {});
+        if (changedSections.current.get(key) === version) changedSections.current.delete(key);
       }
-      setDirty(false);
-      if (redirect) {
+      const hasNewEdits = changedSections.current.size > 0;
+      setDirty(hasNewEdits);
+      if (redirect && !hasNewEdits) {
         nav("/admin", { state: { toast: { type: "success", text: "✓ Homepage saved." } } });
       } else {
-        setMsg({ type: "success", text: "✓ Saved. Click Preview to see." });
+        setMsg(hasNewEdits
+          ? { type: "info", text: "Perubahan baru dibuat saat menyimpan. Klik Save lagi sebelum Preview." }
+          : { type: "success", text: "✓ Tersimpan di Supabase. Buka Preview untuk melihat hasilnya." });
       }
+      return !hasNewEdits;
     } catch (e) {
-      setMsg({ type: "error", text: e.message ?? "Failed to save." });
+      setDirty(true);
+      setMsg({ type: "error", text: `${e.message ?? "Gagal menyimpan."} Penyimpanan belum selesai; sebagian bagian mungkin sudah terpublikasi.` });
+      return false;
     } finally { setBusy(false); }
   }
 
-  function preview() {
-    if (dirty) save({ redirect: false });
-    window.open("/", "_blank");
+  async function preview() {
+    if (busy) return;
+    if (!dirty) {
+      setShowPreview(true);
+      return;
+    }
+    const saved = await save();
+    if (saved) setShowPreview(true);
   }
 
   const hero = data.hero ?? {};
@@ -55,13 +77,13 @@ export function AdminHomepagePage() {
       <div className="wpx__page-header">
         <h1>Homepage {dirty && <span style={{ fontSize: 12, color: "#fbbf24", marginLeft: 8 }}>● unsaved</span>}</h1>
         <div className="spacer" />
-        <button type="button" className="wpx__btn wpx__btn--secondary" onClick={preview}>
-          <ExternalLink size={14} /> Preview
+        <button type="button" className="wpx__btn wpx__btn--secondary" onClick={preview} disabled={busy}>
+          <Eye size={14} /> Preview
         </button>
-        <button type="button" className="wpx__btn wpx__btn--secondary" onClick={() => save({ redirect: false })} disabled={busy}>
+        <button type="button" className="wpx__btn wpx__btn--secondary" onClick={() => save({ redirect: false })} disabled={busy || !dirty}>
           {busy ? "Saving…" : "Save (stay here)"}
         </button>
-        <button type="button" className="wpx__btn wpx__btn--primary" onClick={() => save({ redirect: true })} disabled={busy}>
+        <button type="button" className="wpx__btn wpx__btn--primary" onClick={() => save({ redirect: true })} disabled={busy || !dirty}>
           {busy ? "…" : "Save & return"}
         </button>
       </div>
@@ -76,10 +98,10 @@ export function AdminHomepagePage() {
             <Field label="Title line 2 (gradient)" value={hero.title_line2} onChange={(v) => setSection("hero", { title_line2: v })} />
           </div>
           <Field label="Subtitle (EN)" textarea value={hero.subtitle} onChange={(v) => setSection("hero", { subtitle: v })} />
-          <Field label="Subtitle (ID)" textarea value={hero.subtitle_id} onChange={(v) => setSection("hero", { subtitle_id: v })} />
+          <Field label="Subtitle (ID, kosong = pakai EN)" textarea value={hero.subtitle_id} onChange={(v) => setSection("hero", { subtitle_id: v })} />
           <div className="wpx__grid-2">
-            <Field label="Primary CTA label" value={hero.cta_primary_label} onChange={(v) => setSection("hero", { cta_primary_label: v })} />
-            <Field label="Secondary CTA label" value={hero.cta_secondary_label} onChange={(v) => setSection("hero", { cta_secondary_label: v })} />
+            <Field label="Primary CTA label (ke Contact)" value={hero.cta_primary_label} onChange={(v) => setSection("hero", { cta_primary_label: v })} />
+            <Field label="Secondary CTA label (ke Services)" value={hero.cta_secondary_label} onChange={(v) => setSection("hero", { cta_secondary_label: v })} />
           </div>
         </div>
       </div>
@@ -88,12 +110,12 @@ export function AdminHomepagePage() {
         <div className="wpx__card-body">
           <Field label="Title" value={cta.title} onChange={(v) => setSection("cta", { title: v })} />
           <Field label="Subtitle" textarea value={cta.subtitle} onChange={(v) => setSection("cta", { subtitle: v })} />
-          <Field label="Button label" value={cta.button_label} onChange={(v) => setSection("cta", { button_label: v })} />
+          <Field label="Button label (ke WhatsApp atau Contact)" value={cta.button_label} onChange={(v) => setSection("cta", { button_label: v })} />
         </div>
       </div>
 
       <ItemsEditor
-        title="Services (landing preview)"
+        title="Service highlights (homepage)"
         items={services.items ?? []}
         onChange={(items) => setSectionRaw("services", { items })}
         fields={[{ key: "title", label: "Title" }, { key: "body", label: "Body", textarea: true }]}
@@ -135,11 +157,12 @@ export function AdminHomepagePage() {
       />
 
       <div style={{ textAlign: "right", marginTop: 20, paddingBottom: 20 }}>
-        <button className="wpx__btn wpx__btn--primary" onClick={() => save({ redirect: true })} disabled={busy}
+        <button className="wpx__btn wpx__btn--primary" onClick={() => save({ redirect: true })} disabled={busy || !dirty}
           style={{ padding: "12px 24px", fontSize: 15 }}>
           {busy ? "Saving…" : "Save & return"}
         </button>
       </div>
+      {showPreview && <AdminPreviewModal path="/" title="Preview homepage" onClose={() => setShowPreview(false)} />}
     </>
   );
 }

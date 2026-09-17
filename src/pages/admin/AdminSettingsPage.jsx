@@ -5,6 +5,7 @@ import { getSiteSettings, updateSiteSettings } from "../../services/settingsServ
 import { productsData, ordersData } from "../../lib/supabaseData";
 import { pushLocalContentToSupabase } from "../../lib/supabaseSeed";
 import { createDynamicQrisDataUrl } from "../../lib/qrisDynamic";
+import { AdminPreviewModal } from "../../components/admin/AdminPreviewModal";
 
 const QRIS_PREVIEW_AMOUNT = 149000;
 
@@ -67,6 +68,7 @@ export function AdminSettingsPage() {
   const [syncBusy, setSyncBusy] = useState(false);
   const [syncStatus, setSyncStatus] = useState("");
   const [toast, setToast] = useState(null); // {type, text}
+  const [previewOrderPath, setPreviewOrderPath] = useState("");
   const [dynamicQrisPreview, setDynamicQrisPreview] = useState(null);
   const [dynamicQrisPreviewError, setDynamicQrisPreviewError] = useState(null);
   const fileRef = useRef(null);
@@ -139,26 +141,29 @@ export function AdminSettingsPage() {
   }
 
   async function generateTestOrder(currentData) {
-    // Simpan dulu settings terbaru (biar QRIS current ter-apply di test order)
-    const patch = { ...currentData };
-    delete patch.updated_at;
-    updateSiteSettings(patch);
-    // Buat order dummy
-    const anyProduct = (await productsData.list({ status: "active" }))[0] ?? {
-      id: "test-item", name: "Test Item", price: 149000, image_url: "",
-    };
-    const testOrder = await ordersData.create({
-      customer_name: "Test Customer (admin preview)",
-      customer_email: "test@israanwar.com",
-      customer_phone: currentData.admin_whatsapp ?? "",
-      shipping_address: "Preview order — bisa dihapus dari /admin/orders",
-      notes: "Order preview yang dibuat dari halaman Settings",
-      payment_method: "qris",
-      items: [{ product_id: anyProduct.id, name: anyProduct.name, price: anyProduct.price ?? 149000, qty: 1, subtotal: anyProduct.price ?? 149000 }],
-      total: anyProduct.price ?? 149000,
-    });
-    // Buka di tab baru
-    window.open(`/order/${testOrder.order_number}`, "_blank");
+    setToast(null);
+    try {
+      // Simpan dulu settings terbaru (biar QRIS current ter-apply di test order)
+      const patch = { ...currentData };
+      delete patch.updated_at;
+      await updateSiteSettings(patch);
+      const anyProduct = (await productsData.list({ status: "active" }))[0] ?? {
+        id: "test-item", name: "Test Item", price: 149000, image_url: "",
+      };
+      const testOrder = await ordersData.create({
+        customer_name: "Test Customer (admin preview)",
+        customer_email: "test@israanwar.com",
+        customer_phone: currentData.admin_whatsapp ?? "",
+        shipping_address: "Preview order — bisa dihapus dari /admin/orders",
+        notes: "Order preview yang dibuat dari halaman Settings",
+        payment_method: "qris",
+        items: [{ product_id: anyProduct.id, name: anyProduct.name, price: anyProduct.price ?? 149000, qty: 1, subtotal: anyProduct.price ?? 149000 }],
+        total: anyProduct.price ?? 149000,
+      });
+      setPreviewOrderPath(`/order/${testOrder.order_number}`);
+    } catch (e) {
+      setToast({ type: "error", text: e.message ?? "Gagal membuat order preview." });
+    }
   }
 
   async function save() {
@@ -308,7 +313,7 @@ export function AdminSettingsPage() {
                       Upload screenshot QRIS (PNG/JPG, maks 1MB) hanya sebagai arsip/fallback visual. Nominal otomatis dibuat dari field <b>Payload QRIS statis</b>.
                     </p>
                     <p className="wpx__help" style={{ marginTop: 6 }}>
-                      💡 Tips: kalau file terlalu besar, compress dulu di <a href="https://tinypng.com" target="_blank" rel="noreferrer" style={{ color: "var(--primary)" }}>tinypng.com</a>
+                      💡 Tips: kalau file terlalu besar, kompres gambar sebelum diunggah.
                     </p>
                     {data.qris_image && (
                       <button
@@ -413,6 +418,7 @@ export function AdminSettingsPage() {
           {busy ? "Menyimpan…" : "Simpan semua"}
         </button>
       </div>
+      {previewOrderPath && <AdminPreviewModal path={previewOrderPath} title="Preview pembayaran customer" onClose={() => setPreviewOrderPath("")} />}
     </>
   );
 }

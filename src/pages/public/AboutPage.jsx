@@ -1,5 +1,6 @@
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
+import { SunBackground } from "../../components/hero/SunBackground";
 import { useLivePage } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizePage } from "../../lib/pageI18n";
@@ -13,6 +14,7 @@ export function AboutPage() {
     <>
       <Seo title={`${p.hero_title || t("nav_about")} — israanwar`} description={p.hero_subtitle} />
               <section className="okr__section okr__page-hero">
+            <SunBackground />
             <div className="okr__wrap" style={{ maxWidth: 900 }}>
             {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}
             <AnimatedHeadline text={p.hero_title} className="okr__h2 okr__hero-title--stagger" highlightFrom={3} assembleLetters />

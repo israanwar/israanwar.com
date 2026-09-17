@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Check, X, Eye, ExternalLink } from "lucide-react";
+import { Check, X, Eye } from "lucide-react";
 import { ORDER_STATUS } from "../../lib/localStore";
 import { ordersData } from "../../lib/supabaseData";
 
@@ -20,6 +20,7 @@ export function AdminOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [detailOrder, setDetailOrder] = useState(null);
   const [filter, setFilter] = useState("all");
+  const [error, setError] = useState(null);
   async function load() {
     setOrders(await ordersData.list());
   }
@@ -27,21 +28,30 @@ export function AdminOrdersPage() {
 
   async function approve(id) {
     const note = prompt("Optional note for customer:") ?? undefined;
-    await ordersData.approve(id, note || null);
-    await load();
-    if (detailOrder?.id === id) setDetailOrder(await ordersData.get(id));
+    try {
+      await ordersData.approve(id, note || null);
+      setError(null);
+      await load();
+      if (detailOrder?.id === id) setDetailOrder(await ordersData.get(id));
+    } catch (e) { setError(e.message ?? "Gagal menyetujui pesanan."); }
   }
   async function reject(id) {
     const note = prompt("Reason for rejection (visible to customer):");
     if (note === null) return;
-    await ordersData.reject(id, note || "Payment could not be verified.");
-    await load();
-    if (detailOrder?.id === id) setDetailOrder(await ordersData.get(id));
+    try {
+      await ordersData.reject(id, note || "Payment could not be verified.");
+      setError(null);
+      await load();
+      if (detailOrder?.id === id) setDetailOrder(await ordersData.get(id));
+    } catch (e) { setError(e.message ?? "Gagal menolak pesanan."); }
   }
   async function setStatus(id, status) {
-    await ordersData.updateStatus(id, status);
-    await load();
-    if (detailOrder?.id === id) setDetailOrder(await ordersData.get(id));
+    try {
+      await ordersData.updateStatus(id, status);
+      setError(null);
+      await load();
+      if (detailOrder?.id === id) setDetailOrder(await ordersData.get(id));
+    } catch (e) { setError(e.message ?? "Gagal mengubah status pesanan."); }
   }
 
   const filtered = filter === "all" ? orders : orders.filter((o) => o.status === filter);
@@ -57,6 +67,8 @@ export function AdminOrdersPage() {
           {orders.length} total · {reviewCount} perlu dicek di GoPay Merchant
         </span>
       </div>
+
+      {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
 
       {/* Filter tabs */}
       <div style={{ display: "flex", gap: 4, marginBottom: 20, borderBottom: "1px solid var(--border)", flexWrap: "wrap" }}>
@@ -168,10 +180,6 @@ function OrderDetailModal({ order, onClose, onApprove, onReject }) {
         <div className="wpx__card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <span style={{ fontFamily: "monospace" }}>{order.order_number}</span>
           <div style={{ display: "flex", gap: 6 }}>
-            <a href={`/orders/${order.order_number}/payment`} target="_blank" rel="noreferrer"
-              className="wpx__btn wpx__btn--secondary" style={{ padding: "4px 10px", fontSize: 12 }}>
-              <ExternalLink size={12} /> Customer view
-            </a>
             <button className="wpx__btn wpx__btn--secondary" style={{ padding: "4px 10px" }} onClick={onClose}>
               <X size={13} />
             </button>
@@ -181,8 +189,8 @@ function OrderDetailModal({ order, onClose, onApprove, onReject }) {
           <div style={{ display: "grid", gap: 8, fontSize: 13, marginBottom: 20 }}>
             <div><strong>Status:</strong> <span className={`wpx__badge wpx__badge--${STATUS_LABEL[order.status]?.badge}`}>{STATUS_LABEL[order.status]?.label ?? order.status}</span></div>
             <div><strong>Customer:</strong> {order.customer_name}</div>
-            <div><strong>Email:</strong> <a href={`mailto:${order.customer_email}`} style={{ color: "var(--primary)" }}>{order.customer_email}</a></div>
-            <div><strong>Phone:</strong> <a href={`https://wa.me/${order.customer_phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" style={{ color: "var(--primary)" }}>{order.customer_phone}</a></div>
+            <div><strong>Email:</strong> {order.customer_email}</div>
+            <div><strong>Phone:</strong> {order.customer_phone}</div>
             <div><strong>Address:</strong> {order.shipping_address}</div>
             {order.notes && <div><strong>Notes:</strong> {order.notes}</div>}
             <div><strong>Total:</strong> Rp {order.total.toLocaleString("id-ID")}</div>
@@ -218,10 +226,6 @@ function OrderDetailModal({ order, onClose, onApprove, onReject }) {
             <div>
               <h4 style={{ margin: "0 0 12px", fontSize: 14 }}>Payment Proof</h4>
               <img src={order.payment_proof} alt="Proof" style={{ maxWidth: "100%", maxHeight: 400, borderRadius: 10, border: "1px solid var(--border)" }} />
-              <a href={order.payment_proof} download={`proof-${order.order_number}.png`}
-                className="wpx__btn wpx__btn--secondary" style={{ marginTop: 12, padding: "6px 14px", fontSize: 13 }}>
-                <ExternalLink size={13} /> Open full size
-              </a>
             </div>
           ) : (
             <div style={{ padding: 24, background: "var(--panel-2)", borderRadius: 8, textAlign: "center", color: "var(--text-mute)", fontSize: 13 }}>

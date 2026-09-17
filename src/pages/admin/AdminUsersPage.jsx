@@ -4,6 +4,7 @@ import { listProfiles, updateProfileRole } from "../../services/userService";
 export function AdminUsersPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -13,8 +14,8 @@ export function AdminUsersPage() {
   useEffect(() => { load(); }, []);
 
   async function changeRole(id, role) {
-    await updateProfileRole(id, role);
-    load();
+    try { await updateProfileRole(id, role); setError(null); await load(); }
+    catch (e) { setError(e.message ?? "Gagal mengubah role."); }
   }
 
   return (
@@ -22,6 +23,8 @@ export function AdminUsersPage() {
       <div className="wpx__page-header">
         <h1>Users</h1>
       </div>
+
+      {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
 
       <div className="wpx__notice wpx__notice--info">
         Untuk mengundang user baru: buka Supabase Dashboard → Authentication → Users → <b>Add user</b>. Setelah user pertama kali login, dia akan otomatis punya role <b>editor</b>. Ubah ke admin di tabel bawah.

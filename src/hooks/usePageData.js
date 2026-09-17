@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   pagesRepo, settingsRepo, homepageRepo, productsRepo,
   servicesRepo, postsRepo, cartRepo,
@@ -211,12 +211,31 @@ export function useLivePostState(slug) {
   return useLiveState(`post:${slug}`, () => postsData.getBySlug(slug), () => postsRepo.getBySlug(slug));
 }
 
-// Cart — pakai listener bawaan cartRepo (lebih responsif dari polling)
+// Cart — pakai listener bawaan cartRepo (lebih responsif dari polling).
+// cartRepo itself only persists { product_id, qty } pairs; it has no way
+// to resolve those against the real (Supabase-backed) product catalog, so
+// row/total data is built here from the live product list instead of
+// cartRepo.detail() (which resolved against the local-only product
+// mirror — always empty for a Supabase-backed store, so every cart item
+// was silently dropped and checkout looked "empty" for every product).
 export function useLiveCart() {
-  const [detail, setDetail] = useState(() => cartRepo.detail());
+  const products = useLiveProducts();
+  const [items, setItems] = useState(() => cartRepo.list());
   useEffect(() => {
-    const off = cartRepo.onChange(() => setDetail(cartRepo.detail()));
+    const off = cartRepo.onChange(setItems);
     return off;
   }, []);
-  return detail;
+  return useMemo(() => {
+    const rows = items.map((it) => {
+      const product = products.find((p) => p.id === it.product_id);
+      if (!product) return null;
+      return { ...it, product, subtotal: (product.price ?? 0) * it.qty };
+    }).filter(Boolean);
+    const total = rows.reduce((sum, row) => sum + row.subtotal, 0);
+    // itemCount reflects the raw cart (synchronous, from localStorage) —
+    // unlike `rows`, it doesn't wait on the live product fetch, so pages
+    // that redirect away on an "empty" cart don't fire that redirect
+    // during the one render where products just haven't loaded yet.
+    return { rows, total, itemCount: items.length };
+  }, [items, products]);
 }

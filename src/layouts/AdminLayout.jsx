@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet, Link } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import {
   LayoutDashboard, FileText, Image as ImageIcon, Settings, Users, Home, LogOut, Sliders,
   ShoppingBag, Package, Briefcase, FileEdit, Inbox, Mail,
@@ -7,6 +7,7 @@ import {
 import { useAuth } from "../hooks/useAuth";
 import { contactsData } from "../lib/supabaseData";
 import { IsraAnwarLogo } from "../components/brand/IsraAnwarLogo";
+import { AdminPreviewModal } from "../components/admin/AdminPreviewModal";
 import "../styles/admin.css";
 
 const NAV = [
@@ -27,6 +28,7 @@ const NAV = [
 export function AdminLayout() {
   const { profile, logout, isAdmin } = useAuth();
   const [unread, setUnread] = useState(0);
+  const [showSitePreview, setShowSitePreview] = useState(false);
   useEffect(() => {
     const update = async () => {
       const contacts = await contactsData.list();
@@ -69,10 +71,10 @@ export function AdminLayout() {
         <div className="wpx__main">
           <header className="wpx__topbar">
             <span className="wpx__topbar-brand">
-              <Link to="/">
+              <button type="button" onClick={() => setShowSitePreview(true)}>
                 <Home size={14} style={{ verticalAlign: "-2px", marginRight: 4 }} />
-                Lihat situs
-              </Link>
+                Preview situs
+              </button>
             </span>
             <div className="wpx__topbar-spacer" />
             <div className="wpx__topbar-user">
@@ -88,6 +90,7 @@ export function AdminLayout() {
           </div>
         </div>
       </div>
+      {showSitePreview && <AdminPreviewModal path="/" onClose={() => setShowSitePreview(false)} />}
     </div>
   );
 }

@@ -98,16 +98,33 @@
   border-color: rgba(55, 31, 35, 0.14);
 }
 
-/* Small static dot-grid texture instead of an animated particle field —
-   plain CSS (no WebGL/JS), so it's cheap, never janky, and reads as a
-   quiet decorative texture rather than something competing with the nav
-   links for attention. Brand orange at low opacity, on the menu's own
-   white background. */
+/* Same live Sun background as every page's hero (SunBackground with
+   variant="menu" — its own independent WebGL instance, since the menu can
+   be open at the same time as a page's own Sun underneath it), instead of
+   the flat white sheet + static dot texture this used to repaint in. */
 .okr__mobile-menu {
-  background-color: #ffffff;
-  background-image: radial-gradient(rgba(184, 78, 44, 0.22) 1px, transparent 1.5px);
-  background-size: 22px 22px;
-  color: #20181b;
+  /* No `position` here on purpose — landing.css's own @media(max-width:900px)
+     rule already sets `position: fixed`, which is what keeps this out of
+     the document's normal flow while closed. An earlier version of this
+     rule set `position: relative` unconditionally, which (being the same
+     specificity, loaded after) beat that `fixed` at every width, putting
+     the closed menu back in normal flow at its full ~100dvh height and
+     silently pushing the whole page's real content down below the fold. */
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #030205;
+  background-image: none;
+  color: #fff;
+}
+
+.okr__mobile-menu .okr__isra-cloud {
+  z-index: 0;
+}
+
+.okr__mobile-menu-close,
+.okr__mobile-menu-content {
+  position: relative;
+  z-index: 1;
 }
 
 .okr__mobile-menu-kicker {
@@ -119,24 +136,21 @@
 .okr__mobile-navlink:hover,
 .okr__mobile-navlink:focus-visible,
 .okr__mobile-navlink:active {
-  color: #b84e2c;
+  color: #d7c9ff;
 }
 
-/* landing.css was written for a full-bleed dark mobile menu; this repaints
-   it white but never touched the close button or resting link color, so
-   both stayed near-white text on a near-white sheet. */
 .okr__mobile-menu-close {
-  color: #20181b;
+  color: #fff;
 }
 
 .okr__mobile-menu-close:hover,
 .okr__mobile-menu-close:focus-visible,
 .okr__mobile-menu-close:active {
-  color: #b84e2c;
+  color: #d7c9ff;
 }
 
 .okr__mobile-navlink {
-  color: rgba(32, 24, 27, 0.62);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 32px;
 }
 
@@ -479,13 +493,22 @@
 .okr__footer {
   position: relative;
   overflow: hidden;
-  background: #101012 !important;
+  background: #000000 !important;
+  background-image: none !important;
   border-top: none !important;
   color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   /* Top value absorbs what used to be the (now-removed) card's own inner
      top padding too, so the content sits the same comfortable distance
      from the edge as before, just without the nested wrapper. */
   padding-block: clamp(56px, 9vw, 104px) clamp(40px, 6vw, 72px);
+}
+
+.okr__footer::before,
+.okr__footer::after {
+  content: none !important;
+  display: none !important;
 }
 
 /* ==========================================================================
@@ -714,6 +737,29 @@
   box-shadow: none;
 }
 
+/* On Home — and now every public page's own Sun hero, for the same
+   floating-header treatment — the fixed header overlays the WebGL scene:
+   the shell no longer reserves a header-height strip, so The Sun is
+   rendered from the very top of the viewport instead of beginning
+   underneath the navigation. */
+.okr:has(.okr__home),
+.okr:has(.okr__page-hero),
+.okr:has(.okr__portfolio-page),
+.okr:has(.okr__tools-hero),
+.okr:has(.okr__tool-detail-hero) {
+  padding-top: 0;
+}
+
+.okr:has(.okr__home) .okr__header,
+.okr:has(.okr__page-hero) .okr__header,
+.okr:has(.okr__portfolio-page) .okr__header,
+.okr:has(.okr__tools-hero) .okr__header,
+.okr:has(.okr__tool-detail-hero) .okr__header {
+  background: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
 .okr__header::before {
   display: none;
 }
@@ -722,9 +768,10 @@
   color: #ffffff;
 }
 
-/* White chip around the mark, same idea as a logo badge on a dark bar —
-   the mark's own ink (#20181b, near-black) reads perfectly on white
-   without needing to recolor it. */
+/* Black chip around the mark, per request — the mono mark (a flat-black
+   silhouette on a transparent PNG, see markSrc in SiteChrome.jsx) is
+   inverted to white so it reads on the black chip instead of
+   disappearing into it. */
 .okr__logo-badge {
   display: inline-flex;
   align-items: center;
@@ -732,7 +779,7 @@
   width: 38px;
   height: 38px;
   border-radius: 11px;
-  background: #ffffff;
+  background: #000000;
   padding: 6px;
   flex-shrink: 0;
 }
@@ -743,6 +790,22 @@
 .okr__logo-badge .okr-mark {
   width: 26px;
   height: 26px;
+  /* The mono asset is a solid-black silhouette — invert(1) flips it to
+     solid white cleanly (unlike the two-tone default mark, inverting
+     this flat color never produces an off color). */
+  filter: invert(1);
+}
+/* public-lavender-theme.css carries a blanket
+   `:is(h1,h2,h3,p,a,button,span,li,img,svg) { filter: none !important; }`
+   on every non-Home/Blog page — it matches this <img> too and was
+   silently winning over the plain rule above (its own !important beats a
+   plain declaration outright, regardless of specificity), so the mark
+   rendered in its original dark ink instead of white everywhere except
+   Home. Matched here with equal !important and higher specificity so it
+   wins back on every page, Home included. */
+.okr .okr__header .okr__brand .okr__logo-badge .okr-mark,
+.okr .okr__footer .okr__foot-brand .okr__logo-badge .okr-mark {
+  filter: invert(1) !important;
 }
 
 /* The "Isra Anwar" wordmark sitting next to the badge (header + footer).
@@ -750,7 +813,7 @@
    !important }` Poppins override needs to come after this rule to win by
    source order (same trick already used for .okr-logo__wordmark). */
 .okr__brand-wordmark {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1;
   letter-spacing: 0.01em;
   color: rgba(255, 255, 255, 0.92);
@@ -759,7 +822,7 @@
 
 @media (max-width: 560px) {
   .okr__brand-wordmark {
-    font-size: 17px;
+    font-size: 15px;
   }
 }
 
@@ -782,14 +845,13 @@
 .okr__header .okr__cart-link::before,
 .okr__header .okr__lang-toggle::before,
 .okr__header .okr__mobile-menu-btn::before {
-  background: rgba(255, 255, 255, 0.14);
+  background: #000000;
   box-shadow: none;
 }
 
 .okr__header .okr__navlink:hover,
 .okr__header .okr__navlink:focus-visible,
-.okr__header .okr__navlink:active,
-.okr__header .okr__navlink.is-active {
+.okr__header .okr__navlink:active {
   /* This rule's non-header counterpart near the top of this file sets a
      literal `background: #fff6ed` (cream) directly on the link itself —
      a second, separate source of the same cream color beyond the
@@ -797,14 +859,35 @@
      is included for the same reason found on the footer social icons:
      landing.css's own `.okr__navlink:active` rule sets
      color: var(--okr-text) (near-black), invisible on this dark bar. */
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.22);
+  background: #000000;
+  border-color: rgba(255, 255, 255, 0.16);
   box-shadow: none;
-  color: #ffffff;
+  color: #d7c9ff;
+}
+
+/* Black pill + lavender text for the active nav item, the lang toggle,
+   and the cart icon — matching the Balao chat widget's black/lavender
+   button style, per request (was a white pill). */
+.okr__header .okr__navlink.is-active {
+  background: #000000;
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: none;
+  color: #d7c9ff;
 }
 
 .okr__header .okr__lang-toggle,
-.okr__header .okr__cart-link,
+.okr__header .okr__cart-link {
+  /* Black pill, matching the Balao chat widget's own button style
+     (--balao-black: #000000 + lavender ink), per request — was white. */
+  background: #000000;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #d7c9ff;
+  /* landing.css's base .okr__cart-link sits at opacity:0.75 at rest (a
+     dimmed-icon look meant for the light theme) — left alone here, it
+     blends this circle down to gray against the dark header bar. */
+  opacity: 1;
+}
+
 .okr__header .okr__mobile-menu-btn {
   background: transparent;
   border-color: rgba(255, 255, 255, 0.24);
@@ -815,7 +898,12 @@
 .okr__header .okr__lang-toggle:active,
 .okr__header .okr__cart-link:hover,
 .okr__header .okr__cart-link:focus-visible,
-.okr__header .okr__cart-link:active,
+.okr__header .okr__cart-link:active {
+  background: #191522;
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #d7c9ff;
+}
+
 .okr__header .okr__mobile-menu-btn:hover,
 .okr__header .okr__mobile-menu-btn:focus-visible,
 .okr__header .okr__mobile-menu-btn:active {
@@ -2765,27 +2853,30 @@
 @media (max-width: 640px) {
   .okr .okr__service-card {
     min-height: 0 !important;
-    padding: 18px !important;
+    padding: 14px !important;
   }
   .okr .okr__service-card .okr__card-icon {
-    width: 44px !important;
-    height: 44px !important;
-    margin: 12px 0 12px !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin: 8px 0 !important;
   }
   .okr .okr__service-card .okr__card-title {
-    font-size: 21px !important;
+    font-size: 20px !important;
     max-width: none !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
   }
   .okr .okr__service-card .okr__service-count {
-    margin-bottom: 8px !important;
+    margin-bottom: 6px !important;
   }
   .okr .okr__service-card .okr__card-body {
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     overflow: hidden;
-    margin-bottom: 12px !important;
+    margin-bottom: 8px !important;
+  }
+  .okr .okr__service-card .okr__card-link {
+    padding-top: 10px !important;
   }
   .okr .okr__portfolio-consult-card {
     padding: 18px !important;
@@ -2796,4 +2887,799 @@
     -webkit-line-clamp: 2;
     overflow: hidden;
   }
+}
+
+/* Homepage CMS fields: optional service highlights and closing CTA. */
+.okr__foot-tagline {
+  margin: 16px 0 6px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.okr__services-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  padding-top: 28px;
+  margin-top: 26px;
+  border-top: 1px solid var(--okr-glass-border);
+}
+.okr__services-highlight {
+  padding: 20px;
+  border: 1px solid var(--okr-glass-border);
+  border-radius: 16px;
+  background: #fffaf7;
+}
+.okr__services-highlight > span {
+  color: var(--okr-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+.okr__services-highlight h3 {
+  margin: 14px 0 8px;
+  color: var(--okr-text);
+  font-size: clamp(19px, 2vw, 23px);
+  line-height: 1.25;
+}
+.okr__services-highlight p {
+  margin: 0;
+  color: var(--okr-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+.okr__home-contact-section { padding-top: 0; }
+.okr__home-contact {
+  border: 1px solid var(--okr-glass-border);
+  border-radius: 28px;
+  background: #f7f2ec;
+  padding: clamp(32px, 6vw, 72px);
+}
+.okr__home-contact-eyebrow {
+  color: var(--okr-primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+}
+.okr__home-contact h2 {
+  max-width: 820px;
+  margin: 14px 0 18px;
+  color: var(--okr-text);
+  font-size: clamp(32px, 4.5vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+.okr__home-contact p {
+  max-width: 620px;
+  margin: 0 0 28px;
+  color: var(--okr-muted);
+  font-size: 16px;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+@media (max-width: 640px) {
+  .okr__home-contact { border-radius: 18px; }
+  .okr__home-contact .okr__btn { max-width: 100%; text-align: left; }
+}
+
+/* Keeps an element in the DOM (so the page still has a real <h1> for SEO
+   and screen readers) while removing it from the visual layout entirely —
+   used for the hero headline now that the hero shows only the robot. */
+.okr__visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Homepage hero — the point-cloud scene and its editorial overlay. */
+.okr .okr__hero--pointcloud {
+  isolation: isolate;
+  background: #030205 !important;
+  background-image: none !important;
+  padding: 0 !important;
+  min-height: max(720px, 100svh) !important;
+  color: #fff;
+}
+
+.okr__hero-pointcloud-copy {
+  position: absolute !important;
+  z-index: 3 !important;
+  left: 50%;
+  top: 50%;
+  bottom: auto;
+  /* The stellar body is sized from the viewport height in WebGL. Matching
+     the copy to that same axis keeps the whole message inside its disc. */
+  width: min(84vw, 88svh);
+  max-width: calc(100% - (var(--okr-gutter) * 2));
+  text-align: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.okr__hero--pointcloud .okr__isra-cloud-stage,
+.okr__hero--pointcloud .okr__isra-cloud-fallback,
+.okr__hero-pointcloud-copy {
+  opacity: 0;
+  transition: opacity 420ms ease;
+}
+
+.okr__hero--pointcloud.is-scene-ready .okr__isra-cloud-stage,
+.okr__hero--pointcloud.is-scene-ready .okr__isra-cloud-fallback,
+.okr__hero--pointcloud.is-scene-ready .okr__hero-pointcloud-copy {
+  opacity: 1;
+}
+
+.okr__hero-pointcloud-kicker,
+.okr__hero-pointcloud-title,
+.okr__hero-pointcloud-subtitle {
+  pointer-events: auto;
+}
+
+.okr__hero-pointcloud-kicker {
+  margin: 0 0 18px;
+  color: rgba(238, 230, 255, 0.78);
+  font-family: "Plus Jakarta Sans", Arial, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.okr__hero-pointcloud-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  color: #fff;
+  font-family: "Plus Jakarta Sans", Arial, sans-serif;
+  font-size: clamp(46px, min(5.2vw, 7svh), 88px);
+  font-weight: 400;
+  letter-spacing: -0.06em;
+  line-height: 0.93;
+  text-wrap: balance;
+  text-shadow: 0 4px 36px rgba(0, 0, 0, 0.74);
+}
+
+.okr__hero-pointcloud-title > span {
+  display: block;
+}
+
+.okr__hero-pointcloud-title-accent {
+  color: #d7c9ff;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 0.92em;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+.okr__hero-pointcloud-subtitle {
+  max-width: 660px;
+  margin: 22px auto 0;
+  color: rgba(247, 247, 248, 0.78);
+  font-size: clamp(14px, 1.2vw, 17px);
+  line-height: 1.65;
+  text-wrap: balance;
+  text-shadow: 0 3px 20px rgba(0, 0, 0, 0.82);
+}
+
+.okr__hero-pointcloud-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 24px;
+  pointer-events: auto;
+}
+
+.okr__hero-pointcloud-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 54px;
+  padding: 0 24px;
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 10px;
+  background: #fff;
+  color: #08070b;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+  transition: transform 180ms ease;
+}
+
+/* Same rising-fill touch animation as the homepage's "All Services"
+   button (home-services-motion.css) — a field grows from the bottom
+   instead of the background flatly swapping. */
+.okr__hero-pointcloud-cta-fill {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+  height: 0;
+  background: #d7c9ff;
+  transition: height 400ms ease;
+  pointer-events: none;
+}
+
+.okr__hero-pointcloud-cta-label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.okr__hero-pointcloud-cta svg {
+  transform: rotate(-45deg);
+  transition: transform 180ms ease;
+}
+
+.okr__hero-pointcloud-cta:hover,
+.okr__hero-pointcloud-cta:focus-visible {
+  transform: translateY(-2px);
+}
+
+.okr__hero-pointcloud-cta:hover .okr__hero-pointcloud-cta-fill,
+.okr__hero-pointcloud-cta:focus-visible .okr__hero-pointcloud-cta-fill {
+  height: 100%;
+}
+
+@media (hover: none) {
+  .okr__hero-pointcloud-cta-fill {
+    transition-duration: 180ms;
+  }
+  .okr__hero-pointcloud-cta:active {
+    transform: translateY(-2px);
+  }
+  .okr__hero-pointcloud-cta:active .okr__hero-pointcloud-cta-fill {
+    height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr__hero-pointcloud-cta,
+  .okr__hero-pointcloud-cta-fill {
+    transition: none !important;
+  }
+}
+
+.okr__hero-pointcloud-cta:hover svg,
+.okr__hero-pointcloud-cta:focus-visible svg {
+  transform: rotate(-45deg) translate(2px, 2px);
+}
+
+.okr__hero-pointcloud-cta:focus-visible,
+.okr__hero-pointcloud-scroll:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.okr__hero-pointcloud-hint {
+  color: rgba(255, 255, 255, 0.54);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.okr__hero-pointcloud-scroll {
+  position: absolute !important;
+  z-index: 3 !important;
+  right: max(var(--okr-gutter), calc((100vw - var(--okr-max)) / 2 + var(--okr-gutter)));
+  bottom: clamp(52px, 7vh, 88px);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.okr__hero-pointcloud-scroll svg {
+  transform: rotate(90deg);
+}
+
+.okr__hero-pointcloud-scroll:hover,
+.okr__hero-pointcloud-scroll:focus-visible {
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  .okr .okr__hero--pointcloud {
+    min-height: max(700px, 100svh) !important;
+    padding: 0 !important;
+  }
+
+  .okr__hero-pointcloud-copy {
+    top: 50%;
+    bottom: auto;
+    width: min(90vw, 82svh);
+    max-width: calc(100% - (var(--okr-gutter) * 2));
+  }
+
+  .okr__hero-pointcloud-kicker {
+    margin-bottom: 12px;
+    font-size: 9px;
+  }
+
+  .okr__hero-pointcloud-title {
+    font-size: clamp(34px, min(10vw, 6.8svh), 52px);
+    line-height: 0.95;
+  }
+
+  .okr__hero-pointcloud-subtitle {
+    max-width: 36ch;
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .okr__hero-pointcloud-actions {
+    margin-top: 18px;
+  }
+
+  .okr__hero-pointcloud-cta {
+    min-height: 50px;
+    padding-inline: 19px;
+  }
+
+  .okr__hero-pointcloud-hint,
+  .okr__hero-pointcloud-scroll {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .okr__hero-pointcloud-copy {
+    width: min(690px, calc(100% - (var(--okr-gutter) * 2)));
+  }
+
+  .okr__hero-pointcloud-title {
+    font-size: clamp(50px, 7vw, 74px);
+  }
+
+  .okr__hero-pointcloud-scroll {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr__hero-pointcloud-cta,
+  .okr__hero-pointcloud-cta svg {
+    transition: none;
+  }
+}
+
+/* Home-only noir palette. This changes colours only; layout, spacing,
+   components, motion, header, footer, and every other route stay intact. */
+.okr .okr__home {
+  --okr-bg: #000000;
+  --okr-bg-2: #000000;
+  --okr-line: rgba(255, 255, 255, 0.12);
+  --okr-line-strong: rgba(255, 255, 255, 0.22);
+  --okr-text: #f7f7f8;
+  --okr-muted: #b0b0b5;
+  --okr-dim: #85858d;
+  --okr-card-bg: #000000;
+  --okr-card-surface: #000000;
+  --okr-card-surface-hover: #101010;
+  --okr-card-ink: #f7f7f8;
+  --okr-card-muted: #b0b0b5;
+  --okr-card-dim: #85858d;
+  --okr-glass-bg: #000000;
+  --okr-glass-bg-hover: #101010;
+  --okr-glass-border: rgba(255, 255, 255, 0.14);
+  --okr-touch-glass: #101010;
+  /* Every orange accent on the homepage (eyebrows, the services hover
+     panel, tags, focus outlines, etc.) reads from these three variables
+     or from a hardcoded #b84e2c/#c95732 elsewhere in this file — the
+     hardcoded ones get their own .okr__home-scoped overrides below. */
+  --okr-primary: #d7c9ff;
+  --okr-primary-2: #d7c9ff;
+  --okr-cyan: #d7c9ff;
+  background: #000000;
+  color: #f7f7f8;
+  color-scheme: dark;
+}
+
+.okr .okr__home,
+.okr .okr__home > .okr__section,
+.okr .okr__home > .okr__section:nth-of-type(odd),
+.okr .okr__home > .okr__section:nth-of-type(even),
+.okr .okr__home .okr__process-section--story {
+  background-color: #000000 !important;
+}
+
+.okr .okr__home .okr__process-section--story {
+  background-image: none !important;
+}
+
+.okr .okr__home .okr__process-story-shell::before {
+  background: none;
+}
+
+.okr .okr__home :is(
+  .okr__services-card,
+  .okr__services-highlight,
+  .okr__blog-pin-card,
+  .okr__case,
+  .okr__home-contact
+) {
+  background-color: #000000 !important;
+}
+
+/* Certification marks are supplied in mixed dark and brand-colour artwork.
+   A clean white tile guarantees every original logo remains legible. */
+.okr .okr__home .okr__certstrip-card {
+  background-color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
+}
+
+.okr .okr__home :is(
+  .okr__h2,
+  .okr__services-headline,
+  .okr__services-row-name,
+  .okr__services-row-arrow,
+  .okr__stage-copy h3,
+  .okr__case-title,
+  .okr__blog-pin-title,
+  .okr__home-contact h2
+) {
+  color: #f7f7f8 !important;
+}
+
+.okr .okr__home .okr__headline--stagger .okr__word:not(.is-grad),
+.okr .okr__home .okr__hero-title--stagger .okr__word:not(.is-grad),
+.okr .okr__home .okr__hero-title--stagger .okr__word:not(.is-grad) .okr__glyph {
+  color: #f7f7f8 !important;
+  -webkit-text-fill-color: #f7f7f8 !important;
+}
+
+.okr .okr__home :is(
+  .okr__process-intro-copy,
+  .okr__stage-copy p,
+  .okr__stage-points li,
+  .okr__case-body p,
+  .okr__home-contact p
+) {
+  color: #b0b0b5 !important;
+}
+
+.okr .okr__home .okr__stage-nav-item {
+  color: #85858d;
+}
+
+.okr .okr__home .okr__stage-nav-item:is(:hover, :focus-visible, :active) {
+  color: #d4d4d8;
+}
+
+/* No lavender background rule here (there used to be one, matching the
+   old orange it replaced): the actual visible touch/hover effect is the
+   light "#e5e9eb" panel from home-services-motion.css's ::before layer,
+   which paints opaquely over this row's own background on desktop hover
+   — but on touch devices the row's own background and that panel can
+   both be triggered by :active at once, and any edge/timing gap let this
+   accent color bleed through against the white panel. Simplest fix: this
+   row has no accent background of its own, so there's nothing to bleed. */
+
+/* Text still needs to read against the white panel once it's fully
+   grown — was left white, which is why the row number/title/arrow
+   disappeared into the light hover background. */
+.okr .okr__home .okr__services-row:is(:hover, :focus-visible, :active) :is(
+  .okr__services-row-index,
+  .okr__services-row-name,
+  .okr__services-row-arrow
+) {
+  color: #090909 !important;
+}
+
+.okr .okr__home .okr__services-all-btn {
+  background: #ffffff;
+  color: #090909;
+}
+
+.okr .okr__home .okr__services-all-btn:is(:hover, :focus-visible) {
+  background: #e7e7e9;
+}
+
+/* Every remaining orange accent that's hardcoded (not read from the
+   --okr-primary/--okr-primary-2/--okr-cyan variables overridden above)
+   for elements that only exist on the homepage. Text-color pairings that
+   were tuned to sit on the old orange (white text, mostly) get a dark
+   pairing here too, for the same reason the services-row hover fix
+   above needed one: a pale accent under white text is unreadable. */
+.okr .okr__home .okr__scroll-word.is-highlight {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__home :is(.okr__stage-kicker, .okr__stage-points > span) {
+  color: #d7c9ff;
+}
+
+/* .okr__eyebrow's own color is a hardcoded #b84e2c a few hundred lines up
+   (not read from --okr-primary-2), so the variable override above doesn't
+   reach it — it needs its own override like every other hardcoded spot. */
+.okr .okr__home .okr__eyebrow {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__letter-touch:is(:hover, :active),
+.okr .okr__home .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word:not(.is-grad) .okr__glyph:is(:hover, :active) {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__home :is(.okr__word.is-grad, .okr__word.is-grad .okr__glyph) {
+  background: none !important;
+  color: #d7c9ff !important;
+  -webkit-text-fill-color: #d7c9ff !important;
+  text-shadow: none !important;
+}
+/* The per-letter gradient glyphs read color from an inline --glyph-color
+   custom property via a 6-class selector elsewhere in this file — more
+   specific than the rule just above, so it still won despite !important
+   on both sides (specificity beats source order in an !important tie).
+   Matching that exact selector shape, scoped under .okr__home, is the
+   only way to out-specify it rather than out-order it. */
+.okr .okr__home .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word.is-grad .okr__glyph {
+  color: #d7c9ff !important;
+  -webkit-text-fill-color: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__services-all-btn-fill {
+  background: #d7c9ff;
+}
+
+.okr .okr__home .okr__services-all-btn:is(:hover, :focus-visible, :active) {
+  color: #20181b !important;
+}
+
+.okr .okr__home .okr__certstrip-card:is(:hover, :focus-visible) {
+  border-color: rgba(215, 201, 255, 0.5) !important;
+}
+
+/* White button, black text at rest (per request) — was the shared
+   near-black .okr__btn--primary default used sitewide. Scoped to home so
+   Contact/Cart/Checkout etc. keep their original dark button. */
+.okr .okr__home .okr__btn--primary {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #20181b !important;
+}
+
+.okr .okr__home .okr__btn--primary:is(:hover, :focus-visible) {
+  background: #d7c9ff !important;
+  border-color: #d7c9ff !important;
+  color: #20181b !important;
+}
+
+/* Motion remains active, but never softens copy or identity assets. */
+.okr .okr__home :is(
+  h1,
+  h2,
+  h3,
+  p,
+  a,
+  button,
+  span,
+  li,
+  img,
+  svg
+) {
+  filter: none !important;
+  -webkit-filter: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Homepage accent lock
+   Keep every Five Stages and blog-card interaction inside the current
+   black/lavender identity. Several legacy rules below the theme variables use
+   literal warm colours, so each visible state is deliberately overridden. */
+.okr .okr__home .okr__stage-nav-item.is-active {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__stage-nav-item:focus-visible span {
+  text-shadow: 0 0 18px rgba(215, 201, 255, 0.28) !important;
+}
+
+.okr .okr__home .okr__stage-scene::before {
+  color: rgba(215, 201, 255, 0.055) !important;
+}
+
+.okr .okr__home :is(.okr__stage-kicker, .okr__stage-points > span) {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__process-card::after {
+  background: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__process-card:is(:hover, :focus-visible, :active, .is-active) {
+  border-top-color: rgba(215, 201, 255, 0.48) !important;
+  border-color: rgba(215, 201, 255, 0.48) !important;
+}
+
+.okr .okr__home .okr__process-detail::after {
+  color: rgba(215, 201, 255, 0.065) !important;
+}
+
+.okr .okr__home .okr__process-status strong,
+.okr .okr__home .okr__process-card .okr__step-n {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__process-rail > i,
+.okr .okr__home .okr__process-rail > span.is-passed {
+  background: #d7c9ff !important;
+  border-color: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__process-rail > span.is-passed {
+  box-shadow: 0 0 0 5px rgba(215, 201, 255, 0.1) !important;
+}
+
+.okr .okr__home .okr__blog-pin-card {
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.38) !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.okr .okr__home .okr__blog-pin-card:is(:hover, :focus-visible, :active) {
+  background: #0b0a0e !important;
+  border-color: rgba(215, 201, 255, 0.58) !important;
+  box-shadow:
+    0 26px 52px rgba(0, 0, 0, 0.58),
+    0 0 28px rgba(215, 201, 255, 0.1) !important;
+}
+
+.okr .okr__home .okr__blog-pin-card:focus-visible {
+  outline-color: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__blog-pin-dot {
+  background: #d7c9ff !important;
+  box-shadow: 0 2px 10px rgba(215, 201, 255, 0.26) !important;
+}
+
+.okr .okr__home .okr__blog-pin-card:is(:hover, :focus-visible, :active) .okr__blog-pin-category {
+  color: #d7c9ff !important;
+}
+
+.okr .okr__home .okr__blog-pin-card:is(:hover, :focus-visible, :active) .okr__blog-pin-title {
+  color: #f7f7f8 !important;
+}
+
+/* Live Sun background on every public page's hero — the same particle
+   sun/glow/starfield that renders on Home (the humanoid there is
+   currently invisible, so this is a pixel-identical dark treatment, not a
+   different or reduced one). Resets the theme tokens these sections'
+   existing panels/inputs/cards already consume via var() back to the
+   site's original dark palette (landing.css's base :root), so form
+   fields, glass panels and cart rows stay legible without per-component
+   overrides. */
+.okr__page-hero,
+.okr__portfolio-page,
+.okr__tools-hero,
+.okr__tool-detail-hero {
+  --okr-bg: #000000;
+  --okr-bg-2: #070707;
+  --okr-line: rgba(255, 255, 255, 0.06);
+  --okr-line-strong: rgba(255, 255, 255, 0.12);
+  --okr-text: #eef0f6;
+  --okr-muted: #8b8f9d;
+  --okr-dim: #6b6f7c;
+  --okr-primary: #56636f;
+  --okr-primary-2: #c9cdd1;
+  --okr-card-bg: #111111;
+  --okr-input-bg: #0d0d0d;
+  --okr-glass-bg: #111111;
+  --okr-glass-bg-hover: #171717;
+  --okr-glass-border: rgba(255, 255, 255, 0.12);
+  --okr-glass-shadow: none;
+  isolation: isolate;
+  position: relative;
+  overflow: hidden;
+  background: #030205 !important;
+  background-color: #030205 !important;
+  background-image: none !important;
+  border-bottom-color: transparent !important;
+  color: #fff;
+  /* Same floor as Home's .okr__hero--pointcloud, so the sun disc — fixed
+     camera FOV/distance, not rescaled per page — renders fully uncropped
+     here too instead of reading smaller where a page's own content is
+     shorter than a full viewport. */
+  min-height: max(720px, 100svh) !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Services (/services, plain .okr__page-hero, no per-page override) is
+     the locked reference: this is its own actual computed padding
+     (clamp(64px,8vw,112px) top / clamp(48px,6vw,82px) bottom — confirmed
+     via getComputedStyle, not the visually-similar but unused clamp(48…96)
+     rule earlier in landing.css). .okr__tools-hero/.okr__tool-detail-hero
+     otherwise resolve a different clamp() from landing.css, and
+     .okr__portfolio-page had no CSS padding of its own (only a per-page
+     inline override, now removed) — both forced to match here so the
+     Sun's position/framing is identical on every non-Home hero. */
+  padding-top: clamp(64px, 8vw, 112px) !important;
+  padding-bottom: clamp(48px, 6vw, 82px) !important;
+}
+
+.okr__page-hero > .okr__wrap,
+.okr__portfolio-page > .okr__wrap,
+.okr__tools-hero > .okr__wrap,
+.okr__tool-detail-hero > .okr__wrap {
+  position: relative;
+  z-index: 1;
+}
+
+/* The Sun canvas itself (SunBackground.jsx's root .okr__isra-cloud, marked
+   with this extra class so Home's own .okr__isra-cloud from
+   OkkaRobotPointCloud.jsx is never touched): pinned to a fixed band at the
+   top of the section instead of HeroPointCloud.css's default `inset: 0`,
+   which would otherwise stretch the WebGL canvas — and with it the
+   camera's computed framing of the sun — to match each page's full
+   content height (a Store or Sitemap page can run several thousand
+   pixels tall). Fixed to the same height as the min-height floor above,
+   so the sun renders at the same scale/crop on every page regardless of
+   how much page content follows below it. */
+.okr__isra-cloud.okr__sun-hero-bg {
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+  height: max(720px, 100svh) !important;
+}
+
+.okr__page-hero .okr__h2,
+.okr__page-hero .okr__hero-title,
+.okr__page-hero h1,
+.okr__page-hero h2,
+.okr__page-hero h3,
+.okr__portfolio-page .okr__hero-title,
+.okr__tools-hero .okr__hero-title,
+.okr__tools-page .okr__tools-hero .okr__hero-title,
+.okr__tool-detail-hero .okr__hero-title--stagger {
+  color: #fff !important;
+}
+
+.okr__page-hero .okr__kicker,
+.okr__portfolio-page .okr__kicker,
+.okr__tools-hero .okr__kicker,
+.okr__tool-detail-hero .okr__kicker,
+.okr__page-hero .okr__eyebrow,
+.okr__portfolio-page .okr__eyebrow {
+  color: #d7c9ff;
+  border-top-color: rgba(255, 255, 255, 0.18);
+}
+
+.okr__tool-detail-hero .okr__tool-back {
+  color: #eef0f6;
+}
+
+.okr__tool-detail-hero .okr__tool-privacy-chip {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+  color: #eef0f6;
 }

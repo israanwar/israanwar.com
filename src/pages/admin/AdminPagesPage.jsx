@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ExternalLink } from "lucide-react";
+import { Eye } from "lucide-react";
 import { pagesData } from "../../lib/supabaseData";
+import { AdminPreviewModal } from "../../components/admin/AdminPreviewModal";
 
 const TABS = [
   { key: "about", label: "About", url: "/about" },
@@ -18,6 +19,7 @@ export function AdminPagesPage() {
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [inlineMsg, setInlineMsg] = useState(null);
+  const [previewPath, setPreviewPath] = useState("");
 
   useEffect(() => {
     let alive = true;
@@ -55,15 +57,22 @@ export function AdminPagesPage() {
         setData(await pagesData.get(tab));
         setInlineMsg({ type: "success", text: "✓ Tersimpan. Klik Preview untuk lihat hasilnya." });
       }
+      return true;
     } catch (e) {
       setInlineMsg({ type: "error", text: e.message ?? "Gagal menyimpan." });
+      return false;
     } finally { setBusy(false); }
   }
 
   async function previewOnly() {
-    if (dirty) await save({ redirect: false });
+    if (busy) return;
     const url = TABS.find((x) => x.key === tab)?.url ?? "/";
-    window.open(url, "_blank");
+    if (!dirty) {
+      setPreviewPath(url);
+      return;
+    }
+    const saved = await save({ redirect: false });
+    if (saved) setPreviewPath(url);
   }
 
   const activeTab = TABS.find((t) => t.key === tab);
@@ -77,9 +86,10 @@ export function AdminPagesPage() {
           type="button"
           className="wpx__btn wpx__btn--secondary"
           onClick={previewOnly}
-          title="Simpan sementara + buka di tab baru"
+          disabled={busy}
+          title="Simpan lalu tampilkan preview di dalam panel"
         >
-          <ExternalLink size={14} /> Preview
+          <Eye size={14} /> Preview
         </button>
         <button
           type="button"
@@ -102,11 +112,6 @@ export function AdminPagesPage() {
       {inlineMsg && (
         <div className={`wpx__notice wpx__notice--${inlineMsg.type}`} style={{ marginBottom: 16 }}>
           {inlineMsg.text}
-          {inlineMsg.type === "success" && activeTab && (
-            <> <a href={activeTab.url} target="_blank" rel="noreferrer" style={{ color: "var(--primary)", marginLeft: 8 }}>
-              Buka {activeTab.url} →
-            </a></>
-          )}
         </div>
       )}
 
@@ -127,6 +132,7 @@ export function AdminPagesPage() {
       {tab === "contact" && <ContactEditor data={data} set={set} />}
       {tab === "portfolio" && <PortfolioEditor data={data} set={set} />}
       {(tab === "privacy" || tab === "terms") && <LegalEditor data={data} set={set} />}
+      {previewPath && <AdminPreviewModal path={previewPath} title={`Preview ${activeTab?.label ?? "halaman"}`} onClose={() => setPreviewPath("")} />}
     </>
   );
 }

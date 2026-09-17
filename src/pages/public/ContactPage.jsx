@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Mail, MessageCircle, MapPin, Clock, Check } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
+import { SunBackground } from "../../components/hero/SunBackground";
 import { contactsData } from "../../lib/supabaseData";
 import { useLivePage, useLiveSettings } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
@@ -17,6 +18,7 @@ export function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "", message: "" });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
   const [busy, setBusy] = useState(false);
 
   function set(k, v) { setForm((f) => ({ ...f, [k]: v })); if (errors[k]) setErrors((e) => ({ ...e, [k]: null })); }
@@ -33,16 +35,22 @@ export function ContactPage() {
     ev.preventDefault();
     if (!validate()) return;
     setBusy(true);
-    await contactsData.create({ ...form });
-    setStatus("success");
-    setBusy(false);
-    setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+    setSubmitError(null);
+    try {
+      await contactsData.create({ ...form });
+      setStatus("success");
+      setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+    } catch (e) {
+      setStatus("error");
+      setSubmitError(e.message ?? "Pesan gagal dikirim. Coba lagi.");
+    } finally { setBusy(false); }
   }
 
   return (
     <>
       <Seo title={`${t("nav_contact")} — israanwar`} description={p.hero_subtitle} />
               <section className="okr__section okr__page-hero">
+            <SunBackground />
           <div className="okr__wrap">
             {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}
             <AnimatedHeadline text={p.hero_title} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters style={{ marginTop: 20 }} />
@@ -65,6 +73,7 @@ export function ContactPage() {
                     <Check size={16} /> {t("contact_success")}
                   </div>
                 )}
+                {status === "error" && <p role="alert" style={{ color: "#fca5a5", margin: "0 0 20px" }}>{submitError}</p>}
 
                 <div className="okr__field-2col">
                   <div className="okr__field">

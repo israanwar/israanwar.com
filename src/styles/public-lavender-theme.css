@@ -1,0 +1,351 @@
+/* Public-route visual identity for every page except Home and Blog.
+   The exclusions keep the live Home/robot work isolated, while Blog retains
+   its more editorial route-specific treatment. */
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page)) {
+  --okr-bg: #000000;
+  --okr-bg-2: #000000;
+  --okr-line: rgba(255, 255, 255, 0.12);
+  --okr-line-strong: rgba(255, 255, 255, 0.22);
+  --okr-border: rgba(255, 255, 255, 0.12);
+  --okr-text: #f7f7f8;
+  --okr-muted: #b0b0b5;
+  --okr-dim: #85858d;
+  --okr-primary: #d7c9ff;
+  --okr-primary-2: #d7c9ff;
+  --okr-cyan: #d7c9ff;
+  --okr-card-bg: #08080b;
+  --okr-card-surface: #08080b;
+  --okr-card-surface-hover: #111016;
+  --okr-card-ink: #f7f7f8;
+  --okr-card-muted: #b0b0b5;
+  --okr-card-dim: #85858d;
+  --okr-card-accent: #d7c9ff;
+  --okr-input-bg: #0b0b0e;
+  --okr-glass-bg: #08080b;
+  --okr-glass-bg-hover: #111016;
+  --okr-glass-border: rgba(255, 255, 255, 0.15);
+  --okr-touch-glass: rgba(215, 201, 255, 0.12);
+  --okr-touch-glass-border: rgba(215, 201, 255, 0.52);
+  --okr-touch-glass-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --okr-system-bg: #08080b;
+  --okr-system-bg-raised: #111016;
+  --okr-system-line: rgba(255, 255, 255, 0.14);
+  --okr-system-line-hot: rgba(215, 201, 255, 0.56);
+  --okr-system-accent: #d7c9ff;
+  --okr-system-accent-soft: #d7c9ff;
+  --okr-system-cyan: #d7c9ff;
+  --okr-system-muted: #b0b0b5;
+  --okr-system-dim: #85858d;
+  background: #000000 !important;
+  color: #f7f7f8;
+  color-scheme: dark;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__section, .okr__page-hero, .okr__tool-detail-page, .okr__tool-work-section) {
+  background-color: #000000 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__page-hero {
+  background-image: radial-gradient(circle at 72% 0%, rgba(121, 88, 194, 0.16), transparent 48%) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__h2, .okr__detail-title, .okr__card-title, .okr__product-name, .okr__post-title, .okr__case-title, .okr__cta h3, h1, h2, h3) {
+  color: #f7f7f8 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__hero-title--stagger .okr__word:not(.is-grad),
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__hero-title--stagger .okr__word:not(.is-grad) .okr__glyph {
+  color: #f7f7f8 !important;
+  -webkit-text-fill-color: #f7f7f8 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__word.is-grad, .okr__word.is-grad .okr__glyph),
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word.is-grad .okr__glyph {
+  background: none !important;
+  color: #d7c9ff !important;
+  -webkit-text-fill-color: #d7c9ff !important;
+  text-shadow: none !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__eyebrow, .okr__kicker, .okr__service-parent, .okr__card-link, .okr__link, .okr__product-cat, .okr__tools-overline) {
+  color: #d7c9ff !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__letter-touch:is(:hover, :focus-visible, :active),
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word:not(.is-grad) .okr__glyph:is(:hover, :active) {
+  color: #d7c9ff !important;
+  -webkit-text-fill-color: #d7c9ff !important;
+}
+
+/* Dark surfaces with a lavender interaction edge. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(
+    .okr__card,
+    .okr__panel,
+    .okr__cta,
+    .okr__product,
+    .okr__post,
+    .okr__case,
+    .okr__tool-shell,
+    .okr__tool-panel,
+    .okr__tool-workspace,
+    .okr__converter,
+    .okr__checkout-card,
+    .okr__order-card,
+    .okr__payment-card,
+    .okr__cart-item,
+    .okr__summary-card,
+    .okr__contact-card,
+    .okr__tool-related-grid a
+  ) {
+  background: #08080b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.34) !important;
+  color: #f7f7f8 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__card, .okr__product, .okr__post, .okr__case, .okr__tool-related-grid a):is(:hover, :focus-visible, :focus-within, :active) {
+  background: #111016 !important;
+  border-color: rgba(215, 201, 255, 0.62) !important;
+  box-shadow: 0 24px 58px rgba(42, 29, 72, 0.4) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__card-body, .okr__card-desc, .okr__product-desc, .okr__product-description, .okr__service-text p, .okr__cta p) {
+  color: #b0b0b5 !important;
+}
+
+/* Services keep every label readable on hover and touch. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) {
+  background: #111016 !important;
+  border-color: rgba(215, 201, 255, 0.62) !important;
+  box-shadow: 0 26px 62px rgba(42, 29, 72, 0.4) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active)
+  :is(.okr__card-title, .okr__service-count) {
+  color: #f7f7f8 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__service-card .okr__card-icon,
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active) .okr__card-icon {
+  background: rgba(215, 201, 255, 0.1) !important;
+  border-color: rgba(215, 201, 255, 0.42) !important;
+  color: #d7c9ff !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__service-card .okr__service-count {
+  background: #0b0b0e !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #b0b0b5 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__cards > .okr__service-card:is(:hover, :focus-visible, :focus-within, :active)
+  :is(.okr__card-link, .okr__card-link svg) {
+  color: #d7c9ff !important;
+}
+
+/* Portfolio credentials reuse the exact white issuer cards from Home.
+   The neutral tile preserves every original logo colour and wordmark. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__portfolio-page .okr__cert-marquee {
+  margin: 24px -4px 0;
+  padding: 6px 4px 16px;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__portfolio-page .okr__cert-marquee-track {
+  gap: 14px;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__portfolio-page .okr__portfolio-cert-card {
+  background: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__portfolio-page .okr__portfolio-cert-card:is(:hover, :focus-visible, :active) {
+  background: #ffffff !important;
+  border-color: rgba(215, 201, 255, 0.72) !important;
+  box-shadow: 0 20px 42px rgba(42, 29, 72, 0.46), 0 0 0 1px rgba(215, 201, 255, 0.12) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__portfolio-page .okr__portfolio-cert-card .okr__certstrip-card-name {
+  color: #20181b !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__portfolio-page .okr__portfolio-cert-card .okr__certstrip-card-icon img {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+/* Store and cart surfaces. Product artwork is left intact. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact > .okr__artifact-card {
+  background: #08080b !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.36) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible, :active) {
+  border-color: rgba(215, 201, 255, 0.62) !important;
+  box-shadow: 0 22px 48px rgba(42, 29, 72, 0.4) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__product-body {
+  background: #08080b !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__product-price, .okr__product-stars svg, .okr__cart-actions strong) {
+  color: #d7c9ff !important;
+}
+
+/* Forms, filters, and tool controls. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__glass-input, .okr__glass-select, .okr__input, input, textarea, select) {
+  background: #0b0b0e !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #f7f7f8 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(input, textarea)::placeholder {
+  color: rgba(255, 255, 255, 0.48) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__glass-input, .okr__glass-select, .okr__input, input, textarea, select):focus {
+  border-color: rgba(215, 201, 255, 0.72) !important;
+  box-shadow: 0 0 0 3px rgba(215, 201, 255, 0.12) !important;
+  outline: none;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  select option {
+  background: #0b0b0e;
+  color: #f7f7f8;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__rail-chip {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+  color: #d4d4d8 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__rail-chip:is(:hover, :focus-visible, .is-active) {
+  background: rgba(215, 201, 255, 0.12) !important;
+  border-color: rgba(215, 201, 255, 0.58) !important;
+  color: #ffffff !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__category-rail-wrap {
+  --rail-fade-bg: rgba(0, 0, 0, 0.92);
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__tool-dropzone {
+  background-image: radial-gradient(circle at 50% 0%, rgba(215, 201, 255, 0.14), transparent 42%) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__tool-note {
+  background: rgba(215, 201, 255, 0.07) !important;
+  border-left-color: #d7c9ff !important;
+}
+
+/* Buttons follow Home: white at rest, lavender for interaction. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__btn--primary {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #090909 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__btn--primary:is(:hover, :focus-visible, :active) {
+  background: #d7c9ff !important;
+  border-color: #d7c9ff !important;
+  color: #090909 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__btn--ghost {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #f7f7f8 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__btn--ghost:is(:hover, :focus-visible, :active) {
+  background: rgba(215, 201, 255, 0.1) !important;
+  border-color: rgba(215, 201, 255, 0.58) !important;
+}
+
+/* Shared chrome states that still contain legacy warm-accent literals. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__scroll-progress,
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__chat-trigger:is(:hover, :focus-visible, :active),
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__chat-panel-icon,
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__chat-send:not(:disabled):is(:hover, :focus-visible, :active) {
+  background: #d7c9ff !important;
+  color: #090909 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__chat-upload, .okr__chat-input):is(:hover, :focus, :focus-visible, :active) {
+  border-color: #d7c9ff !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(.okr__mobile-menu-kicker, .okr__mobile-navlink.is-active, .okr__mobile-navlink:hover, .okr__mobile-navlink:focus-visible, .okr__mobile-navlink:active) {
+  color: #d7c9ff !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(a, button, input, textarea, select):focus-visible {
+  outline-color: rgba(215, 201, 255, 0.78) !important;
+}
+
+/* Motion remains present, but no effect may blur text, identity, or controls. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  :is(h1, h2, h3, p, a, button, span, li, img, svg) {
+  filter: none !important;
+  -webkit-filter: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page)) * {
+    scroll-behavior: auto !important;
+  }
+}

@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import {
   MessageCircle, Github, Instagram, Linkedin, Mail, ShoppingBag, Menu, X,
-  Home, Fingerprint, Compass, LayoutGrid, ShoppingCart, BookOpen, Wrench,
+  Home, Compass, ShoppingCart, BookOpen, Wrench,
 } from "lucide-react";
 import { useLiveSettings, useLiveProductsExist, useLiveCart } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeSiteDescription } from "../../lib/pageI18n";
 import { LangThemeSwitcher } from "./LangThemeSwitcher";
 import { IsraAnwarMark } from "../brand/IsraAnwarLogo";
-import { FooterParticles } from "./FooterParticles";
+import { SunBackground } from "../hero/SunBackground";
 import { NewsletterForm } from "../marketing/NewsletterForm";
 import { SiteChatWidget } from "../chat/SiteChatWidget";
 import "../../styles/landing.css";
@@ -110,13 +110,10 @@ export function SiteHeader({ settings }) {
 
   const nav = [
     { label: t("nav_home"), to: "/", route: true, icon: Home },
-    { label: t("nav_about"), to: "/about", route: true, icon: Fingerprint },
     { label: t("nav_services"), to: "/services", route: true, icon: Compass },
-    { label: t("nav_portfolio"), to: "/portfolio", route: true, icon: LayoutGrid },
     { label: t("nav_tools"), to: "/tools", route: true, icon: Wrench },
     ...(hasProducts ? [{ label: t("nav_store"), to: "/store", route: true, icon: ShoppingCart }] : []),
     { label: t("nav_blog"), to: "/blog", route: true, icon: BookOpen },
-    { label: t("nav_contact"), to: "/contact", route: true, icon: Mail },
   ];
 
   useEffect(() => {
@@ -242,6 +239,7 @@ export function SiteHeader({ settings }) {
           which would clip the menu to the 60px header box. Rendering here keeps
           the menu positioned against the viewport. */}
       <div className={`okr__mobile-menu${menuOpen ? " is-open" : ""}`} id="okr-mobile-nav">
+        {menuOpen && <SunBackground variant="menu" />}
         <button
           className="okr__mobile-menu-close"
           type="button"
@@ -285,7 +283,6 @@ export function SiteFooter({ settings }) {
   const description = localizeSiteDescription(settings.description, lang, settings.description_id) || t("site_description");
   return (
     <footer className="okr__footer">
-      <FooterParticles />
       <div className="okr__wrap">
         <div className="okr__footer-card">
           <div className="okr__footer-grid">
@@ -296,6 +293,7 @@ export function SiteFooter({ settings }) {
                 </span>
                 <span className="okr__brand-wordmark">{settings.site_name || "Isra Anwar"}</span>
               </div>
+              {settings.tagline && <p className="okr__foot-tagline">{settings.tagline}</p>}
               <p className="okr__foot-desc">{description}</p>
               <div className="okr__foot-social">
                 {settings.social_twitter && (

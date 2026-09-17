@@ -6,6 +6,7 @@ import { deletePost, listPosts } from "../../services/postService";
 export function AdminPostsPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   async function load() {
     setLoading(true);
@@ -16,8 +17,8 @@ export function AdminPostsPage() {
 
   async function remove(id) {
     if (!confirm("Hapus post ini?")) return;
-    await deletePost(id);
-    load();
+    try { await deletePost(id); setError(null); await load(); }
+    catch (e) { setError(e.message ?? "Gagal menghapus post."); }
   }
 
   return (
@@ -29,6 +30,8 @@ export function AdminPostsPage() {
           <Plus size={14} /> Tambah baru
         </Link>
       </div>
+
+      {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
 
       {loading ? <p>Loading…</p> : (
         <table className="wpx__table">
@@ -42,11 +45,11 @@ export function AdminPostsPage() {
               <tr><td colSpan={4} style={{ textAlign: "center", color: "var(--wpx-muted)", padding: 40 }}>Belum ada post.</td></tr>
             ) : posts.map((p) => (
               <tr key={p.id}>
-                <td><Link to={`/admin/posts/${p.id}`} style={{ color: "var(--wpx-primary)", fontWeight: 600 }}>{p.title}</Link></td>
+                <td><Link to={`/admin/posts/${p.slug || p.id}`} style={{ color: "var(--wpx-primary)", fontWeight: 600 }}>{p.title}</Link></td>
                 <td><span className={`wpx__badge wpx__badge--${p.status}`}>{p.status}</span></td>
                 <td>{new Date(p.created_at).toLocaleDateString("id-ID")}</td>
                 <td>
-                  <Link to={`/admin/posts/${p.id}`} className="wpx__btn wpx__btn--secondary" style={{ padding: "3px 8px", marginRight: 4 }}>
+                  <Link to={`/admin/posts/${p.slug || p.id}`} className="wpx__btn wpx__btn--secondary" style={{ padding: "3px 8px", marginRight: 4 }}>
                     <Edit size={12} />
                   </Link>
                   <button className="wpx__btn wpx__btn--danger" style={{ padding: "3px 8px" }} onClick={() => remove(p.id)}>

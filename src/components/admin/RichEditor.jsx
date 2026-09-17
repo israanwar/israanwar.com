@@ -1,7 +1,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import {
-  Bold, Italic, Strikethrough, Heading2, Heading3, List, ListOrdered, Quote, Undo, Redo,
+  Bold, Italic, Strikethrough, Heading2, Heading3, List, ListOrdered, Quote, Link2, Undo, Redo,
 } from "lucide-react";
 
 export function RichEditor({ value, onChange }) {
@@ -12,6 +12,25 @@ export function RichEditor({ value, onChange }) {
   });
 
   if (!editor) return null;
+
+  function editLink() {
+    if (editor.isActive("link")) {
+      editor.chain().focus().unsetLink().run();
+      return;
+    }
+    if (editor.state.selection.empty) {
+      window.alert("Pilih teks yang akan dijadikan tautan terlebih dahulu.");
+      return;
+    }
+    const href = window.prompt("URL tautan (https://… atau /halaman)");
+    if (!href) return;
+    const value = href.trim();
+    if (!/^https?:\/\/[^\s]+$/i.test(value) && !/^\/(?!\/)[^\s]*$/.test(value)) {
+      window.alert("Gunakan URL https:// atau path internal yang diawali /.");
+      return;
+    }
+    editor.chain().focus().setLink({ href: value }).run();
+  }
 
   const Btn = ({ cmd, active, children, title }) => (
     <button
@@ -35,6 +54,7 @@ export function RichEditor({ value, onChange }) {
         <Btn cmd={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive("bulletList")} title="Bulleted list"><List size={13} /></Btn>
         <Btn cmd={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive("orderedList")} title="Numbered list"><ListOrdered size={13} /></Btn>
         <Btn cmd={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive("blockquote")} title="Quote"><Quote size={13} /></Btn>
+        <Btn cmd={editLink} active={editor.isActive("link")} title="Tambah atau hapus tautan pada teks terpilih"><Link2 size={13} /></Btn>
         <Btn cmd={() => editor.chain().focus().undo().run()} title="Undo"><Undo size={13} /></Btn>
         <Btn cmd={() => editor.chain().focus().redo().run()} title="Redo"><Redo size={13} /></Btn>
       </div>

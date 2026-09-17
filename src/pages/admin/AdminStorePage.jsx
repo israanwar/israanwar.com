@@ -145,9 +145,10 @@ export function AdminStorePage() {
       .filter((i) => !term || i.name.toLowerCase().includes(term));
   }, [items, cat, q]);
 
-  function remove(id) {
+  async function remove(id) {
     if (!confirm("Hapus item store ini?")) return;
-    productsData.delete(id).then(load);
+    try { await productsData.delete(id); setImportResult(null); await load(); }
+    catch (e) { setImportResult({ error: e.message ?? "Gagal menghapus produk." }); }
   }
 
   return (

@@ -13,6 +13,16 @@ import "./styles/globals.css";
 
 const rootEl = document.getElementById("root");
 
+// Disable the browser's native scroll restoration before the asynchronous
+// font gate below. Waiting until React mounts is too late on a hard reload:
+// the browser can already have restored the previous footer position.
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
+if (window.location.pathname === "/" && !window.location.hash) {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+}
+
 async function mountApp() {
   // The hero relies on exact word wrapping. Waiting for the bundled fonts
   // prevents the fallback face from composing one layout and shifting it

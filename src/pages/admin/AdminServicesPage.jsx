@@ -5,14 +5,16 @@ import { servicesData } from "../../lib/supabaseData";
 
 export function AdminServicesPage() {
   const [items, setItems] = useState([]);
+  const [error, setError] = useState(null);
   async function load() {
     setItems(await servicesData.list());
   }
   useEffect(() => { load(); }, []);
 
-  function remove(id) {
+  async function remove(id) {
     if (!confirm("Hapus layanan ini?")) return;
-    servicesData.delete(id).then(load);
+    try { await servicesData.delete(id); setError(null); await load(); }
+    catch (e) { setError(e.message ?? "Gagal menghapus layanan."); }
   }
 
   return (
@@ -24,6 +26,8 @@ export function AdminServicesPage() {
           <Plus size={14} /> Tambah layanan
         </Link>
       </div>
+
+      {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
 
       {items.length === 0 ? (
         <div className="wpx__card"><div className="wpx__card-body" style={{ textAlign: "center", color: "var(--text-mute)" }}>Belum ada layanan.</div></div>

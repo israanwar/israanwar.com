@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState } from "react";
-import { useParams, Link, Navigate } from "react-router-dom";
+import { useParams, useNavigate, Link, Navigate } from "react-router-dom";
 import {
   Check, Copy, Clock, X, Download, ShoppingBag, FileImage, ChevronRight, RefreshCw,
 } from "lucide-react";
@@ -99,7 +99,7 @@ function PaymentBody({ order, settings, onChanged }) {
       {isPending && <PendingView order={order} settings={settings} L={L} onChanged={onChanged} />}
       {isWaiting && <WaitingView order={order} L={L} />}
       {isPaid && <PaidView order={order} L={L} />}
-      {isRejected && <RejectedView order={order} L={L} onChanged={onChanged} />}
+      {isRejected && <RejectedView order={order} L={L} />}
 
       {/* Order summary — always shown */}
       <OrderSummary order={order} L={L} />
@@ -243,10 +243,7 @@ function PendingView({ order, settings, L, onChanged }) {
     setManualConfirmError(null);
     setConfirming(true);
     try {
-      await ordersData.updateStatus(order.id ?? order.order_number, ORDER_STATUS.WAITING_VERIFICATION, {
-        payment_confirmed_without_proof_at: new Date().toISOString(),
-        payment_verification_source: "gopay_merchant_app",
-      });
+      await ordersData.uploadProof(order.order_number, "");
       onChanged();
     } catch (e) {
       setManualConfirmError(e.message ?? L.manual_confirm_error);
@@ -474,14 +471,31 @@ function PaidView({ order, L }) {
 /* ============================================================
  * REJECTED — retry upload
  * ============================================================ */
-function RejectedView({ order, L, onChanged }) {
+function RejectedView({ order, L }) {
+  const nav = useNavigate();
+  const [retryError, setRetryError] = useState(null);
+  const [retryBusy, setRetryBusy] = useState(false);
   async function retry() {
     if (!confirm(L.retry_confirm)) return;
-    await ordersData.updateStatus(order.id ?? order.order_number, ORDER_STATUS.PENDING_PAYMENT, {
-      payment_proof: null,
-      payment_proof_uploaded_at: null,
-    });
-    onChanged();
+    setRetryError(null);
+    setRetryBusy(true);
+    try {
+      const nextOrder = await ordersData.create({
+        customer_name: order.customer_name,
+        customer_email: order.customer_email,
+        customer_phone: order.customer_phone,
+        shipping_address: order.shipping_address,
+        items: order.items,
+        subtotal: order.subtotal,
+        total: order.total,
+        payment_method: order.payment_method,
+        notes: order.notes,
+      });
+      nav(`/orders/${nextOrder.order_number}/payment`, { replace: true });
+    } catch (e) {
+      setRetryError(e.message ?? "Gagal mengulang pembayaran.");
+      setRetryBusy(false);
+    }
   }
   return (
     <div className="okr__panel" style={{ textAlign: "center", padding: "40px 32px", marginBottom: 20 }}>
@@ -506,7 +520,8 @@ function RejectedView({ order, L, onChanged }) {
           <strong>{L.admin_note}:</strong> {order.admin_note}
         </div>
       )}
-      <button onClick={retry} className="okr__btn okr__btn--primary" style={{ padding: "12px 24px" }}>
+      {retryError && <p role="alert" style={{ color: "#a72226" }}>{retryError}</p>}
+      <button onClick={retry} disabled={retryBusy} className="okr__btn okr__btn--primary" style={{ padding: "12px 24px" }}>
         <RefreshCw size={15} /> {L.retry}
       </button>
     </div>
@@ -634,7 +649,7 @@ const LANG_EN = {
   rejected_body: "There was an issue with your payment. Please try again or contact admin.",
   admin_note: "Note from admin",
   retry: "Retry payment",
-  retry_confirm: "Reset order to pending and try payment again?",
+  retry_confirm: "Create a new order to try payment again?",
   summary: "Order summary",
 };
 const LANG_ID = {
@@ -682,6 +697,6 @@ const LANG_ID = {
   rejected_body: "Ada masalah dengan pembayaran. Silakan coba lagi atau hubungi admin.",
   admin_note: "Catatan dari admin",
   retry: "Coba bayar ulang",
-  retry_confirm: "Reset order ke pending dan coba bayar ulang?",
+  retry_confirm: "Buat pesanan baru untuk mencoba pembayaran lagi?",
   summary: "Ringkasan pesanan",
 };

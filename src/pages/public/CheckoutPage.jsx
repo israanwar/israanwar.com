@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
+import { SunBackground } from "../../components/hero/SunBackground";
 import { cartRepo } from "../../lib/localStore";
 import { ordersData } from "../../lib/supabaseData";
 import { useLiveCart, useLiveSettings } from "../../hooks/usePageData";
@@ -25,10 +26,15 @@ export function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
-  // Guard: kalau cart kosong DAN belum submit → redirect ke cart.
-  // Kalau sudah submit, biarkan navigate ke halaman payment berjalan.
-  if (!submitted && detail.rows.length === 0) return <Navigate to="/cart" replace />;
+  // Guard: kalau cart kosong DAN belum submit → redirect ke cart. Checked
+  // against itemCount (the raw, synchronous cart contents) rather than
+  // rows.length — rows only resolves once the live product list has
+  // loaded, so gating on it fired this redirect on every visit, even with
+  // items actually in the cart, during the render before that fetch
+  // finished. Kalau sudah submit, biarkan navigate ke halaman payment berjalan.
+  if (!submitted && detail.itemCount === 0) return <Navigate to="/cart" replace />;
 
   function set(k, v) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -53,7 +59,9 @@ export function CheckoutPage() {
     }
     setBusy(true);
     setSubmitted(true); // gate: prevent redirect to /cart after cartRepo.clear()
-    const order = await ordersData.create({
+    setSubmitError(null);
+    try {
+      const order = await ordersData.create({
       ...form,
       payment_method: getCheckoutPaymentMethod(settings),
       subtotal: detail.total,
@@ -64,20 +72,27 @@ export function CheckoutPage() {
         };
       }),
       total: detail.total,
-    });
-    // Navigate ke halaman payment DULU — clear cart setelah nav biar UI tidak lompat.
-    nav(`/orders/${order.order_number}/payment`, { replace: true });
-    setTimeout(() => cartRepo.clear(), 100);
+      });
+      // Navigate ke halaman payment DULU — clear cart setelah nav biar UI tidak lompat.
+      nav(`/orders/${order.order_number}/payment`, { replace: true });
+      setTimeout(() => cartRepo.clear(), 100);
+    } catch (e) {
+      setSubmitError(e.message ?? "Pesanan gagal dibuat. Coba lagi.");
+      setSubmitted(false);
+      setBusy(false);
+    }
   }
 
   return (
     <>
       <Seo title={`${t("checkout_title")} — israanwar`} description={t("checkout_title")} noindex />
               <section className="okr__section okr__page-hero">
+            <SunBackground />
           <div className="okr__wrap">
             <AnimatedHeadline text={t("checkout_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
 
             <form onSubmit={submit} className="okr__checkout-grid" style={{ marginTop: 40 }}>
+              {submitError && <p role="alert" style={{ color: "#fca5a5", gridColumn: "1 / -1", margin: 0 }}>{submitError}</p>}
               <div className="okr__panel">
                 <h3 style={{ margin: "0 0 20px", fontSize: 18, fontWeight: 700 }}>{t("checkout_customer")}</h3>
 

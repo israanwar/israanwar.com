@@ -10,80 +10,8 @@ import { localizeHomepage, localizePage, localizeSiteDescription } from "../../l
 import { localizeServiceCardItems } from "../../lib/serviceI18n";
 import { useLandingEffects, useProcessScrollStory } from "../../hooks/useLandingEffects";
 import { BlogPinCard } from "../../components/blog/BlogPinCard";
+import { SunBackground } from "../../components/hero/SunBackground";
 import "../../styles/home-services-motion.css";
-
-const DEFAULT_HERO_SUBTITLES = new Set([
-  "web, seo, ai workflow & content strategy for personal brands and businesses.",
-  "web, seo, workflow ai, dan strategi konten untuk personal brand dan bisnis.",
-  "building smarter digital systems for stronger visibility, efficient operations, and sustainable business growth.",
-  "kami membangun sistem digital yang lebih cerdas untuk memperkuat visibilitas, mengefisienkan operasional, dan mendorong pertumbuhan bisnis berkelanjutan.",
-]);
-
-function useHeroSequence(text) {
-  const [sequence, setSequence] = useState({ complete: false, typing: false, value: "" });
-
-  useEffect(() => {
-    if (!text) {
-      setSequence({ complete: true, typing: false, value: "" });
-      return undefined;
-    }
-
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // Mobile: skip the 3.35s hold + per-character typing entirely. The
-    // subtitle (and the CTA below it, which is gated on `complete`) must be
-    // available the instant the page renders — see the mobile hero block
-    // in light-theme.css for the matching visual-only override.
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    if (reducedMotion || isMobile) {
-      setSequence({ complete: true, typing: false, value: text });
-      return undefined;
-    }
-
-    let index = 0;
-    let timer = 0;
-    let cancelled = false;
-    const glyphs = Array.from(text);
-
-    setSequence({ complete: false, typing: false, value: "" });
-
-    const typeNext = () => {
-      if (cancelled) return;
-      index += 1;
-      const value = glyphs.slice(0, index).join("");
-      const complete = index >= glyphs.length;
-      setSequence({ complete, typing: !complete, value });
-
-      if (complete) return;
-
-      const current = glyphs[index - 1];
-      const humanRhythm = [12, 18, 15, 22, 13, 19, 15];
-      const delay = current === ","
-        ? 90
-        : current === "."
-          ? 130
-          : current === " "
-            ? 12
-            : humanRhythm[(index - 1) % humanRhythm.length];
-      timer = window.setTimeout(typeNext, delay);
-    };
-
-    timer = window.setTimeout(() => {
-      setSequence((current) => ({ ...current, typing: true }));
-      typeNext();
-    }, 350);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [text]);
-
-  return sequence;
-}
-
-function isDefaultHeroSubtitle(value) {
-  return DEFAULT_HERO_SUBTITLES.has(String(value ?? "").trim().toLowerCase());
-}
 
 // Wraps each non-space character in its own span so hover (desktop) / tap
 // (mobile, via :active — no touch JS needed) can pop just that one letter.
@@ -138,7 +66,7 @@ function ScrollRevealTitle({ text }) {
 // Slow, continuous px/ms drift for the auto-scrolling credential carousel —
 // deliberately gentle ("bergerak otomatis perlahan"), same speed on every
 // device (mobile just also gets scroll-snap + native touch momentum).
-const CERTSTRIP_SPEED = 0.026;
+const CERTSTRIP_SPEED = 0.055;
 
 // Issuer cards show only the brand logo — click opens a modal listing that
 // issuer's certificates. Only real certification issuers belong here —
@@ -357,7 +285,10 @@ function CertificationsStrip({ providers, t }) {
             tabIndex={i < providers.length ? 0 : -1}
             aria-hidden={i < providers.length ? undefined : true}
           >
-            <img src={provider.logo} alt="" aria-hidden="true" draggable={false} />
+            <span className="okr__certstrip-card-icon">
+              <img src={provider.logo} alt="" aria-hidden="true" draggable={false} />
+            </span>
+            <span className="okr__certstrip-card-name">{provider.name}</span>
           </button>
         ))}
       </div>
@@ -428,19 +359,17 @@ export function LandingPage() {
   }, [rawServiceCategories, lang]);
 
   const hero = sections.hero ?? {};
-  const heroLeadWordCount = String(hero.title_line1 || "")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean).length;
-  const siteDescription = localizeSiteDescription(settings.description, lang, settings.description_id);
-  const heroSubtitle = !hero.subtitle || isDefaultHeroSubtitle(hero.subtitle)
-    ? siteDescription
-    : hero.subtitle;
-  const heroSequence = useHeroSequence(heroSubtitle);
+  const heroTitle = [hero.title_line1, hero.title_line2].filter(Boolean).join(" ");
+  const cta = sections.cta ?? {};
+  const curatedServices = sections.services?.items ?? [];
+  const whatsappHref = /^https:\/\/(wa\.me|api\.whatsapp\.com)\//i.test(settings.whatsapp_url ?? "")
+    ? settings.whatsapp_url
+    : null;
   const process = sections.process ?? { title: "", items: [] };
   const cases = sections.cases ?? { title: t("section_cases_title"), items: [] };
   const processItems = process.items ?? [];
   const processSectionRef = useRef(null);
+  const [heroSceneReady, setHeroSceneReady] = useState(false);
   const [selectedProcessIndex, setSelectedProcessIndex] = useState(0);
   const activeProcessIndex = Number.isInteger(selectedProcessIndex) && selectedProcessIndex >= 0
     ? Math.min(selectedProcessIndex, Math.max(processItems.length - 1, 0))
@@ -477,43 +406,53 @@ export function LandingPage() {
       {/* A compact, native scroll-progress indicator is shown on mobile only. */}
       <span className="okr__scroll-progress" aria-hidden="true" />
     <div className="okr__home">
-          <section className="okr__hero">
-            <div className="okr__wrap">
+          <section
+            className={`okr__hero okr__hero--pointcloud${heroSceneReady ? " is-scene-ready" : ""}`}
+            aria-busy={!heroSceneReady}
+          >
+            <SunBackground onReady={setHeroSceneReady} />
+            <div className="okr__hero-pointcloud-copy">
               {hero.kicker && (
-                <span className="okr__kicker okr__hero-kicker" aria-label={hero.kicker}>
-                  <span aria-hidden="true">{renderTouchLetters(hero.kicker, "kicker")}</span>
-                </span>
-              )}
-              <AnimatedHeadline
-                text={[hero.title_line1, hero.title_line2].filter(Boolean).join(" ")}
-                className="okr__hero-title okr__hero-title--stagger"
-                highlightFrom={heroLeadWordCount}
-                assembleLetters
-              />
-              {heroSubtitle && (
-                <p className="okr__hero-sub okr__hero-sub--typed" aria-label={heroSubtitle}>
-                  <span className="okr__hero-sub-measure" aria-hidden="true">{heroSubtitle}</span>
-                  <span className="okr__hero-sub-output" aria-hidden="true">
-                    {renderTouchLetters(heroSequence.value, "sub")}
-                    <i className={heroSequence.typing ? "is-typing" : ""} />
-                  </span>
+                <p className="okr__hero-pointcloud-kicker" aria-label={hero.kicker}>
+                  <span aria-hidden="true">{renderTouchLetters(hero.kicker, "hero-kicker")}</span>
                 </p>
               )}
-              <div className={`okr__hero-cta okr__hero-cta--sequenced${heroSequence.complete ? " is-ready" : ""}`}>
-                <Link
-                  className="okr__btn okr__btn--primary okr__btn--tactile"
-                  to="/services"
-                  aria-hidden={!heroSequence.complete}
-                  tabIndex={heroSequence.complete ? undefined : -1}
-                >
-                  {hero.cta_secondary_label || t("hero_cta_secondary")}
-                  <ArrowRight size={16} />
+              {heroTitle && (
+                <h1 className="okr__hero-pointcloud-title" aria-label={heroTitle}>
+                  <span aria-hidden="true">
+                    {hero.title_line1 && renderTouchLetters(hero.title_line1, "hero-title-1")}
+                    {hero.title_line1 && hero.title_line2 ? " " : ""}
+                    {hero.title_line2 && (
+                      <span className="okr__hero-pointcloud-title-accent">
+                        {renderTouchLetters(hero.title_line2, "hero-title-2")}
+                      </span>
+                    )}
+                  </span>
+                </h1>
+              )}
+              {hero.subtitle && (
+                <p className="okr__hero-pointcloud-subtitle" aria-label={hero.subtitle}>
+                  <span aria-hidden="true">{renderTouchLetters(hero.subtitle, "hero-subtitle")}</span>
+                </p>
+              )}
+              <div className="okr__hero-pointcloud-actions">
+                <Link className="okr__hero-pointcloud-cta" to="/services">
+                  <span className="okr__hero-pointcloud-cta-fill" aria-hidden="true" />
+                  <span className="okr__hero-pointcloud-cta-label">
+                    {hero.cta_secondary_label || t("hero_cta_secondary")}
+                  </span>
                 </Link>
               </div>
             </div>
+            {false && (
+              <a className="okr__hero-pointcloud-scroll" href="#services">
+                <span>Scroll &amp; explore</span>
+                <ArrowRight size={16} aria-hidden="true" />
+              </a>
+            )}
           </section>
 
-          {serviceCategories.length > 0 && (
+          {(serviceCategories.length > 0 || curatedServices.length > 0) && (
             <section className="okr__section okr__services-section" id="services">
               <div className="okr__wrap">
                 <div className="okr__services-card okr__reveal">
@@ -529,7 +468,7 @@ export function LandingPage() {
                       </span>
                     </h2>
                   </div>
-                  <div className="okr__services-list">
+                  {serviceCategories.length > 0 && <div className="okr__services-list">
                     {serviceCategories.map((s, i) => (
                       <Link
                         key={s.id}
@@ -544,7 +483,18 @@ export function LandingPage() {
                         </span>
                       </Link>
                     ))}
-                  </div>
+                  </div>}
+                  {curatedServices.length > 0 && (
+                    <div className="okr__services-highlights">
+                      {curatedServices.map((item, index) => (
+                        <div className="okr__services-highlight" key={`${item.title}-${index}`}>
+                          <span>{String(index + 1).padStart(2, "0")}</span>
+                          <h3>{item.title}</h3>
+                          <p>{item.body}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   <Link to="/services" className="okr__services-all-btn">
                     <span className="okr__services-all-btn-fill" aria-hidden="true" />
                     <span className="okr__services-all-btn-label">All Services</span>
@@ -710,6 +660,22 @@ export function LandingPage() {
                   </div>
                 </div>
                 <CertificationsStrip providers={portfolio.certifications} t={t} />
+              </div>
+            </section>
+          )}
+
+          {(cta.title || cta.subtitle || cta.button_label) && (
+            <section className="okr__section okr__home-contact-section">
+              <div className="okr__wrap">
+                <div className="okr__home-contact">
+                  <span className="okr__home-contact-eyebrow">LET'S TALK</span>
+                  {cta.title && <h2>{cta.title}</h2>}
+                  {cta.subtitle && <p>{cta.subtitle}</p>}
+                  {cta.button_label && (whatsappHref
+                    ? <a className="okr__btn okr__btn--primary" href={whatsappHref} target="_blank" rel="noopener noreferrer">{cta.button_label} <ArrowRight size={16} /></a>
+                    : <Link className="okr__btn okr__btn--primary" to="/contact">{cta.button_label} <ArrowRight size={16} /></Link>
+                  )}
+                </div>
               </div>
             </section>
           )}

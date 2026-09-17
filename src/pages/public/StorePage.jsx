@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronDown, Search } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
+import { SunBackground } from "../../components/hero/SunBackground";
 import { useLiveProducts } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeProduct, storeCategoryLabel } from "../../lib/storeI18n";
@@ -86,6 +87,7 @@ export function StorePage() {
     <>
       <Seo title="Store — israanwar" description={t("store_subtitle")} />
               <section className="okr__section okr__page-hero">
+            <SunBackground />
           <div className="okr__wrap">
             <span className="okr__eyebrow">{t("store_eyebrow")}</span>
             <AnimatedHeadline text={t("store_title")} className="okr__h2 okr__hero-title--stagger" highlightFrom={1} assembleLetters />

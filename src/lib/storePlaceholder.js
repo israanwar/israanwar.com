@@ -1,7 +1,7 @@
 const STORE_WATERMARK = "Isra Anwar — Store";
 
 // One brand look for every generated cover: white canvas, ink title, one
-// orange accent line. Earlier versions layered diagonal ribbons, rotated
+// lavender accent line. Earlier versions layered diagonal ribbons, rotated
 // chip badges, grid lines, and a dark "Arcana" palette per category —
 // busy and, per feedback, cheap-looking. This is deliberately plain:
 // kicker, rule, headline, a faint real logo watermark. Category still
@@ -9,7 +9,7 @@ const STORE_WATERMARK = "Isra Anwar — Store";
 // just never the color.
 const INK = "#20181b";
 const MUTED = "#9a8f92";
-const ACCENT = "#c95732";
+const ACCENT = "#d7c9ff";
 const BG = "#fcfbf8";
 
 const CATEGORY_LABELS = {

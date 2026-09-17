@@ -1,22 +1,35 @@
 import { useEffect, useMemo, useState } from "react";
-import { Trash2, Mail, MessageCircle, Check } from "lucide-react";
+import { Trash2, Copy, Check } from "lucide-react";
 import { contactsData } from "../../lib/supabaseData";
 
 export function AdminContactsPage() {
   const [items, setItems] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [error, setError] = useState(null);
+  const [copied, setCopied] = useState("");
+  async function copyValue(value, label) {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(`${label} disalin.`);
+      setError(null);
+    } catch {
+      setError(`Gagal menyalin ${label.toLowerCase()}. Pilih dan salin teks secara manual.`);
+    }
+  }
   async function load() {
     setItems(await contactsData.list());
   }
   useEffect(() => { load(); }, []);
   useEffect(() => { if (!selected && items[0]) setSelected(items[0]); }, [items, selected]);
 
-  async function markRead(id) { await contactsData.updateStatus(id, "read"); load(); }
-  function remove(id) {
+  async function markRead(id) {
+    try { await contactsData.updateStatus(id, "read"); setError(null); await load(); }
+    catch (e) { setError(e.message ?? "Gagal memperbarui pesan."); }
+  }
+  async function remove(id) {
     if (!confirm("Hapus pesan ini?")) return;
-    contactsData.delete(id).then(() => {
-      setSelected(null); load();
-    });
+    try { await contactsData.delete(id); setSelected(null); setError(null); await load(); }
+    catch (e) { setError(e.message ?? "Gagal menghapus pesan."); }
   }
 
   const current = useMemo(() => items.find((c) => c.id === selected?.id), [items, selected]);
@@ -30,6 +43,9 @@ export function AdminContactsPage() {
           {items.filter((c) => c.status === "new").length} baru · {items.length} total
         </span>
       </div>
+
+      {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
+      {copied && <div className="wpx__notice wpx__notice--success">{copied}</div>}
 
       {items.length === 0 ? (
         <div className="wpx__card"><div className="wpx__card-body" style={{ textAlign: "center", color: "var(--text-mute)", padding: 60 }}>
@@ -83,7 +99,7 @@ export function AdminContactsPage() {
                   display: "grid", gap: 8, fontSize: 14, marginBottom: 24,
                 }}>
                   <div><strong>Nama:</strong> {current.name}</div>
-                  <div><strong>Email:</strong> <a href={`mailto:${current.email}`} style={{ color: "var(--primary)" }}>{current.email}</a></div>
+                  <div><strong>Email:</strong> {current.email}</div>
                   {current.phone && <div><strong>Phone:</strong> {current.phone}</div>}
                 </div>
 
@@ -92,11 +108,9 @@ export function AdminContactsPage() {
                 </div>
 
                 <div style={{ display: "flex", gap: 10, marginTop: 24, flexWrap: "wrap" }}>
-                  <a href={`mailto:${current.email}?subject=Re: ${encodeURIComponent(current.subject || "Pesan Anda")}`}
-                    className="wpx__btn wpx__btn--primary"><Mail size={13} /> Balas via Email</a>
+                  <button type="button" onClick={() => copyValue(current.email, "Email")} className="wpx__btn wpx__btn--secondary"><Copy size={13} /> Salin email</button>
                   {current.phone && (
-                    <a href={`https://wa.me/${current.phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
-                      className="wpx__btn wpx__btn--secondary"><MessageCircle size={13} /> WhatsApp</a>
+                    <button type="button" onClick={() => copyValue(current.phone, "Nomor telepon")} className="wpx__btn wpx__btn--secondary"><Copy size={13} /> Salin nomor</button>
                   )}
                   {current.status === "new" && (
                     <button className="wpx__btn wpx__btn--secondary" onClick={() => markRead(current.id)}>

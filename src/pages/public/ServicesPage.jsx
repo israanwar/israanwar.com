@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
+import { SunBackground } from "../../components/hero/SunBackground";
 import { useLiveServices } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeServiceCardItems } from "../../lib/serviceI18n";
@@ -27,6 +28,7 @@ export function ServicesPage() {
         description={t("services_page_subtitle", { count: serviceCount })}
       />
               <section className="okr__section okr__page-hero">
+            <SunBackground />
           <div className="okr__wrap">
             <span className="okr__eyebrow">// {t("services_eyebrow").toUpperCase()}</span>
             <AnimatedHeadline text={t("services_page_title")} className="okr__h2 okr__hero-title--stagger" highlightFrom={2} assembleLetters />

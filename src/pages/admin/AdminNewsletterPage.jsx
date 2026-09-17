@@ -4,15 +4,17 @@ import { newsletterData } from "../../lib/supabaseData";
 
 export function AdminNewsletterPage() {
   const [items, setItems] = useState([]);
+  const [error, setError] = useState(null);
 
   async function load() {
     setItems(await newsletterData.list());
   }
   useEffect(() => { load(); }, []);
 
-  function remove(id) {
+  async function remove(id) {
     if (!confirm("Hapus subscriber ini?")) return;
-    newsletterData.delete(id).then(load);
+    try { await newsletterData.delete(id); setError(null); await load(); }
+    catch (e) { setError(e.message ?? "Gagal menghapus subscriber."); }
   }
 
   function exportCsv() {
@@ -43,6 +45,8 @@ export function AdminNewsletterPage() {
           <Download size={13} /> Export CSV
         </button>
       </div>
+
+      {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
 
       {items.length > 0 && (
         <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
@@ -77,9 +81,9 @@ export function AdminNewsletterPage() {
               {items.map((s) => (
                 <tr key={s.id} style={{ borderBottom: "1px solid var(--border)" }}>
                   <td style={{ padding: "12px 16px" }}>
-                    <a href={`mailto:${s.email}`} style={{ color: "var(--text)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ color: "var(--text)", display: "inline-flex", alignItems: "center", gap: 6 }}>
                       <Mail size={13} style={{ color: "var(--text-mute)" }} /> {s.email}
-                    </a>
+                    </span>
                   </td>
                   <td style={{ padding: "12px 16px", color: "var(--text-mute)" }}>{s.source || "—"}</td>
                   <td style={{ padding: "12px 16px" }}>

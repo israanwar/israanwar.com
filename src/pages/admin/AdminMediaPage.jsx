@@ -7,6 +7,7 @@ export function AdminMediaPage() {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
   const fileRef = useRef(null);
 
   async function load() { setItems(await listMedia()); }
@@ -18,14 +19,17 @@ export function AdminMediaPage() {
     setBusy(true);
     try {
       for (const f of files) await uploadMedia(f, user.id);
+      setError(null);
       await load();
+    } catch (e) {
+      setError(e.message ?? "Gagal mengunggah media.");
     } finally { setBusy(false); e.target.value = ""; }
   }
 
   async function remove(m) {
     if (!confirm("Hapus file ini?")) return;
-    await deleteMedia(m.id);
-    load();
+    try { await deleteMedia(m.id); setError(null); await load(); }
+    catch (e) { setError(e.message ?? "Gagal menghapus media."); }
   }
 
   return (
@@ -38,6 +42,8 @@ export function AdminMediaPage() {
         </button>
         <input ref={fileRef} type="file" multiple accept="image/*" style={{ display: "none" }} onChange={onFile} />
       </div>
+
+      {error && <div className="wpx__notice wpx__notice--error">{error}</div>}
 
       {items.length === 0 ? (
         <div className="wpx__card"><div className="wpx__card-body" style={{ textAlign: "center", color: "var(--wpx-muted)" }}>Belum ada media.</div></div>

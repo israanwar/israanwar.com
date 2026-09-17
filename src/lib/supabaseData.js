@@ -35,7 +35,7 @@ function clone(value) {
 }
 
 function localFirstList(remoteRows, fallbackRows) {
-  return remoteRows?.length ? remoteRows : fallbackRows;
+  return remoteRows ?? fallbackRows;
 }
 
 async function tryRemote(action, fallback) {
@@ -46,6 +46,13 @@ async function tryRemote(action, fallback) {
     console.warn("[israanwar:supabase]", error?.message ?? error);
     return typeof fallback === "function" ? fallback(error) : fallback;
   }
+}
+
+async function writeRemote(action) {
+  if (!supabaseEnabled || !supabase) {
+    throw new Error("Supabase belum aktif. Perubahan belum tersimpan untuk pengunjung situs.");
+  }
+  return action();
 }
 
 function rowToItem(row) {
@@ -71,6 +78,13 @@ function rowToItem(row) {
 
 function productRowToItem(row) {
   return applyProductPriceDiscount(rowToItem(row));
+}
+
+// Seed posts retain a legacy string ID inside `data.id`, while Supabase uses
+// a UUID primary key. Admin routes must use the real row ID for reads/writes.
+export function postRowToItem(row) {
+  const legacyId = row.data?.legacy_id || (!isUuid(row.data?.id) ? row.data?.id : null);
+  return { ...rowToItem(row), id: row.id, ...(legacyId ? { legacy_id: legacyId } : {}) };
 }
 
 function orderRowToItem(row) {
@@ -234,7 +248,7 @@ export const settingsData = {
     }, () => settingsRepo.get());
   },
   async update(patch) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const current = await this.get();
       const next = normalizePaymentSettings({ ...current, ...patch });
       if (
@@ -266,9 +280,10 @@ export const settingsData = {
           if (patch.description_id && shouldFollowDescription(heroData.subtitle_id, current.description_id)) {
             heroData.subtitle_id = patch.description_id;
           }
-          await supabase
+          const { error: heroError } = await supabase
             .from("homepage_sections")
             .upsert({ section_key: "hero", data: heroData }, { onConflict: "section_key" });
+          if (heroError) throw new Error(`Hero homepage gagal diperbarui: ${heroError.message}`);
           homepageRepo.update("hero", heroData);
           emitRemoteChange("homepage");
         }
@@ -276,7 +291,7 @@ export const settingsData = {
       settingsRepo.update(data.data);
       emitRemoteChange("settings");
       return normalizePaymentSettings(data.data);
-    }, () => settingsRepo.update(patch));
+    });
   },
 };
 
@@ -287,20 +302,19 @@ export const homepageData = {
         .from("homepage_sections")
         .select("section_key,data");
       if (error) throw error;
-      if (!data?.length) return homepageRepo.getAll();
-      return Object.fromEntries(data.map((row) => [row.section_key, row.data]));
+      return Object.fromEntries((data ?? []).map((row) => [row.section_key, row.data]));
     }, () => homepageRepo.getAll());
   },
   async update(sectionKey, sectionData) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const { error } = await supabase
         .from("homepage_sections")
         .upsert({ section_key: sectionKey, data: clone(sectionData) }, { onConflict: "section_key" });
-      if (error) throw error;
+      if (error) throw new Error(`Bagian ${sectionKey} gagal disimpan: ${error.message}`);
       homepageRepo.update(sectionKey, sectionData);
       emitRemoteChange("homepage");
-      return this.getAll();
-    }, () => homepageRepo.update(sectionKey, sectionData));
+      return sectionData;
+    });
   },
 };
 
@@ -311,11 +325,7 @@ export const pagesData = {
         .from("pages")
         .select("page_key,data");
       if (error) throw error;
-      if (!data?.length) {
-        const pages = pagesRepo.getAll();
-        return { ...pages, portfolio: normalizePortfolioProjects(pages?.portfolio) };
-      }
-      return Object.fromEntries(data.map((row) => [row.page_key, pageRowToItem(row.page_key, row.data)]));
+      return Object.fromEntries((data ?? []).map((row) => [row.page_key, pageRowToItem(row.page_key, row.data)]));
     }, () => {
       const pages = pagesRepo.getAll();
       return { ...pages, portfolio: normalizePortfolioProjects(pages?.portfolio) };
@@ -329,11 +339,11 @@ export const pagesData = {
         .eq("page_key", key)
         .maybeSingle();
       if (error) throw error;
-      return pageRowToItem(key, data?.data ?? pagesRepo.get(key));
+      return pageRowToItem(key, data?.data ?? {});
     }, () => pageRowToItem(key, pagesRepo.get(key)));
   },
   async update(key, pageData) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const nextPage = pageRowToItem(key, clone(pageData));
       const { data, error } = await supabase
         .from("pages")
@@ -345,7 +355,7 @@ export const pagesData = {
       pagesRepo.update(key, updatedPage);
       emitRemoteChange(`pages:${key}`);
       return updatedPage;
-    }, () => pagesRepo.update(key, pageRowToItem(key, pageData)));
+    });
   },
 };
 
@@ -356,55 +366,72 @@ export const postsData = {
       if (filter?.status) query = query.eq("status", filter.status);
       const { data, error } = await query;
       if (error) throw error;
-      return localFirstList((data ?? []).map(rowToItem), postsRepo.list(filter));
+      return localFirstList((data ?? []).map(postRowToItem), postsRepo.list(filter));
     }, () => postsRepo.list(filter));
   },
   async get(id) {
     return tryRemote(async () => {
+      const legacyPost = !isUuid(id) ? postsRepo.get(id) : null;
       const query = isUuid(id)
         ? supabase.from("posts").select("*").eq("id", id)
-        : supabase.from("posts").select("*").eq("slug", id);
+        : supabase.from("posts").select("*").eq("slug", legacyPost?.slug ?? id);
       const { data, error } = await query.maybeSingle();
       if (error) throw error;
-      return data ? rowToItem(data) : postsRepo.get(id);
+      if (data) return postRowToItem(data);
+      // Old bookmarked admin URLs can contain `data.id` rather than a slug.
+      if (!isUuid(id)) {
+        const { data: byLegacyId, error: legacyError } = await supabase
+          .from("posts").select("*").eq("data->>id", id).maybeSingle();
+        if (legacyError) throw legacyError;
+        if (byLegacyId) return postRowToItem(byLegacyId);
+        const { data: byPreservedId, error: preservedError } = await supabase
+          .from("posts").select("*").eq("data->>legacy_id", id).maybeSingle();
+        if (preservedError) throw preservedError;
+        return byPreservedId ? postRowToItem(byPreservedId) : null;
+      }
+      return null;
     }, () => postsRepo.get(id));
   },
   async getBySlug(slug) {
     return tryRemote(async () => {
       const { data, error } = await supabase.from("posts").select("*").eq("slug", slug).maybeSingle();
       if (error) throw error;
-      return data ? rowToItem(data) : postsRepo.getBySlug(slug);
+      return data ? postRowToItem(data) : null;
     }, () => postsRepo.getBySlug(slug));
   },
   async create(payload) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const { data, error } = await supabase
         .from("posts")
         .insert(postPayload(payload))
         .select("*")
         .single();
       if (error) throw error;
-      cacheRecord(postsRepo, data.id, rowToItem(data));
+      cacheRecord(postsRepo, data.id, postRowToItem(data));
       emitRemoteChange("posts");
-      return rowToItem(data);
-    }, () => postsRepo.create(payload));
+      return postRowToItem(data);
+    });
   },
   async update(id, patch) {
-    return tryRemote(async () => {
-      const next = { ...(await this.get(id)), ...patch };
+    return writeRemote(async () => {
+      const current = await this.get(id);
+      if (!current) throw new Error("Post tidak ditemukan di Supabase. Muat ulang halaman sebelum menyimpan.");
+      const next = { ...current, ...patch };
+      const { id: _rowId, ...rowPatch } = postPayload(next);
       const { data, error } = await supabase
         .from("posts")
-        .upsert(postPayload(next), { onConflict: "slug" })
+        .update(rowPatch)
+        .eq("id", current.id)
         .select("*")
         .single();
       if (error) throw error;
-      cacheRecord(postsRepo, id, rowToItem(data));
+      cacheRecord(postsRepo, id, postRowToItem(data));
       emitRemoteChange("posts");
-      return rowToItem(data);
-    }, () => postsRepo.update(id, patch));
+      return postRowToItem(data);
+    });
   },
   async delete(id) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const query = isUuid(id)
         ? supabase.from("posts").delete().eq("id", id)
         : supabase.from("posts").delete().eq("slug", id);
@@ -412,7 +439,7 @@ export const postsData = {
       if (error) throw error;
       deleteCachedRecord(postsRepo, id);
       emitRemoteChange("posts");
-    }, () => postsRepo.delete(id));
+    });
   },
 };
 
@@ -442,18 +469,18 @@ export const productsData = {
         : supabase.from("products").select("*").eq("slug", id);
       const { data, error } = await query.maybeSingle();
       if (error) throw error;
-      return data ? productRowToItem(data) : applyProductPriceDiscount(productsRepo.get(id));
+      return data ? productRowToItem(data) : null;
     }, () => applyProductPriceDiscount(productsRepo.get(id)));
   },
   async getBySlug(slug) {
     return tryRemote(async () => {
       const { data, error } = await supabase.from("products").select("*").eq("slug", slug).maybeSingle();
       if (error) throw error;
-      return data ? productRowToItem(data) : applyProductPriceDiscount(productsRepo.getBySlug(slug));
+      return data ? productRowToItem(data) : null;
     }, () => applyProductPriceDiscount(productsRepo.getBySlug(slug)));
   },
   async create(payload) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const { data, error } = await supabase
         .from("products")
         .insert(productPayload(payload))
@@ -463,11 +490,13 @@ export const productsData = {
       cacheRecord(productsRepo, data.id, rowToItem(data));
       emitRemoteChange("products");
       return productRowToItem(data);
-    }, () => applyProductPriceDiscount(productsRepo.create(payload)));
+    });
   },
   async update(id, patch) {
-    return tryRemote(async () => {
-      const next = { ...(await this.get(id)), ...patch };
+    return writeRemote(async () => {
+      const current = await this.get(id);
+      if (!current) throw new Error("Produk tidak ditemukan di Supabase. Muat ulang halaman sebelum menyimpan.");
+      const next = { ...current, ...patch };
       const { data, error } = await supabase
         .from("products")
         .upsert(productPayload(next), { onConflict: "slug" })
@@ -477,10 +506,10 @@ export const productsData = {
       cacheRecord(productsRepo, id, rowToItem(data));
       emitRemoteChange("products");
       return productRowToItem(data);
-    }, () => applyProductPriceDiscount(productsRepo.update(id, patch)));
+    });
   },
   async delete(id) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const query = isUuid(id)
         ? supabase.from("products").delete().eq("id", id)
         : supabase.from("products").delete().eq("slug", id);
@@ -488,7 +517,7 @@ export const productsData = {
       if (error) throw error;
       deleteCachedRecord(productsRepo, id);
       emitRemoteChange("products");
-    }, () => productsRepo.delete(id));
+    });
   },
 };
 
@@ -509,18 +538,18 @@ export const servicesData = {
         : supabase.from("services").select("*").eq("slug", id);
       const { data, error } = await query.maybeSingle();
       if (error) throw error;
-      return data ? rowToItem(data) : servicesRepo.get(id);
+      return data ? rowToItem(data) : null;
     }, () => servicesRepo.get(id));
   },
   async getBySlug(slug) {
     return tryRemote(async () => {
       const { data, error } = await supabase.from("services").select("*").eq("slug", slug).maybeSingle();
       if (error) throw error;
-      return data ? rowToItem(data) : servicesRepo.getBySlug(slug);
+      return data ? rowToItem(data) : null;
     }, () => servicesRepo.getBySlug(slug));
   },
   async create(payload) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const { data, error } = await supabase
         .from("services")
         .insert(servicePayload(payload))
@@ -530,11 +559,13 @@ export const servicesData = {
       cacheRecord(servicesRepo, data.id, rowToItem(data));
       emitRemoteChange("services");
       return rowToItem(data);
-    }, () => servicesRepo.create(payload));
+    });
   },
   async update(id, patch) {
-    return tryRemote(async () => {
-      const next = { ...(await this.get(id)), ...patch };
+    return writeRemote(async () => {
+      const current = await this.get(id);
+      if (!current) throw new Error("Layanan tidak ditemukan di Supabase. Muat ulang halaman sebelum menyimpan.");
+      const next = { ...current, ...patch };
       const { data, error } = await supabase
         .from("services")
         .upsert(servicePayload(next), { onConflict: "slug" })
@@ -544,10 +575,10 @@ export const servicesData = {
       cacheRecord(servicesRepo, id, rowToItem(data));
       emitRemoteChange("services");
       return rowToItem(data);
-    }, () => servicesRepo.update(id, patch));
+    });
   },
   async delete(id) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const query = isUuid(id)
         ? supabase.from("services").delete().eq("id", id)
         : supabase.from("services").delete().eq("slug", id);
@@ -555,7 +586,7 @@ export const servicesData = {
       if (error) throw error;
       deleteCachedRecord(servicesRepo, id);
       emitRemoteChange("services");
-    }, () => servicesRepo.delete(id));
+    });
   },
 };
 
@@ -568,7 +599,7 @@ export const mediaData = {
     }, () => mediaRepo.list());
   },
   async upload(file, uploadedBy) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const ext = file.name.includes(".") ? file.name.split(".").pop() : "bin";
       const path = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}.${ext}`;
       const upload = await supabase.storage.from(MEDIA_BUCKET).upload(path, file, { upsert: false });
@@ -587,17 +618,17 @@ export const mediaData = {
       if (error) throw error;
       emitRemoteChange("media");
       return rowToItem(data);
-    }, () => mediaRepo.upload(file, uploadedBy));
+    });
   },
   async delete(id) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const item = await supabase.from("media").select("path").eq("id", id).maybeSingle();
       if (item.error) throw item.error;
       if (item.data?.path) await supabase.storage.from(MEDIA_BUCKET).remove([item.data.path]);
       const { error } = await supabase.from("media").delete().eq("id", id);
       if (error) throw error;
       emitRemoteChange("media");
-    }, () => mediaRepo.delete(id));
+    });
   },
 };
 
@@ -610,27 +641,28 @@ export const contactsData = {
     }, () => contactsRepo.list());
   },
   async create(payload) {
-    return tryRemote(async () => {
-      const { data, error } = await supabase.from("contacts").insert(contactPayload(payload)).select("*").single();
+    return writeRemote(async () => {
+      const row = contactPayload(payload);
+      const { error } = await supabase.from("contacts").insert(row);
       if (error) throw error;
       emitRemoteChange("contacts");
-      return rowToItem(data);
-    }, () => contactsRepo.create(payload));
+      return row;
+    });
   },
   async updateStatus(id, status) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const { data, error } = await supabase.from("contacts").update({ status }).eq("id", id).select("*").single();
       if (error) throw error;
       emitRemoteChange("contacts");
       return rowToItem(data);
-    }, () => contactsRepo.updateStatus(id, status));
+    });
   },
   async delete(id) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const { error } = await supabase.from("contacts").delete().eq("id", id);
       if (error) throw error;
       emitRemoteChange("contacts");
-    }, () => contactsRepo.delete(id));
+    });
   },
 };
 
@@ -643,9 +675,10 @@ export const newsletterData = {
     }, () => newsletterRepo.list());
   },
   async create(payload) {
-    return tryRemote(async () => {
-      const { data, error } = await supabase.from("newsletter_subscribers")
-        .insert(newsletterPayload(payload)).select("*").single();
+    return writeRemote(async () => {
+      const row = newsletterPayload(payload);
+      const { error } = await supabase.from("newsletter_subscribers")
+        .insert(row);
       if (error) {
         // 23505 = unique_violation (email already subscribed) — not a real
         // failure, just report it as already-on-the-list instead of an error.
@@ -653,15 +686,15 @@ export const newsletterData = {
         throw error;
       }
       emitRemoteChange("newsletter_subscribers");
-      return rowToItem(data);
-    }, () => newsletterRepo.create(payload));
+      return row;
+    });
   },
   async delete(id) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const { error } = await supabase.from("newsletter_subscribers").delete().eq("id", id);
       if (error) throw error;
       emitRemoteChange("newsletter_subscribers");
-    }, () => newsletterRepo.delete(id));
+    });
   },
 };
 
@@ -678,27 +711,29 @@ export const ordersData = {
       if (isUuid(id)) {
         const { data, error } = await supabase.from("orders").select("*").eq("id", id).maybeSingle();
         if (error) throw error;
-        return data ? orderRowToItem(data) : ordersRepo.get(id);
+        return data ? orderRowToItem(data) : null;
       }
       const { data, error } = await supabase.rpc("get_order_by_number", { order_no: id });
       if (error) throw error;
-      return data ? orderRowToItem(data) : ordersRepo.get(id);
+      return data ? orderRowToItem(data) : null;
     }, () => ordersRepo.get(id));
   },
   async getByNumber(orderNumber) {
     return this.get(orderNumber);
   },
   async create(payload) {
-    return tryRemote(async () => {
-      const { data, error } = await supabase.from("orders").insert(orderPayload(payload)).select("*").single();
+    return writeRemote(async () => {
+      const row = orderPayload(payload);
+      const { error } = await supabase.from("orders").insert(row);
       if (error) throw error;
       emitRemoteChange("orders");
-      return orderRowToItem(data);
-    }, () => ordersRepo.create(payload));
+      return orderRowToItem(row);
+    });
   },
   async updateStatus(id, status, extra = {}) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const current = await this.get(id);
+      if (!current) throw new Error("Pesanan tidak ditemukan di Supabase. Muat ulang halaman sebelum mengubah status.");
       const nextData = { ...(current ?? {}), ...extra, status };
       const { data, error } = await supabase
         .from("orders")
@@ -709,10 +744,10 @@ export const ordersData = {
       if (error) throw error;
       emitRemoteChange("orders");
       return orderRowToItem(data);
-    }, () => ordersRepo.updateStatus(id, status, extra));
+    });
   },
   async uploadProof(id, dataUrl) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const order = await this.get(id);
       const orderNumber = order?.order_number ?? id;
       const { data, error } = await supabase.rpc("mark_order_waiting_verification", {
@@ -720,9 +755,10 @@ export const ordersData = {
         proof_url: dataUrl,
       });
       if (error) throw error;
+      if (!data) throw new Error("Status pesanan tidak dapat diperbarui. Muat ulang halaman dan coba lagi.");
       emitRemoteChange("orders");
-      return data ? orderRowToItem(data) : this.get(orderNumber);
-    }, () => ordersRepo.uploadProof(id, dataUrl));
+      return orderRowToItem(data);
+    });
   },
   async approve(id, note) {
     return this.updateStatus(id, ORDER_STATUS.PAID, { admin_note: note ?? null });
@@ -741,12 +777,12 @@ export const usersData = {
     }, () => usersRepo.list());
   },
   async updateRole(id, role) {
-    return tryRemote(async () => {
+    return writeRemote(async () => {
       const { data, error } = await supabase.from("profiles").update({ role }).eq("id", id).select("*").single();
       if (error) throw error;
       emitRemoteChange("profiles");
       return data;
-    }, () => usersRepo.updateRole(id, role));
+    });
   },
 };
 

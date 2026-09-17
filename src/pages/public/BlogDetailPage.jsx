@@ -11,6 +11,7 @@ import { formatPostReadCount, getPostReadCount } from "../../lib/blogMetrics";
 import { CATEGORY_BY_SLUG, DEFAULT_CATEGORY_SLUG } from "../../data/blogCategories";
 import { getBlogSocialArtworkPath } from "../../data/blogArtwork";
 import { SOCIAL_CARD_PATH } from "../../lib/socialMeta";
+import "../../styles/blog-home-theme.css";
 
 export function BlogDetailPage() {
   const { lang, t } = useI18n();
@@ -20,7 +21,7 @@ export function BlogDetailPage() {
 
   if (loading && !post) {
     return (
-              <section className="okr__section okr__page-hero">
+      <section className="okr__section okr__page-hero okr__blog-detail-page">
           <div className="okr__wrap" style={{ color: "var(--okr-muted)" }}>Loading…</div>
         </section>
     );
@@ -53,7 +54,7 @@ export function BlogDetailPage() {
         socialTitle={post.title}
         socialImage={socialImage}
       />
-              <article className="okr__section" style={{ paddingTop: 100 }}>
+      <article className="okr__section okr__blog-detail-page" style={{ paddingTop: 100 }}>
           <div className="okr__wrap" style={{ maxWidth: 780 }}>
             <Link to="/blog" className="okr__link" style={{ marginBottom: 24, display: "inline-flex" }}>
               <ArrowLeft size={14} /> {t("blog_back")}

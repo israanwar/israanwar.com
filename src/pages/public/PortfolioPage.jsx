@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
+import { SunBackground } from "../../components/hero/SunBackground";
 import { useLivePage } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizePage } from "../../lib/pageI18n";
@@ -31,6 +32,7 @@ export function PortfolioPage() {
     p.hero_title
     || p.hero_subtitle
     || p.core_expertise?.length
+    || p.tools?.length
     || p.consulting?.length
     || p.portfolio_groups?.length
     || p.certifications?.length,
@@ -59,7 +61,8 @@ export function PortfolioPage() {
         title={`${p.hero_title || t("nav_portfolio")} - israanwar`}
         description={p.hero_subtitle || t("portfolio_empty_body")}
       />
-              <section className="okr__section okr__portfolio-page" style={{ paddingTop: 110, paddingBottom: 70 }}>
+              <section className="okr__section okr__portfolio-page">
+            <SunBackground />
           <div className="okr__wrap">
             <header style={{ maxWidth: 860, marginBottom: 54 }}>
               {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}
@@ -80,6 +83,12 @@ export function PortfolioPage() {
             {p.core_expertise?.length > 0 && (
               <PortfolioSection eyebrow={t("portfolio_positioning")} title={t("portfolio_consultant_focus")}>
                 <TagCloud tags={p.core_expertise} highlight={["Consultant", "SEO Architecture", "Web Development"]} />
+              </PortfolioSection>
+            )}
+
+            {p.tools?.length > 0 && (
+              <PortfolioSection eyebrow="TOOLS & STACK" title={lang === "id" ? "Perangkat yang digunakan" : "Tools I work with"}>
+                <TagCloud tags={p.tools} />
               </PortfolioSection>
             )}
 
@@ -291,7 +300,7 @@ function CertificationsMarquee({ providers }) {
             <button
               key={`${provider.slug}-${i}`}
               type="button"
-              className="okr__cert-logo"
+              className="okr__certstrip-card okr__portfolio-cert-card"
               onClick={() => setActiveSlug(provider.slug)}
               aria-label={`${provider.name} — ${t("portfolio_view_certificates")}`}
               tabIndex={i < providers.length ? 0 : -1}
@@ -301,7 +310,10 @@ function CertificationsMarquee({ providers }) {
                   every logo — including ones further along the track —
                   must already be decoded, not deferred until it scrolls
                   near the viewport. */}
-              <img src={provider.logo} alt="" aria-hidden="true" />
+              <span className="okr__certstrip-card-icon">
+                <img src={provider.logo} alt="" aria-hidden="true" />
+              </span>
+              <span className="okr__certstrip-card-name">{provider.name}</span>
             </button>
           ))}
         </div>

@@ -1,0 +1,70 @@
+/* `.okr__hero > * { position: relative; z-index: 1; }` (landing.css) is
+   equal-specificity to a bare class selector and load-order-dependent
+   against it, so these are pinned with !important rather than left to
+   chance — this element must stay a full-bleed absolute layer. */
+.okr__isra-cloud {
+  position: absolute !important;
+  inset: 0 !important;
+  overflow: hidden;
+  z-index: 0;
+  background: #030205;
+}
+
+.okr__isra-cloud-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.okr__isra-cloud-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Was pan-y (let vertical touch scroll the page through the canvas).
+     The robot now supports touch-drag-to-spin, so touch gestures here
+     need to reach JS as rotation input instead of being interpreted as a
+     page scroll — "Scroll & explore" still works from anywhere else on
+     the page, just not by dragging directly across the figure. */
+  touch-action: none;
+}
+
+.okr__isra-cloud::before,
+.okr__isra-cloud::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.okr__isra-cloud::before {
+  background:
+    radial-gradient(circle at 54% 30%, rgba(111, 78, 165, 0.12), transparent 34%),
+    linear-gradient(90deg, rgba(3, 2, 5, 0.48) 0%, transparent 30%, transparent 72%, rgba(3, 2, 5, 0.28) 100%);
+}
+
+.okr__isra-cloud::after {
+  background:
+    linear-gradient(180deg, rgba(3, 2, 5, 0.12) 0%, transparent 42%, rgba(3, 2, 5, 0.22) 74%, rgba(3, 2, 5, 0.72) 100%),
+    radial-gradient(ellipse at center, transparent 48%, rgba(3, 2, 5, 0.46) 100%);
+}
+
+.okr__isra-cloud-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 40%;
+  filter: saturate(0.78) brightness(0.68) contrast(1.16);
+}
+
+.okr__isra-cloud[data-mode="fallback"]::after,
+.okr__isra-cloud[data-mode="loading"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 32%, rgba(60, 35, 80, 0.18), transparent 68%),
+    linear-gradient(180deg, rgba(3, 2, 5, 0.38) 0%, rgba(3, 2, 5, 0.82) 100%);
+  pointer-events: none;
+}

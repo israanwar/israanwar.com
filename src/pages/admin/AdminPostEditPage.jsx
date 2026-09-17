@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { createPost, getPost, updatePost } from "../../services/postService";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { createPost, getPost, listPosts, updatePost } from "../../services/postService";
 import { RichEditor } from "../../components/admin/RichEditor";
 import { useAuth } from "../../hooks/useAuth";
 import { BLOG_CATEGORIES } from "../../data/blogCategories";
+import { auditPostSeo } from "../../lib/seoAudit";
 
 function slugify(s) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -25,7 +26,7 @@ function fromDateTimeLocal(value) {
 }
 
 function referencesToText(refs) {
-  return (refs ?? []).map((ref) => [ref.title, ref.source, ref.url].filter(Boolean).join(" | ")).join("\n");
+  return (Array.isArray(refs) ? refs : []).map((ref) => [ref.title, ref.source, ref.url].filter(Boolean).join(" | ")).join("\n");
 }
 
 function textToReferences(value) {
@@ -52,31 +53,80 @@ export function AdminPostEditPage() {
   });
   const [referencesText, setReferencesText] = useState("");
   const [loading, setLoading] = useState(!isNew);
+  const [loadError, setLoadError] = useState("");
+  const [originalSlug, setOriginalSlug] = useState("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState(null);
+  const [relatedPosts, setRelatedPosts] = useState(null);
+
+  const audit = useMemo(() => auditPostSeo({
+    ...post,
+    slug: post.slug || slugify(post.title),
+    references: textToReferences(referencesText),
+  }, relatedPosts), [post, referencesText, relatedPosts]);
 
   useEffect(() => {
     if (isNew) {
       setReferencesText("");
       return;
     }
+    let active = true;
+    setLoading(true);
+    setLoadError("");
     getPost(id).then((p) => {
-      setPost(p);
-      setReferencesText(referencesToText(p?.references));
-      setLoading(false);
+      if (!active) return;
+      if (!p) {
+        setLoadError("Post tidak ditemukan. Buka kembali dari daftar Posts.");
+        return;
+      }
+      setPost({
+        ...p,
+        tags: Array.isArray(p.tags) ? p.tags : [],
+        related_slugs: Array.isArray(p.related_slugs) ? p.related_slugs : [],
+      });
+      setOriginalSlug(p.slug || "");
+      setReferencesText(referencesToText(p.references));
+    }).catch((error) => {
+      if (active) setLoadError(error?.message || "Gagal memuat post.");
+    }).finally(() => {
+      if (active) setLoading(false);
     });
+    return () => { active = false; };
   }, [id, isNew]);
 
-  if (loading) return <p>Loading…</p>;
+  useEffect(() => {
+    let active = true;
+    listPosts().then((posts) => {
+      if (active) setRelatedPosts(posts);
+    }).catch(() => {
+      if (active) setRelatedPosts(null);
+    });
+    return () => { active = false; };
+  }, []);
 
-  function set(k, v) { setPost((p) => ({ ...p, [k]: v })); }
+  if (loading) return <p>Loading…</p>;
+  if (loadError) return <div className="wpx__notice wpx__notice--error" role="alert">{loadError} <Link to="/admin/posts">Kembali ke daftar Posts</Link></div>;
+
+  function set(k, v) {
+    setPost((p) => {
+      if (k === "slug" && (!p.canonical_path || p.canonical_path === `/blog/${p.slug}`)) {
+        return { ...p, slug: v, canonical_path: `/blog/${v}` };
+      }
+      return { ...p, [k]: v };
+    });
+  }
 
   async function save(publishStatus) {
     setBusy(true); setMsg(null);
     try {
+      const nextSlug = slugify(post.slug || post.title);
+      if (!nextSlug) throw new Error("Judul atau slug post harus diisi.");
+      const canonicalPath = !post.canonical_path || post.canonical_path === `/blog/${originalSlug}` || post.canonical_path === `/blog/${post.slug}`
+        ? `/blog/${nextSlug}`
+        : post.canonical_path;
       const patch = {
         title: post.title,
-        slug: post.slug || slugify(post.title),
+        slug: nextSlug,
         excerpt: post.excerpt,
         content: post.content,
         cover_url: post.cover_url,
@@ -85,7 +135,7 @@ export function AdminPostEditPage() {
         focus_keyword: post.focus_keyword,
         meta_title: post.meta_title,
         meta_description: post.meta_description,
-        canonical_path: post.canonical_path,
+        canonical_path: canonicalPath,
         related_slugs: post.related_slugs ?? [],
         references: textToReferences(referencesText),
         status: publishStatus ?? post.status,
@@ -97,10 +147,12 @@ export function AdminPostEditPage() {
       }
       if (isNew) {
         const saved = await createPost({ ...patch, author_id: user.id });
-        nav(`/admin/posts/${saved.id}`, { replace: true });
+        nav(`/admin/posts/${saved.slug}`, { replace: true });
       } else {
         const saved = await updatePost(id, patch);
         setPost(saved);
+        setOriginalSlug(saved.slug);
+        if (id !== saved.slug) nav(`/admin/posts/${saved.slug}`, { replace: true });
         setMsg({ type: "success", text: "Tersimpan." });
       }
     } catch (e) {
@@ -214,6 +266,28 @@ export function AdminPostEditPage() {
               </div>
             </div>
           </div>
+          <section className="wpx__card wpx__seo-audit" aria-label="Pemeriksaan SEO artikel">
+            <div className="wpx__card-header">Pemeriksaan SEO langsung</div>
+            <div className="wpx__card-body">
+              <p className="wpx__seo-audit-summary">{audit.good} baik · {audit.improve} perlu ditinjau · {audit.info} informasi{audit.pending ? ` · ${audit.pending} menunggu data` : ""}</p>
+              <p className="wpx__help">Dihitung dari isi editor saat ini. Ini pemeriksaan konten, bukan skor resmi Yoast atau hasil pengindeksan Google.</p>
+              <ul className="wpx__seo-audit-list">
+                {audit.checks.map((item) => (
+                  <li key={item.id} className={`wpx__seo-audit-item wpx__seo-audit-item--${item.status}`}>
+                    <span className="wpx__seo-audit-dot" aria-hidden="true" />
+                    <div>
+                      <strong>{item.label}</strong>
+                      <span className="wpx__seo-audit-evidence">{item.evidence}</span>
+                      {(item.status === "improve" || item.status === "info") && <span className="wpx__seo-audit-action">{item.action}</span>}
+                      <span className="wpx__seo-audit-source">Dasar: {item.source}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <p className="wpx__help">Hijau berarti aturan yang tertulis terpenuhi, bukan jaminan ranking. Analisis sinonim, keterbacaan per bahasa, alt gambar, dan duplikasi frasa belum diperiksa di sini.</p>
+              <p className="wpx__help">Sitemap dan HTML awal situs ini dibuat saat build. Perubahan post di admin belum otomatis memperbarui keduanya untuk crawler; verifikasi halaman publik dan Search Console tetap diperlukan.</p>
+            </div>
+          </section>
           <div className="wpx__card">
             <div className="wpx__card-header">Category</div>
             <div className="wpx__card-body">
