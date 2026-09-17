@@ -2020,7 +2020,19 @@
 .okr__letter-touch.okr__touch-active,
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word:not(.is-grad) .okr__glyph:hover,
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word:not(.is-grad) .okr__glyph:active {
-  color: #b84e2c !important;
+  /* Site identity is lavender, not the old brand orange. This base rule
+     used to be #b84e2c with separate per-page lavender overrides layered
+     on top (light-theme.css's own .okr__home rule further down, and
+     public-lavender-theme.css for every other page) — but both of those
+     overrides only re-covered :hover/:active, never
+     .okr__touch-active (the class useLandingEffects.js's touch-linger
+     logic holds briefly after a real finger lifts, since :active itself
+     clears the instant a touch ends). So on an actual phone — where
+     .okr__touch-active, not :active, is what's showing during that
+     linger window — every one of those pages fell through to this base
+     rule and flashed orange right as you released a letter. Fixed at the
+     source instead of patching each override. */
+  color: #d7c9ff !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

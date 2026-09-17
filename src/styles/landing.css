@@ -2181,7 +2181,7 @@
 }
 .okr__cert-panel-list a:hover,
 .okr__cert-panel-list a:focus-visible {
-  color: #b84e2c;
+  color: #d7c9ff;
   padding-left: 10px;
   padding-right: 0;
   outline: none;
@@ -2404,12 +2404,12 @@
 .okr__blog-pin-card:hover,
 .okr__blog-pin-card:focus-visible {
   opacity: 1;
-  border-color: rgba(184, 78, 44, 0.32);
+  border-color: rgba(215, 201, 255, 0.4);
   transform: rotate(calc(var(--tilt, 0deg) * 0.3)) translateY(-6px) scale(1.02);
   box-shadow: 0 26px 52px rgba(55, 31, 35, 0.15), 0 6px 16px rgba(55, 31, 35, 0.08);
 }
 .okr__blog-pin-card:focus-visible {
-  outline: 2px solid var(--okr-primary-2, #b84e2c);
+  outline: 2px solid #d7c9ff;
   outline-offset: 3px;
 }
 .okr__blog-pin-dot {
