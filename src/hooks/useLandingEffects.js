@@ -1,5 +1,27 @@
 import { useEffect } from "react";
 
+// How long a touch-driven feedback state (spotlight glow, letter pop,
+// service-row fill, CTA fill) stays visible after the finger lifts or the
+// browser cancels the pointer for scrolling. A real tap's pointerdown→
+// pointerup window is often shorter than the 180-400ms CSS transitions
+// these effects already use, and pointercancel (fired the moment Chrome
+// decides the gesture is a scroll, not a tap) used to clear the state
+// immediately — so the effect was frequently removed before it had ever
+// finished fading in, reading as "barely there" or "not working" on a
+// real touchscreen even though the exact same CSS looks fine under mouse
+// hover or devtools' synthetic touch emulation. Desktop/mouse is
+// untouched: mouse keeps the original immediate clear (hover itself
+// already drives the visible state there; this class is redundant for
+// mouse, just no longer allowed to *fight* touch's timing).
+const TOUCH_LINGER_MS = 220;
+
+// Elements that get the generic tap "pop" (feedback class only — no
+// coordinate tracking, unlike the spotlight below). Kept as one delegated
+// listener rather than per-node handlers, same reasoning as the spotlight.
+const PRESS_FEEDBACK_SELECTOR =
+  ".okr__letter-touch, .okr__word-touch, .okr__services-row, .okr__services-all-btn, .okr__hero-pointcloud-cta";
+const PRESS_FEEDBACK_CLASS = "okr__touch-active";
+
 /**
  * Landing-page micro-interactions. Kept as a single hook so we set up (and
  * tear down) one delegated pointer listener regardless of how many cards live
@@ -9,10 +31,20 @@ import { useEffect } from "react";
  *  1. Touch/pointer spotlight — a delegated pointer listener paints
  *     `--okr-mx / --okr-my` on any `.okr__spotlight` ancestor of the pointer,
  *     so the CSS glow can chase the finger. One handler covers cards, posts,
- *     and process cards without per-node listeners.
+ *     and process cards without per-node listeners. Mouse behavior (hover
+ *     chases the cursor, clears the instant the pointer leaves) is
+ *     unchanged; touch gets a lingering release (see TOUCH_LINGER_MS above)
+ *     instead of clearing on pointerup/pointercancel.
+ *  2. Generic press feedback — the same lingering-release pattern applied
+ *     to per-letter touch pop, service rows, and the two CTA fill buttons,
+ *     via `.okr__touch-active` alongside their existing `:hover`/`:active`
+ *     CSS (added, not replaced — desktop's :hover/:active paths are
+ *     untouched).
  *
  * Scroll progress is native CSS now (`animation-timeline: scroll(root)`), so
  * this hook intentionally does not write layout-affecting scroll styles.
+ * Every listener here is passive and never calls preventDefault, so native
+ * scrolling/swiping is never blocked by either effect.
  *
  * Bails out entirely when `prefers-reduced-motion: reduce` — no pointer
  * chasing. The shell still renders; it just doesn't animate.
@@ -31,7 +63,15 @@ export function useLandingEffects(shellRef) {
     // We track the nearest `.okr__spotlight` ancestor and paint local coords
     // on it, so the CSS radial-gradient can position itself under the finger.
     let lastTarget = null;
-    const clearTarget = () => {
+    let spotlightReleaseTimer = 0;
+    const cancelSpotlightRelease = () => {
+      if (spotlightReleaseTimer) {
+        clearTimeout(spotlightReleaseTimer);
+        spotlightReleaseTimer = 0;
+      }
+    };
+    const releaseSpotlightNow = () => {
+      cancelSpotlightRelease();
       if (lastTarget) {
         lastTarget.classList.remove("is-touched");
         lastTarget = null;
@@ -39,12 +79,13 @@ export function useLandingEffects(shellRef) {
     };
     const onPointerMove = (event) => {
       const target = event.target?.closest?.(".okr__spotlight");
+      cancelSpotlightRelease();
       if (!target) {
-        clearTarget();
+        releaseSpotlightNow();
         return;
       }
       if (target !== lastTarget) {
-        clearTarget();
+        if (lastTarget) lastTarget.classList.remove("is-touched");
         lastTarget = target;
         target.classList.add("is-touched");
       }
@@ -52,24 +93,81 @@ export function useLandingEffects(shellRef) {
       target.style.setProperty("--okr-mx", `${event.clientX - rect.left}px`);
       target.style.setProperty("--okr-my", `${event.clientY - rect.top}px`);
     };
-    const onPointerEnd = () => {
-      // Fade the spotlight on lift so it doesn't stick to the last touch point.
-      if (lastTarget) lastTarget.classList.remove("is-touched");
+    // Mouse: fade out the instant the button/finger lifts, same as before —
+    // :hover already drives visibility for mouse, so this is just tidying
+    // the JS class. Touch: the pointer is gone (finger lifted, or Chrome
+    // just took the gesture over for scrolling) with no :hover to fall back
+    // on, so let the glow actually finish being seen before it clears.
+    const onPointerEnd = (event) => {
+      if (!lastTarget) return;
+      if (event.pointerType === "mouse") {
+        releaseSpotlightNow();
+        return;
+      }
+      cancelSpotlightRelease();
+      spotlightReleaseTimer = setTimeout(releaseSpotlightNow, TOUCH_LINGER_MS);
     };
+    const onPointerLeave = () => releaseSpotlightNow();
 
     shell.addEventListener("pointermove", onPointerMove, { passive: true });
     shell.addEventListener("pointerdown", onPointerMove, { passive: true });
     shell.addEventListener("pointerup", onPointerEnd, { passive: true });
     shell.addEventListener("pointercancel", onPointerEnd, { passive: true });
-    shell.addEventListener("pointerleave", clearTarget, { passive: true });
+    shell.addEventListener("pointerleave", onPointerLeave, { passive: true });
+
+    // --- Generic press feedback (letters, service rows, CTA fills) ---------
+    // Touch only — desktop keeps its existing :hover/:active CSS untouched.
+    // Adds `.okr__touch-active` on pointerdown, same lingering release as
+    // the spotlight above on pointerup/pointercancel.
+    let pressedTarget = null;
+    let pressReleaseTimer = 0;
+    const cancelPressRelease = () => {
+      if (pressReleaseTimer) {
+        clearTimeout(pressReleaseTimer);
+        pressReleaseTimer = 0;
+      }
+    };
+    const releasePressNow = () => {
+      cancelPressRelease();
+      if (pressedTarget) {
+        pressedTarget.classList.remove(PRESS_FEEDBACK_CLASS);
+        pressedTarget = null;
+      }
+    };
+    const onPressStart = (event) => {
+      if (event.pointerType === "mouse") return;
+      const target = event.target?.closest?.(PRESS_FEEDBACK_SELECTOR);
+      if (!target) return;
+      cancelPressRelease();
+      if (pressedTarget && pressedTarget !== target) {
+        pressedTarget.classList.remove(PRESS_FEEDBACK_CLASS);
+      }
+      pressedTarget = target;
+      target.classList.add(PRESS_FEEDBACK_CLASS);
+    };
+    const onPressEnd = (event) => {
+      if (event.pointerType === "mouse" || !pressedTarget) return;
+      cancelPressRelease();
+      pressReleaseTimer = setTimeout(releasePressNow, TOUCH_LINGER_MS);
+    };
+
+    shell.addEventListener("pointerdown", onPressStart, { passive: true });
+    shell.addEventListener("pointerup", onPressEnd, { passive: true });
+    shell.addEventListener("pointercancel", onPressEnd, { passive: true });
 
     return () => {
+      cancelSpotlightRelease();
+      cancelPressRelease();
       shell.removeEventListener("pointermove", onPointerMove);
       shell.removeEventListener("pointerdown", onPointerMove);
       shell.removeEventListener("pointerup", onPointerEnd);
       shell.removeEventListener("pointercancel", onPointerEnd);
-      shell.removeEventListener("pointerleave", clearTarget);
-      clearTarget();
+      shell.removeEventListener("pointerleave", onPointerLeave);
+      shell.removeEventListener("pointerdown", onPressStart);
+      shell.removeEventListener("pointerup", onPressEnd);
+      shell.removeEventListener("pointercancel", onPressEnd);
+      if (lastTarget) lastTarget.classList.remove("is-touched");
+      if (pressedTarget) pressedTarget.classList.remove(PRESS_FEEDBACK_CLASS);
     };
   }, [shellRef]);
 }

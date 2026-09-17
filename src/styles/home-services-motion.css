@@ -138,18 +138,45 @@
     transition-duration: 180ms;
   }
 
-  .okr__services-card .okr__services-row:active {
+  /* .okr__touch-active (useLandingEffects.js) mirrors :active but is held
+     for a short lingering window after the finger lifts or Chrome cancels
+     the pointer for a scroll — plain :active clears the instant that
+     happens, which on a real tap is often before this row had visibly
+     finished sliding/filling in. */
+  .okr__services-card .okr__services-row:active,
+  .okr__services-card .okr__services-row.okr__touch-active {
     padding-right: var(--services-row-inline-pad);
     padding-left: var(--services-row-inline-pad);
   }
 
-  .okr__services-card .okr__services-row:active::before {
+  .okr__services-card .okr__services-row:active::before,
+  .okr__services-card .okr__services-row.okr__touch-active::before {
     height: 100%;
   }
 
-  .okr__services-card .okr__services-row:active .okr__services-row-arrow-icon {
+  .okr__services-card .okr__services-row:active .okr__services-row-arrow-icon,
+  .okr__services-card .okr__services-row.okr__touch-active .okr__services-row-arrow-icon {
     transform: translateX(170%);
     transition-duration: 240ms;
+  }
+
+  /* The "All Services" fill (rest of this file, above) only ever rises on
+     :hover/:focus-visible — neither exists on a real touch tap, so the
+     fill previously never appeared at all on mobile; only the text-stays-
+     white :active rule below did anything visible. */
+  .okr__services-card .okr__services-all-btn-fill {
+    transition-duration: 180ms;
+  }
+
+  .okr__services-card .okr__services-all-btn:active,
+  .okr__services-card .okr__services-all-btn.okr__touch-active {
+    color: #ffffff;
+    background: #000000;
+  }
+
+  .okr__services-card .okr__services-all-btn:active .okr__services-all-btn-fill,
+  .okr__services-card .okr__services-all-btn.okr__touch-active .okr__services-all-btn-fill {
+    height: 100%;
   }
 }
 

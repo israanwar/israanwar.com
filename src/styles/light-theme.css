@@ -1976,6 +1976,7 @@
 
 .okr__letter-touch:hover,
 .okr__letter-touch:active,
+.okr__letter-touch.okr__touch-active,
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__glyph:hover,
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__glyph:active {
   /* !important: the mobile "no entrance motion" block further down sets
@@ -1983,12 +1984,18 @@
      selector — needed so headline letters stay static on load — which
      would otherwise also cancel this on-tap pop since importance beats
      specificity. This rule's extra :hover/:active in the selector still
-     gives it higher specificity, so it wins the important-vs-important tie. */
+     gives it higher specificity, so it wins the important-vs-important tie.
+     .okr__touch-active (useLandingEffects.js) is a real touch's actual
+     press state, held slightly past release so a quick tap doesn't clear
+     it before the 180ms transition ever finishes — :active alone reverts
+     the instant a finger lifts, which on a real screen is often faster
+     than that. */
   transform: translate3d(0, -4px, 0) scale(1.18) !important;
 }
 
 .okr__letter-touch:hover,
 .okr__letter-touch:active,
+.okr__letter-touch.okr__touch-active,
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word:not(.is-grad) .okr__glyph:hover,
 .okr .okr__hero-title--stagger.okr__headline--assemble-letters .okr__word:not(.is-grad) .okr__glyph:active {
   color: #b84e2c !important;
@@ -3145,10 +3152,15 @@
   .okr__hero-pointcloud-cta-fill {
     transition-duration: 180ms;
   }
-  .okr__hero-pointcloud-cta:active {
+  /* .okr__touch-active (useLandingEffects.js): held slightly past release
+     so a quick real tap isn't cleared before the fill visibly rises —
+     :active alone reverts the instant the finger lifts. */
+  .okr__hero-pointcloud-cta:active,
+  .okr__hero-pointcloud-cta.okr__touch-active {
     transform: translateY(-2px);
   }
-  .okr__hero-pointcloud-cta:active .okr__hero-pointcloud-cta-fill {
+  .okr__hero-pointcloud-cta:active .okr__hero-pointcloud-cta-fill,
+  .okr__hero-pointcloud-cta.okr__touch-active .okr__hero-pointcloud-cta-fill {
     height: 100%;
   }
 }
