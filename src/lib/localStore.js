@@ -2491,7 +2491,7 @@ This policy may be updated at any time. The latest version will always be availa
       },
       {
         label: "Website Development & SEO",
-        items: "TADCO, SMAK Makassar, UPRI Makassar, Pemerintah Kota Ambon, IRIS SMAKMA, Manajemen Sumber Daya Manusia, Investoft, Pergolafr, MetodePenelitian, Electra Junction, Situasi ID, CoreFold, Centra Actual, Zapgaze, Blockchain Essential, Radarpedia, Datacore, Technura, Technify, Teknold, Oktekno, Bytecrux, Playrift, Cyberix, Cloudix, Byteindo, Funzonez, Protechz, Techindo, Coredata, Rayatekno, Techroom, Gamebolt, Skillwin, Bytearc, Netina, Techloom, Learnflix, Datacipta, Skillzy, Netforge, Techgrid, Gamenest, Indodata, Tutorgo, SMAN 1 Takalar, AC Dive Club, Kopi Break, Handuk Pink, Citrus Online, Daewong, Gear Flare, Glow Charm, Pro Media, Play Now!, Play Gamehub, Caripondokan, Daengkuliner.",
+        items: "TADCO, SMAK Makassar, UPRI Makassar, Pemerintah Kota Ambon, IRIS SMAKMA, Manajemen Sumber Daya Manusia, MetodePenelitian, Electra Junction, Situasi ID, CoreFold, Centra Actual, Zapgaze, Blockchain Essential, Radarpedia, Datacore, Technura, Technify, Teknold, Oktekno, Bytecrux, Playrift, Cyberix, Cloudix, Byteindo, Funzonez, Protechz, Techindo, Coredata, Rayatekno, Techroom, Gamebolt, Skillwin, Bytearc, Netina, Techloom, Learnflix, Datacipta, Skillzy, Netforge, Techgrid, Gamenest, Indodata, Tutorgo, SMAN 1 Takalar, AC Dive Club, Kopi Break, Handuk Pink, Citrus Online, Daewong, Gear Flare, Glow Charm, Pro Media, Play Now!, Play Gamehub, Caripondokan, Daengkuliner.",
       },
       {
         label: "SEO, Niche & AdSense Sites",
