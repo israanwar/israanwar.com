@@ -19,9 +19,44 @@ import "./HeroPointCloud.css";
 const FALLBACK_SRC = "/assets/3d/okka-fallback.jpg";
 const MOBILE_BREAKPOINT = 767;
 const DESKTOP_SWARM_POINT_COUNT = 24000;
-const MOBILE_SWARM_POINT_COUNT = 7000;
+const MOBILE_SWARM_POINT_COUNT = 12000;
+const MENU_MOBILE_SWARM_POINT_COUNT = 7000;
 const DESKTOP_DUST_COUNT = 420;
-const MOBILE_DUST_COUNT = 140;
+const MOBILE_DUST_COUNT = 260;
+const MENU_MOBILE_DUST_COUNT = 140;
+const BASE_CAMERA_FOV = 34;
+const BASE_CAMERA_Z = 12.4;
+const PORTRAIT_CAMERA_FOV = 42;
+const PORTRAIT_TARGET_HALF_WIDTH = 6.6;
+const PORTRAIT_BLEND_START_ASPECT = 1.15;
+const PORTRAIT_REFERENCE_ASPECT = 0.44;
+
+function getCameraFraming(aspect) {
+  if (aspect >= PORTRAIT_BLEND_START_ASPECT) {
+    return { fov: BASE_CAMERA_FOV, z: BASE_CAMERA_Z, pointScale: 1 };
+  }
+
+  const linear = Math.min(1, Math.max(
+    0,
+    (PORTRAIT_BLEND_START_ASPECT - aspect)
+      / (PORTRAIT_BLEND_START_ASPECT - PORTRAIT_REFERENCE_ASPECT),
+  ));
+  const portrait = linear * linear * (3 - 2 * linear);
+  const fov = BASE_CAMERA_FOV + (PORTRAIT_CAMERA_FOV - BASE_CAMERA_FOV) * portrait;
+  const desktopHalfWidth = BASE_CAMERA_Z * Math.tan((BASE_CAMERA_FOV * Math.PI) / 360);
+  const targetHalfWidth = desktopHalfWidth
+    + (PORTRAIT_TARGET_HALF_WIDTH - desktopHalfWidth) * portrait;
+  const fittedZ = targetHalfWidth / (Math.tan((fov * Math.PI) / 360) * aspect);
+  const z = Math.max(BASE_CAMERA_Z, fittedZ);
+
+  return {
+    fov,
+    z,
+    // The shaders size point sprites from camera depth. Compensate for the
+    // farther portrait camera so the Sun keeps its granular desktop texture.
+    pointScale: Math.min(2.65, z / BASE_CAMERA_Z),
+  };
+}
 
 function supportsWebGL() {
   try {
@@ -260,17 +295,27 @@ const ICON_FRAGMENT_SHADER = `
   }
 `;
 
-function makeDust(THREE, count) {
+function makeDust(THREE, count, isMobile) {
   const positions = new Float32Array(count * 3);
   const sizes = new Float32Array(count);
   const seeds = new Float32Array(count);
   for (let index = 0; index < count; index += 1) {
-    const radius = 1.9 + Math.random() * 1.8;
-    const theta = Math.random() * Math.PI * 2;
-    positions[index * 3] = Math.cos(theta) * radius;
-    positions[index * 3 + 1] = (Math.random() - 0.42) * 5.2;
-    positions[index * 3 + 2] = Math.sin(theta) * radius * 0.52;
-    sizes[index] = 0.9 + Math.random() * 1.35;
+    if (isMobile) {
+      // Portrait framing exposes a much taller world-space window. Spread the
+      // inexpensive dust layer through that negative space instead of leaving
+      // every point packed behind the solar body at the centre.
+      positions[index * 3] = (Math.random() - 0.5) * 12.8;
+      positions[index * 3 + 1] = (Math.random() - 0.5) * 24.5;
+      positions[index * 3 + 2] = (Math.random() - 0.5) * 6.5 - 0.8;
+      sizes[index] = 1.05 + Math.random() * 1.55;
+    } else {
+      const radius = 1.9 + Math.random() * 1.8;
+      const theta = Math.random() * Math.PI * 2;
+      positions[index * 3] = Math.cos(theta) * radius;
+      positions[index * 3 + 1] = (Math.random() - 0.42) * 5.2;
+      positions[index * 3 + 2] = Math.sin(theta) * radius * 0.52;
+      sizes[index] = 0.9 + Math.random() * 1.35;
+    }
     seeds[index] = Math.random();
   }
   const geometry = new THREE.BufferGeometry();
@@ -342,8 +387,12 @@ const ICON_SHAPES = [
 
 function makeIconField(THREE, isMobile) {
   const instances = isMobile
-    ? [{ shape: 0, cx: -2.3, cy: 1.15, cz: -1.1, scale: 0.32 },
-      { shape: 2, cx: 2.15, cy: -0.75, cz: -0.9, scale: 0.28 }]
+    ? [{ shape: 0, cx: -5.15, cy: 5.3, cz: -1.1, scale: 0.52 },
+      { shape: 1, cx: 5.1, cy: 3.25, cz: -1.5, scale: 0.46 },
+      { shape: 2, cx: -4.8, cy: -3.7, cz: -0.8, scale: 0.4 },
+      { shape: 3, cx: 5.25, cy: -5.2, cz: -1.3, scale: 0.44 },
+      { shape: 1, cx: -2.8, cy: 9.3, cz: -2.1, scale: 0.3 },
+      { shape: 0, cx: 3.2, cy: -9.5, cz: -1.8, scale: 0.34 }]
     : [{ shape: 0, cx: -3.4, cy: 1.5, cz: -1.4, scale: 0.42 },
       { shape: 1, cx: 3.5, cy: 0.65, cz: -1.1, scale: 0.36 },
       { shape: 2, cx: -3.0, cy: -1.6, cz: -0.8, scale: 0.3 },
@@ -408,7 +457,7 @@ function getKeepAliveHost() {
   return host;
 }
 
-function createSharedSunFactory() {
+function createSharedSunFactory({ menu = false } = {}) {
   let shared = null;
   let initPromise = null;
   return async function ensureShared() {
@@ -425,7 +474,12 @@ function createSharedSunFactory() {
 
     const isMobile = window.innerWidth <= MOBILE_BREAKPOINT;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const dustCount = isMobile ? MOBILE_DUST_COUNT : DESKTOP_DUST_COUNT;
+    const dustCount = isMobile
+      ? (menu ? MENU_MOBILE_DUST_COUNT : MOBILE_DUST_COUNT)
+      : DESKTOP_DUST_COUNT;
+    const swarmCount = isMobile
+      ? (menu ? MENU_MOBILE_SWARM_POINT_COUNT : MOBILE_SWARM_POINT_COUNT)
+      : DESKTOP_SWARM_POINT_COUNT;
     // Same reference point Home derives from the (currently invisible)
     // robot's display height, kept so the scroll-zoom vertical shift
     // matches exactly: robotDisplayHeight * (1 - 0.59).
@@ -438,8 +492,8 @@ function createSharedSunFactory() {
     scene.add(solarSystemGroup);
     const robotGroup = new THREE.Group();
     scene.add(robotGroup);
-    const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 30);
-    camera.position.set(0, 0, 12.4);
+    const camera = new THREE.PerspectiveCamera(BASE_CAMERA_FOV, 1, 0.1, 100);
+    camera.position.set(0, 0, BASE_CAMERA_Z);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.2 : 1.5));
     renderer.setClearColor(0x0c0713, 1);
@@ -464,7 +518,7 @@ function createSharedSunFactory() {
     sunGlow.renderOrder = -3;
     scene.add(sunGlow);
 
-    const swarmGeometry = makeSwarmField(THREE, isMobile ? MOBILE_SWARM_POINT_COUNT : DESKTOP_SWARM_POINT_COUNT);
+    const swarmGeometry = makeSwarmField(THREE, swarmCount);
     const makeSwarmMaterial = (layerPass) => new THREE.ShaderMaterial({
       vertexShader: SWARM_VERTEX_SHADER,
       fragmentShader: SWARM_FRAGMENT_SHADER,
@@ -496,7 +550,7 @@ function createSharedSunFactory() {
     solarSystemGroup.add(swarmBack);
     solarSystemGroup.add(swarmFront);
 
-    const dustGeometry = makeDust(THREE, dustCount);
+    const dustGeometry = makeDust(THREE, dustCount, isMobile);
     const dustMaterial = new THREE.ShaderMaterial({
       vertexShader: DUST_VERTEX_SHADER,
       fragmentShader: DUST_FRAGMENT_SHADER,
@@ -534,7 +588,14 @@ function createSharedSunFactory() {
       renderer.setSize(width, height, false);
       composer.setSize(width, height);
       camera.aspect = width / height;
-      camera.position.z = width / height < 0.78 ? 13.6 : 12.4;
+      const framing = getCameraFraming(camera.aspect);
+      camera.fov = framing.fov;
+      camera.position.z = framing.z;
+      const pointRatio = renderer.getPixelRatio() * framing.pointScale;
+      swarmBackMaterial.uniforms.uPixelRatio.value = pointRatio;
+      swarmFrontMaterial.uniforms.uPixelRatio.value = pointRatio;
+      dustMaterial.uniforms.uPixelRatio.value = pointRatio;
+      iconMaterial.uniforms.uPixelRatio.value = pointRatio;
       camera.updateProjectionMatrix();
     }
     const resizeObserver = new ResizeObserver(resize);
@@ -784,7 +845,7 @@ function createSharedSunFactory() {
 }
 
 const ensureShared = createSharedSunFactory();
-const ensureMenuShared = createSharedSunFactory();
+const ensureMenuShared = createSharedSunFactory({ menu: true });
 
 export function SunBackground({ onReady, variant = "page" }) {
   const ensure = variant === "menu" ? ensureMenuShared : ensureShared;

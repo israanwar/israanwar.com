@@ -21,6 +21,7 @@
   right: clamp(16px, 4vw, 28px);
   bottom: clamp(16px, 4vw, 28px);
   z-index: 200;
+  transition: opacity 160ms ease, visibility 160ms ease;
 }
 
 .okr__chat-trigger {

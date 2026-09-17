@@ -103,7 +103,10 @@ export function BrandMark() {
 
 export function SiteHeader({ settings }) {
   const { t } = useI18n();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuPhase, setMenuPhase] = useState("closed");
+  const closeTimerRef = useRef(0);
+  const menuOpen = menuPhase === "open";
+  const menuVisible = menuPhase !== "closed";
   const cart = useLiveCart();
   const hasProducts = useLiveProductsExist();
   const cartCount = cart.rows.reduce((s, r) => s + r.qty, 0);
@@ -116,6 +119,28 @@ export function SiteHeader({ settings }) {
     { label: t("nav_blog"), to: "/blog", route: true, icon: BookOpen },
   ];
 
+  function openMenu() {
+    window.clearTimeout(closeTimerRef.current);
+    setMenuPhase("open");
+  }
+
+  function closeMenu() {
+    if (menuPhase === "closed") return;
+    window.clearTimeout(closeTimerRef.current);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setMenuPhase("closed");
+      return;
+    }
+
+    setMenuPhase("closing");
+    // transitionend normally completes the close. This guard is deliberately
+    // much longer than the CSS transition and only prevents a permanent lock
+    // if a browser drops that event while the tab is backgrounded.
+    closeTimerRef.current = window.setTimeout(() => setMenuPhase("closed"), 1000);
+  }
+
+  useEffect(() => () => window.clearTimeout(closeTimerRef.current), []);
+
   useEffect(() => {
     // Toggle a class on the `.okr` shell so CSS can lock scroll while the
     // full-viewport mobile menu is open.
@@ -123,7 +148,7 @@ export function SiteHeader({ settings }) {
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
 
-    if (menuOpen) {
+    if (menuVisible) {
       shell?.classList.add("is-menu-open");
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
@@ -138,17 +163,20 @@ export function SiteHeader({ settings }) {
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
     };
-  }, [menuOpen]);
+  }, [menuVisible]);
 
   useEffect(() => {
-    if (!menuOpen) return undefined;
+    if (!menuVisible) return undefined;
 
     function onKeyDown(event) {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key === "Escape") closeMenu();
     }
 
     function onResize() {
-      if (window.innerWidth > 900) setMenuOpen(false);
+      if (window.innerWidth > 900) {
+        window.clearTimeout(closeTimerRef.current);
+        setMenuPhase("closed");
+      }
     }
 
     window.addEventListener("keydown", onKeyDown);
@@ -157,13 +185,13 @@ export function SiteHeader({ settings }) {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("resize", onResize);
     };
-  }, [menuOpen]);
+  }, [menuVisible]);
 
   return (
     <>
       <header className="okr__header">
         <div className="okr__wrap okr__nav">
-          <Link className="okr__brand" to="/" onClick={() => setMenuOpen(false)}>
+          <Link className="okr__brand" to="/" onClick={closeMenu}>
             <span className="okr__logo-badge">
               <IsraAnwarMark decorative markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png" />
             </span>
@@ -223,12 +251,12 @@ export function SiteHeader({ settings }) {
             <button
               className="okr__mobile-menu-btn"
               type="button"
-              aria-label={menuOpen ? t("nav_close_menu") : t("nav_open_menu")}
-              aria-expanded={menuOpen}
+              aria-label={menuVisible ? t("nav_close_menu") : t("nav_open_menu")}
+              aria-expanded={menuVisible}
               aria-controls="okr-mobile-nav"
-              onClick={() => setMenuOpen((open) => !open)}
+              onClick={menuVisible ? closeMenu : openMenu}
             >
-              {menuOpen ? <X size={19} /> : <Menu size={19} />}
+              {menuVisible ? <X size={19} /> : <Menu size={19} />}
             </button>
           </div>
         </div>
@@ -238,13 +266,22 @@ export function SiteHeader({ settings }) {
           the header into a containing block for `position: fixed` descendants —
           which would clip the menu to the 60px header box. Rendering here keeps
           the menu positioned against the viewport. */}
-      <div className={`okr__mobile-menu${menuOpen ? " is-open" : ""}`} id="okr-mobile-nav">
-        {menuOpen && <SunBackground variant="menu" />}
+      <div
+        className={`okr__mobile-menu${menuOpen ? " is-open" : ""}${menuPhase === "closing" ? " is-closing" : ""}`}
+        id="okr-mobile-nav"
+        aria-hidden={!menuVisible}
+        onTransitionEnd={(event) => {
+          if (event.target !== event.currentTarget || event.propertyName !== "opacity" || menuPhase !== "closing") return;
+          window.clearTimeout(closeTimerRef.current);
+          setMenuPhase("closed");
+        }}
+      >
+        {menuVisible && <SunBackground variant="menu" />}
         <button
           className="okr__mobile-menu-close"
           type="button"
           aria-label={t("nav_close_menu")}
-          onClick={() => setMenuOpen(false)}
+          onClick={closeMenu}
         >
           <X size={30} strokeWidth={2.2} />
         </button>
@@ -259,13 +296,13 @@ export function SiteHeader({ settings }) {
                   to={item.to}
                   end={item.to === "/"}
                   className={({ isActive }) => `okr__mobile-navlink${isActive ? " is-active" : ""}`}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={closeMenu}
                 >
                   <Icon size={30} strokeWidth={1.9} aria-hidden="true" />
                   <span>{item.label}</span>
                 </NavLink>
               ) : (
-                <a key={item.label} href={item.to} className="okr__mobile-navlink" onClick={() => setMenuOpen(false)}>
+                <a key={item.label} href={item.to} className="okr__mobile-navlink" onClick={closeMenu}>
                   <Icon size={30} strokeWidth={1.9} aria-hidden="true" />
                   <span>{item.label}</span>
                 </a>

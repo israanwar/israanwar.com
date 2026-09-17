@@ -562,7 +562,7 @@
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
     transform: translate3d(0, 8px, 0);
-    transition: opacity .2s ease, visibility .2s ease, transform .24s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity .2s ease, visibility 0s linear .2s, transform .24s cubic-bezier(0.16, 1, 0.3, 1);
     z-index: 140;
   }
   .okr__mobile-menu.is-open {
@@ -570,6 +570,11 @@
     pointer-events: auto;
     visibility: visible;
     transform: translate3d(0, 0, 0);
+    transition-delay: 0s;
+  }
+  .okr__mobile-menu.is-closing {
+    visibility: visible;
+    pointer-events: none;
   }
   .okr__mobile-menu-close {
     position: absolute;
@@ -638,7 +643,7 @@
     letter-spacing: 0;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
-    transition: color .18s ease, opacity .18s ease, transform .18s ease;
+    transition: color .18s ease, opacity .18s ease, filter .18s ease, box-shadow .18s ease, text-shadow .18s ease;
   }
   .okr__mobile-navlink::before { content: none; }
   .okr__mobile-navlink svg {
@@ -651,13 +656,15 @@
   .okr__mobile-navlink:focus-visible {
     color: rgba(255, 255, 255, 0.94);
     outline: none;
-    transform: translate3d(2px, 0, 0);
+    box-shadow: 0 0 0 7px rgba(215, 201, 255, 0.055);
   }
   .okr__mobile-navlink:active {
     color: #d7c9ff;
-    font-style: italic;
     outline: none;
-    transform: translate3d(2px, 0, 0);
+    opacity: 0.88;
+    filter: brightness(1.12);
+    box-shadow: none;
+    text-shadow: 0 0 18px rgba(215, 201, 255, 0.22);
   }
   /* Current-page indicator — deliberately NOT italic. At the old smaller
      font-size, italic read as "this one's highlighted"; now that the type
@@ -858,6 +865,11 @@
 /* Body scroll lock when mobile menu open (class set by SiteChrome). */
 .okr.is-menu-open { overflow: hidden; touch-action: none; }
 .okr.is-menu-open .okr__hero { pointer-events: none; }
+.okr.is-menu-open .okr__chat {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 
 @media (max-width: 560px) {
   .okr__brand { min-width: 0; }
