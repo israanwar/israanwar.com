@@ -7,7 +7,8 @@ import { PostShareBar } from "../../components/blog/PostShareBar";
 import { NewsletterForm } from "../../components/marketing/NewsletterForm";
 import { ArrowLeft } from "lucide-react";
 import { useI18n } from "../../lib/i18n";
-import { formatPostReadCount, getPostReadCount } from "../../lib/blogMetrics";
+import { formatPostReadCount } from "../../lib/blogMetrics";
+import { usePostViewCount } from "../../hooks/usePostViewCount";
 import { CATEGORY_BY_SLUG, DEFAULT_CATEGORY_SLUG } from "../../data/blogCategories";
 import { getBlogSocialArtworkPath } from "../../data/blogArtwork";
 import { SOCIAL_CARD_PATH } from "../../lib/socialMeta";
@@ -18,6 +19,9 @@ export function BlogDetailPage() {
   const { slug } = useParams();
   const { value: post, loading } = useLivePostState(slug);
   const allPosts = useLivePosts({ status: "published" });
+  // Hooks must run unconditionally (before the early returns below), even
+  // while `post` is still null/loading — the hook itself tolerates that.
+  const readCount = usePostViewCount(post);
 
   if (loading && !post) {
     return (
@@ -39,7 +43,6 @@ export function BlogDetailPage() {
   const seoTitle = post.meta_title || `${post.title} — Blog israanwar`;
   const canonicalPath = post.canonical_path || `/blog/${post.slug}`;
   const readingTime = post.reading_time ?? 1;
-  const readCount = getPostReadCount(post);
   const rawCategory = CATEGORY_BY_SLUG[post.category] ?? CATEGORY_BY_SLUG[DEFAULT_CATEGORY_SLUG];
   const postIndex = Math.max(0, allPosts.findIndex((candidate) => candidate.id === post.id));
   const socialImage = post.cover_url || getBlogSocialArtworkPath(postIndex) || SOCIAL_CARD_PATH;
