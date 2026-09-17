@@ -26,8 +26,17 @@ const MOBILE_DUST_COUNT = 260;
 const MENU_MOBILE_DUST_COUNT = 140;
 const BASE_CAMERA_FOV = 34;
 const BASE_CAMERA_Z = 12.4;
-const PORTRAIT_CAMERA_FOV = 42;
-const PORTRAIT_TARGET_HALF_WIDTH = 6.6;
+// A portrait viewport doesn't need a wider vertical FOV — three.js's
+// PerspectiveCamera.fov is already the vertical field of view, so it's
+// aspect-independent; only the horizontal extent narrows with aspect, which
+// the renderer handles on its own via camera.aspect. Widening FOV and
+// pulling the camera back (as a previous version did, up to z ≈ 37 for a
+// 390-wide phone) shrank the sunGlow plane's apparent size so much that its
+// square edge became fully visible with dark margin on every side — reading
+// as a small floating orb instead of desktop's immersive, edge-bleeding
+// glow. A small, capped z nudge is enough to give portrait phones a little
+// extra breathing room without losing that bleed.
+const PORTRAIT_CAMERA_Z = 13.6;
 const PORTRAIT_BLEND_START_ASPECT = 1.15;
 const PORTRAIT_REFERENCE_ASPECT = 0.44;
 
@@ -42,19 +51,14 @@ function getCameraFraming(aspect) {
       / (PORTRAIT_BLEND_START_ASPECT - PORTRAIT_REFERENCE_ASPECT),
   ));
   const portrait = linear * linear * (3 - 2 * linear);
-  const fov = BASE_CAMERA_FOV + (PORTRAIT_CAMERA_FOV - BASE_CAMERA_FOV) * portrait;
-  const desktopHalfWidth = BASE_CAMERA_Z * Math.tan((BASE_CAMERA_FOV * Math.PI) / 360);
-  const targetHalfWidth = desktopHalfWidth
-    + (PORTRAIT_TARGET_HALF_WIDTH - desktopHalfWidth) * portrait;
-  const fittedZ = targetHalfWidth / (Math.tan((fov * Math.PI) / 360) * aspect);
-  const z = Math.max(BASE_CAMERA_Z, fittedZ);
+  const z = BASE_CAMERA_Z + (PORTRAIT_CAMERA_Z - BASE_CAMERA_Z) * portrait;
 
   return {
-    fov,
+    fov: BASE_CAMERA_FOV,
     z,
-    // The shaders size point sprites from camera depth. Compensate for the
-    // farther portrait camera so the Sun keeps its granular desktop texture.
-    pointScale: Math.min(2.65, z / BASE_CAMERA_Z),
+    // The shaders size point sprites from camera depth; compensate for the
+    // (now small) portrait z change so sprite size stays consistent.
+    pointScale: z / BASE_CAMERA_Z,
   };
 }
 
@@ -387,12 +391,8 @@ const ICON_SHAPES = [
 
 function makeIconField(THREE, isMobile) {
   const instances = isMobile
-    ? [{ shape: 0, cx: -5.15, cy: 5.3, cz: -1.1, scale: 0.52 },
-      { shape: 1, cx: 5.1, cy: 3.25, cz: -1.5, scale: 0.46 },
-      { shape: 2, cx: -4.8, cy: -3.7, cz: -0.8, scale: 0.4 },
-      { shape: 3, cx: 5.25, cy: -5.2, cz: -1.3, scale: 0.44 },
-      { shape: 1, cx: -2.8, cy: 9.3, cz: -2.1, scale: 0.3 },
-      { shape: 0, cx: 3.2, cy: -9.5, cz: -1.8, scale: 0.34 }]
+    ? [{ shape: 0, cx: -2.3, cy: 1.15, cz: -1.1, scale: 0.32 },
+      { shape: 2, cx: 2.15, cy: -0.75, cz: -0.9, scale: 0.28 }]
     : [{ shape: 0, cx: -3.4, cy: 1.5, cz: -1.4, scale: 0.42 },
       { shape: 1, cx: 3.5, cy: 0.65, cz: -1.1, scale: 0.36 },
       { shape: 2, cx: -3.0, cy: -1.6, cz: -0.8, scale: 0.3 },
