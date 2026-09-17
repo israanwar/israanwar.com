@@ -67,24 +67,13 @@ const AdminContactsPage = lazyNamed(() => import("../pages/admin/AdminContactsPa
 const AdminNewsletterPage = lazyNamed(() => import("../pages/admin/AdminNewsletterPage"), "AdminNewsletterPage");
 const AdminPagesPage = lazyNamed(() => import("../pages/admin/AdminPagesPage"), "AdminPagesPage");
 
+// The in-flight Suspense state for a normal route-chunk fetch, not a
+// failure. It must stay visually silent — the body is already the site's
+// black (see globals.css) — so a normal load or reload never flashes
+// "Loading..." text or a reload control at the user. Genuine failures are
+// handled below by RouteErrorBoundary instead.
 function RouteFallback() {
-  return (
-    <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "#8b8b94", textAlign: "center" }}>
-      <div>
-        <p>Loading...</p>
-        <button
-          type="button"
-          onClick={() => window.location.reload()}
-          style={{
-            padding: "10px 20px", borderRadius: 999, border: "1px solid currentColor",
-            background: "transparent", color: "inherit", cursor: "pointer", fontSize: 14,
-          }}
-        >
-          Muat ulang
-        </button>
-      </div>
-    </div>
-  );
+  return <div style={{ minHeight: "100vh" }} aria-hidden="true" />;
 }
 
 // A persistent chunk failure after the one guarded reload, or any ordinary
