@@ -9,14 +9,14 @@ export const POST_CONTENT_OVERRIDES = {
   "title": "Sebelum Mikirin Keranjang, E-Commerce yang Serius Harus Menang di Rasa Percaya Dulu",
   "meta_title": "E-Commerce Harus Menang di Rasa Percaya Dulu",
   "meta_description": "E-commerce yang serius dibangun dari kepercayaan, bukan sekadar keranjang. Pelajaran dari sejarah eBay, riset checkout Baymard, dan psikologi social proof.",
-  "excerpt": "Toko online yang bagus bukan cuma soal katalog dan tombol checkout — ia mesin kepercayaan, persis seperti masalah yang dipecahkan eBay sejak 1996.",
+  "excerpt": "Toko online yang bagus bukan cuma soal katalog dan tombol checkout. Ia mesin kepercayaan, persis seperti masalah yang dipecahkan eBay sejak 1996.",
   "focus_keyword": "strategi e-commerce berbasis kepercayaan pembeli",
   "reading_time": 7,
   "image_alt": "Sebelum Mikirin Keranjang, E-Commerce yang Serius Harus Menang di Rasa Percaya Dulu",
   "faqs": [
     {
       "question": "Kenapa cart abandonment tinggi walaupun produk saya bagus?",
-      "answer": "Biasanya bukan produk yang salah, tapi checkout yang mengejutkan. Baymard Institute mencatat rata-rata cart abandonment ada di kisaran 70 persen, dan alasan paling sering muncul adalah biaya tambahan yang baru terlihat di langkah terakhir — bukan harga produknya sendiri."
+      "answer": "Biasanya bukan produk yang salah, tapi checkout yang mengejutkan. Baymard Institute mencatat rata-rata cart abandonment ada di kisaran 70 persen, dan alasan paling sering muncul adalah biaya tambahan yang baru terlihat di langkah terakhir, bukan harga produknya sendiri."
     },
     {
       "question": "Apa perbaikan e-commerce yang paling dulu harus dikerjakan?",
@@ -35,7 +35,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Tahun 1995, seorang programmer bernama Pierre Omidyar membuat situs lelang kecil-kecilan bernama AuctionWeb, cikal bakal eBay. Idenya sederhana: orang bisa menjual barang bekas kepada orang asing di seluruh negeri, tanpa toko fisik, tanpa tatap muka. Tapi begitu transaksi pertama mulai berjalan, muncul satu masalah yang jauh lebih besar daripada logistik atau pembayaran: bagaimana caranya orang asing berani mengirim uang kepada orang asing lain, untuk barang yang bahkan tidak pernah mereka pegang?"
+            "text": "Tahun 1995, seorang programmer bernama Pierre Omidyar membuat situs lelang kecil-kecilan bernama AuctionWeb, cikal bakal eBay. Idenya sederhana. Orang bisa menjual barang bekas kepada orang asing di seluruh negeri, tanpa toko fisik, tanpa tatap muka. Tapi begitu transaksi pertama mulai berjalan, muncul satu masalah yang jauh lebih besar daripada logistik atau pembayaran. Bagaimana caranya orang asing berani mengirim uang kepada orang asing lain, untuk barang yang bahkan tidak pernah mereka pegang?"
           }
         ]
       },
@@ -44,7 +44,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Omidyar tidak menjawabnya dengan menambah fitur belanja. Ia menjawabnya dengan membangun Feedback Forum pada 1996 — sistem rating dan ulasan sederhana yang memungkinkan pembeli menilai penjual, dan sebaliknya. Bukan katalog yang menyelamatkan eBay dari kegagalan. Bukan juga desain situsnya, yang waktu itu masih sangat sederhana. Yang menyelamatkan eBay adalah satu hal: mereka menemukan cara membuat orang asing berani percaya satu sama lain, dalam skala yang sebelumnya tidak pernah ada dalam sejarah perdagangan."
+            "text": "Omidyar tidak menjawabnya dengan menambah fitur belanja. Ia menjawabnya dengan membangun Feedback Forum pada 1996, sistem rating dan ulasan sederhana yang memungkinkan pembeli menilai penjual, dan sebaliknya. Bukan katalog yang menyelamatkan eBay dari kegagalan. Bukan juga desain situsnya, yang waktu itu masih sangat sederhana. Yang menyelamatkan eBay cuma satu hal. Mereka menemukan cara membuat orang asing berani percaya satu sama lain, dalam skala yang sebelumnya tidak pernah ada dalam sejarah perdagangan."
           }
         ]
       },
@@ -53,7 +53,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Hampir tiga puluh tahun kemudian, masalah yang sama masih jadi akar dari sebagian besar e-commerce yang gagal — kita cuma menyebutnya dengan istilah lain. Bounce rate. Cart abandonment. Conversion rate rendah. Padahal kalau ditelusuri ke akarnya, masalahnya sering persis sama dengan yang dihadapi Omidyar tahun 1995: pembeli belum cukup percaya untuk bergerak dari melihat ke membeli."
+            "text": "Hampir tiga puluh tahun kemudian, masalah yang sama masih jadi akar dari sebagian besar e-commerce yang gagal, cuma kita menyebutnya dengan istilah lain. Bounce rate. Cart abandonment. Conversion rate rendah. Padahal kalau ditelusuri ke akarnya, masalahnya sering persis sama dengan yang dihadapi Omidyar tahun 1995. Pembeli belum cukup percaya untuk bergerak dari melihat ke membeli."
           }
         ]
       },
@@ -74,7 +74,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "E-commerce yang sehat itu, kalau boleh disederhanakan, adalah mesin kepercayaan yang kebetulan menjual produk. Katalog, keranjang, checkout, payment gateway, notifikasi — semua itu penting, tapi statusnya cuma alat. Alat itu baru bekerja kalau pembeli merasa cukup yakin untuk bergerak dari melihat menjadi membeli. Conversion rate bukan lahir dari tombol yang warnanya lebih menyala. Conversion rate lahir dari perjalanan yang membuat keraguan turun pelan-pelan, satu pertanyaan pada satu waktu."
+            "text": "E-commerce yang sehat itu, kalau boleh disederhanakan, adalah mesin kepercayaan yang kebetulan menjual produk. Katalog, keranjang, checkout, payment gateway, notifikasi, semua itu penting, tapi statusnya cuma alat. Alat itu baru bekerja kalau pembeli merasa cukup yakin untuk bergerak dari melihat menjadi membeli. Conversion rate bukan lahir dari tombol yang warnanya lebih menyala. Conversion rate lahir dari perjalanan yang membuat keraguan turun pelan-pelan, satu pertanyaan pada satu waktu."
           }
         ]
       },
@@ -83,7 +83,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Baymard Institute, lembaga riset UX asal Denmark yang sejak 2011 secara khusus meneliti usability checkout dan mobile commerce lintas ratusan situs, punya kesimpulan yang konsisten dari tahun ke tahun: rata-rata tingkat pengabaian keranjang belanja bertengger di kisaran 70 persen, dan alasan paling sering disebut bukan harga produk, melainkan biaya tambahan yang muncul mendadak di langkah akhir — ongkir, pajak, atau biaya admin yang tidak terlihat sejak awal. Sejalan dengan apa yang saya sebut di atas: yang bikin orang ragu bukan produknya, tapi kejutan yang tidak diharapkan."
+            "text": "Baymard Institute, lembaga riset UX asal Denmark yang sejak 2011 secara khusus meneliti usability checkout dan mobile commerce lintas ratusan situs, punya kesimpulan yang konsisten dari tahun ke tahun. Rata-rata tingkat pengabaian keranjang belanja bertengger di kisaran 70 persen, dan alasan paling sering disebut bukan harga produk, melainkan biaya tambahan yang muncul mendadak di langkah akhir, misalnya ongkir, pajak, atau biaya admin yang tidak terlihat sejak awal. Sejalan dengan apa yang saya sebut di atas, yang bikin orang ragu bukan produknya, tapi kejutan yang tidak diharapkan."
           }
         ]
       },
@@ -104,7 +104,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Hampir setiap klien yang datang ke saya membuka percakapan dengan pertanyaan yang sama: “Gimana caranya biar traffic naik?” Pertanyaan itu sah, tapi jarang jadi pertanyaan pertama yang tepat. Kalau toko belum menjawab keraguan dasar pembeli, menaikkan traffic cuma memperbanyak orang yang datang, celingak-celinguk, lalu pergi. Ibaratnya membuka pintu lebar-lebar ke ruangan yang belum dirapikan. Ramai iya. Dipercaya belum tentu."
+            "text": "Hampir setiap klien yang datang ke saya membuka percakapan dengan pertanyaan yang sama, “Gimana caranya biar traffic naik?” Pertanyaan itu sah, tapi jarang jadi pertanyaan pertama yang tepat. Kalau toko belum menjawab keraguan dasar pembeli, menaikkan traffic cuma memperbanyak orang yang datang, celingak-celinguk, lalu pergi. Ibaratnya membuka pintu lebar-lebar ke ruangan yang belum dirapikan. Ramai iya. Dipercaya belum tentu."
           }
         ]
       },
@@ -113,7 +113,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Sebelum bicara traffic, saya biasanya audit tiga hal dulu. Pertama, kejelasan halaman produk — apakah foto, ukuran, dan spesifikasi gampang dipahami tanpa pembeli harus menebak-nebak. Kedua, transparansi biaya — apakah harga, ongkir, stok, dan kebijakan retur sudah terlihat sebelum pembeli merasa perlu mencari-cari. Ketiga, bukti sosial yang relevan — bukan testimoni generik “barang bagus”, tapi bukti yang menjawab keraguan spesifik yang biasa muncul untuk kategori produk itu. Robert Cialdini, dalam bukunya Influence, sudah lama menjelaskan kenapa manusia cenderung meniru keputusan orang lain saat mereka sendiri tidak yakin — itu sebabnya ulasan yang spesifik jauh lebih kuat daripada sekadar bintang lima tanpa konteks."
+            "text": "Sebelum bicara traffic, saya biasanya audit tiga hal dulu. Pertama, kejelasan halaman produk. Apakah foto, ukuran, dan spesifikasi gampang dipahami tanpa pembeli harus menebak-nebak? Kedua, transparansi biaya. Apakah harga, ongkir, stok, dan kebijakan retur sudah terlihat sebelum pembeli merasa perlu mencari-cari? Ketiga, bukti sosial yang relevan, bukan testimoni generik “barang bagus”, tapi bukti yang menjawab keraguan spesifik yang biasa muncul untuk kategori produk itu. Robert Cialdini, dalam bukunya Influence, sudah lama menjelaskan kenapa manusia cenderung meniru keputusan orang lain saat mereka sendiri tidak yakin. Itu sebabnya ulasan yang spesifik jauh lebih kuat daripada sekadar bintang lima tanpa konteks."
           }
         ]
       },
@@ -143,7 +143,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Halaman produk bukan etalase pasif. Ia wiraniaga yang bekerja 24 jam tanpa jeda — bedanya, ia tidak bisa berimprovisasi kalau ada pertanyaan mendadak. Jadi semua jawaban penting harus sudah disiapkan sebelum pembeli sempat bertanya."
+            "text": "Halaman produk bukan etalase pasif. Ia wiraniaga yang bekerja 24 jam tanpa jeda. Bedanya, ia tidak bisa berimprovisasi kalau ada pertanyaan mendadak. Jadi semua jawaban penting harus sudah disiapkan sebelum pembeli sempat bertanya."
           }
         ]
       },
@@ -152,7 +152,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Foto harus membantu, bukan sekadar cantik. Deskripsi harus menjawab use case — untuk siapa, dipakai kapan, dipasangkan dengan apa — bukan cuma menyalin ulang spesifikasi dari pabrik. Kalau produk punya banyak varian, bantu pembeli memilih; jangan cuma menampilkan dropdown yang dingin tanpa penjelasan beda ukuran, bahan, atau edisi. Kalau produk butuh perawatan khusus, tuliskan. Pembeli tidak selalu malas membaca. Mereka malas membaca tulisan yang tidak menolong mereka mengambil keputusan."
+            "text": "Foto harus membantu, bukan sekadar cantik. Deskripsi harus menjawab use case, untuk siapa, dipakai kapan, dipasangkan dengan apa, bukan cuma menyalin ulang spesifikasi dari pabrik. Kalau produk punya banyak varian, bantu pembeli memilih; jangan cuma menampilkan dropdown yang dingin tanpa penjelasan beda ukuran, bahan, atau edisi. Kalau produk butuh perawatan khusus, tuliskan. Pembeli tidak selalu malas membaca. Mereka malas membaca tulisan yang tidak menolong mereka mengambil keputusan."
           }
         ]
       },
@@ -198,7 +198,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Checkout yang baik itu membosankan — dalam artian yang bagus. Tidak banyak kejutan. Tidak ada langkah aneh di tengah jalan. Tidak tiba-tiba minta bikin akun padahal orang sudah siap bayar. Tidak menyembunyikan biaya tambahan sampai halaman terakhir."
+            "text": "Checkout yang baik itu membosankan, dalam artian yang bagus. Tidak banyak kejutan. Tidak ada langkah aneh di tengah jalan. Tidak tiba-tiba minta bikin akun padahal orang sudah siap bayar. Tidak menyembunyikan biaya tambahan sampai halaman terakhir."
           }
         ]
       },
@@ -207,7 +207,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Kalau checkout terasa seperti labirin, pembeli akan ingat bahwa mereka masih punya satu pilihan yang jauh lebih gampang daripada menyelesaikan masalah: menutup tab. Ini kedengarannya keras, tapi begitulah kenyataannya. Di internet, orang tidak perlu marah dulu untuk pergi. Mereka cukup menghilang, tanpa keluhan, tanpa jejak."
+            "text": "Kalau checkout terasa seperti labirin, pembeli akan ingat bahwa mereka masih punya satu pilihan yang jauh lebih gampang daripada menyelesaikan masalah, yaitu menutup tab. Ini kedengarannya keras, tapi begitulah kenyataannya. Di internet, orang tidak perlu marah dulu untuk pergi. Mereka cukup menghilang, tanpa keluhan, tanpa jejak."
           }
         ]
       },
@@ -216,7 +216,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Beberapa prinsip yang menurut pengalaman saya hampir selalu berlaku:"
+            "text": "Beberapa prinsip yang menurut pengalaman saya hampir selalu berlaku."
           }
         ]
       },
@@ -287,7 +287,7 @@ export const POST_CONTENT_OVERRIDES = {
                 "content": [
                   {
                     "type": "text",
-                    "text": "Tunjukkan trust signal yang relevan — metode pembayaran yang dikenal, estimasi pengiriman yang realistis, kebijakan retur yang jelas."
+                    "text": "Tunjukkan trust signal yang relevan, seperti metode pembayaran yang dikenal, estimasi pengiriman yang realistis, dan kebijakan retur yang jelas."
                   }
                 ]
               }
@@ -300,7 +300,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Trust signal, perlu saya tegaskan, bukan stiker keamanan palsu yang ditempel supaya toko terlihat serius. Trust signal harus menjawab kekhawatiran yang sesungguhnya. Kalau pembeli khawatir barang telat, jawab dengan estimasi yang jujur. Kalau khawatir salah ukuran, jawab dengan panduan ukuran. Kalau khawatir barang rusak di jalan, jawab dengan prosedur komplain yang jelas — bukan janji kosong."
+            "text": "Trust signal, perlu saya tegaskan, bukan stiker keamanan palsu yang ditempel supaya toko terlihat serius. Trust signal harus menjawab kekhawatiran yang sesungguhnya. Kalau pembeli khawatir barang telat, jawab dengan estimasi yang jujur. Kalau khawatir salah ukuran, jawab dengan panduan ukuran. Kalau khawatir barang rusak di jalan, jawab dengan prosedur komplain yang jelas, bukan janji kosong."
           }
         ]
       },
@@ -321,7 +321,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Di desktop, pembeli masih punya sedikit ruang untuk memaafkan layout yang agak berantakan. Di mobile, tidak. Layar yang kecil membuat setiap kebingungan terasa jauh lebih mahal. Tombol yang kekecilan, filter yang susah dipakai, gambar yang lambat dimuat, teks deskripsi yang kepanjangan tanpa struktur, popup yang menutupi separuh layar — semua itu bisa membuat orang pergi dalam hitungan detik."
+            "text": "Di desktop, pembeli masih punya sedikit ruang untuk memaafkan layout yang agak berantakan. Di mobile, tidak. Layar yang kecil membuat setiap kebingungan terasa jauh lebih mahal. Tombol yang kekecilan, filter yang susah dipakai, gambar yang lambat dimuat, teks deskripsi yang kepanjangan tanpa struktur, popup yang menutupi separuh layar, semua itu bisa membuat orang pergi dalam hitungan detik."
           }
         ]
       },
@@ -330,7 +330,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Riset Baymard tentang mobile commerce menunjukkan pola yang berulang di hampir semua studi mereka: mayoritas kegagalan mobile commerce bukan soal fitur yang kurang, melainkan gesekan kecil yang menumpuk — form yang terlalu panjang untuk diisi lewat keyboard virtual, tombol yang meleset saat disentuh jempol, atau proses yang memaksa pembeli berpindah aplikasi di tengah jalan lalu lupa kembali."
+            "text": "Riset Baymard tentang mobile commerce menunjukkan pola yang berulang di hampir semua studi mereka. Mayoritas kegagalan mobile commerce bukan soal fitur yang kurang, melainkan gesekan kecil yang menumpuk, misalnya form yang terlalu panjang untuk diisi lewat keyboard virtual, tombol yang meleset saat disentuh jempol, atau proses yang memaksa pembeli berpindah aplikasi di tengah jalan lalu lupa kembali."
           }
         ]
       },
@@ -339,7 +339,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Orang belanja lewat HP sambil antre, sambil menunggu ojek datang, sambil rebahan setengah mendengarkan orang rumah bicara. Prioritasnya jelas: produk harus cepat dipahami, gambar harus ringan tapi tetap tajam, tombol aksi harus gampang dijangkau jempol, dan informasi penting tidak boleh membuat halaman terasa seperti brosur yang kepanjangan."
+            "text": "Orang belanja lewat HP sambil antre, sambil menunggu ojek datang, sambil rebahan setengah mendengarkan orang rumah bicara. Prioritasnya jelas. Produk harus cepat dipahami, gambar harus ringan tapi tetap tajam, tombol aksi harus gampang dijangkau jempol, dan informasi penting tidak boleh membuat halaman terasa seperti brosur yang kepanjangan."
           }
         ]
       },
@@ -360,7 +360,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Banyak toko online mengira urusan SEO selesai begitu produk sudah diunggah dengan nama, harga, dan deskripsi singkat. Belum selesai. Search engine — dan sekarang juga answer engine seperti asisten AI yang mulai dipakai orang untuk mencari rekomendasi belanja — butuh konteks yang jauh lebih dalam daripada sekadar nama produk. Mereka perlu memahami produk itu sebagai satu entitas yang terhubung dengan kategori, kebutuhan, dan pertanyaan yang menyertainya."
+            "text": "Banyak toko online mengira urusan SEO selesai begitu produk sudah diunggah dengan nama, harga, dan deskripsi singkat. Belum selesai. Search engine, dan sekarang juga answer engine seperti asisten AI yang mulai dipakai orang untuk mencari rekomendasi belanja, butuh konteks yang jauh lebih dalam daripada sekadar nama produk. Mereka perlu memahami produk itu sebagai satu entitas yang terhubung dengan kategori, kebutuhan, dan pertanyaan yang menyertainya."
           }
         ]
       },
@@ -385,7 +385,7 @@ export const POST_CONTENT_OVERRIDES = {
           },
           {
             "type": "text",
-            "text": ". Kalau artikel Anda cuma mengulang apa yang sudah bertebaran di halaman satu Google, mesin pencari — dan pembaca — tidak punya alasan menaruh perhatian ekstra padanya."
+            "text": ". Kalau artikel Anda cuma mengulang apa yang sudah bertebaran di halaman satu Google, mesin pencari, dan juga pembaca, tidak punya alasan menaruh perhatian ekstra padanya."
           }
         ]
       },
@@ -424,7 +424,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Apakah marketplace saja sudah cukup, tidak perlu website sendiri? Marketplace bagus untuk distribusi dan menjangkau demand yang sudah aktif mencari. Tapi website sendiri memberi kontrol atas narasi, data pelanggan, SEO jangka panjang, dan pengalaman brand yang tidak segampang itu ditiru kompetitor. Idealnya keduanya tidak saling membunuh — marketplace untuk permintaan yang sudah panas, website untuk membangun otoritas dan hubungan jangka panjang."
+            "text": "Apakah marketplace saja sudah cukup, tidak perlu website sendiri? Marketplace bagus untuk distribusi dan menjangkau demand yang sudah aktif mencari. Tapi website sendiri memberi kontrol atas narasi, data pelanggan, SEO jangka panjang, dan pengalaman brand yang tidak segampang itu ditiru kompetitor. Idealnya keduanya tidak saling membunuh. Marketplace berperan untuk permintaan yang sudah panas, website berperan untuk membangun otoritas dan hubungan jangka panjang."
           }
         ]
       },
@@ -433,7 +433,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Apakah desain harus terlihat mewah? Tidak harus. Yang penting jelas, cepat, konsisten, dan menolong pembeli mengambil keputusan. Desain mewah tanpa kejelasan cuma mahal secara visual — dan pembeli yang ragu tidak peduli seberapa bagus foto heronya."
+            "text": "Apakah desain harus terlihat mewah? Tidak harus. Yang penting jelas, cepat, konsisten, dan menolong pembeli mengambil keputusan. Desain mewah tanpa kejelasan cuma mahal secara visual, dan pembeli yang ragu tidak peduli seberapa bagus foto heronya."
           }
         ]
       },
@@ -454,7 +454,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Kembali ke Pierre Omidyar. Yang menarik dari cerita eBay bukan cuma karena mereka menemukan solusi tepat di tahun 1996. Yang menarik adalah masalah intinya — bagaimana membuat orang asing berani percaya — ternyata tidak pernah benar-benar selesai. Setiap generasi teknologi e-commerce cuma menemukan bentuk baru untuk masalah lama yang sama. Marketplace menemukan rating dan ulasan. Payment gateway menemukan escrow dan garansi uang kembali. Sekarang, giliran toko online kecil dan menengah yang harus menemukan versi mereka sendiri: bagaimana caranya, dalam skala yang jauh lebih kecil, membuat orang asing berani mengklik “beli sekarang.”"
+            "text": "Kembali ke Pierre Omidyar. Yang menarik dari cerita eBay bukan cuma karena mereka menemukan solusi tepat di tahun 1996. Yang menarik adalah masalah intinya, bagaimana membuat orang asing berani percaya, ternyata tidak pernah benar-benar selesai. Setiap generasi teknologi e-commerce cuma menemukan bentuk baru untuk masalah lama yang sama. Marketplace menemukan rating dan ulasan. Payment gateway menemukan escrow dan garansi uang kembali. Sekarang, giliran toko online kecil dan menengah yang harus menemukan versi mereka sendiri, bagaimana caranya, dalam skala yang jauh lebih kecil, membuat orang asing berani mengklik “beli sekarang.”"
           }
         ]
       },
@@ -472,7 +472,7 @@ export const POST_CONTENT_OVERRIDES = {
         "content": [
           {
             "type": "text",
-            "text": "Jadi sebelum buru-buru menambah budget iklan, coba audit dulu rasa percaya di toko Anda sendiri — dari homepage ke kategori, dari halaman produk ke keranjang, dari checkout sampai email konfirmasi. Kalau perjalanan itu sudah rapi, traffic yang datang akan punya tempat mendarat. Kalau belum, traffic cuma jadi angka yang lewat begitu saja — persis seperti pengunjung AuctionWeb di tahun 1995, yang datang, melihat-lihat, lalu pergi karena belum ada alasan untuk percaya."
+            "text": "Jadi sebelum buru-buru menambah budget iklan, coba audit dulu rasa percaya di toko Anda sendiri, dari homepage ke kategori, dari halaman produk ke keranjang, dari checkout sampai email konfirmasi. Kalau perjalanan itu sudah rapi, traffic yang datang akan punya tempat mendarat. Kalau belum, traffic cuma jadi angka yang lewat begitu saja, persis seperti pengunjung AuctionWeb di tahun 1995, yang datang, melihat-lihat, lalu pergi karena belum ada alasan untuk percaya."
           }
         ]
       },
