@@ -13,6 +13,14 @@ export function usePostViewCount(post) {
   const [count, setCount] = useState(fallback);
 
   useEffect(() => {
+    // BlogDetailPage doesn't remount when navigating between two posts on
+    // the same `/blog/:slug` route (same component, just new params), so
+    // without this the count from the previously viewed post stayed stuck
+    // on screen until (if ever) the new post's fetch resolved. Snap to the
+    // new post's own fallback immediately, then let the fetch below
+    // upgrade it to the real count.
+    setCount(fallback);
+
     if (!post?.slug) return undefined;
     const sessionKey = `${SESSION_KEY_PREFIX}${post.slug}`;
     let alreadyViewedThisSession = false;
