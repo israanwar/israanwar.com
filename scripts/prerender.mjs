@@ -20,6 +20,19 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, "..");
 
+// Vercel's build injects project env vars straight into process.env — no
+// file needed there. Locally, `npm run build` runs plain `node` (not
+// `vite`), so nothing has loaded .env.local for this script yet; do that
+// ourselves, best-effort, so `VITE_SUPABASE_URL`/`VITE_SUPABASE_
+// PUBLISHABLE_KEY` are available here the same way Vite already exposes
+// them to the client bundle.
+try {
+  process.loadEnvFile(resolve(projectRoot, ".env.local"));
+} catch {
+  // No .env.local (e.g. on Vercel, or a machine that never created one) —
+  // fine, process.env may already have these from the platform.
+}
+
 const { ISRA_ANWAR_BLOG_POSTS_SEED } = await import(
   `file://${projectRoot}/src/data/blogSeedIsraVoice.js`
 );
@@ -38,6 +51,9 @@ const { ISRA_ANWAR_SERVICES_SEED } = await import(
 const { TOOLS, TOOLS_CATALOG } = await import(
   `file://${projectRoot}/src/data/toolsCatalog.js`
 );
+const { isGeneratedStoreCover, isLegacyStoreCover } = await import(
+  `file://${projectRoot}/src/lib/storePlaceholder.js`
+);
 
 const SITE_URL = "https://www.israanwar.com";
 // SITE_NAME stays "Isra Anwar" — it only feeds the <title> tag suffix
@@ -53,6 +69,15 @@ const SITE_IDENTITY =
 const SOCIAL_SITE_NAME = SITE_IDENTITY;
 const DEFAULT_DESCRIPTION =
   "Web, SEO, AI workflow & content strategy for personal brands and businesses.";
+// Generic brand share card (see src/lib/socialMeta.js — same file, kept in
+// sync manually since this script runs standalone in Node, not through the
+// client bundle). Every route below except blog posts (which have their own
+// cover/generated artwork) had NO og:image/twitter:image at all — sharing
+// any link other than a blog post showed no brand identity whatsoever
+// (LinkedIn/WhatsApp/Facebook previews with just a title and domain, no
+// image), since these crawlers read this static HTML directly and never
+// run the client-side Seo.jsx effect that already had its own fallback.
+const DEFAULT_SOCIAL_IMAGE = `${SITE_URL}/assets/social/israanwar-social-share.png`;
 
 // Settings context untuk schema builders (mirror struktur useLiveSettings).
 // site_name here only ever reaches buildOrganization/buildWebsite/
@@ -390,6 +415,18 @@ function renderBodyHtml(route) {
     <p>${xmlEsc(route.tool.description)}</p>
     <p>This tool runs locally in your browser. No account is required.</p>
   </main>`;
+  } else if (route.product) {
+    const { product } = route;
+    const priceLine = Number.isFinite(product.price)
+      ? `<p>Rp ${product.price.toLocaleString("id-ID")}</p>`
+      : "";
+    main = `<main>
+    <p><a href="/">Home</a> / <a href="/store">Store</a></p>
+    <h1>${xmlEsc(product.name)}</h1>
+    ${product.category ? `<p>${xmlEsc(product.category)}</p>` : ""}
+    ${priceLine}
+    ${renderPlainParagraphs(product.description)}
+  </main>`;
   } else if (route.path === "/") {
     // Real recent-posts list (same data as the /blog page) — gives the
     // homepage real internal links + text instead of just one paragraph.
@@ -454,18 +491,20 @@ function buildRouteHtml(route) {
   html = upsertMeta(html, "property", "og:site_name", SOCIAL_SITE_NAME);
   html = upsertMeta(html, "name", "twitter:title", socialTitle);
   html = upsertMeta(html, "name", "twitter:description", route.description);
-  html = upsertMeta(html, "name", "twitter:card", route.socialImage ? "summary_large_image" : "summary");
+  html = upsertMeta(html, "name", "twitter:card", "summary_large_image");
 
-  if (route.socialImage) {
-    html = upsertMeta(html, "property", "og:image", route.socialImage);
-    html = upsertMeta(html, "property", "og:image:secure_url", route.socialImage);
-    html = upsertMeta(html, "property", "og:image:type", "image/png");
-    html = upsertMeta(html, "property", "og:image:width", "1200");
-    html = upsertMeta(html, "property", "og:image:height", "630");
-    html = upsertMeta(html, "property", "og:image:alt", route.socialImageAlt || socialTitle);
-    html = upsertMeta(html, "name", "twitter:image", route.socialImage);
-    html = upsertMeta(html, "name", "twitter:image:alt", route.socialImageAlt || socialTitle);
-  }
+  // Every route gets a share image now — falls back to the generic brand
+  // card when the route doesn't provide its own (see DEFAULT_SOCIAL_IMAGE
+  // above).
+  const socialImage = route.socialImage || DEFAULT_SOCIAL_IMAGE;
+  html = upsertMeta(html, "property", "og:image", socialImage);
+  html = upsertMeta(html, "property", "og:image:secure_url", socialImage);
+  html = upsertMeta(html, "property", "og:image:type", "image/png");
+  html = upsertMeta(html, "property", "og:image:width", "1200");
+  html = upsertMeta(html, "property", "og:image:height", "630");
+  html = upsertMeta(html, "property", "og:image:alt", route.socialImageAlt || socialTitle);
+  html = upsertMeta(html, "name", "twitter:image", socialImage);
+  html = upsertMeta(html, "name", "twitter:image:alt", route.socialImageAlt || socialTitle);
 
   // Article-specific OG (untuk blog post).
   if (route.article) {
@@ -636,6 +675,65 @@ TOOLS.forEach((tool) => {
   });
 });
 
+// Store products — unlike services/tools/blog, these live in Supabase (added
+// and edited from the admin panel), not a static seed file, so there was no
+// prerendered page for any individual product at all: `/store/<slug>` had
+// no static file, and vercel.json's catch-all rewrite sent crawlers to
+// `/index.html` (Home's own prerendered page) instead — sharing a product
+// link showed Home's title/description/image, not the product's. Fetched
+// live at build time, best-effort: if Supabase is unreachable or env vars
+// aren't set (e.g. a local build with no .env.local), this only skips
+// per-product prerendering for that build — it never fails the build, and
+// vercel.json's SPA fallback still serves those pages correctly to real
+// visitors either way, just without their own social preview until the
+// next successful build.
+let productRoutes = [];
+try {
+  const supabaseUrl = process.env.VITE_SUPABASE_URL;
+  const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn("⚠ prerender: VITE_SUPABASE_URL/VITE_SUPABASE_PUBLISHABLE_KEY not set — skipping per-product pages.");
+  } else {
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const { data: products, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("status", "active");
+    if (error) throw error;
+
+    productRoutes = (products ?? []).map((row) => {
+      const data = row.data ?? {};
+      const product = {
+        id: data.id ?? row.id,
+        slug: row.slug ?? data.slug,
+        name: row.name ?? data.name,
+        category: row.category ?? data.category,
+        price: row.price ?? data.price,
+        description: data.description ?? "",
+        image_url: data.image_url ?? null,
+      };
+      if (!product.slug) return null;
+      const hasRealImage = product.image_url
+        && !isGeneratedStoreCover(product.image_url)
+        && !isLegacyStoreCover(product.image_url);
+      return {
+        path: `/store/${product.slug}`,
+        title: `${product.name || "Produk"} — israanwar`,
+        description: (product.description || "").split(/\n+/)[0].slice(0, 160)
+          || `${product.name || "Produk digital"} — tersedia di Store israanwar.`,
+        currentTitle: product.name,
+        ogType: "website",
+        socialImage: hasRealImage ? new URL(product.image_url, SITE_URL).toString() : undefined,
+        product,
+      };
+    }).filter(Boolean);
+    routes.push(...productRoutes);
+  }
+} catch (err) {
+  console.warn("⚠ prerender: failed to fetch products from Supabase — skipping per-product pages.", err?.message ?? err);
+}
+
 // Service category + individual service pages — these previously had no
 // prerendered file at all (only /services itself did), which meant every
 // /services/<slug> URL 404'd at the host level on a fresh load: no static
@@ -714,6 +812,7 @@ let categoryCount = 0;
 let postCount = 0;
 let serviceCategoryCount = 0;
 let serviceCount = 0;
+let productCount = 0;
 
 routes.forEach((route) => {
   const html = buildRouteHtml(route);
@@ -729,6 +828,7 @@ routes.forEach((route) => {
   else if (route.path.startsWith("/blog/")) categoryCount++;
   else if (route.serviceCategory) serviceCategoryCount++;
   else if (route.service) serviceCount++;
+  else if (route.product) productCount++;
   else staticCount++;
 });
 
@@ -738,3 +838,4 @@ console.log(`  · ${serviceCategoryCount} service categories`);
 console.log(`  · ${serviceCount} individual services`);
 console.log(`  · ${categoryCount} blog categories`);
 console.log(`  · ${postCount} blog posts`);
+console.log(`  · ${productCount} store products`);

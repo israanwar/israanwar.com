@@ -8,6 +8,7 @@ import {
   getSocialImageUrl,
   getSocialSiteName,
   SOCIAL_CARD_HEIGHT,
+  SOCIAL_CARD_PATH,
   SOCIAL_CARD_WIDTH,
 } from "../../lib/socialMeta";
 import {
@@ -118,7 +119,13 @@ export function Seo({
       ? `${cleanTitle} | ${siteName}`
       : siteName;
     const shareTitle = socialTitle?.trim() || pageTitle;
-    const shareImage = socialImage ? getSocialImageUrl(socialImage) : null;
+    // Every page gets a share image now, not just the ones that happened to
+    // pass one explicitly — previously any page without its own
+    // `socialImage` (Home, Services, Store, About, Contact, Tools,
+    // Portfolio, individual products/services…) sent no og:image/
+    // twitter:image at all, so sharing its link showed no brand identity
+    // whatsoever. Falls back to the site's generic branded card.
+    const shareImage = getSocialImageUrl(socialImage || SOCIAL_CARD_PATH);
     const robots = noindex ? "noindex, nofollow" : "index, follow";
 
     document.title = pageTitle;

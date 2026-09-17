@@ -7,7 +7,7 @@ import { cartRepo } from "../../lib/localStore";
 import { useLiveProductState } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeProduct } from "../../lib/storeI18n";
-import { resolveProductCover } from "../../lib/storePlaceholder";
+import { resolveProductCover, isGeneratedStoreCover, isLegacyStoreCover } from "../../lib/storePlaceholder";
 import { ProductSocialProof } from "../../components/store/ProductSocialProof";
 
 function seoDescription(text) {
@@ -61,6 +61,14 @@ export function StoreItemPage() {
   if (!product || product.status !== "active") return <Navigate to="/store" replace />;
   const displayProduct = localizeProduct(product, lang);
   const coverUrl = resolveProductCover(displayProduct);
+  // Only a real uploaded photo makes sense as a share-card image — the
+  // generated/legacy covers are data: URI SVGs, which social crawlers
+  // (WhatsApp, Facebook, X, LinkedIn) can't fetch as og:image at all.
+  // Seo.jsx already falls back to the site's generic branded card when no
+  // socialImage is passed, so products without a real photo still get one.
+  const shareImage = !isGeneratedStoreCover(displayProduct.image_url) && !isLegacyStoreCover(displayProduct.image_url)
+    ? coverUrl
+    : null;
 
   function addToCart() {
     cartRepo.add(product.id, qty);
@@ -70,7 +78,7 @@ export function StoreItemPage() {
 
   return (
     <>
-      <Seo title={`${displayProduct.name} — israanwar`} description={seoDescription(displayProduct.description)} />
+      <Seo title={`${displayProduct.name} — israanwar`} description={seoDescription(displayProduct.description)} socialImage={shareImage} />
               <section className="okr__section" style={{ paddingTop: 100 }}>
           <div className="okr__wrap">
             <Link to="/store" className="okr__link" style={{ marginBottom: 24, display: "inline-flex" }}>
