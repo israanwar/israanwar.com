@@ -17,6 +17,15 @@ import { applyProductPriceDiscount, applyProductPriceDiscounts } from "./product
 import { normalizePortfolioProjects } from "./portfolioProjects";
 import { normalizePaymentSettings } from "./paymentSettings";
 import { POST_CONTENT_OVERRIDES } from "../data/postContentOverrides";
+import { SLUG_RENAMES } from "../data/slugRenames";
+
+// Reverse lookup (new slug -> old/current Supabase slug), built once. Used
+// so a request for the new, human-facing URL still finds the right row —
+// the `posts.slug` column itself hasn't changed (Supabase writes are
+// currently blocked), only what this app presents to visitors.
+const OLD_SLUG_BY_NEW_SLUG = Object.fromEntries(
+  Object.entries(SLUG_RENAMES).map(([oldSlug, newSlug]) => [newSlug, oldSlug]),
+);
 
 const MEDIA_BUCKET = "israanwar-media";
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -87,7 +96,15 @@ export function postRowToItem(row) {
   const legacyId = row.data?.legacy_id || (!isUuid(row.data?.id) ? row.data?.id : null);
   const item = { ...rowToItem(row), id: row.id, ...(legacyId ? { legacy_id: legacyId } : {}) };
   const override = POST_CONTENT_OVERRIDES[item.slug];
-  return override ? { ...item, ...override } : item;
+  const merged = override ? { ...item, ...override } : item;
+  // A post's related_slugs can point at another post that got renamed —
+  // resolve those references to the new slug too, otherwise "related
+  // posts" silently comes up empty for anything that cross-links a
+  // renamed post.
+  if (Array.isArray(merged.related_slugs) && merged.related_slugs.some((s) => SLUG_RENAMES[s])) {
+    merged.related_slugs = merged.related_slugs.map((s) => SLUG_RENAMES[s] ?? s);
+  }
+  return merged;
 }
 
 function orderRowToItem(row) {
@@ -396,11 +413,15 @@ export const postsData = {
     }, () => postsRepo.get(id));
   },
   async getBySlug(slug) {
+    // `slug` here is whatever the visitor's URL says, which may be the new,
+    // renamed slug this app now presents. The `posts.slug` column in
+    // Supabase still has the old value, so translate before querying.
+    const dbSlug = OLD_SLUG_BY_NEW_SLUG[slug] ?? slug;
     return tryRemote(async () => {
-      const { data, error } = await supabase.from("posts").select("*").eq("slug", slug).maybeSingle();
+      const { data, error } = await supabase.from("posts").select("*").eq("slug", dbSlug).maybeSingle();
       if (error) throw error;
       return data ? postRowToItem(data) : null;
-    }, () => postsRepo.getBySlug(slug));
+    }, () => postsRepo.getBySlug(dbSlug));
   },
   async create(payload) {
     return writeRemote(async () => {

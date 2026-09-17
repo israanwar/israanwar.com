@@ -69,6 +69,9 @@ export function BlogDetailPage() {
               assembleLetters
               style={{ margin: "8px 0 20px" }}
             />
+            <p style={{ color: "var(--okr-text)", fontSize: 15, marginBottom: 12, fontWeight: 600 }}>
+              {post.author_name || "Isra Anwar"}
+            </p>
             <p style={{ color: "var(--okr-muted)", fontSize: 15, marginBottom: 32, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
               <span>
                 {new Date(post.published_at ?? post.created_at).toLocaleDateString(lang === "id" ? "id-ID" : "en-US", {

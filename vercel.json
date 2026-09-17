@@ -1,5 +1,120 @@
 {
+  "redirects": [
+    {
+      "source": "/blog/bisnis-kecil-setelah-dunia-pindah-ke-layar",
+      "destination": "/blog/dunia-sudah-pindah-ke-layar-bisnis-kecil-belum-tentu-ikut-pindah",
+      "permanent": true
+    },
+    {
+      "source": "/blog/ketika-semua-orang-online-masalahnya-bukan-lagi-punya-akun",
+      "destination": "/blog/online-saja-tidak-cukup-yang-dicari-orang-itu-alasan-untuk-memilih",
+      "permanent": true
+    },
+    {
+      "source": "/blog/branding-di-era-scroll-cepat-dipercaya-sebelum-dijelaskan",
+      "destination": "/blog/orang-scroll-dalam-hitungan-detik-brand-yang-membosankan-kalah-duluan",
+      "permanent": true
+    },
+    {
+      "source": "/blog/selling-yang-baik-adalah-arsitektur-kepercayaan",
+      "destination": "/blog/selling-yang-bagus-itu-tidak-terasa-seperti-dikejar-kejar",
+      "permanent": true
+    },
+    {
+      "source": "/blog/kenapa-banyak-website-gagal-menjual-walau-tampil-bagus",
+      "destination": "/blog/website-nya-sudah-cantik-tapi-kok-tetap-tidak-ada-yang-beli",
+      "permanent": true
+    },
+    {
+      "source": "/blog/workflow-adalah-infrastruktur-kreatif",
+      "destination": "/blog/kalau-kerjaan-berantakan-coba-cek-dulu-workflow-nya-ada-di-mana",
+      "permanent": true
+    },
+    {
+      "source": "/blog/ai-tidak-menggantikan-strategi-ia-menguji-kedewasaan-bisnis",
+      "destination": "/blog/ai-tidak-bikin-strategi-mati-cuma-bikin-yang-berantakan-ketahuan",
+      "permanent": true
+    },
+    {
+      "source": "/blog/politik-perhatian-di-era-algoritma",
+      "destination": "/blog/merasa-banyak-tahu-itu-gampang-kalau-semua-disodorkan-algoritma",
+      "permanent": true
+    },
+    {
+      "source": "/blog/seo-in-the-age-of-ai-search-is-still-about-trust",
+      "destination": "/blog/seo-di-zaman-ai-sudah-berubah-konten-generik-duluan-ditinggalkan",
+      "permanent": true
+    },
+    {
+      "source": "/blog/digital-education-needs-better-thinking-not-more-tools",
+      "destination": "/blog/kalau-belajar-digital-cuma-hafal-tombol-wajar-cepat-ketinggalan",
+      "permanent": true
+    },
+    {
+      "source": "/blog/website-yang-bagus-juga-bisa-sepi-pengunjung",
+      "destination": "/blog/tampilan-bagus-tidak-otomatis-bikin-website-ramai-pengunjung",
+      "permanent": true
+    },
+    {
+      "source": "/blog/ai-workflow-untuk-bisnis-kecil-mulai-dari-audit-bukan-tool",
+      "destination": "/blog/sebelum-buru-buru-pakai-ai-cek-dulu-kerjaan-yang-paling-bikin-capek",
+      "permanent": true
+    },
+    {
+      "source": "/blog/ekonomi-digital-tidak-cukup-dengan-produk-ia-butuh-distribusi",
+      "destination": "/blog/produknya-sudah-bagus-masalahnya-mungkin-di-jalan-menuju-pembeli",
+      "permanent": true
+    },
+    {
+      "source": "/blog/brand-yang-cerdas-tidak-mengejar-semua-orang",
+      "destination": "/blog/brand-yang-berusaha-disukai-semua-orang-sering-lupa-punya-target",
+      "permanent": true
+    },
+    {
+      "source": "/blog/masa-depan-digital-milik-tim-kecil-yang-punya-sistem-belajar",
+      "destination": "/blog/tim-kecil-bisa-menang-asal-kerjanya-tidak-serba-panik",
+      "permanent": true
+    },
+    {
+      "source": "/blog/catatan-israanwar-kenapa-blog-ini-dibangun-sebagai-mesin-pengetahuan",
+      "destination": "/blog/kenapa-kami-membangun-blog-ini-bukan-sekadar-tempat-numpang-nulis",
+      "permanent": true
+    },
+    {
+      "source": "/blog/cara-membaca-riset-tanpa-jadi-korban-grafik-cantik",
+      "destination": "/blog/biar-tidak-gampang-percaya-begini-cara-membaca-riset-yang-benar",
+      "permanent": true
+    },
+    {
+      "source": "/blog/inovasi-teknologi-yang-waras-dimulai-dari-masalah-yang-benar",
+      "destination": "/blog/inovasi-teknologi-yang-berguna-dimulai-dari-masalah-nyata-bukan-ikut-tren",
+      "permanent": true
+    },
+    {
+      "source": "/blog/case-study-merapikan-website-yang-ramai-tapi-tidak-menjual",
+      "destination": "/blog/case-study-website-ramai-pengunjung-tapi-susah-closing",
+      "permanent": true
+    },
+    {
+      "source": "/blog/cro-itu-bukan-mengubah-warna-tombol-bro",
+      "destination": "/blog/cro-itu-lebih-dari-sekadar-ganti-warna-tombol",
+      "permanent": true
+    },
+    {
+      "source": "/blog/website-yang-tajam-adalah-mesin-kepercayaan",
+      "destination": "/blog/tampilan-website-sudah-meyakinkan-tapi-orang-masih-ragu-untuk-percaya",
+      "permanent": true
+    },
+    {
+      "source": "/blog/e-commerce-yang-serius-tidak-dimulai-dari-keranjang-tapi-dari-rasa-percaya",
+      "destination": "/blog/sebelum-mikirin-keranjang-e-commerce-yang-serius-harus-menang-di-rasa-percaya-dulu",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
