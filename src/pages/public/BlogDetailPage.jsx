@@ -83,8 +83,12 @@ export function BlogDetailPage() {
               </span>
               <span aria-hidden>·</span>
               <span>{t("blog_min_read", { count: readingTime })}</span>
-              <span aria-hidden>·</span>
-              <span>{t("blog_read_count", { count: formatPostReadCount(readCount, lang) })}</span>
+              {readCount != null && (
+                <>
+                  <span aria-hidden>·</span>
+                  <span>{t("blog_read_count", { count: formatPostReadCount(readCount, lang) })}</span>
+                </>
+              )}
             </p>
             {post.excerpt && (
               <p style={{ color: "var(--okr-text)", fontSize: 20, lineHeight: 1.5, marginBottom: 32 }}>{post.excerpt}</p>

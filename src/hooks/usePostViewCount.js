@@ -1,66 +1,49 @@
 import { useEffect, useState } from "react";
 import { getPostReadCount } from "../lib/blogMetrics";
 
-const SESSION_KEY_PREFIX = "okr:viewed:";
-
-// Real, cross-visitor read count backed by /api/post-views (Vercel KV).
-// Falls back to the existing deterministic estimate (blogMetrics.js) while
-// the request is in flight, and stays on that estimate for good if the KV
-// store isn't connected yet or the request fails, so the page never shows
-// a broken or empty number.
+// Real, cross-visitor, ever-incrementing read count backed by
+// /api/post-views (Upstash Redis). Every mount (including a plain reload)
+// counts as a view — there is deliberately no per-session dedup, since the
+// whole point is "reload increases it."
+//
+// Returns null until the real count is known, and renders nothing until
+// then (see BlogDetailPage). This is deliberate: showing a placeholder
+// estimate first and then swapping it for the real number caused the
+// number to visibly drop-then-jump on every load, which read as broken.
+// A single clean transition (nothing -> final number) never does that.
 export function usePostViewCount(post) {
-  const fallback = getPostReadCount(post ?? {});
-  const [count, setCount] = useState(fallback);
+  const [count, setCount] = useState(null);
 
   useEffect(() => {
-    // BlogDetailPage doesn't remount when navigating between two posts on
-    // the same `/blog/:slug` route (same component, just new params), so
-    // without this the count from the previously viewed post stayed stuck
-    // on screen until (if ever) the new post's fetch resolved. Snap to the
-    // new post's own fallback immediately, then let the fetch below
-    // upgrade it to the real count.
-    setCount(fallback);
-
+    setCount(null);
     if (!post?.slug) return undefined;
-    const sessionKey = `${SESSION_KEY_PREFIX}${post.slug}`;
-    let alreadyViewedThisSession = false;
-    try {
-      alreadyViewedThisSession = sessionStorage.getItem(sessionKey) === "1";
-    } catch {
-      // Storage unavailable (private mode etc.) — treat every load as a
-      // fresh view rather than blocking the feature entirely.
-    }
 
     let cancelled = false;
-    async function run() {
+    const fallback = getPostReadCount(post);
+
+    (async () => {
       try {
-        const res = alreadyViewedThisSession
-          ? await fetch(`/api/post-views?slug=${encodeURIComponent(post.slug)}`)
-          : await fetch("/api/post-views", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ slug: post.slug, seed: fallback }),
-            });
-        if (!res.ok) return;
+        const res = await fetch("/api/post-views", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ slug: post.slug, seed: fallback }),
+        });
+        if (!res.ok) throw new Error(`bad status ${res.status}`);
         const data = await res.json();
-        if (!cancelled && Number.isFinite(data?.count) && data.count > 0) {
-          setCount(data.count);
+        if (!Number.isFinite(data?.count) || data.count <= 0) {
+          throw new Error("bad payload");
         }
-        if (!alreadyViewedThisSession) {
-          try {
-            sessionStorage.setItem(sessionKey, "1");
-          } catch {
-            // Best-effort only — a missed write just means the next load
-            // in this session counts as a view again.
-          }
-        }
+        if (!cancelled) setCount(data.count);
       } catch {
-        // KV not connected yet, offline, etc. — keep showing `fallback`.
+        // Redis not reachable/configured — show the same deterministic
+        // estimate the page always showed before this feature existed,
+        // set once, never overwritten again for this mount.
+        if (!cancelled) setCount(fallback);
       }
-    }
-    run();
+    })();
+
     return () => { cancelled = true; };
-  }, [post?.slug, fallback]);
+  }, [post?.slug]);
 
   return count;
 }
