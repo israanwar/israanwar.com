@@ -1,5 +1,7 @@
 import { Component, lazy, Suspense, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
+import { PublicLayout } from "../layouts/PublicLayout";
+import { LandingPage } from "../pages/public/LandingPage";
 import { RequireStaff, RequireAdmin } from "./RouteGuards";
 import { clearChunkReloadMarker, importWithRetry } from "./lazyWithRetry";
 
@@ -28,7 +30,6 @@ function lazyNamed(loader, exportName, { marksRouteReady = true } = {}) {
   }));
 }
 
-const LandingPage = lazyNamed(() => import("../pages/public/LandingPage"), "LandingPage");
 const AboutPage = lazyNamed(() => import("../pages/public/AboutPage"), "AboutPage");
 const ServicesPage = lazyNamed(() => import("../pages/public/ServicesPage"), "ServicesPage");
 const ServiceDetailPage = lazyNamed(() => import("../pages/public/ServiceDetailPage"), "ServiceDetailPage");
@@ -48,7 +49,6 @@ const CartPage = lazyNamed(() => import("../pages/public/CartPage"), "CartPage")
 const CheckoutPage = lazyNamed(() => import("../pages/public/CheckoutPage"), "CheckoutPage");
 const PaymentPage = lazyNamed(() => import("../pages/public/PaymentPage"), "PaymentPage");
 
-const PublicLayout = lazyNamed(() => import("../layouts/PublicLayout"), "PublicLayout", { marksRouteReady: false });
 const AdminLoginPage = lazyNamed(() => import("../pages/admin/AdminLoginPage"), "AdminLoginPage");
 const AdminLayout = lazyNamed(() => import("../layouts/AdminLayout"), "AdminLayout", { marksRouteReady: false });
 const AdminDashboardPage = lazyNamed(() => import("../pages/admin/AdminDashboardPage"), "AdminDashboardPage");

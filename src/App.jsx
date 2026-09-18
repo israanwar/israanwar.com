@@ -40,12 +40,23 @@ function ScrollToTop() {
       if (live) apply();
     };
 
+    // Chrome can restore a saved position after React's first layout effect,
+    // and on a cold cache that can happen later than a fixed animation-frame
+    // grace period. Native restoration emits `scroll`, so correct that event
+    // for as long as this navigation is armed. Real reader input releases the
+    // guard before its resulting scroll event reaches this listener.
+    const onUnexpectedScroll = () => {
+      if (!live) return;
+      if (targetId || window.scrollX !== 0 || window.scrollY !== 0) apply();
+    };
+
     const release = () => {
       live = false;
       observer?.disconnect();
       window.clearTimeout(timer);
       cancelAnimationFrame(frame);
       window.removeEventListener("pageshow", onPageShow);
+      window.removeEventListener("scroll", onUnexpectedScroll);
       INTENT_EVENTS.forEach((type) => window.removeEventListener(type, release));
     };
 
@@ -98,6 +109,7 @@ function ScrollToTop() {
     // Hard stop, so this can never end up fighting a reader on a long-lived page.
     timer = window.setTimeout(release, 8000);
     window.addEventListener("pageshow", onPageShow);
+    window.addEventListener("scroll", onUnexpectedScroll, { passive: true });
     INTENT_EVENTS.forEach((type) =>
       window.addEventListener(type, release, { passive: true, once: true }),
     );

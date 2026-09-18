@@ -11,8 +11,13 @@
           window.history.scrollRestoration = "manual";
         }
 
+        let keepInitialScrollAtTop = true;
+        const releaseInitialScroll = () => {
+          keepInitialScrollAtTop = false;
+        };
+
         const resetInitialScroll = () => {
-          if (window.location.hash) return;
+          if (!keepInitialScrollAtTop || window.location.hash) return;
           window.scrollTo(0, 0);
           document.documentElement.scrollTop = 0;
           if (document.body) document.body.scrollTop = 0;
@@ -25,9 +30,13 @@
         // or `load`, after the SPA's own lazy route chunk has started
         // growing the page. Re-applying at each of these points, plus on
         // every bfcache restore (not just the first), closes that gap
-        // without fighting a reader who has since scrolled on purpose —
-        // ScrollToTop's own intent-detection (wheel/touch/pointer/key)
-        // still wins the moment any of those fire.
+        // without fighting a reader who has since scrolled on purpose.
+        // Intent listeners live in this pre-React layer too because `load`
+        // can arrive after someone already started interacting on a slow
+        // connection; React's ScrollToTop cannot protect that early window.
+        ["wheel", "touchstart", "pointerdown", "keydown"].forEach((type) =>
+          window.addEventListener(type, releaseInitialScroll, { passive: true, once: true }),
+        );
         document.addEventListener("DOMContentLoaded", resetInitialScroll, { once: true });
         window.addEventListener("load", resetInitialScroll, { once: true });
         window.addEventListener("pageshow", resetInitialScroll);
