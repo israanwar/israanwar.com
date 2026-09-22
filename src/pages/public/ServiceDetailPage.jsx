@@ -96,7 +96,7 @@ export function ServiceDetailPage() {
                 </div>
                 <div className="okr__cards okr__cards--services okr__service-child-grid">
                   {childServices.map((child, i) => {
-                    const ChildIcon = getServiceChildIcon(i, child.parent_slug);
+                    const ChildIcon = getServiceChildIcon(i, child.parent_slug, child.slug);
                     const childIndex = String(i + 1).padStart(2, "0");
                     return (
                       <Link

@@ -8,10 +8,13 @@ import { useLiveSettings, useLiveHomepage, useLivePosts, useLivePage, useLiveSer
 import { useI18n } from "../../lib/i18n";
 import { localizeHomepage, localizePage, localizeSiteDescription } from "../../lib/pageI18n";
 import { localizeServiceCardItems } from "../../lib/serviceI18n";
-import { useLandingEffects, useProcessScrollStory } from "../../hooks/useLandingEffects";
+import { useLandingEffects } from "../../hooks/useLandingEffects";
 import { BlogPinCard } from "../../components/blog/BlogPinCard";
 import { SunBackground } from "../../components/hero/SunBackground";
-import "../../styles/home-services-motion.css";
+import { ProcessCardSlider } from "../../components/marketing/ProcessCardSlider";
+import { ServiceFolderGrid } from "../../components/marketing/ServiceFolderGrid";
+import { ServicesKineticGrid } from "../../components/marketing/ServicesKineticGrid";
+import "../../styles/service-folder-grid.css";
 
 // Wraps each non-space character in its own span so hover (desktop) / tap
 // (mobile, via :active — no touch JS needed) can pop just that one letter.
@@ -349,49 +352,29 @@ export function LandingPage() {
   const posts = useLivePosts({ status: "published" }).slice(0, 6);
   const rawPortfolio = useLivePage("portfolio");
   const portfolio = useMemo(() => localizePage(rawPortfolio, lang), [rawPortfolio, lang]);
-  // Real, navigable service categories (same source ServicesPage.jsx uses) —
-  // capped at 8 for the homepage row list, per spec ("maksimal 8 service
-  // utama jika datanya lebih banyak").
-  const rawServiceCategories = useLiveServices({ status: "active" });
-  const serviceCategories = useMemo(() => {
-    const categories = rawServiceCategories.filter((s) => s.kind === "category");
-    return localizeServiceCardItems(categories, lang).slice(0, 8);
-  }, [rawServiceCategories, lang]);
+  // The folder catalog uses six explicitly curated categories, while its
+  // preview cards keep the real child-service routes from the shared catalog.
+  const rawServiceItems = useLiveServices({ status: "active" });
+  const serviceItems = useMemo(
+    () => localizeServiceCardItems(rawServiceItems, lang),
+    [rawServiceItems, lang],
+  );
 
   const hero = sections.hero ?? {};
   const heroTitle = [hero.title_line1, hero.title_line2].filter(Boolean).join(" ");
   const cta = sections.cta ?? {};
-  const curatedServices = sections.services?.items ?? [];
   const whatsappHref = /^https:\/\/(wa\.me|api\.whatsapp\.com)\//i.test(settings.whatsapp_url ?? "")
     ? settings.whatsapp_url
     : null;
   const process = sections.process ?? { title: "", items: [] };
   const cases = sections.cases ?? { title: t("section_cases_title"), items: [] };
   const processItems = process.items ?? [];
-  const processSectionRef = useRef(null);
   const [heroSceneReady, setHeroSceneReady] = useState(false);
-  const [selectedProcessIndex, setSelectedProcessIndex] = useState(0);
-  const activeProcessIndex = Number.isInteger(selectedProcessIndex) && selectedProcessIndex >= 0
-    ? Math.min(selectedProcessIndex, Math.max(processItems.length - 1, 0))
-    : -1;
   // Section reveals now run entirely through CSS `animation-timeline: view()`
   // (see `.okr__reveal` in landing.css) — no IntersectionObserver, no
   // classList mutation, no React re-render conflicts. This hook only keeps the
   // pointer spotlight alive; scroll progress is native CSS.
   useLandingEffects(null);
-  useProcessScrollStory(processSectionRef, processItems.length, setSelectedProcessIndex);
-
-  function moveToProcessStage(index) {
-    setSelectedProcessIndex(index);
-    const section = processSectionRef.current;
-    const desktop = window.matchMedia("(min-width: 901px) and (min-height: 700px)").matches;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!section || !desktop || reduce || processItems.length < 2) return;
-
-    const travel = Math.max(section.offsetHeight - window.innerHeight, 0);
-    const target = section.offsetTop + (travel * index) / (processItems.length - 1);
-    window.scrollTo({ top: target, behavior: "smooth" });
-  }
 
   return (
     <>
@@ -452,65 +435,21 @@ export function LandingPage() {
             )}
           </section>
 
-          {(serviceCategories.length > 0 || curatedServices.length > 0) && (
-            <section className="okr__section okr__services-section" id="services">
-              <div className="okr__wrap">
-                <div className="okr__services-card okr__reveal">
-                  <div className="okr__services-top">
-                    <span className="okr__services-eyebrow">
-                      <span aria-hidden="true">•</span> Our services
-                    </span>
-                    <h2 className="okr__services-headline" aria-label="Everything your business needs to grow under one roof.">
-                      <span aria-hidden="true">
-                        {renderTouchLetters("Everything your business needs to grow", "serviceshead1")}
-                        <br />
-                        {renderTouchLetters("under one roof.", "serviceshead2")}
-                      </span>
-                    </h2>
-                  </div>
-                  {serviceCategories.length > 0 && <div className="okr__services-list">
-                    {serviceCategories.map((s, i) => (
-                      <Link
-                        key={s.id}
-                        to={`/services/${s.slug}`}
-                        className="okr__services-row"
-                      >
-                        <span className="okr__services-row-index">{String(i + 1).padStart(2, "0")}</span>
-                        <span className="okr__services-row-name">{s.name}</span>
-                        <span className="okr__services-row-arrow" aria-hidden="true">
-                          <ArrowRight className="okr__services-row-arrow-icon okr__services-row-arrow-icon--front" size={18} strokeWidth={1.5} />
-                          <ArrowRight className="okr__services-row-arrow-icon okr__services-row-arrow-icon--back" size={18} strokeWidth={1.5} />
-                        </span>
-                      </Link>
-                    ))}
-                  </div>}
-                  {curatedServices.length > 0 && (
-                    <div className="okr__services-highlights">
-                      {curatedServices.map((item, index) => (
-                        <div className="okr__services-highlight" key={`${item.title}-${index}`}>
-                          <span>{String(index + 1).padStart(2, "0")}</span>
-                          <h3>{item.title}</h3>
-                          <p>{item.body}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <Link to="/services" className="okr__services-all-btn">
-                    <span className="okr__services-all-btn-fill" aria-hidden="true" />
-                    <span className="okr__services-all-btn-label">All Services</span>
-                  </Link>
+          {serviceItems.length > 0 && (
+            <>
+              <ServicesKineticGrid scope="page" />
+              <section className="okr__section okr__services-section" id="services">
+                <div className="okr__wrap">
+                  <ServiceFolderGrid items={serviceItems} lang={lang} />
                 </div>
-              </div>
-            </section>
+              </section>
+            </>
           )}
 
           {processItems.length > 0 && (
             <section
-              ref={processSectionRef}
-              className="okr__section okr__process-section okr__process-section--story"
+              className="okr__section okr__process-section okr__process-section--slider"
               id="about"
-              data-active-stage={processItems[activeProcessIndex]?.title || ""}
-              style={{ "--process-count": processItems.length }}
             >
               <div className="okr__wrap">
                 <div className="okr__process-story-shell">
@@ -532,55 +471,12 @@ export function LandingPage() {
                       </span>
                     </p>
                   </div>
-                  <div className="okr__stage-theatre">
-                    <nav className="okr__stage-nav" aria-label={t("section_process")}>
-                    {processItems.map((s, i) => (
-                      <button
-                        key={s.title}
-                        type="button"
-                        className={`okr__stage-nav-item${i === activeProcessIndex ? " is-active" : ""}`}
-                        style={{ "--stage-index": i }}
-                        onMouseEnter={() => {
-                          if (!window.matchMedia("(max-width: 900px)").matches) setSelectedProcessIndex(i);
-                        }}
-                        onFocus={() => setSelectedProcessIndex(i)}
-                        onClick={() => moveToProcessStage(i)}
-                        aria-pressed={i === activeProcessIndex}
-                        aria-controls={`okr-stage-${i}`}
-                      >
-                        <span>{s.title}</span>
-                        <small>{s.body}</small>
-                      </button>
-                    ))}
-                    </nav>
-                    <div className="okr__stage-viewport" role="region" aria-live="polite">
-                      {processItems.map((stage, i) => (
-                        <article
-                          key={stage.title}
-                          className={`okr__stage-scene${stage.title.length > 10 ? " has-long-title" : stage.title.length > 7 ? " has-medium-title" : ""}${i === activeProcessIndex ? " is-active" : ""}`}
-                          id={`okr-stage-${i}`}
-                          data-stage-name={stage.title}
-                          aria-hidden={i !== activeProcessIndex}
-                        >
-                          <div className="okr__stage-copy">
-                            <span className="okr__stage-kicker">{t("process_detail_label")}</span>
-                            <h3>{stage.title}</h3>
-                            <p>{stage.detail || stage.body}</p>
-                          </div>
-                          {stage.points?.length > 0 && (
-                            <div className="okr__stage-points">
-                              <span>{t("process_points_label")}</span>
-                              <ul>
-                                {stage.points.map((point, pointIndex) => (
-                                  <li key={point} style={{ "--point-index": pointIndex }}>{point}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                        </article>
-                      ))}
-                    </div>
-                  </div>
+                  <ProcessCardSlider
+                    items={processItems}
+                    lang={lang}
+                    detailLabel={t("process_detail_label")}
+                    pointsLabel={t("process_points_label")}
+                  />
                 </div>
               </div>
             </section>

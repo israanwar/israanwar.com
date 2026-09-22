@@ -1192,6 +1192,19 @@
 
 }
 
+/* Process 3D carousel: this replaces the former 380svh scroll theatre. */
+.okr .okr__process-section--slider {
+  background: #000000 !important;
+  border: 0;
+  min-height: auto;
+  overflow: hidden;
+  padding-block: clamp(96px, 12vw, 168px);
+}
+
+.okr .okr__process-section--slider .okr__process-story-shell::before {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .okr__header,
   .okr :is(.okr__card, .okr__post, .okr__case, .okr__product) {
