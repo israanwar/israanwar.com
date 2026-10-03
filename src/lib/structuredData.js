@@ -10,6 +10,7 @@
 //   muncul di "People also ask" / featured snippet.
 
 import { site as SITE } from "../data/site.js";
+import { PROFILE, CREDENTIALS } from "../data/profile.js";
 
 // Ambil canonical base URL (support settings override kalau nanti ada
 // custom domain). Fallback ke site.url dari data/site.js.
@@ -25,33 +26,51 @@ function absoluteUrl(path, settings) {
   return `${siteUrl(settings)}${clean}`;
 }
 
+// Entity model (dipakai konsisten di semua halaman):
+//   Person       @id  <site>/#person        — Isra Anwar (founder)
+//   Organization @id  <site>/#organization  — studio, founder -> #person
+// Studio memakai nama yang sama dengan person-nya, jadi @id dibedakan
+// secara eksplisit. Nama entity selalu brand "Isra Anwar" (bukan tagline
+// atau nilai settings.site_name dari CMS) supaya prerender dan client sama.
+function personId(settings) {
+  return `${siteUrl(settings)}/#person`;
+}
+function organizationId(settings) {
+  return `${siteUrl(settings)}/#organization`;
+}
+
+function uniqueUrls(...lists) {
+  return [...new Set(lists.flat().filter(Boolean))];
+}
+
 // ==================================================================
 // Organization — dipasang global di semua halaman. Bikin brand terlihat
 // sebagai entity di Google Knowledge Graph + AI systems.
 // ==================================================================
 export function buildOrganization(settings) {
   const url = siteUrl(settings);
-  const name = settings?.site_name || SITE.name;
   const description = settings?.description || SITE.description;
 
-  const sameAs = [
+  const sameAs = uniqueUrls(PROFILE.sameAs, [
     settings?.social_linkedin,
     settings?.social_github,
     settings?.social_instagram,
     settings?.social_twitter,
-  ].filter(Boolean);
+  ]);
 
   const org = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${url}/#organization`,
-    name,
+    "@id": organizationId(settings),
+    name: SITE.name,
     url,
     description,
     logo: {
       "@type": "ImageObject",
       url: `${url}/assets/brand/favicon-ia-v2.png`,
     },
+    founder: { "@id": personId(settings) },
+    areaServed: { "@type": "Country", name: PROFILE.country.name },
   };
 
   if (sameAs.length > 0) org.sameAs = sameAs;
@@ -69,16 +88,15 @@ export function buildOrganization(settings) {
 // ==================================================================
 export function buildWebsite(settings) {
   const url = siteUrl(settings);
-  const name = settings?.site_name || SITE.name;
 
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${url}/#website`,
-    name,
+    name: SITE.name,
     url,
     inLanguage: "id-ID",
-    publisher: { "@id": `${url}/#organization` },
+    publisher: { "@id": organizationId(settings) },
     potentialAction: {
       "@type": "SearchAction",
       target: {
@@ -156,7 +174,8 @@ export function buildArticle(post, category, settings, socialImage = null) {
 
   // Author display — sistem ini masih single-author. Kalau nanti multi,
   // resolve via usersRepo.
-  const authorName = post.author_name || "Isra Anwar";
+  const authorName = post.author_name || PROFILE.name;
+  const isOwner = authorName === PROFILE.name;
 
   // Cover image — pakai cover_url kalau ada; kalau belum, pakai social
   // card 1200×630 yang juga dipakai LinkedIn/X supaya crawler menerima
@@ -190,10 +209,11 @@ export function buildArticle(post, category, settings, socialImage = null) {
     dateModified: post.updated_at || post.published_at,
     author: {
       "@type": "Person",
+      ...(isOwner ? { "@id": personId(settings) } : {}),
       name: authorName,
       url: `${url}/about`,
     },
-    publisher: { "@id": `${url}/#organization` },
+    publisher: { "@id": organizationId(settings) },
     keywords: [post.focus_keyword, ...(post.tags || [])].filter(Boolean).join(", "),
   };
 
@@ -227,16 +247,19 @@ export function buildWebPage(pathname, pageTitle, description, settings) {
   const url = siteUrl(settings);
   const canonical = pathname === "/" ? `${url}/` : `${url}${pathname}`;
 
+  const isAbout = pathname === "/about";
+
   return {
     "@context": "https://schema.org",
-    "@type": "WebPage",
+    "@type": isAbout ? "AboutPage" : "WebPage",
     "@id": `${canonical}#webpage`,
     url: canonical,
     name: pageTitle,
     description,
     inLanguage: "id-ID",
     isPartOf: { "@id": `${url}/#website` },
-    about: { "@id": `${url}/#organization` },
+    about: { "@id": isAbout ? personId(settings) : organizationId(settings) },
+    ...(isAbout ? { mainEntity: { "@id": personId(settings) } } : {}),
     primaryImageOfPage: {
       "@type": "ImageObject",
       url: `${url}/assets/brand/favicon-ia-v2.png`,
@@ -255,23 +278,42 @@ export function buildWebPage(pathname, pageTitle, description, settings) {
 // ==================================================================
 export function buildPerson(settings) {
   const url = siteUrl(settings);
-  const founderName = settings?.founder_name || "Isra Anwar";
 
-  const sameAs = [
+  const sameAs = uniqueUrls(PROFILE.sameAs, [
     settings?.social_linkedin,
     settings?.social_github,
     settings?.social_instagram,
     settings?.social_twitter,
-  ].filter(Boolean);
+  ]);
 
   const person = {
     "@context": "https://schema.org",
     "@type": "Person",
-    "@id": `${url}/#founder`,
-    name: founderName,
+    "@id": personId(settings),
+    name: PROFILE.name,
+    alternateName: PROFILE.alternateNames,
     url: `${url}/about`,
-    jobTitle: "Digital Consultant",
-    worksFor: { "@id": `${url}/#organization` },
+    mainEntityOfPage: `${url}/about`,
+    jobTitle: PROFILE.jobTitle,
+    description: `${PROFILE.name} (${PROFILE.alternateNames.join(", ")}) adalah ${PROFILE.jobTitle} dengan pengalaman ${PROFILE.experienceYears}+ tahun di web development, SEO, AI workflow, dan strategi konten.`,
+    knowsAbout: PROFILE.knowsAbout,
+    workLocation: PROFILE.locations.map((city) => ({
+      "@type": "Place",
+      name: `${city}, ${PROFILE.country.name}`,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: city,
+        addressCountry: PROFILE.country.code,
+      },
+    })),
+    worksFor: { "@id": organizationId(settings) },
+    hasCredential: CREDENTIALS.map((credential) => ({
+      "@type": "EducationalOccupationalCredential",
+      name: credential.name,
+      credentialCategory: "certificate",
+      recognizedBy: { "@type": "Organization", name: credential.issuer },
+      ...(credential.url ? { url: credential.url } : {}),
+    })),
     image: `${url}/assets/brand/favicon-ia-v2.png`,
   };
 
@@ -287,17 +329,16 @@ export function buildPerson(settings) {
 // ==================================================================
 export function buildProfessionalService(settings) {
   const url = siteUrl(settings);
-  const name = settings?.site_name || SITE.name;
   const description = settings?.description || SITE.description;
 
   const service = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     "@id": `${url}/#service`,
-    name,
+    name: SITE.name,
     url,
     description,
-    provider: { "@id": `${url}/#organization` },
+    provider: { "@id": organizationId(settings) },
     serviceType: [
       "Web Development",
       "Search Engine Optimization",
