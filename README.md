@@ -37,7 +37,10 @@ Runs `vite build`, then a `postbuild` step (`scripts/prerender.mjs`) that
 crawls the app's routes and writes static HTML for each one (SEO/crawlers).
 Output goes to `dist/`.
 
-`prebuild` also regenerates `public/sitemap.xml` and `public/llms.txt` from the
+Production is hosted on **Netlify** (`netlify.toml`; redirects in `public/_redirects`).
+`vercel.json` is kept in step only for the Vercel preview project.
+
+`prebuild` also regenerates `public/sitemap.xml`, `public/llms.txt` and `public/_redirects` from the
 canonical post data (`src/lib/canonicalPosts.js`), so URLs there always match
 the prerendered pages.
 

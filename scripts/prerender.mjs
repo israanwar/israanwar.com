@@ -7,7 +7,7 @@
 //   mismatch risk karena tidak ada content pre-rendered yang mesti match.
 // - Cuma modifikasi <head>: title, meta description, OG, Twitter Card,
 //   canonical, dan inject JSON-LD structured data.
-// - Output per-route index.html file. Static host (Vercel/Netlify/Nginx)
+// - Output per-route index.html file. Static host (Netlify/Vercel/Nginx)
 //   auto-serve folder-based /path/index.html untuk URL /path.
 //
 // Kalau script ini gagal, dist/ tetap punya index.html SPA fallback yang
@@ -989,6 +989,11 @@ routes.forEach((route) => {
   else if (route.product) productCount++;
   else staticCount++;
 });
+
+// Netlify serves dist/404.html with a real 404 status for any URL that has no
+// file and no redirect rule. Ship the plain SPA shell there so the React
+// NotFoundPage renders (instead of the homepage), without a soft 404.
+writeFileSync(resolve(distDir, "404.html"), TEMPLATE, "utf8");
 
 console.log(`✓ prerender complete → ${routes.length} HTML files`);
 console.log(`  · ${staticCount} static pages`);

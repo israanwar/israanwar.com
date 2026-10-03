@@ -78,18 +78,37 @@ for (const path of ["/", "/blog", ...locs.map((l) => l.slice(SITE_URL.length))])
   }
 }
 
-// 4. vercel.json: every old slug 301s straight to its canonical slug, and the
-//    apex host redirects to www.
+// 4. Redirects (production is Netlify: dist/_redirects; vercel.json mirrors it
+//    for the Vercel preview project). Every old slug 301s straight to its
+//    canonical slug, the apex host redirects to www, and the SPA fallback is
+//    last so it never shadows a rule.
+const redirectsFile = resolve(distDir, "_redirects");
+if (!existsSync(redirectsFile)) fail("dist/_redirects missing (Netlify redirects not shipped)");
+else {
+  const rules = readFileSync(redirectsFile, "utf8")
+    .split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#"))
+    .map((l) => l.split(/\s+/));
+  for (const [old, next] of Object.entries(SLUG_RENAMES)) {
+    const rule = rules.find((r) => r[0] === `/blog/${old}`);
+    if (!rule) fail(`_redirects: no rule for /blog/${old}`);
+    else if (rule[1] !== `/blog/${next}` || rule[2] !== "301") fail(`_redirects: wrong rule for /blog/${old}`);
+    if (oldSlugs.includes(next)) fail(`redirect chain: ${old} -> ${next} -> ...`);
+  }
+  if (!rules.some((r) => r[0] === "https://israanwar.com/*" && r[1] === `${SITE_URL}/:splat` && r[2].startsWith("301"))) {
+    fail("_redirects: no apex (israanwar.com) -> www rule");
+  }
+  const firstFallback = rules.findIndex((r) => r[1] === "/index.html" && r[2] === "200");
+  const lastRedirect = rules.map((r, i) => (r[2]?.startsWith("301") ? i : -1)).reduce((a, b) => Math.max(a, b), -1);
+  if (firstFallback === -1 || firstFallback < lastRedirect) fail("_redirects: SPA fallback missing or placed before redirects");
+}
+if (!existsSync(resolve(distDir, "404.html"))) fail("dist/404.html missing (unknown URLs would soft-404)");
+if (!/publish\s*=\s*"dist"/.test(readFileSync(resolve(projectRoot, "netlify.toml"), "utf8"))) fail("netlify.toml: publish dir is not dist");
+
 const vercel = JSON.parse(readFileSync(resolve(projectRoot, "vercel.json"), "utf8"));
 const redirects = vercel.redirects ?? [];
 for (const [old, next] of Object.entries(SLUG_RENAMES)) {
   const rule = redirects.find((r) => r.source === `/blog/${old}`);
-  if (!rule) fail(`vercel.json: no redirect for /blog/${old}`);
-  else if (rule.destination !== `/blog/${next}` || rule.statusCode !== 301) fail(`vercel.json: wrong redirect for /blog/${old}`);
-  if (oldSlugs.includes(next)) fail(`redirect chain: ${old} -> ${next} -> ...`);
-}
-if (!redirects.some((r) => r.has?.some((h) => h.type === "host" && h.value === "israanwar.com") && r.destination.startsWith(`${SITE_URL}/`))) {
-  fail("vercel.json: no apex (israanwar.com) -> www redirect");
+  if (!rule || rule.destination !== `/blog/${next}` || rule.statusCode !== 301) fail(`vercel.json: missing/wrong redirect for /blog/${old}`);
 }
 
 // 5. Sitemap hygiene: the HTML /sitemap page is not listed, and <lastmod> is

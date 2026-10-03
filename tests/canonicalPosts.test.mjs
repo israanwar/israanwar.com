@@ -48,3 +48,13 @@ test("vercel.json 301s every old slug straight to its canonical slug", () => {
     assert.equal(rule.statusCode, 301);
   }
 });
+
+test("public/_redirects (Netlify) 301s every old slug to its canonical slug", () => {
+  const rules = readFileSync(new URL("../public/_redirects", import.meta.url), "utf8")
+    .split("\n").map((l) => l.trim()).filter((l) => l && !l.startsWith("#")).map((l) => l.split(/\s+/));
+  for (const [old, next] of Object.entries(SLUG_RENAMES)) {
+    const rule = rules.find((r) => r[0] === `/blog/${old}`);
+    assert.ok(rule, `missing Netlify rule for ${old}`);
+    assert.deepEqual(rule.slice(1), [`/blog/${next}`, "301"]);
+  }
+});
