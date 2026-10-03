@@ -51,6 +51,9 @@ const { ISRA_ANWAR_SERVICES_SEED } = await import(
 const { TOOLS, TOOLS_CATALOG } = await import(
   `file://${projectRoot}/src/data/toolsCatalog.js`
 );
+const { getServiceMetaDescription } = await import(
+  `file://${projectRoot}/src/data/serviceMeta.js`
+);
 const { PAGES_SEED } = await import(`file://${projectRoot}/src/data/pagesSeed.js`);
 const { localizePage } = await import(`file://${projectRoot}/src/lib/pageI18n.js`);
 const { normalizePortfolioProjects } = await import(
@@ -486,11 +489,15 @@ function renderBodyHtml(route) {
   </main>`;
   }
 
-  return `<div id="ssg-shell" data-ssg="1">
+  // Internal links are emitted absolute on the canonical www host, so a
+  // crawler that happened to fetch the page from the apex domain never
+  // resolves them against the non-www host.
+  const shell = `<div id="ssg-shell" data-ssg="1">
   <header>${nav}</header>
   ${main}
   ${footer}
 </div>`;
+  return shell.replace(/href="\/(?!\/)/g, `href="${SITE_URL}/`);
 }
 
 // -----------------------------------------------------------------------
@@ -899,12 +906,21 @@ serviceCategories.forEach((cat) => {
   });
 });
 
+// Two catalog entries share the name "Website Maintenance" (Web Development
+// and Support & Growth); until they are consolidated (see
+// docs/seo-fix-notes.md), qualify the title so the two pages don't share one.
+const serviceNameCounts = serviceChildren.reduce((acc, svc) => {
+  acc[svc.name] = (acc[svc.name] || 0) + 1;
+  return acc;
+}, {});
+
 serviceChildren.forEach((svc) => {
   const category = serviceCategories.find((c) => c.slug === svc.parent_slug) || null;
+  const title = serviceNameCounts[svc.name] > 1 && category ? `${svc.name} (${category.name})` : svc.name;
   routes.push({
     path: `/services/${svc.slug}`,
-    title: svc.name,
-    description: svc.tagline,
+    title,
+    description: getServiceMetaDescription(svc),
     currentTitle: svc.name,
     ogType: "website",
     service: { svc, category },

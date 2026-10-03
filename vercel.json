@@ -1,6 +1,17 @@
 {
   "redirects": [
     {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "israanwar.com"
+        }
+      ],
+      "destination": "https://www.israanwar.com/$1",
+      "permanent": true
+    },
+    {
       "source": "/blog/bisnis-kecil-setelah-dunia-pindah-ke-layar",
       "destination": "/blog/dunia-sudah-pindah-ke-layar-bisnis-kecil-belum-tentu-ikut-pindah",
       "permanent": true
