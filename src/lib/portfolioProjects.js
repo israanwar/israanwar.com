@@ -7,7 +7,6 @@ const AKRAGA_TV_CONSULTING_PROJECT = {
 
 function normalizeOrgName(value) {
   const org = String(value ?? "").trim();
-  if (org === "Investoft" || org === "Investoft.com") return "R24 Studio";
   if (/^akraga\s*tv$/i.test(org)) return "Akraga TV";
   return org;
 }

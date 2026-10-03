@@ -746,11 +746,6 @@ function ensureSeed() {
         .filter(Boolean)
         .filter((item) => item !== "Kharisma College" && item !== "Sheila On 7");
 
-      if (group.label === "Website Development & SEO" && !items.includes("Pergolafr.com")) {
-        const afterInvestoft = items.indexOf("Investoft.com");
-        items.splice(afterInvestoft >= 0 ? afterInvestoft + 1 : items.length, 0, "Pergolafr.com");
-      }
-
       const nextItems = `${items.join(", ")}.`;
       if (nextItems !== before) changed = true;
       return { ...group, items: nextItems };
@@ -985,8 +980,6 @@ function ensureSeed() {
         .split(",")
         .map((item) => item.trim())
         .filter(Boolean)
-        .map((item) => item === "Investoft.com" ? "Investoft" : item)
-        .map((item) => item === "Pergolafr.com" ? "Pergolafr" : item)
         .map((item) => item === "MetodePenelitian.com" ? "MetodePenelitian" : item)
         .map((item) => item === "ManajemenSumberDayaManusia.com" ? "Manajemen Sumber Daya Manusia" : item);
 
@@ -1002,11 +995,9 @@ function ensureSeed() {
       return { ...group, items: nextItems };
     });
     const nextConsulting = (portfolio.consulting ?? []).map((item) => {
-      const nextOrg = item.org === "Investoft.com"
-        ? "Investoft"
-        : item.org === "MetodePenelitian.com"
-          ? "MetodePenelitian"
-          : item.org;
+      const nextOrg = item.org === "MetodePenelitian.com"
+        ? "MetodePenelitian"
+        : item.org;
       if (nextOrg !== item.org) changed = true;
       return { ...item, org: nextOrg };
     });
