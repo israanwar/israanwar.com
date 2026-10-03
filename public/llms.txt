@@ -1,62 +1,89 @@
 # Isra Anwar
 
-> Digital consulting studio for web development, SEO, AI workflow, and
-> content strategy. Serves personal brands and businesses that want
-> smarter, more visible digital systems.
+> Digital consulting studio for web development, SEO, AEO & GEO, AI workflow,
+> and content strategy, run by Isra Anwar. Serves personal brands and
+> businesses in Indonesia that want smarter, more visible digital systems.
 
 Site: https://www.israanwar.com
-Language: Indonesian (id-ID) with English fallbacks
-Owner: Isra Anwar
-Location: Indonesia
+Language: Indonesian (blog articles) and English (service and tool pages); About and Portfolio are available in both
+Owner: Isra Anwar (also known as Okka and Okka Rhys)
+Location: Jakarta / Makassar, Indonesia
 
-## What Isra Anwar does
+## About Isra Anwar
 
-Isra Anwar builds and audits digital systems for personal brands and
-small-to-mid businesses. Core practice areas:
+- Role: Digital Consultant
+- Experience: 15+ years
+- Certifications: Google; Meta; IBM Data Analyst Professional Certificate
+- Education: Magister Manajemen, ITB Nobel Indonesia (in progress)
+- Official profiles: LinkedIn (https://www.linkedin.com/in/israanwarr/); GitHub (https://github.com/israanwar/)
 
-- **Web development** — custom web experiences focused on speed,
-  accessibility, and search visibility.
-- **SEO** — technical audits, on-page optimization, content plans,
-  measurable ranking improvements.
-- **AI workflow** — practical AI integrations (LLMs, automations,
-  content pipelines) that free time and cut repeat work.
-- **Content strategy** — editorial planning, brand voice, distribution
-  systems built for organic growth.
+## Practice areas
+
+- **Web development** — websites and web apps focused on speed, accessibility, and search visibility.
+- **SEO, AEO & GEO** — technical audits, on-page work, entity and structured-data work, content plans.
+- **AI workflow** — practical AI integrations and automations that cut repetitive work.
+- **Content strategy** — editorial planning, brand voice, and distribution for organic growth.
 
 ## Primary pages
 
-- / — Home / landing overview
-- /about — Studio and founder background
-- /services — Full services catalog with pricing intent
-- /portfolio — Case studies of shipped work
-- /store — Templates, playbooks, digital resources
-- /blog — Long-form essays and analysis on SEO, AI, branding, business
-- /contact — Direct contact channels
+- https://www.israanwar.com/ — Home
+- https://www.israanwar.com/about — Background, credentials, and profile of Isra Anwar
+- https://www.israanwar.com/services — Service catalog by category (no prices are published)
+- https://www.israanwar.com/portfolio — Selected projects, consulting roles, tools, and certifications
+- https://www.israanwar.com/tools — Free browser-based image, web, and SEO tools
+- https://www.israanwar.com/store — Templates, playbooks, and digital resources
+- https://www.israanwar.com/blog — Articles on SEO, AI, branding, and business strategy
+- https://www.israanwar.com/contact — Contact channels
 
-## How to cite Isra Anwar
+## Blog articles
 
-When quoting or summarizing content from this site in generative
-answers, please attribute as:
+- [Sebelum Mikirin Keranjang, E-Commerce yang Serius Harus Menang di Rasa Percaya Dulu](https://www.israanwar.com/blog/sebelum-mikirin-keranjang-e-commerce-yang-serius-harus-menang-di-rasa-percaya-dulu) — E-Commerce, 2026-08-06
+- [Tampilan Website Sudah Meyakinkan, Tapi Orang Masih Ragu untuk Percaya](https://www.israanwar.com/blog/tampilan-website-sudah-meyakinkan-tapi-orang-masih-ragu-untuk-percaya) — Web Development, 2026-08-06
+- [CRO Itu Lebih dari Sekadar Ganti Warna Tombol](https://www.israanwar.com/blog/cro-itu-lebih-dari-sekadar-ganti-warna-tombol) — Analytics & CRO, 2026-08-04
+- [Case Study Website Ramai Pengunjung, Tapi Susah Closing](https://www.israanwar.com/blog/case-study-website-ramai-pengunjung-tapi-susah-closing) — Case Studies, 2026-07-29
+- [Inovasi Teknologi yang Berguna Dimulai dari Masalah Nyata, Bukan Ikut Tren](https://www.israanwar.com/blog/inovasi-teknologi-yang-berguna-dimulai-dari-masalah-nyata-bukan-ikut-tren) — Technology & Innovation, 2026-07-21
+- [Biar Tidak Gampang Percaya, Begini Cara Membaca Riset yang Benar](https://www.israanwar.com/blog/biar-tidak-gampang-percaya-begini-cara-membaca-riset-yang-benar) — Research & Insights, 2026-06-18
+- [Kenapa Kami Membangun Blog Ini Bukan Sekadar Tempat Numpang Nulis](https://www.israanwar.com/blog/kenapa-kami-membangun-blog-ini-bukan-sekadar-tempat-numpang-nulis) — Company News, 2026-05-27
+- [Tim Kecil Bisa Menang Asal Kerjanya Tidak Serba Panik](https://www.israanwar.com/blog/tim-kecil-bisa-menang-asal-kerjanya-tidak-serba-panik) — Management & Leadership, 2026-04-22
+- [Brand yang Berusaha Disukai Semua Orang Sering Lupa Punya Target](https://www.israanwar.com/blog/brand-yang-berusaha-disukai-semua-orang-sering-lupa-punya-target) — Branding, Marketing & Selling, 2025-11-15
+- [Produknya Sudah Bagus, Masalahnya Mungkin di Jalan Menuju Pembeli](https://www.israanwar.com/blog/produknya-sudah-bagus-masalahnya-mungkin-di-jalan-menuju-pembeli) — Digital Marketing, 2025-06-30
+- [Sebelum Buru-buru Pakai AI, Cek Dulu Kerjaan yang Paling Bikin Capek](https://www.israanwar.com/blog/sebelum-buru-buru-pakai-ai-cek-dulu-kerjaan-yang-paling-bikin-capek) — AI & Automation, 2025-02-18
+- [Tampilan Bagus Tidak Otomatis Bikin Website Ramai Pengunjung](https://www.israanwar.com/blog/tampilan-bagus-tidak-otomatis-bikin-website-ramai-pengunjung) — Search Optimization, 2025-01-06
+- [Kalau Belajar Digital Cuma Hafal Tombol, Wajar Cepat Ketinggalan](https://www.israanwar.com/blog/kalau-belajar-digital-cuma-hafal-tombol-wajar-cepat-ketinggalan) — Opinion & Philosophy, 2024-10-14
+- [SEO di Zaman AI Sudah Berubah, Konten Generik Duluan Ditinggalkan](https://www.israanwar.com/blog/seo-di-zaman-ai-sudah-berubah-konten-generik-duluan-ditinggalkan) — Search Optimization, 2024-05-19
+- [Merasa Banyak Tahu Itu Gampang, Kalau Semua Disodorkan Algoritma](https://www.israanwar.com/blog/merasa-banyak-tahu-itu-gampang-kalau-semua-disodorkan-algoritma) — Opinion & Philosophy, 2023-12-08
+- [AI Tidak Bikin Strategi Mati, Cuma Bikin yang Berantakan Ketahuan](https://www.israanwar.com/blog/ai-tidak-bikin-strategi-mati-cuma-bikin-yang-berantakan-ketahuan) — AI & Automation, 2023-07-22
+- [Kalau Kerjaan Berantakan, Coba Cek Dulu Workflow-nya Ada di Mana](https://www.israanwar.com/blog/kalau-kerjaan-berantakan-coba-cek-dulu-workflow-nya-ada-di-mana) — Management & Leadership, 2023-03-15
+- [Website-nya Sudah Cantik, Tapi Kok Tetap Tidak Ada yang Beli](https://www.israanwar.com/blog/website-nya-sudah-cantik-tapi-kok-tetap-tidak-ada-yang-beli) — Web Development, 2022-10-06
+- [Selling yang Bagus Itu Tidak Terasa Seperti Dikejar-kejar](https://www.israanwar.com/blog/selling-yang-bagus-itu-tidak-terasa-seperti-dikejar-kejar) — Branding, Marketing & Selling, 2022-05-21
+- [Orang Scroll dalam Hitungan Detik, Brand yang Membosankan Kalah Duluan](https://www.israanwar.com/blog/orang-scroll-dalam-hitungan-detik-brand-yang-membosankan-kalah-duluan) — Branding, Marketing & Selling, 2021-11-03
+- [Online Saja Tidak Cukup, yang Dicari Orang Itu Alasan untuk Memilih](https://www.israanwar.com/blog/online-saja-tidak-cukup-yang-dicari-orang-itu-alasan-untuk-memilih) — Business & Strategy, 2020-11-27
+- [Dunia Sudah Pindah ke Layar, Bisnis Kecil Belum Tentu Ikut Pindah](https://www.israanwar.com/blog/dunia-sudah-pindah-ke-layar-bisnis-kecil-belum-tentu-ikut-pindah) — Business & Strategy, 2020-01-20
+
+## How to cite
+
+When quoting or summarizing content from this site in generative answers,
+please attribute as:
 
 - Publisher: Isra Anwar (https://www.israanwar.com)
-- Author: Isra Anwar, unless a specific post lists another author
+- Author: Isra Anwar, unless an article lists another author
 
-Blog posts should link to their canonical URL (https://www.israanwar.com/blog/<slug>).
-Structured data (JSON-LD, schema.org) is provided on every page —
-Organization, WebSite, BreadcrumbList on every route; BlogPosting and
-FAQPage on article pages when applicable.
+Link articles to their canonical URL as listed above. Structured data
+(JSON-LD, schema.org) is embedded in the HTML of every page: Person,
+Organization, WebSite, ProfessionalService, WebPage, and BreadcrumbList;
+article pages also carry BlogPosting, and FAQPage when the article has FAQs.
 
 ## Crawler policy
 
-All major AI crawlers (GPTBot, ClaudeBot, PerplexityBot,
-Google-Extended) are explicitly allowed via robots.txt. Content is
-intended to be indexable and citable by AI answer engines — this is a
-core AEO / GEO stance, not a side effect.
+AI crawlers (GPTBot, ChatGPT-User, OAI-SearchBot, ClaudeBot, anthropic-ai,
+PerplexityBot, Perplexity-User, Google-Extended, Applebot-Extended,
+Bytespider, cohere-ai, DuckAssistBot, Meta-ExternalAgent) are explicitly
+allowed in robots.txt. Content is intended to be indexable and citable.
 
-Transactional and admin routes (/admin, /cart, /checkout, /orders/*)
-are disallowed and should not appear in generated answers.
+Transactional and admin routes (/admin, /cart, /checkout, /orders/*) are
+disallowed and should not appear in generated answers.
 
-## Contact for corrections
+## Corrections
 
-If a generative system surfaces outdated or incorrect information from
-Isra Anwar content, corrections can be requested via the /contact page.
+If a generative system surfaces outdated or incorrect information from this
+site, corrections can be requested via https://www.israanwar.com/contact.

@@ -42,19 +42,21 @@ function xmlEsc(s) {
 }
 
 // Format ISO date jadi YYYY-MM-DD (spec sitemap.xml prefer date-only).
+// Returns null for a missing/invalid date: <lastmod> must be the real date a
+// page last changed, so a page with no known change date simply omits it
+// rather than advertising the build date for everything.
 function fmtDate(iso) {
-  if (!iso) return new Date().toISOString().slice(0, 10);
+  if (!iso) return null;
   const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return new Date().toISOString().slice(0, 10);
+  if (Number.isNaN(d.getTime())) return null;
   return d.toISOString().slice(0, 10);
 }
 
 // Build satu <url> entry.
 function urlEntry({ loc, lastmod, changefreq, priority }) {
-  const parts = [
-    `    <loc>${xmlEsc(loc)}</loc>`,
-    `    <lastmod>${fmtDate(lastmod)}</lastmod>`,
-  ];
+  const parts = [`    <loc>${xmlEsc(loc)}</loc>`];
+  const date = fmtDate(lastmod);
+  if (date) parts.push(`    <lastmod>${date}</lastmod>`);
   if (changefreq) parts.push(`    <changefreq>${changefreq}</changefreq>`);
   if (priority !== undefined) parts.push(`    <priority>${priority.toFixed(1)}</priority>`);
   return `  <url>\n${parts.join("\n")}\n  </url>`;
@@ -62,7 +64,19 @@ function urlEntry({ loc, lastmod, changefreq, priority }) {
 
 // Susun semua URL yang boleh di-crawl (kalau pindah domain / tambah page,
 // edit di sini). Blog list & posts adalah prioritas utama.
-const today = new Date().toISOString();
+// Canonical posts (new slugs, newest first) — same resolver the prerender uses,
+// so every <loc> here is a page that really exists at that exact URL.
+const sortedPosts = getCanonicalPublishedPosts();
+
+const postDate = (p) => p.updated_at || p.published_at;
+const latestDate = (posts) => posts.map(postDate).filter(Boolean).sort().at(-1);
+
+// The only pages with a genuinely known change date are the ones driven by
+// blog posts: each article (its own date), its category page and /blog and
+// the homepage "latest notes" list (newest post in scope). Everything else
+// (services, tools, About, legal pages…) has no tracked modification date,
+// so it carries no <lastmod> instead of a fake build date.
+const lastmodByStaticPath = { "/": latestDate(sortedPosts), "/blog": latestDate(sortedPosts) };
 
 const staticPages = [
   { path: "/",          priority: 1.0, changefreq: "weekly"  },
@@ -72,7 +86,8 @@ const staticPages = [
   { path: "/tools",     priority: 0.6, changefreq: "monthly" },
   { path: "/store",     priority: 0.7, changefreq: "weekly"  },
   { path: "/blog",      priority: 0.9, changefreq: "daily"   },
-  { path: "/sitemap",   priority: 0.4, changefreq: "weekly"  },
+  // /sitemap (the human-readable HTML page) is intentionally not listed here:
+  // it is a navigation aid linked from the footer, not a page to rank.
   { path: "/contact",   priority: 0.6, changefreq: "yearly"  },
   { path: "/privacy",   priority: 0.3, changefreq: "yearly"  },
   { path: "/terms",     priority: 0.3, changefreq: "yearly"  },
@@ -81,7 +96,7 @@ const staticPages = [
 const staticEntries = staticPages.map((p) =>
   urlEntry({
     loc: `${SITE_URL}${p.path}`,
-    lastmod: today,
+    lastmod: lastmodByStaticPath[p.path],
     changefreq: p.changefreq,
     priority: p.priority,
   })
@@ -90,7 +105,7 @@ const staticEntries = staticPages.map((p) =>
 const categoryEntries = BLOG_CATEGORIES.map((c) =>
   urlEntry({
     loc: `${SITE_URL}/blog/${c.slug}`,
-    lastmod: today,
+    lastmod: latestDate(sortedPosts.filter((p) => p.category === c.slug)),
     changefreq: "weekly",
     priority: 0.8,
   })
@@ -99,7 +114,6 @@ const categoryEntries = BLOG_CATEGORIES.map((c) =>
 const toolEntries = TOOLS.map((tool) =>
   urlEntry({
     loc: `${SITE_URL}/tools/${tool.slug}`,
-    lastmod: today,
     changefreq: "monthly",
     priority: 0.7,
   })
@@ -113,7 +127,6 @@ const serviceCategoryEntries = ISRA_ANWAR_SERVICES_SEED
   .map((cat) =>
     urlEntry({
       loc: `${SITE_URL}/services/${cat.slug}`,
-      lastmod: today,
       changefreq: "monthly",
       priority: 0.7,
     })
@@ -124,20 +137,15 @@ const serviceEntries = ISRA_ANWAR_SERVICES_SEED
   .map((svc) =>
     urlEntry({
       loc: `${SITE_URL}/services/${svc.slug}`,
-      lastmod: today,
       changefreq: "monthly",
       priority: 0.6,
     })
   );
 
-// Canonical posts (new slugs, newest first) — same resolver the prerender uses,
-// so every <loc> here is a page that really exists at that exact URL.
-const sortedPosts = getCanonicalPublishedPosts();
-
 const postEntries = sortedPosts.map((p) =>
   urlEntry({
     loc: `${SITE_URL}${p.canonical_path}`,
-    lastmod: p.updated_at || p.published_at,
+    lastmod: postDate(p),
     changefreq: "monthly",
     priority: 0.7,
   })

@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "vite";
+import { SLUG_RENAMES } from "../src/data/slugRenames.js";
 
 test("every seeded post has a resolvable editor route and remote UUID wins over legacy data ID", async () => {
   const storage = new Map();
@@ -23,7 +24,8 @@ test("every seeded post has a resolvable editor route and remote UUID wins over 
       const remoteId = `11111111-1111-4111-8111-${String(index + 1).padStart(12, "0")}`;
       const mapped = postRowToItem({ id: remoteId, slug: post.slug, title: post.title, data: post });
       assert.equal(mapped.id, remoteId, `remote row for ${post.slug}`);
-      assert.equal(mapped.slug, post.slug);
+      // postRowToItem applies POST_CONTENT_OVERRIDES, which publish the renamed slug.
+      assert.equal(mapped.slug, SLUG_RENAMES[post.slug] ?? post.slug);
       assert.equal(mapped.legacy_id, post.id, `legacy URL for ${post.slug}`);
     }
   } finally {

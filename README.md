@@ -37,6 +37,17 @@ Runs `vite build`, then a `postbuild` step (`scripts/prerender.mjs`) that
 crawls the app's routes and writes static HTML for each one (SEO/crawlers).
 Output goes to `dist/`.
 
+`prebuild` also regenerates `public/sitemap.xml` and `public/llms.txt` from the
+canonical post data (`src/lib/canonicalPosts.js`), so URLs there always match
+the prerendered pages.
+
+After a build, check the SEO acceptance criteria (raw HTML, no JavaScript):
+
+```bash
+npm run verify:seo   # sitemap URLs, canonicals, JSON-LD, titles, redirects, llms.txt
+npm test             # unit tests (canonical slugs, redirects, SEO audit)
+```
+
 ```bash
 npm run preview
 ```
