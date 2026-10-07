@@ -23,7 +23,16 @@ export async function renderPublicHtml({ distDir, routes, template }) {
   const base = `http://127.0.0.1:${server.address().port}`;
   let browser;
   try {
-    browser = await chromium.launch({ headless:true });
+    const launchOptions = { headless:true };
+    // Vercel's Amazon Linux runner has no Playwright-managed browser cache.
+    // This runtime is only used to generate HTML; it never enters client bundles.
+    if (process.env.VERCEL === '1' && process.platform === 'linux') {
+      const { default: buildChromium } = await import('@sparticuz/chromium');
+      // Separate processes let the four workers open and close fresh contexts.
+      launchOptions.args = buildChromium.args.filter(arg => arg !== '--single-process');
+      launchOptions.executablePath = await buildChromium.executablePath();
+    }
+    browser = await chromium.launch(launchOptions);
     const pending = routes.filter(r => !r.noindex);
     const snapshots = [];
     let completed = 0;

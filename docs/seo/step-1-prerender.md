@@ -14,6 +14,9 @@ source is changed. The client uses createRoot, not hydrateRoot.
 
 - Install dev dependencies, including `@playwright/test`.
 - Install a supported Chromium runtime: `npx playwright install chromium`.
+- Vercel Linux builds use the pinned build-only `@sparticuz/chromium` runtime
+  automatically, without relying on a pre-existing Playwright browser cache.
+  Local builds continue to use Playwright's installed browser.
 - Linux runners may need system browser dependencies:
   `npx playwright install --with-deps chromium` on runners with apt permission.
 - Provide the same public Supabase environment variables as the deployed app.
