@@ -1,0 +1,11 @@
+# Production is hosted on Netlify. Redirects live in public/_redirects
+# (generated from src/data/slugRenames.js by `npm run redirects`, which also
+# runs in `prebuild`), so only build settings and headers belong here.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 8 and prerender.mjs (process.loadEnvFile) need a current Node.
+  NODE_VERSION = "22"

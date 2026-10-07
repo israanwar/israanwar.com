@@ -7,7 +7,7 @@
 //   mismatch risk karena tidak ada content pre-rendered yang mesti match.
 // - Cuma modifikasi <head>: title, meta description, OG, Twitter Card,
 //   canonical, dan inject JSON-LD structured data.
-// - Output per-route index.html file. Static host (Vercel/Netlify/Nginx)
+// - Output per-route index.html file. Static host (Netlify/Vercel/Nginx)
 //   auto-serve folder-based /path/index.html untuk URL /path.
 //
 // Kalau script ini gagal, dist/ tetap punya index.html SPA fallback yang
@@ -33,8 +33,8 @@ try {
   // fine, process.env may already have these from the platform.
 }
 
-const { ISRA_ANWAR_BLOG_POSTS_SEED } = await import(
-  `file://${projectRoot}/src/data/blogSeedIsraVoice.js`
+const { getCanonicalPublishedPosts } = await import(
+  `file://${projectRoot}/src/lib/canonicalPosts.js`
 );
 const { BLOG_CATEGORIES, CATEGORY_BY_SLUG, DEFAULT_CATEGORY_SLUG } = await import(
   `file://${projectRoot}/src/data/blogCategories.js`
@@ -51,22 +51,28 @@ const { ISRA_ANWAR_SERVICES_SEED } = await import(
 const { TOOLS, TOOLS_CATALOG } = await import(
   `file://${projectRoot}/src/data/toolsCatalog.js`
 );
+const { getServiceMetaDescription } = await import(
+  `file://${projectRoot}/src/data/serviceMeta.js`
+);
+const { PAGES_SEED } = await import(`file://${projectRoot}/src/data/pagesSeed.js`);
+const { localizePage } = await import(`file://${projectRoot}/src/lib/pageI18n.js`);
+const { normalizePortfolioProjects } = await import(
+  `file://${projectRoot}/src/lib/portfolioProjects.js`
+);
+const { getProfileRows, getProfileHeading, withProfileExperience } = await import(
+  `file://${projectRoot}/src/data/profile.js`
+);
 const { isGeneratedStoreCover, isLegacyStoreCover } = await import(
   `file://${projectRoot}/src/lib/storePlaceholder.js`
 );
 
 const SITE_URL = "https://www.israanwar.com";
-// SITE_NAME stays "Isra Anwar" — it only feeds the <title> tag suffix
-// ("Page Title | Isra Anwar"), which needs to stay short and readable in
-// a browser tab / search result blue link.
+// SITE_NAME is the brand: it feeds the <title> suffix ("Page Title | Isra
+// Anwar"), og:site_name, and every schema.org entity "name" (Organization,
+// WebSite, ProfessionalService, Person — see structuredData.js). The longer
+// positioning line below is only a description, never an entity name.
 const SITE_NAME = "Isra Anwar";
-// SITE_IDENTITY is the site's declared identity for search engines and AI
-// answer engines specifically — og:site_name and every schema.org "name"
-// field (Organization, WebSite, ProfessionalService) below, per explicit
-// request to use this instead of the personal name "Isra Anwar" there.
-const SITE_IDENTITY =
-  "Web Development & AI Integration, Branding & Marketing, SEO, AEO & GEO.";
-const SOCIAL_SITE_NAME = SITE_IDENTITY;
+const SOCIAL_SITE_NAME = SITE_NAME;
 const DEFAULT_DESCRIPTION =
   "Web, SEO, AI workflow & content strategy for personal brands and businesses.";
 // Generic brand share card (see src/lib/socialMeta.js — same file, kept in
@@ -80,12 +86,9 @@ const DEFAULT_DESCRIPTION =
 const DEFAULT_SOCIAL_IMAGE = `${SITE_URL}/assets/social/israanwar-social-share.png`;
 
 // Settings context untuk schema builders (mirror struktur useLiveSettings).
-// site_name here only ever reaches buildOrganization/buildWebsite/
-// buildProfessionalService (see structuredData.js) — it's the search-engine
-// identity, not the client app's own site_name (that's a separate,
-// Supabase-backed value used for the footer/logo/copyright text).
+// Entity names no longer come from here — structuredData.js pins them to the
+// brand — so only the shared description and base URL are passed.
 const settings = {
-  site_name: SITE_IDENTITY,
   site_url: SITE_URL,
   description: DEFAULT_DESCRIPTION,
 };
@@ -293,15 +296,46 @@ function renderBodyHtml(route) {
   if (route.article) {
     const { post, category } = route.article;
     const tagsLine = post.tags?.length ? `<p>${xmlEsc(post.tags.join(" · ").toUpperCase())}</p>` : "";
-    const metaBits = [fmtDateID(post.published_at || post.created_at), post.reading_time ? `${post.reading_time} min read` : ""].filter(Boolean);
+    const publishedIso = post.published_at || post.created_at || "";
+    const dateLabel = fmtDateID(publishedIso);
+    const dateHtml = dateLabel ? `<time datetime="${xmlEsc(publishedIso)}">${xmlEsc(dateLabel)}</time>` : "";
+    const readingHtml = post.reading_time ? ` · ${xmlEsc(String(post.reading_time))} min read` : "";
     const excerptHtml = post.excerpt ? `<p>${xmlEsc(post.excerpt)}</p>` : "";
+    const faqHtml = post.faqs?.length
+      ? `<section>
+      <h2>Pertanyaan yang sering muncul</h2>
+      ${post.faqs.map((f) => `<h3>${xmlEsc(f.question)}</h3>\n      <p>${xmlEsc(f.answer)}</p>`).join("\n      ")}
+    </section>`
+      : "";
+    const refsHtml = post.references?.length
+      ? `<section>
+      <h2>Referensi</h2>
+      <ul>
+        ${post.references.map((r) => `<li><a href="${xmlEsc(r.url)}" target="_blank" rel="noreferrer">${xmlEsc(r.title)}</a>${r.source ? ` · ${xmlEsc(r.source)}` : ""}</li>`).join("\n        ")}
+      </ul>
+    </section>`
+      : "";
+    const relatedPosts = (post.related_slugs ?? [])
+      .map((slug) => publishedPosts.find((p) => p.slug === slug))
+      .filter(Boolean);
+    const relatedHtml = relatedPosts.length
+      ? `<section>
+      <h2>Bacaan terkait</h2>
+      <ul>
+        ${relatedPosts.map((p) => `<li><a href="/blog/${xmlEsc(p.slug)}">${xmlEsc(p.title)}</a></li>`).join("\n        ")}
+      </ul>
+    </section>`
+      : "";
     main = `<main>
     <p><a href="/">Home</a> / <a href="/blog">Blog</a>${category ? ` / <a href="/blog/${xmlEsc(category.slug)}">${xmlEsc(category.name)}</a>` : ""}</p>
     ${tagsLine}
     <h1>${xmlEsc(post.title)}</h1>
-    <p>${xmlEsc(metaBits.join(" · "))}</p>
+    <p>Oleh <a href="/about">${xmlEsc(post.author_name || "Isra Anwar")}</a> · ${dateHtml}${readingHtml}</p>
     ${excerptHtml}
     <article>${renderTiptapDoc(post.content)}</article>
+    ${faqHtml}
+    ${refsHtml}
+    ${relatedHtml}
   </main>`;
   } else if (route.path.startsWith("/blog/")) {
     const catSlug = route.path.replace("/blog/", "");
@@ -427,6 +461,10 @@ function renderBodyHtml(route) {
     ${priceLine}
     ${renderPlainParagraphs(product.description)}
   </main>`;
+  } else if (route.path === "/about") {
+    main = renderAboutMain(route);
+  } else if (route.path === "/portfolio") {
+    main = renderPortfolioMain(route);
   } else if (route.path === "/") {
     // Real recent-posts list (same data as the /blog page) — gives the
     // homepage real internal links + text instead of just one paragraph.
@@ -451,11 +489,124 @@ function renderBodyHtml(route) {
   </main>`;
   }
 
-  return `<div id="ssg-shell" data-ssg="1">
+  // Internal links are emitted absolute on the canonical www host, so a
+  // crawler that happened to fetch the page from the apex domain never
+  // resolves them against the non-www host.
+  const shell = `<div id="ssg-shell" data-ssg="1">
   <header>${nav}</header>
   ${main}
   ${footer}
 </div>`;
+  return shell.replace(/href="\/(?!\/)/g, `href="${SITE_URL}/`);
+}
+
+// -----------------------------------------------------------------------
+// CMS-editable pages (About, Portfolio). The live site reads these from the
+// Supabase `pages` table; fetch the same rows at build time so the static
+// HTML matches what visitors see, and fall back to the in-repo defaults
+// (src/data/pagesSeed.js) when Supabase isn't configured or reachable —
+// the build never fails because of this.
+// -----------------------------------------------------------------------
+
+const pageData = { about: PAGES_SEED.about, portfolio: PAGES_SEED.portfolio };
+try {
+  const supabaseUrl = process.env.VITE_SUPABASE_URL;
+  const supabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (supabaseUrl && supabaseKey) {
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const { data: rows, error } = await supabase
+      .from("pages")
+      .select("page_key,data")
+      .in("page_key", ["about", "portfolio"]);
+    if (error) throw error;
+    for (const row of rows ?? []) {
+      if (row?.data && Object.keys(row.data).length > 0) pageData[row.page_key] = row.data;
+    }
+  } else {
+    console.warn("⚠ prerender: Supabase env not set — About/Portfolio use in-repo defaults.");
+  }
+} catch (err) {
+  console.warn("⚠ prerender: failed to fetch About/Portfolio from Supabase — using in-repo defaults.", err?.message ?? err);
+}
+
+function renderList(items) {
+  return `<ul>\n      ${items.join("\n      ")}\n    </ul>`;
+}
+
+function renderAboutMain(route) {
+  const p = localizePage(pageData.about, "id");
+  const rows = getProfileRows("id")
+    .map((row) => {
+      const value = row.links
+        ? row.links.map((l) => `<a href="${xmlEsc(l.url)}" rel="me noreferrer">${xmlEsc(l.label)}</a>`).join(", ")
+        : xmlEsc(row.value);
+      return `<dt>${xmlEsc(row.label)}</dt>\n      <dd>${value}</dd>`;
+    })
+    .join("\n      ");
+  const values = (p.values ?? []).length
+    ? `<section>
+      <h2>Nilai kerja</h2>
+      ${(p.values ?? []).map((v) => `<h3>${xmlEsc(v.title)}</h3>\n      <p>${xmlEsc(v.body)}</p>`).join("\n      ")}
+    </section>`
+    : "";
+  const stats = withProfileExperience(p.stats, "id") ?? [];
+  const statsHtml = stats.length
+    ? `<section>
+      <h2>Angka singkat</h2>
+      ${renderList(stats.map((st) => `<li>${xmlEsc(st.value)} — ${xmlEsc(st.label)}</li>`))}
+    </section>`
+    : "";
+  return `<main>
+    <p><a href="/">Home</a> / Tentang</p>
+    <h1>${xmlEsc(p.hero_title || route.title)}</h1>
+    <p>${xmlEsc(p.hero_subtitle || route.description)}</p>
+    ${p.story_title ? `<section>\n      <h2>${xmlEsc(p.story_title)}</h2>\n      ${renderPlainParagraphs(p.story_body)}\n    </section>` : ""}
+    <section>
+      <h2>${xmlEsc(getProfileHeading("id"))} Isra Anwar</h2>
+      <dl>
+      ${rows}
+      </dl>
+    </section>
+    ${values}
+    ${statsHtml}
+  </main>`;
+}
+
+function renderPortfolioMain(route) {
+  const p = localizePage(normalizePortfolioProjects(pageData.portfolio), "id");
+  const section = (title, body) => (body ? `<section>\n      <h2>${xmlEsc(title)}</h2>\n      ${body}\n    </section>` : "");
+  const expertise = p.core_expertise?.length
+    ? renderList(p.core_expertise.map((t) => `<li>${xmlEsc(t)}</li>`))
+    : "";
+  const tools = p.tools?.length ? renderList(p.tools.map((t) => `<li>${xmlEsc(t)}</li>`)) : "";
+  const consulting = p.consulting?.length
+    ? p.consulting
+        .map((c) => `<h3>${xmlEsc(c.org)}</h3>\n      <p>${xmlEsc([c.role, c.year].filter(Boolean).join(" · "))}</p>\n      <p>${xmlEsc(c.desc)}</p>`)
+        .join("\n      ")
+    : "";
+  const groups = p.portfolio_groups?.length
+    ? p.portfolio_groups.map((g) => `<h3>${xmlEsc(g.label)}</h3>\n      <p>${xmlEsc(g.items)}</p>`).join("\n      ")
+    : "";
+  const certs = p.certifications?.length
+    ? p.certifications
+        .map((prov) => `<h3>${xmlEsc(prov.name)}</h3>\n      ${renderList((prov.items ?? []).map((i) => `<li><a href="${xmlEsc(i.url)}" rel="noreferrer">${xmlEsc(i.name)}</a></li>`))}`)
+        .join("\n      ")
+    : "";
+  const workshops = p.training_workshops?.length
+    ? renderList(p.training_workshops.map((w) => `<li><a href="${xmlEsc(w.url)}" rel="noreferrer">${xmlEsc(w.name)}</a></li>`))
+    : "";
+  return `<main>
+    <p><a href="/">Home</a> / Portfolio</p>
+    <h1>${xmlEsc(p.hero_title || route.title)}</h1>
+    <p>${xmlEsc(p.hero_subtitle || route.description)}</p>
+    ${section("Fokus konsultan", expertise)}
+    ${section("Perangkat yang digunakan", tools)}
+    ${section("Proyek konsultasi", consulting)}
+    ${section("Portfolio proyek", groups)}
+    ${section("Sertifikasi", certs)}
+    ${section("Pelatihan & workshop", workshops)}
+  </main>`;
 }
 
 // -----------------------------------------------------------------------
@@ -755,12 +906,21 @@ serviceCategories.forEach((cat) => {
   });
 });
 
+// Two catalog entries share the name "Website Maintenance" (Web Development
+// and Support & Growth); until they are consolidated (see
+// docs/seo-fix-notes.md), qualify the title so the two pages don't share one.
+const serviceNameCounts = serviceChildren.reduce((acc, svc) => {
+  acc[svc.name] = (acc[svc.name] || 0) + 1;
+  return acc;
+}, {});
+
 serviceChildren.forEach((svc) => {
   const category = serviceCategories.find((c) => c.slug === svc.parent_slug) || null;
+  const title = serviceNameCounts[svc.name] > 1 && category ? `${svc.name} (${category.name})` : svc.name;
   routes.push({
     path: `/services/${svc.slug}`,
-    title: svc.name,
-    description: svc.tagline,
+    title,
+    description: getServiceMetaDescription(svc),
     currentTitle: svc.name,
     ogType: "website",
     service: { svc, category },
@@ -778,13 +938,11 @@ BLOG_CATEGORIES.forEach((c) => {
   });
 });
 
-// Blog post pages — dengan Article + FAQPage schema.
-const publishedPosts = ISRA_ANWAR_BLOG_POSTS_SEED
-  .filter((p) => p.status === "published")
-  .sort((a, b) => (
-    String(b.published_at ?? b.created_at ?? "").localeCompare(String(a.published_at ?? a.created_at ?? ""))
-    || String(b.created_at ?? "").localeCompare(String(a.created_at ?? ""))
-  ));
+// Blog post pages — dengan Article + FAQPage schema. Posts come from the
+// canonical resolver (seed + overrides + slug renames), so the file written
+// here is at exactly the URL the sitemap, internal links and 301 redirects
+// point to.
+const publishedPosts = getCanonicalPublishedPosts();
 publishedPosts.forEach((post, postIndex) => {
   const category =
     CATEGORY_BY_SLUG[post.category] || CATEGORY_BY_SLUG[DEFAULT_CATEGORY_SLUG];
@@ -831,6 +989,11 @@ routes.forEach((route) => {
   else if (route.product) productCount++;
   else staticCount++;
 });
+
+// Netlify serves dist/404.html with a real 404 status for any URL that has no
+// file and no redirect rule. Ship the plain SPA shell there so the React
+// NotFoundPage renders (instead of the homepage), without a soft 404.
+writeFileSync(resolve(distDir, "404.html"), TEMPLATE, "utf8");
 
 console.log(`✓ prerender complete → ${routes.length} HTML files`);
 console.log(`  · ${staticCount} static pages`);

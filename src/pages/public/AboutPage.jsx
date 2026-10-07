@@ -3,11 +3,14 @@ import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { useLivePage } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizePage } from "../../lib/pageI18n";
+import { getProfileHeading, getProfileRows, withProfileExperience } from "../../data/profile";
 
 export function AboutPage() {
   const { lang, t } = useI18n();
   const rawPage = useLivePage("about");
   const p = localizePage(rawPage, lang);
+  const profileRows = getProfileRows(lang);
+  const stats = withProfileExperience(p.stats, lang);
 
   return (
     <>
@@ -41,6 +44,34 @@ export function AboutPage() {
           </section>
         )}
 
+        <section className="okr__section" style={{ paddingTop: 0 }}>
+          <div className="okr__wrap" style={{ maxWidth: 780 }}>
+            <h2 style={{ fontSize: "clamp(24px, 3.4vw, 32px)", fontWeight: 700, letterSpacing: "-0.02em", marginBottom: 20 }}>
+              {getProfileHeading(lang)} Isra Anwar
+            </h2>
+            <dl className="okr__panel" style={{ padding: "8px 28px", margin: 0 }}>
+              {profileRows.map((row) => (
+                <div
+                  key={row.key}
+                  style={{ display: "grid", gridTemplateColumns: "minmax(110px, 190px) 1fr", gap: 16, padding: "14px 0", borderBottom: "1px solid var(--okr-border, rgba(255,255,255,0.08))" }}
+                >
+                  <dt style={{ color: "var(--okr-muted)", fontSize: 14 }}>{row.label}</dt>
+                  <dd style={{ margin: 0, fontSize: 16, lineHeight: 1.6 }}>
+                    {row.links
+                      ? row.links.map((link, i) => (
+                        <span key={link.url}>
+                          {i > 0 && ", "}
+                          <a href={link.url} target="_blank" rel="me noreferrer" className="okr__link">{link.label}</a>
+                        </span>
+                      ))
+                      : row.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
         {p.values?.length > 0 && (
           <section className="okr__section" style={{ paddingTop: 0 }}>
             <div className="okr__wrap">
@@ -57,14 +88,14 @@ export function AboutPage() {
           </section>
         )}
 
-        {p.stats?.length > 0 && (
+        {stats?.length > 0 && (
           <section className="okr__section" style={{ paddingTop: 0 }}>
             <div className="okr__wrap">
               <div style={{
-                display: "grid", gridTemplateColumns: `repeat(${p.stats.length}, 1fr)`,
+                display: "grid", gridTemplateColumns: `repeat(${stats.length}, 1fr)`,
                 gap: 24, textAlign: "center",
               }} className="okr__stats-grid">
-                {p.stats.map((s, i) => (
+                {stats.map((s, i) => (
                   <div key={i} className="okr__panel" style={{ padding: 32 }}>
                     <div style={{ fontSize: 44, fontWeight: 800, color: "var(--okr-primary-2)", letterSpacing: "-0.02em" }}>
                       {s.value}

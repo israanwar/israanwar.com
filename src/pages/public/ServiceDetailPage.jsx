@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { ArrowLeft, MessageCircle, Check } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
+import { getServiceMetaDescription } from "../../data/serviceMeta";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { useLiveServiceState, useLiveServices, useLiveSettings } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
@@ -58,7 +59,7 @@ export function ServiceDetailPage() {
 
   return (
     <>
-      <Seo title={`${s.name} — Services israanwar`} description={s.description ?? s.body} />
+      <Seo title={`${s.name} — Services israanwar`} description={getServiceMetaDescription(s)} />
       <section className="okr__section" style={{ paddingTop: 100 }}>
         <div className="okr__wrap" style={{ maxWidth: isCategory ? undefined : 900 }}>
             <Link to={backTo} className="okr__link okr__service-detail-back">

@@ -37,6 +37,20 @@ Runs `vite build`, then a `postbuild` step (`scripts/prerender.mjs`) that
 crawls the app's routes and writes static HTML for each one (SEO/crawlers).
 Output goes to `dist/`.
 
+Production is hosted on **Netlify** (`netlify.toml`; redirects in `public/_redirects`).
+`vercel.json` is kept in step only for the Vercel preview project.
+
+`prebuild` also regenerates `public/sitemap.xml`, `public/llms.txt` and `public/_redirects` from the
+canonical post data (`src/lib/canonicalPosts.js`), so URLs there always match
+the prerendered pages.
+
+After a build, check the SEO acceptance criteria (raw HTML, no JavaScript):
+
+```bash
+npm run verify:seo   # sitemap URLs, canonicals, JSON-LD, titles, redirects, llms.txt
+npm test             # unit tests (canonical slugs, redirects, SEO audit)
+```
+
 ```bash
 npm run preview
 ```

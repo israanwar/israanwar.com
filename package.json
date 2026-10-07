@@ -5,13 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "prebuild": "node scripts/generate-blog-social-images.mjs && node scripts/generate-sitemap.mjs",
+    "prebuild": "node scripts/generate-blog-social-images.mjs && node scripts/generate-sitemap.mjs && node scripts/generate-llms-txt.mjs && node scripts/generate-redirects.mjs",
     "build": "vite build",
     "postbuild": "node scripts/prerender.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "social:images": "node scripts/generate-blog-social-images.mjs",
-    "prerender": "node scripts/prerender.mjs"
+    "prerender": "node scripts/prerender.mjs",
+    "verify:seo": "node scripts/verify-seo.mjs",
+    "llms": "node scripts/generate-llms-txt.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "redirects": "node scripts/generate-redirects.mjs"
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.2.8",

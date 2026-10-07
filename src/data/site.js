@@ -1,6 +1,6 @@
 export const site = {
   name: "Isra Anwar",
-  // Canonical is the www subdomain — Netlify redirects apex → www, so all
+  // Canonical is the www subdomain — Netlify (production host) redirects apex → www, so all
   // link rel="canonical", og:url, sitemap <loc>, and JSON-LD URLs must
   // match the redirect target or GSC flags them as duplicate/redirected.
   domain: "www.israanwar.com",
