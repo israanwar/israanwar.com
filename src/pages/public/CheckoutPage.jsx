@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { SunBackground } from "../../components/hero/SunBackground";
 import { cartRepo } from "../../lib/localStore";
 import { ordersData } from "../../lib/supabaseData";
 import { useLiveCart, useLiveSettings } from "../../hooks/usePageData";
@@ -87,7 +86,6 @@ export function CheckoutPage() {
     <>
       <Seo title={`${t("checkout_title")} — israanwar`} description={t("checkout_title")} noindex />
               <section className="okr__section okr__page-hero">
-            <SunBackground />
           <div className="okr__wrap">
             <AnimatedHeadline text={t("checkout_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
 

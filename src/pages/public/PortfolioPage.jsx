@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { SunBackground } from "../../components/hero/SunBackground";
 import { useLivePage } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizePage } from "../../lib/pageI18n";
@@ -62,7 +61,6 @@ export function PortfolioPage() {
         description={p.hero_subtitle || t("portfolio_empty_body")}
       />
               <section className="okr__section okr__portfolio-page">
-            <SunBackground />
           <div className="okr__wrap">
             <header style={{ maxWidth: 860, marginBottom: 54 }}>
               {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}

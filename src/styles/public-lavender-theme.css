@@ -49,7 +49,7 @@
 
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
   .okr__page-hero {
-  background-image: radial-gradient(circle at 72% 0%, rgba(121, 88, 194, 0.16), transparent 48%) !important;
+  background-image: none !important;
 }
 
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
@@ -348,4 +348,41 @@
   .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page)) * {
     scroll-behavior: auto !important;
   }
+}
+
+/* Plain page backdrops everywhere except Home; content surfaces keep their design. */
+.okr:not(:has(.okr__home)) {
+  background: #000000 !important;
+}
+.okr:not(:has(.okr__home)) :is(
+  .okr__section,
+  .okr__page-hero,
+  .okr__tool-detail-page,
+  .okr__tool-work-section,
+  .okr__blog-page,
+  .okr__blog-detail-page,
+  .okr__newsletter-band,
+  .okr__footer,
+  .okr__mobile-menu
+) {
+  background: #000000 !important;
+  background-image: none !important;
+}
+.okr:not(:has(.okr__home)) :is(
+  .okr__section,
+  .okr__blog-page,
+  .okr__blog-detail-page,
+  .okr__newsletter-band,
+  .okr__footer,
+  .okr__mobile-menu
+)::before,
+.okr:not(:has(.okr__home)) :is(
+  .okr__section,
+  .okr__blog-page,
+  .okr__blog-detail-page,
+  .okr__newsletter-band,
+  .okr__footer,
+  .okr__mobile-menu
+)::after {
+  content: none !important;
 }

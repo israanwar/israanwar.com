@@ -1,4 +1,6 @@
-.okr__services-section {
+.okr__services-section,
+.service-subservice-grid {
+  --folder-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --services-brand-black: #030305;
   --services-brand-surface: #09090d;
   --services-brand-border: rgba(255, 255, 255, 0.12);
@@ -7,6 +9,9 @@
   --services-brand-description: #a5a3aa;
   --services-brand-count: #b8b5bf;
   --services-brand-hint: #6f6c76;
+}
+
+.okr__services-section {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -154,16 +159,16 @@
   perspective: 1200px;
   transform: scale(1) rotate(0deg);
   transition:
-    transform 700ms var(--folder-ease),
-    border-color 700ms var(--folder-ease),
-    box-shadow 700ms var(--folder-ease);
+    transform 160ms var(--folder-ease),
+    border-color 160ms var(--folder-ease),
+    box-shadow 160ms var(--folder-ease);
 }
 
 .service-folder-card.is-open {
   z-index: 5;
   border-color: color-mix(in srgb, var(--folder-glow) 28%, rgba(255, 255, 255, 0.12));
   box-shadow: 0 32px 80px -40px color-mix(in srgb, var(--folder-glow) 32%, transparent);
-  transform: scale(1.04) rotate(-1.5deg);
+  transform: none;
 }
 
 .service-folder-card:focus-within {
@@ -179,7 +184,7 @@
   background: radial-gradient(circle at 50% 70%, var(--folder-glow) 0%, transparent 70%);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 700ms var(--folder-ease);
+  transition: opacity 160ms var(--folder-ease);
 }
 
 .service-folder-card:is(:hover, :focus-within, .is-open) .service-folder-card-glow {
@@ -207,7 +212,7 @@
   height: 96px;
   border-radius: 12px;
   transform-origin: bottom center;
-  transition: transform 700ms var(--folder-ease);
+  transition: transform 160ms var(--folder-ease);
 }
 
 .service-folder-back {
@@ -231,144 +236,7 @@
   background: var(--folder-gradient);
   filter: brightness(0.8) saturate(0.82);
   transform-origin: bottom center;
-  transition: transform 700ms var(--folder-ease);
-}
-
-.service-folder-preview-stack {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: 20;
-  display: block;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
-.service-folder-preview {
-  position: absolute;
-  top: -56px;
-  left: -40px;
-  display: block;
-  width: 80px;
-  height: 112px;
-  opacity: 0;
-  pointer-events: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  text-decoration: none;
-  transform: translateY(0) translateX(0) rotate(0deg) scale(0.4);
-  transition:
-    transform 700ms var(--folder-ease) var(--folder-card-delay),
-    opacity 700ms var(--folder-ease) var(--folder-card-delay);
-}
-
-.service-folder-card.is-open .service-folder-preview-stack,
-.service-folder-card.is-open .service-folder-preview {
-  pointer-events: auto;
-}
-
-.service-folder-card.is-open .service-folder-preview {
-  z-index: calc(20 + var(--folder-card-z));
-  opacity: 1;
-  transform:
-    translateY(calc(-100px + var(--folder-card-y)))
-    translateX(var(--folder-card-x))
-    rotate(var(--folder-card-rotate))
-    scale(1);
-}
-
-.service-folder-preview-inner {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  background:
-    linear-gradient(
-      155deg,
-      color-mix(in srgb, var(--folder-glow) 12%, #17171a) 0%,
-      #0f0f12 72%
-    );
-  box-shadow: 0 14px 24px rgba(0, 0, 0, 0.48);
-  transition:
-    box-shadow 500ms var(--folder-ease),
-    border-color 500ms var(--folder-ease);
-}
-
-.service-folder-preview-inner,
-.service-folder-preview-inner * {
-  pointer-events: none;
-}
-
-.service-folder-preview:is(:hover, :focus-visible) {
-  z-index: 50 !important;
-  outline: none;
-  transform:
-    translateY(calc(-124px + var(--folder-card-y)))
-    translateX(var(--folder-card-x))
-    rotate(var(--folder-card-rotate))
-    scale(1.25);
-}
-
-.service-folder-preview:is(:hover, :focus-visible) .service-folder-preview-inner {
-  border-color: color-mix(in srgb, var(--folder-glow) 56%, rgba(255, 255, 255, 0.16));
-  box-shadow: 0 20px 42px color-mix(in srgb, var(--folder-glow) 24%, transparent);
-}
-
-.service-folder-preview-icon {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  display: grid;
-  width: 48px;
-  height: 48px;
-  place-items: center;
-  border: 1px solid color-mix(in srgb, var(--folder-glow) 30%, rgba(255, 255, 255, 0.12));
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--folder-glow) 9%, rgba(14, 14, 17, 0.96));
-  color: color-mix(in srgb, var(--folder-glow) 62%, #f7f7f8);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 10px 24px color-mix(in srgb, var(--folder-glow) 11%, transparent);
-  transform: translateX(-50%);
-  transition:
-    border-color 400ms var(--folder-ease),
-    background 400ms var(--folder-ease),
-    color 400ms var(--folder-ease),
-    box-shadow 400ms var(--folder-ease);
-}
-
-.service-folder-preview-icon svg {
-  display: block;
-}
-
-.service-folder-preview:is(:hover, :focus-visible) .service-folder-preview-icon {
-  border-color: color-mix(in srgb, var(--folder-glow) 54%, #ffffff);
-  background: color-mix(in srgb, var(--folder-glow) 15%, #121216);
-  color: #ffffff;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 12px 28px color-mix(in srgb, var(--folder-glow) 20%, transparent);
-}
-
-.service-folder-preview-title {
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-  left: 6px;
-  overflow: hidden;
-  color: #ffffff;
-  font-size: 9px;
-  font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-  text-align: left;
-  text-overflow: ellipsis;
-  text-shadow: 0 1px 4px #000000;
-  text-transform: uppercase;
-  white-space: nowrap;
+  transition: transform 160ms var(--folder-ease);
 }
 
 .service-folder-front {
@@ -414,7 +282,7 @@
   font-weight: 750;
   line-height: 1.22;
   letter-spacing: -0.025em;
-  transition: transform 500ms var(--folder-ease), letter-spacing 500ms var(--folder-ease);
+  transition: transform 160ms var(--folder-ease), letter-spacing 160ms var(--folder-ease);
 }
 
 .service-folder-all-link {
@@ -431,7 +299,7 @@
   line-height: 1.2;
   pointer-events: auto;
   text-decoration: none;
-  transition: color 220ms ease, opacity 500ms ease;
+  transition: color 220ms ease, opacity 160ms ease;
 }
 
 .service-folder-all-link:is(:hover, :focus-visible) {
@@ -441,8 +309,7 @@
 }
 
 .service-folder-card.is-open .service-folder-meta h3 {
-  letter-spacing: -0.01em;
-  transform: translateY(2px);
+  transform: none;
 }
 
 .service-folder-card.is-open .service-folder-all-link {
@@ -461,7 +328,7 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   transform: translateX(-50%) translateY(0);
-  transition: opacity 500ms ease, transform 500ms ease;
+  transition: opacity 160ms ease, transform 160ms ease;
   pointer-events: none;
 }
 
@@ -546,4 +413,142 @@
     transition-duration: 1ms !important;
     transition-delay: 0ms !important;
   }
+}
+
+/* Keep folder titles identical when the public-page heading theme is active. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .service-folder-meta h3 {
+  color: var(--services-brand-white) !important;
+}
+
+/* The Services page uses a plain backdrop; Home keeps its own background. */
+.okr .okr__section.okr__services-plain {
+  background: #000000 !important;
+  background-image: none !important;
+}
+.okr__services-plain::before,
+.okr__services-plain::after {
+  content: none;
+}
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__page-hero.okr__services-plain {
+  background-image: none !important;
+}
+
+/* Single-service folders reserve equal space for titles and starting prices. */
+.service-folder-card--leaf {
+  height: 320px;
+  min-height: 320px;
+  text-decoration: none;
+}
+.service-folder-card--leaf .service-folder-stage {
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+.service-folder-card--leaf .service-folder-meta {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+}
+.service-folder-card--leaf .service-folder-meta h3 {
+  display: flex;
+  height: 44px;
+  min-height: 44px;
+  margin: 0 auto;
+  align-items: center;
+  justify-content: center;
+}
+.service-folder-card--leaf .service-price {
+  min-height: 42px;
+  margin: 8px 0 0;
+  color: var(--folder-glow);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.service-folder-card--leaf:focus-visible {
+  outline: 2px solid var(--folder-glow);
+  outline-offset: 4px;
+}
+
+/* Names stay upright, complete, and immediately actionable on every input type. */
+.service-folder-card { transition: border-color 120ms ease; }
+.service-folder-meta h3 { transition: none; }
+.service-folder-card-glow { transition: opacity 120ms ease; }
+.service-folder-card.is-open { box-shadow: none; }
+.service-folder-card:not(.service-folder-card--leaf) .service-folder-meta {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  left: 24px;
+}
+.service-folder-card:not(.service-folder-card--leaf) .service-folder-meta h3 { margin-top: 0; }
+.service-folder-card:not(.service-folder-card--leaf) .service-folder-stage { transition: opacity 100ms ease; }
+.service-folder-card.is-open .service-folder-stage { opacity: 0; }
+.service-folder-preview-toggle {
+  position: absolute;
+  z-index: 60;
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--services-brand-border);
+  border-radius: 50%;
+  background: var(--services-brand-surface);
+  color: var(--folder-glow);
+  font: inherit;
+  font-size: 24px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.service-folder-readable-list {
+  position: absolute;
+  z-index: 40;
+  top: 16px;
+  right: 16px;
+  bottom: 94px;
+  left: 16px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--folder-glow) transparent;
+  background: var(--services-brand-surface);
+  padding-right: 44px;
+}
+.service-folder-readable-list a {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  min-height: 44px;
+  padding: 10px 8px;
+  border-radius: 6px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  touch-action: manipulation;
+}
+.service-folder-readable-list a svg { flex-shrink: 0; margin-top: 2px; color: var(--folder-glow); }
+.service-folder-readable-list a span { white-space: normal; overflow-wrap: anywhere; }
+.service-folder-readable-list a:is(:hover,:focus-visible) { background: color-mix(in srgb,var(--folder-glow) 12%,#09090d); }
+.service-folder-preview-toggle:focus-visible,
+.service-folder-readable-list a:focus-visible { outline: 2px solid var(--folder-glow); outline-offset: -2px; }
+.service-folder-card--leaf:is(:hover,:focus-visible) .service-folder-front,
+.service-folder-card--leaf:is(:hover,:focus-visible) .service-folder-back { transform: translateY(-3px); }
+@media(prefers-reduced-motion:reduce) {
+  .service-folder-card * { transition: none !important; }
+}
+.service-folder-card:not(.service-folder-card--leaf) .service-folder-stage {
+  position: absolute;
+  top: 32px;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+}
+.service-folder-card.is-open :is(.service-folder-back,.service-folder-tab,.service-folder-front,.service-folder-front-shine) {
+  transform: none;
 }

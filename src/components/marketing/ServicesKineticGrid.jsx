@@ -4,7 +4,7 @@ const CELL_SIZE = 64;
 const INFLUENCE_RADIUS = 250;
 const MAX_WARP = 20;
 const DOT_SPACING = 30;
-const LERP_SPEED = 0.08;
+const LERP_SPEED = 0.22;
 const LINE_BASE = { r: 255, g: 255, b: 255, a: 0.11 };
 const LAVENDER = { r: 203, g: 183, b: 255, a: 0.78 };
 
@@ -21,6 +21,7 @@ export function ServicesKineticGrid({ scope = "section" }) {
   const pointerRef = useRef({ x: -9999, y: -9999 });
   const targetRef = useRef({ x: -9999, y: -9999 });
   const ripplesRef = useRef([]);
+  const strengthRef = useRef(0);
   const frameRef = useRef(0);
   const sizeRef = useRef({ width: 0, height: 0, dpr: 1 });
 
@@ -69,7 +70,7 @@ export function ServicesKineticGrid({ scope = "section" }) {
         const dx = x - pointer.x;
         const dy = y - pointer.y;
         const distance = Math.hypot(dx, dy);
-        const near = Math.max(0, 1 - distance / INFLUENCE_RADIUS) * pin;
+        const near = Math.max(0, 1 - distance / INFLUENCE_RADIUS) * pin * strengthRef.current;
         let rippleX = 0;
         let rippleY = 0;
 
@@ -92,8 +93,8 @@ export function ServicesKineticGrid({ scope = "section" }) {
         if (distance > 0 && distance < INFLUENCE_RADIUS) {
           const eased = (1 - distance / INFLUENCE_RADIUS) ** 2 * Math.min(1, distance / 58);
           const angle = Math.atan2(dy, dx);
-          warpX = -Math.cos(angle) * eased * MAX_WARP * pin;
-          warpY = -Math.sin(angle) * eased * MAX_WARP * pin;
+          warpX = -Math.cos(angle) * eased * MAX_WARP * pin * strengthRef.current;
+          warpY = -Math.sin(angle) * eased * MAX_WARP * pin * strengthRef.current;
         }
 
         points[row][column] = { x: x + warpX + rippleX, y: y + warpY + rippleY };
@@ -138,7 +139,13 @@ export function ServicesKineticGrid({ scope = "section" }) {
     const surface = scope === "page" ? canvas?.closest(".okr") : canvas?.closest(".okr__services-section");
     if (!canvas || !surface) return undefined;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible = true;
+    let lastFrame = 0;
+    let frameInterval = 1000 / 60;
+    let expensiveFrames = 0;
+    let cheapFrames = 0;
+    let pointerActive = false;
     const servicesSection = scope === "page" ? surface.querySelector(".okr__services-section") : null;
     const updateClip = () => {
       if (!servicesSection) return;
@@ -151,7 +158,8 @@ export function ServicesKineticGrid({ scope = "section" }) {
       const bounds = scope === "page"
         ? { width: window.innerWidth, height: window.innerHeight }
         : surface.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const lowPower = window.matchMedia("(pointer: coarse)").matches || (navigator.hardwareConcurrency || 4) <= 4;
+      const dpr = Math.min(window.devicePixelRatio || 1, lowPower ? 1 : 1.5);
       const height = scope === "page" ? bounds.height : surface.scrollHeight;
       sizeRef.current = { width: bounds.width, height, dpr };
       canvas.width = Math.round(bounds.width * dpr);
@@ -167,21 +175,73 @@ export function ServicesKineticGrid({ scope = "section" }) {
     };
     const onPointerMove = (event) => {
       const point = localPoint(event);
+      pointerActive = true;
       targetRef.current = point;
       if (pointerRef.current.x < -9000) pointerRef.current = { ...point };
+      requestDraw();
     };
-    const onPointerLeave = () => { targetRef.current = { x: -9999, y: -9999 }; };
+    const onPointerLeave = () => { pointerActive = false; requestDraw(); };
+    const onPointerEnd = (event) => {
+      if (event.pointerType !== "mouse" || event.type === "pointercancel") onPointerLeave();
+    };
     const onPointerDown = (event) => {
+      onPointerMove(event);
       const point = localPoint(event);
       ripplesRef.current.push({ ...point, radius: 0, opacity: 1, born: performance.now() });
+      ripplesRef.current = ripplesRef.current.slice(-3);
+      requestDraw();
     };
-    const animate = (now) => {
-      updateClip();
-      pointerRef.current.x = lerp(pointerRef.current.x, targetRef.current.x, LERP_SPEED);
-      pointerRef.current.y = lerp(pointerRef.current.y, targetRef.current.y, LERP_SPEED);
+    function requestDraw() {
+      if (!frameRef.current && visible && !document.hidden && !motionQuery.matches) {
+        frameRef.current = requestAnimationFrame(animate);
+      }
+    }
+    function animate(now) {
+      frameRef.current = 0;
+      if (!visible || document.hidden || motionQuery.matches) return;
+      if (now - lastFrame < frameInterval - 1) { requestDraw(); return; }
+      const elapsed = lastFrame ? Math.min(now - lastFrame, 80) : frameInterval;
+      lastFrame = now;
+      const smoothing = 1 - (1 - LERP_SPEED) ** (elapsed / (1000 / 60));
+      pointerRef.current.x = lerp(pointerRef.current.x, targetRef.current.x, smoothing);
+      pointerRef.current.y = lerp(pointerRef.current.y, targetRef.current.y, smoothing);
+      strengthRef.current = lerp(strengthRef.current, pointerActive ? 1 : 0, smoothing);
+      if (strengthRef.current < 0.001) strengthRef.current = 0;
+      if (strengthRef.current > 0.999) strengthRef.current = 1;
+      const start = performance.now();
       draw(now);
-      frameRef.current = window.requestAnimationFrame(animate);
-    };
+      const cost = performance.now() - start;
+      if (cost > 12) { expensiveFrames += 1; cheapFrames = 0; }
+      else { expensiveFrames = Math.max(0, expensiveFrames - 1); cheapFrames = cost < 8 ? cheapFrames + 1 : 0; }
+      if (expensiveFrames > 5) frameInterval = 1000 / 30;
+      else if (cheapFrames > 30) frameInterval = 1000 / 60;
+      const moving = Math.hypot(pointerRef.current.x - targetRef.current.x, pointerRef.current.y - targetRef.current.y) > 0.25;
+      const settling = Math.abs(strengthRef.current - (pointerActive ? 1 : 0)) > 0.001;
+      if (moving || settling || ripplesRef.current.length) requestDraw();
+      else lastFrame = 0;
+    }
+    function suspend() {
+      cancelAnimationFrame(frameRef.current);
+      frameRef.current = 0;
+      lastFrame = 0;
+      ripplesRef.current = [];
+      pointerActive = false;
+      strengthRef.current = 0;
+      pointerRef.current = { x: -9999, y: -9999 };
+      targetRef.current = { ...pointerRef.current };
+      draw(performance.now());
+    }
+    function onVisibility() {
+      if (document.hidden || motionQuery.matches) suspend();
+      else requestDraw();
+    }
+    const observer = typeof IntersectionObserver === "undefined" ? null : new IntersectionObserver(entries => {
+      visible = entries[0].isIntersecting;
+      if (!visible) suspend(); else requestDraw();
+    });
+    observer?.observe(surface);
+    document.addEventListener("visibilitychange", onVisibility);
+    motionQuery.addEventListener("change", onVisibility);
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(surface);
@@ -189,21 +249,31 @@ export function ServicesKineticGrid({ scope = "section" }) {
     window.addEventListener("scroll", updateClip, { passive: true });
     resize();
     window.requestAnimationFrame(updateClip);
-    if (!reducedMotion) {
+    {
       surface.addEventListener("pointermove", onPointerMove, { passive: true });
       surface.addEventListener("pointerleave", onPointerLeave);
       surface.addEventListener("pointerdown", onPointerDown, { passive: true });
-      frameRef.current = window.requestAnimationFrame(animate);
+      window.addEventListener("pointerup", onPointerEnd, { passive: true });
+      window.addEventListener("pointercancel", onPointerEnd, { passive: true });
+      window.addEventListener("blur", onPointerLeave);
+      requestDraw();
     }
 
     return () => {
+      observer?.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+      motionQuery.removeEventListener("change", onVisibility);
       resizeObserver.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("scroll", updateClip);
       surface.removeEventListener("pointermove", onPointerMove);
       surface.removeEventListener("pointerleave", onPointerLeave);
       surface.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerEnd);
+      window.removeEventListener("pointercancel", onPointerEnd);
+      window.removeEventListener("blur", onPointerLeave);
       window.cancelAnimationFrame(frameRef.current);
+      frameRef.current = 0;
     };
   }, [draw, scope]);
 

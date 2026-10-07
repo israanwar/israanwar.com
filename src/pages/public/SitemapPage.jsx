@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { SunBackground } from "../../components/hero/SunBackground";
 import { useLivePosts } from "../../hooks/usePageData";
 import { BLOG_CATEGORIES } from "../../data/blogCategories";
 import { TOOLS_CATALOG, TOOLS_TOTAL_COUNT } from "../../data/toolsCatalog";
@@ -56,7 +55,6 @@ export function SitemapPage() {
         description={`Peta lengkap halaman Isra Anwar — ${totalPosts} artikel di ${activeCategories} kategori aktif, plus halaman utama dan legal.`}
       />
               <section className="okr__section okr__page-hero">
-            <SunBackground />
           <div className="okr__wrap" style={{ maxWidth: 960 }}>
             {/* Breadcrumb */}
             <nav aria-label="Breadcrumb" style={{ fontSize: 12, color: "var(--okr-muted)", marginBottom: 16, letterSpacing: "0.04em" }}>

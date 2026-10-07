@@ -3,7 +3,6 @@ import { useSearchParams, Link } from "react-router-dom";
 import { ChevronDown, Search } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { SunBackground } from "../../components/hero/SunBackground";
 import { useLivePosts } from "../../hooks/usePageData";
 import { BLOG_CATEGORIES, CATEGORY_BY_SLUG } from "../../data/blogCategories";
 import { BlogPinCard } from "../../components/blog/BlogPinCard";
@@ -117,7 +116,6 @@ export function BlogListPage({ initialCategorySlug = null }) {
     <>
       <Seo title={pageTitle} description={pageDesc} />
       <section className="okr__section okr__page-hero okr__blog-page">
-          <SunBackground />
           <div className="okr__wrap">
             {/* Breadcrumb ringan */}
             <nav aria-label="Breadcrumb" style={{ fontSize: 12, color: "var(--okr-muted)", marginBottom: 16, letterSpacing: "0.04em" }}>

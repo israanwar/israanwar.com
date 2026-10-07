@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { Trash2, ShoppingBag } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { SunBackground } from "../../components/hero/SunBackground";
 import { cartRepo } from "../../lib/localStore";
 import { useLiveCart } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
@@ -17,7 +16,6 @@ export function CartPage() {
     <>
       <Seo title={`${t("cart_title")} — israanwar`} description={t("cart_title")} noindex />
               <section className="okr__section okr__page-hero">
-            <SunBackground />
           <div className="okr__wrap">
             <AnimatedHeadline text={t("cart_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
 

@@ -861,12 +861,28 @@ export function SunBackground({ onReady, variant = "page" }) {
     if (!wrapper || mode === "fallback") return undefined;
     let cancelled = false;
     let attachedShared = null;
+    let attached = false;
+    let observer = null;
 
     ensure()
       .then((instance) => {
         if (cancelled) return;
         attachedShared = instance;
         instance.attach(wrapper);
+        attached = true;
+        if (variant === "page" && typeof IntersectionObserver !== "undefined") {
+          observer = new IntersectionObserver(([entry]) => {
+            if (cancelled) return;
+            if (entry.isIntersecting && !attached) {
+              instance.attach(wrapper);
+              attached = true;
+            } else if (!entry.isIntersecting && attached) {
+              instance.detach(wrapper);
+              attached = false;
+            }
+          });
+          observer.observe(wrapper);
+        }
         setMode("ready");
       })
       .catch(() => {
@@ -875,7 +891,8 @@ export function SunBackground({ onReady, variant = "page" }) {
 
     return () => {
       cancelled = true;
-      attachedShared?.detach(wrapper);
+      observer?.disconnect();
+      if (attached) attachedShared?.detach(wrapper);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

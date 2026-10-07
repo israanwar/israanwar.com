@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { SunBackground } from "../../components/hero/SunBackground";
 import { TOOLS, TOOLS_CATALOG, TOOLS_TOTAL_COUNT } from "../../data/toolsCatalog";
 
 const ICONS = {
@@ -40,7 +39,6 @@ export function ToolsPage() {
       <Seo title="Free Online Tools" description={DESCRIPTION} path="/tools" />
       <main className="okr__tools-page">
         <section className="okr__section okr__tools-hero">
-          <SunBackground />
           <div className="okr__wrap">
             <div className="okr__tools-hero-copy">
               <span className="okr__kicker">// TOOLS · {TOOLS_TOTAL_COUNT} LIVE</span>

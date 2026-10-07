@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Mail, MessageCircle, MapPin, Clock, Check } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { SunBackground } from "../../components/hero/SunBackground";
 import { contactsData } from "../../lib/supabaseData";
 import { useLivePage, useLiveSettings } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
@@ -50,7 +49,6 @@ export function ContactPage() {
     <>
       <Seo title={`${t("nav_contact")} — israanwar`} description={p.hero_subtitle} />
               <section className="okr__section okr__page-hero">
-            <SunBackground />
           <div className="okr__wrap">
             {p.hero_kicker && <span className="okr__kicker">{p.hero_kicker}</span>}
             <AnimatedHeadline text={p.hero_title} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters style={{ marginTop: 20 }} />

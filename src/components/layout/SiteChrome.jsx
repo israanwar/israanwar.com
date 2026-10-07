@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import {
   MessageCircle, Github, Instagram, Linkedin, Mail, ShoppingBag, Menu, X,
   Home, Compass, ShoppingCart, BookOpen, Wrench,
@@ -14,6 +14,7 @@ import { NewsletterForm } from "../marketing/NewsletterForm";
 import { SiteChatWidget } from "../chat/SiteChatWidget";
 import "../../styles/landing.css";
 import "../../styles/light-theme.css";
+import "../../styles/footer-dots.css";
 
 // Aurora canvas gradient configs — pulled out of the component so they're
 // stable object references. Only their (fixed) color stops are used to build
@@ -102,6 +103,7 @@ export function BrandMark() {
 }
 
 export function SiteHeader({ settings }) {
+  const { pathname } = useLocation();
   const { t } = useI18n();
   const [menuPhase, setMenuPhase] = useState("closed");
   const closeTimerRef = useRef(0);
@@ -276,7 +278,7 @@ export function SiteHeader({ settings }) {
           setMenuPhase("closed");
         }}
       >
-        {menuVisible && <SunBackground variant="menu" />}
+        {menuVisible && pathname === "/" && <SunBackground variant="menu" />}
         <button
           className="okr__mobile-menu-close"
           type="button"
@@ -319,7 +321,7 @@ export function SiteFooter({ settings }) {
   const { lang, t } = useI18n();
   const description = localizeSiteDescription(settings.description, lang, settings.description_id) || t("site_description");
   return (
-    <footer className="okr__footer">
+    <footer className="okr__footer okr__footer--dots">
       <div className="okr__wrap">
         <div className="okr__footer-card">
           <div className="okr__footer-grid">
@@ -720,12 +722,14 @@ function AuroraBackdrop() {
 }
 
 function NewsletterBand() {
+  // <section> dengan nama membentuk landmark "region", agar konten ini tidak
+  // berada di luar landmark (aturan axe "region").
   return (
-    <div className="okr__newsletter-band">
+    <section className="okr__newsletter-band" aria-label="Newsletter">
       <div className="okr__wrap">
         <NewsletterForm source="footer" variant="band" />
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -737,8 +741,11 @@ export function SiteChrome({ children, settings: providedSettings }) {
     <div className="okr">
       <SiteHeader settings={settings} />
       {children}
-      <NewsletterBand />
-      <SiteFooter settings={settings} />
+      <div className="okr__closing-area">
+        <div className="okr__closing-dots" aria-hidden="true" />
+        <NewsletterBand />
+        <SiteFooter settings={settings} />
+      </div>
       <SiteChatWidget />
     </div>
   );

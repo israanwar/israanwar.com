@@ -1,0 +1,57 @@
+import assert from 'node:assert/strict';
+import { chromium } from '@playwright/test';
+const baseURL = process.env.PRICING_URL || 'http://127.0.0.1:3000';
+const browser = await chromium.launch();
+try {
+  for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
+    const page = await browser.newPage({viewport, reducedMotion:'reduce'});
+    page.setDefaultTimeout(30000);
+    const errors = [];
+    page.on('pageerror', e => errors.push(e.message));
+    await page.goto(`${baseURL}/services`);
+    const builder = page.locator('#build-package');
+    await builder.waitFor();
+    const select = builder.locator('select');
+    const summary = builder.locator('aside');
+    const pick = async name => builder.locator('.service-pricing-item').filter({has:page.locator('strong', {hasText:new RegExp(`^${name}$`)})}).getByRole('checkbox').check();
+    await pick('Landing Page Development');
+    await pick('Basic SEO');
+    await pick('GA4');
+    await select.selectOption('content-creative');
+    await pick('Landing Page Copywriting');
+    assert.match(await summary.innerText(), /Rp1\.100\.000/);
+    await select.selectOption('analytics-data-intelligence');
+    assert.equal(await builder.locator('.service-pricing-item').filter({has:page.locator('strong',{hasText:/^Google Analytics Setup$/})}).getByRole('checkbox').isDisabled(), true);
+    await select.selectOption('search-optimization');
+    await pick('SEO Starter');
+    assert.match(await summary.innerText(), /Rp1\.500\.000\/month/);
+    assert.match(await summary.innerText(), /Rp4\.500\.000/);
+    await select.selectOption('web-development');
+    await pick('Additional Page');
+    await builder.getByRole('spinbutton',{name:'Quantity Additional Page',exact:true}).fill('3');
+    assert.match(await summary.innerText(), /Rp1\.400\.000/);
+    await pick('Enterprise Web Development');
+    assert.match(await summary.innerText(), /Custom quote for unpriced selections/);
+    const quote = await summary.getByRole('link',{name:'Request Package Quote',exact:true}).getAttribute('href');
+    assert.match(new URL(quote).searchParams.get('text'), /Additional Page × 3/);
+    await page.reload();
+    await builder.waitFor();
+    assert.match(await summary.innerText(), /Rp1\.400\.000/);
+    await summary.getByRole('button',{name:'Clear package',exact:true}).click();
+    assert.match(await summary.innerText(), /Select a service/);
+    await page.goto(`${baseURL}/services/web-development-landing-page-development`);
+    await page.getByRole('link',{name:'Add to Custom Package',exact:true}).click();
+    await builder.waitFor();
+    assert.match(await summary.innerText(), /Landing Page Development × 1/);
+    await page.goto(`${baseURL}/services/web-development`);
+    assert.match(await page.locator('.service-subservice-grid').innerText(), /Starting from Rp200\.000/);
+    await page.goto(`${baseURL}/services#build-package`);
+    await builder.waitFor();
+    await builder.scrollIntoViewIfNeeded();
+    await page.screenshot({path:`/tmp/israanwar-pricing-${viewport.width}.png`});
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    assert.deepEqual(errors, []);
+    console.log(`PASS ${viewport.width}px: totals, units, commitment, duplicate prevention, custom, quote link, persistence, detail navigation, overflow, runtime`);
+    await page.close();
+  }
+} finally { await browser.close(); }

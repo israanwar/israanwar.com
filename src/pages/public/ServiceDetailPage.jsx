@@ -6,7 +6,11 @@ import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { useLiveServiceState, useLiveServices, useLiveSettings } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeServiceCardItem, localizeServiceItem } from "../../lib/serviceI18n";
-import { getServiceChildIcon } from "../../lib/serviceIcons";
+import { ServiceFolderArtwork } from "../../components/marketing/ServiceFolderArtwork";
+import { getServiceFolderVisual } from "../../data/serviceFolderVisuals";
+import "../../styles/service-folder-grid.css";
+
+import { ServicePrice, ServicePackageLink } from "../../components/services/ServicePricing";
 
 export function ServiceDetailPage() {
   const { lang, t } = useI18n();
@@ -23,6 +27,7 @@ export function ServiceDetailPage() {
     if (!s || !isCategory) return [];
     return rawServices
       .filter((item) => item.kind === "service" && item.parent_slug === s.slug)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
       .map((item) => localizeServiceCardItem(item, rawServices, lang));
   }, [isCategory, rawServices, s?.slug, lang]);
   const parentCategory = useMemo(() => {
@@ -55,7 +60,7 @@ export function ServiceDetailPage() {
     <>
       <Seo title={`${s.name} — Services israanwar`} description={s.description ?? s.body} />
       <section className="okr__section" style={{ paddingTop: 100 }}>
-        <div className="okr__wrap" style={{ maxWidth: 900 }}>
+        <div className="okr__wrap" style={{ maxWidth: isCategory ? undefined : 900 }}>
             <Link to={backTo} className="okr__link okr__service-detail-back">
               <ArrowLeft size={14} /> {backLabel}
             </Link>
@@ -77,6 +82,9 @@ export function ServiceDetailPage() {
                 {s.tagline}
               </p>
             )}
+            <ServicePrice service={rawService} lang={lang} />
+            <ServicePackageLink service={rawService} lang={lang} />
+            <p style={{ color: "var(--okr-muted)", fontSize: 13, margin: "16px 0 28px" }}>{lang === "id" ? "Harga awal. Cakupan, hasil kerja, revisi, dan biaya tambahan dikonfirmasi dalam penawaran. Biaya pihak ketiga tidak termasuk." : "Starting price. Scope, deliverables, revisions, and additional costs are confirmed in the quote. Third-party costs are excluded."}</p>
             {s.description && (
               <ServiceText value={s.description} />
             )}
@@ -94,26 +102,22 @@ export function ServiceDetailPage() {
                     />
                   </div>
                 </div>
-                <div className="okr__cards okr__cards--services okr__service-child-grid">
-                  {childServices.map((child, i) => {
-                    const ChildIcon = getServiceChildIcon(i, child.parent_slug, child.slug);
-                    const childIndex = String(i + 1).padStart(2, "0");
+                <div className="service-folder-grid service-subservice-grid">
+                  {childServices.map((child, index) => {
+                    const visual = getServiceFolderVisual(child.parent_slug, index, childServices.length);
                     return (
                       <Link
                         key={child.id}
                         to={`/services/${child.slug}`}
-                        className="okr__card okr__service-card okr__service-card--catalog"
-                        data-card-index={childIndex}
-                        style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column" }}
+                        className="service-folder-card service-folder-card--leaf"
+                        style={{ "--folder-gradient": visual.gradient, "--folder-glow": visual.accent }}
                       >
-                        <div className="okr__service-card-meta" aria-hidden="true">
-                          <span>{childIndex}</span>
-                          <span>{t("services_menu")}</span>
+                        <span className="service-folder-card-glow" aria-hidden="true" />
+                        <ServiceFolderArtwork />
+                        <div className="service-folder-meta">
+                          <h3>{child.name}</h3>
+                          <ServicePrice service={rawServices.find(item => item.slug === child.slug)} lang={lang} />
                         </div>
-                        <div className="okr__card-icon"><ChildIcon size={20} strokeWidth={2} /></div>
-                        <h3 className="okr__card-title">{child.name}</h3>
-                        <p className="okr__card-body" style={{ flex: 1 }}>{child.body}</p>
-                        <span className="okr__card-link">{t("services_details")}</span>
                       </Link>
                     );
                   })}

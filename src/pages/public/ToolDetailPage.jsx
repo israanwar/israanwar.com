@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { SunBackground } from "../../components/hero/SunBackground";
 import { ImageCompressorWorkspace } from "../../components/tools/ImageCompressorWorkspace";
 import { ImageResizerWorkspace } from "../../components/tools/ImageResizerWorkspace";
 import { InvoiceBuilderWorkspace } from "../../components/tools/InvoiceBuilderWorkspace";
@@ -49,7 +48,6 @@ export function ToolDetailPage() {
     <main className="okr__tool-detail-page">
       <Seo title={tool.name} description={tool.description} path={`/tools/${tool.slug}`} />
       <section className="okr__section okr__tool-detail-hero">
-        <SunBackground />
         <div className="okr__wrap">
           <Link to="/tools" className="okr__tool-back"><ArrowLeft size={16} /> All tools</Link>
           <span className="okr__kicker">// {tool.category}</span>

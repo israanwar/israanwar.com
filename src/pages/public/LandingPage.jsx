@@ -11,7 +11,7 @@ import { localizeServiceCardItems } from "../../lib/serviceI18n";
 import { useLandingEffects } from "../../hooks/useLandingEffects";
 import { BlogPinCard } from "../../components/blog/BlogPinCard";
 import { SunBackground } from "../../components/hero/SunBackground";
-import { ProcessCardSlider } from "../../components/marketing/ProcessCardSlider";
+import { ProcessTimeline } from "../../components/marketing/ProcessTimeline";
 import { ServiceFolderGrid } from "../../components/marketing/ServiceFolderGrid";
 import { ServicesKineticGrid } from "../../components/marketing/ServicesKineticGrid";
 import "../../styles/service-folder-grid.css";
@@ -448,36 +448,21 @@ export function LandingPage() {
 
           {processItems.length > 0 && (
             <section
-              className="okr__section okr__process-section okr__process-section--slider"
+              className="okr__section okr__process-section okr__process-section--timeline"
               id="about"
             >
               <div className="okr__wrap">
-                <div className="okr__process-story-shell">
-                  <div className="okr__process-intro">
-                    <div>
-                      <span className="okr__eyebrow okr__reveal">{t("section_process")}</span>
-                      <ScrollRevealTitle text={process.title} />
-                    </div>
-                    <p
-                      className="okr__process-intro-copy"
-                      aria-label={lang === "id"
-                        ? "Proses menyeluruh yang mengubah ide menjadi hasil nyata."
-                        : "A clear, end-to-end process to turn ideas into real outcomes."}
-                    >
-                      <span aria-hidden="true">
-                        {lang === "id"
-                          ? renderTouchLetters("Proses menyeluruh yang mengubah ide menjadi hasil nyata.", "processsub")
-                          : renderTouchLetters("A clear, end-to-end process to turn ideas into real outcomes.", "processsub")}
-                      </span>
-                    </p>
+                <div className="process-timeline-intro">
+                  <div>
+                    <span className="okr__eyebrow">{t("section_process")}</span>
+                    <h2 className="process-timeline-title" aria-label={lang === "id" ? "Cara kami bekerja." : "How we work."}>
+                      <span aria-hidden="true">{renderTouchLetters(lang === "id" ? "Cara kami" : "How we", "process-title-lead")}</span>{" "}
+                      <em aria-hidden="true">{renderTouchLetters(lang === "id" ? "bekerja." : "work.", "process-title-accent")}</em>
+                    </h2>
                   </div>
-                  <ProcessCardSlider
-                    items={processItems}
-                    lang={lang}
-                    detailLabel={t("process_detail_label")}
-                    pointsLabel={t("process_points_label")}
-                  />
+                  <p>{lang === "id" ? "Lima tahap yang jelas, dari brief awal hingga perbaikan berkelanjutan." : "Five clear stages, from your first brief to continuous improvement."}</p>
                 </div>
+                <ProcessTimeline items={processItems} lang={lang} />
               </div>
             </section>
           )}

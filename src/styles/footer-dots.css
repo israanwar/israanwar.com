@@ -1,0 +1,32 @@
+.okr .okr__closing-area {
+  position: relative;
+  isolation: isolate;
+  background: #000;
+}
+.okr__closing-area > .okr__closing-dots {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255,255,255,.18) 1.25px, transparent 1.25px);
+  background-size: 28px 28px;
+}
+.okr .okr__closing-area.okr__closing-area > .okr__newsletter-band.okr__newsletter-band,
+.okr .okr__closing-area > .okr__footer.okr__footer--dots.okr__footer {
+  position: relative;
+  z-index: 1;
+  background: transparent !important;
+  background-image: none !important;
+}
+.okr .okr__closing-area .okr__newsletter-band .okr__wrap,
+.okr__footer--dots > .okr__wrap {
+  position: relative;
+  z-index: 1;
+}
+.okr .okr__footer--dots :is(.okr__foot-desc, .okr__foot-tagline, .okr__foot-list a, .okr__foot-contact-link, .okr__foot-bottom, .okr__foot-title) {
+  color: #d9d9d9 !important;
+  text-shadow: 0 1px 3px #000;
+}
+.okr .okr__footer--dots :is(.okr__brand-wordmark, .okr__foot-list a:hover, .okr__foot-list a:focus-visible, .okr__foot-contact-link:hover, .okr__foot-contact-link:focus-visible) {
+  color: #fff !important;
+}
