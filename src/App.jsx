@@ -29,7 +29,8 @@ function ScrollToTop() {
     const targetId = hash ? decodeURIComponent(hash.slice(1)) : null;
 
     let live = true;
-    let lastHeight = document.documentElement.scrollHeight;
+    // ResizeObserver runs after layout; avoid forcing it during React commit.
+    let lastHeight = 0;
     // Declared up front so `release` can run on the early path too, before
     // the frame/observer/timer below have been created.
     let frame = 0;
@@ -69,9 +70,9 @@ function ScrollToTop() {
         target.scrollIntoView({ block: "start", behavior: "auto" });
         return true;
       }
-      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
+      if (window.scrollX !== 0 || window.scrollY !== 0) {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      }
       return false; // stay armed: later content can still shift us
     };
 

@@ -76,7 +76,7 @@ export function StoreItemPage() {
 
   return (
     <>
-      <Seo title={`${displayProduct.name} — israanwar`} description={seoDescription(displayProduct.description)} socialImage={shareImage} />
+      <Seo title={`${displayProduct.name} — israanwar`} description={seoDescription(displayProduct.description)} socialImage={shareImage} product={displayProduct} />
               <section className="okr__section" style={{ paddingTop: 100 }}>
           <div className="okr__wrap">
             <Link to="/store" className="okr__link" style={{ marginBottom: 24, display: "inline-flex" }}>

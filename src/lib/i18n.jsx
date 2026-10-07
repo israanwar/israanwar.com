@@ -554,6 +554,12 @@ function initialLang() {
 export function I18nProvider({ children }) {
   const location = useLocation();
   const [lang, setLang] = useState(initialLang);
+  const [pageLanguage, setPageLanguageState] = useState(null);
+  const setPageLanguage = useCallback((language) => {
+    setPageLanguageState(previous => previous?.path === location.pathname && previous?.language === language
+      ? previous : { path: location.pathname, language });
+  }, [location.pathname]);
+  const contentLanguage = pageLanguage?.path === location.pathname ? pageLanguage.language : lang;
   useEffect(() => {
     const nextLang = normalizeLang(lang);
     try {
@@ -561,8 +567,8 @@ export function I18nProvider({ children }) {
     } catch {
       // Ignore storage failures; document language still updates below.
     }
-    document.documentElement.lang = location.pathname.startsWith("/admin") ? "id" : nextLang;
-  }, [lang, location.pathname]);
+    document.documentElement.lang = location.pathname.startsWith("/admin") ? "id" : contentLanguage;
+  }, [lang, contentLanguage, location.pathname]);
 
   // t(key, params?) — support {var} interpolation
   const t = useCallback((key, params) => {
@@ -575,7 +581,7 @@ export function I18nProvider({ children }) {
   // I18nProvider re-renders on every route change (it reads useLocation()) —
   // memoize the context value so components consuming useI18n() only
   // re-render when the language actually changes, not on every navigation.
-  const value = useMemo(() => ({ lang, setLang, toggle, t }), [lang, toggle, t]);
+  const value = useMemo(() => ({ lang, setLang, toggle, t, setPageLanguage }), [lang, toggle, t, setPageLanguage]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }

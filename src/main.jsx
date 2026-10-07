@@ -38,8 +38,8 @@ if (document.fonts?.load) {
   });
 }
 
-// `dist/*/index.html` contains a hidden no-JS crawler shell. Clear it only
-// when the real app is ready to mount so there is never a competing tree.
+// Built pages contain a snapshot of this same application. Clear it before
+// createRoot mounts; this is prerendering, not React hydration.
 if (rootEl) rootEl.textContent = "";
 
 ReactDOM.createRoot(rootEl).render(

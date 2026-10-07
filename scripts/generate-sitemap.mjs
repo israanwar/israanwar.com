@@ -10,6 +10,7 @@
 import { writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { publicPostPath } from "../src/lib/publicPostUrls.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, "..");
@@ -26,9 +27,6 @@ const { TOOLS } = await import(
 );
 const { ISRA_ANWAR_SERVICES_SEED } = await import(
   `file://${projectRoot}/src/data/serviceCatalog.js`
-);
-const { SLUG_RENAMES } = await import(
-  `file://${projectRoot}/src/data/slugRenames.js`
 );
 
 // Konfigurasi domain — sesuaikan kalau pindah host.
@@ -140,7 +138,7 @@ const sortedPosts = [...ISRA_ANWAR_BLOG_POSTS_SEED]
 
 const postEntries = sortedPosts.map((p) =>
   urlEntry({
-    loc: `${SITE_URL}/blog/${SLUG_RENAMES[p.slug] ?? p.slug}`,
+    loc: `${SITE_URL}${publicPostPath(p)}`,
     lastmod: p.updated_at || p.published_at,
     changefreq: "monthly",
     priority: 0.7,

@@ -1,21 +1,12 @@
-// Prerender per-route static HTML (head only) untuk SEO/GEO/AEO.
-// Dijalankan otomatis sebagai `postbuild` script setelah vite build.
-//
-// Strategi (zero-risk):
-// - Nggak sentuh <body> — <div id="root"> tetap kosong, React tetap render
-//   di client dengan cara yang sama seperti sekarang. Zero hydration
-//   mismatch risk karena tidak ada content pre-rendered yang mesti match.
-// - Cuma modifikasi <head>: title, meta description, OG, Twitter Card,
-//   canonical, dan inject JSON-LD structured data.
-// - Output per-route index.html file. Static host (Vercel/Netlify/Nginx)
-//   auto-serve folder-based /path/index.html untuk URL /path.
-//
-// Kalau script ini gagal, dist/ tetap punya index.html SPA fallback yang
-// bekerja normal. Rollback = hapus postbuild script + hapus folder.
+// Build the public route inventory and provisional documents, then render
+// the built React application to capture its actual content and metadata.
+// render-public-html.mjs replaces output only after every public page passes.
+// Client mounting uses createRoot, so snapshots do not require hydration.
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { publicPostPath } from "../src/lib/publicPostUrls.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, "..");
@@ -554,23 +545,22 @@ function buildRouteHtml(route) {
   // Real body content for crawlers that don't execute JS — see the
   // REAL_SOCIAL/renderBodyHtml block above for why this is zero-risk.
   //
-  // The shell is plain semantic HTML with no class names, so it renders
-  // completely unstyled — a real visitor on a cold cache would stare at a
-  // wall of raw text for as long as the JS bundle takes to arrive. So it
-  // is hidden from anything that can run JavaScript, using the classic
-  // no-JS fallback pattern: the inline <head> script stamps `js-on` on
-  // <html> before the body is even parsed (so there is no paint of the
-  // shell, ever), and the inline rule hides it from that point on.
-  //
-  // Crawlers that don't execute JS never get the `js-on` class, so for
-  // them the rule doesn't match and the content stays fully visible and
-  // countable. Crawlers that DO execute JS (Googlebot) render the real
-  // React app, which contains the same content — so nothing is hidden
-  // from anyone that isn't shown the equivalent in another form.
+  // The shell is plain semantic HTML with no class names. It is shown on
+  // first paint, so a visitor on a cold cache reads the real headings and
+  // links while the JS bundle is still downloading, instead of a blank page.
+  // main.jsx clears #root right before React mounts, which removes the shell
+  // in the same step that the real app takes over.
+  // Gaya di bawah hanya menyasar #ssg-shell, jadi tidak bocor ke aplikasi
+  // React. Tanpa ini, teks shell tampak mentah sebelum CSS situs termuat.
   html = html.replace(
     "</head>",
-    `    <style>html.js-on #ssg-shell{display:none!important}</style>\n` +
-    `    <script>document.documentElement.classList.add("js-on")</script>\n  </head>`,
+    `    <style>` +
+      `#ssg-shell{min-height:100vh;padding:24px;background:#000;color:#f7f7f8;font-family:system-ui,-apple-system,sans-serif;line-height:1.55}` +
+      `#ssg-shell main{max-width:1100px;margin:0 auto}` +
+      `#ssg-shell h1{font-size:clamp(36px,8vw,64px);line-height:1.05;margin:24px 0 12px}` +
+      `#ssg-shell a{color:#d7c9ff}` +
+      `#ssg-shell nav a{margin-right:14px}` +
+      `</style>\n  </head>`,
   );
   html = html.replace('<div id="root"></div>', `<div id="root">${renderBodyHtml(route)}</div>`);
 
@@ -789,7 +779,7 @@ publishedPosts.forEach((post, postIndex) => {
   const category =
     CATEGORY_BY_SLUG[post.category] || CATEGORY_BY_SLUG[DEFAULT_CATEGORY_SLUG];
   routes.push({
-    path: `/blog/${post.slug}`,
+    path: publicPostPath(post),
     title: post.meta_title || post.title,
     socialTitle: post.title,
     description: post.meta_description || post.excerpt,
@@ -839,3 +829,8 @@ console.log(`  · ${serviceCount} individual services`);
 console.log(`  · ${categoryCount} blog categories`);
 console.log(`  · ${postCount} blog posts`);
 console.log(`  · ${productCount} store products`);
+
+const { renderPublicHtml } = await import("./render-public-html.mjs");
+await renderPublicHtml({ distDir, routes, template: TEMPLATE });
+const { verifyPublicHtml } = await import("./verify-public-html.mjs");
+await verifyPublicHtml({ distDir, routes });

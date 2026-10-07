@@ -56,7 +56,7 @@ export function BlogDetailPage() {
         socialTitle={post.title}
         socialImage={socialImage}
       />
-      <article className="okr__section okr__blog-detail-page" style={{ paddingTop: 100 }}>
+      <article lang={post.language || "id"} className="okr__section okr__blog-detail-page" style={{ paddingTop: 100 }}>
           <div className="okr__wrap" style={{ maxWidth: 780 }}>
             <Link to="/blog" className="okr__link" style={{ marginBottom: 24, display: "inline-flex" }}>
               <ArrowLeft size={14} /> {t("blog_back")}

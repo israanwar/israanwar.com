@@ -58,7 +58,7 @@ export function ServiceDetailPage() {
 
   return (
     <>
-      <Seo title={`${s.name} — Services israanwar`} description={s.description ?? s.body} />
+      <Seo title={`${s.name} — Services israanwar`} description={s.description ?? s.body} service={s} />
       <section className="okr__section" style={{ paddingTop: 100 }}>
         <div className="okr__wrap" style={{ maxWidth: isCategory ? undefined : 900 }}>
             <Link to={backTo} className="okr__link okr__service-detail-back">

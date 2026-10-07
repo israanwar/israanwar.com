@@ -1,13 +1,5 @@
-// Structured-data builders — pure functions yang return JSON-LD object
-// siap di-stringify. Dipakai di src/components/seo/Seo.jsx dan
-// scripts/generate-sitemap.mjs (indirectly). Tidak menyentuh DOM.
-//
-// Kenapa struktur ini penting:
-// - SEO: rich result eligibility di Google (breadcrumb, article snippet).
-// - GEO: AI crawler (GPTBot, ClaudeBot, PerplexityBot) pakai schema.org
-//   untuk memahami entity + relationship di halaman.
-// - AEO: BreadcrumbList + Article schema meningkatkan chance halaman
-//   muncul di "People also ask" / featured snippet.
+// JSON-LD describes the visible content, publisher, and author. It does
+// not guarantee rich results, indexing, or citations by answer engines.
 
 import { site as SITE } from "../data/site.js";
 
@@ -64,8 +56,8 @@ export function buildOrganization(settings) {
 }
 
 // ==================================================================
-// WebSite + SearchAction — bikin sitelinks searchbox eligible di Google.
-// Blog search di /blog?q= dipakai sebagai search endpoint.
+// WebSite identifies the publisher and supported languages. Do not declare
+// a SearchAction: the blog does not implement the advertised ?q= endpoint.
 // ==================================================================
 export function buildWebsite(settings) {
   const url = siteUrl(settings);
@@ -77,16 +69,8 @@ export function buildWebsite(settings) {
     "@id": `${url}/#website`,
     name,
     url,
-    inLanguage: "id-ID",
+    inLanguage: ["en", "id-ID"],
     publisher: { "@id": `${url}/#organization` },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${url}/blog?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 
@@ -167,8 +151,13 @@ export function buildArticle(post, category, settings, socialImage = null) {
       ? absoluteUrl(socialImage, settings)
       : `${url}/assets/social/israanwar-blog-share.png`;
 
-  // Approximate word count dari reading_time (200 wpm).
-  const wordCount = post.reading_time ? post.reading_time * 200 : undefined;
+  // Count the actual article text rather than infer it from reading time.
+  function contentText(node) {
+    if (typeof node === "string") return node.replace(/<[^>]*>/g, " ");
+    if (!node) return "";
+    return [node.text || "", ...(node.content || []).map(contentText)].join(" ");
+  }
+  const wordCount = contentText(post.content).trim().split(/\s+/u).filter(Boolean).length;
 
   const article = {
     "@context": "https://schema.org",
@@ -180,7 +169,7 @@ export function buildArticle(post, category, settings, socialImage = null) {
     },
     headline: post.title,
     description: post.meta_description || post.excerpt,
-    inLanguage: "id-ID",
+    inLanguage: (post.language || "id") === "id" ? "id-ID" : post.language,
     url: canonical,
     image: {
       "@type": "ImageObject",
@@ -190,6 +179,7 @@ export function buildArticle(post, category, settings, socialImage = null) {
     dateModified: post.updated_at || post.published_at,
     author: {
       "@type": "Person",
+      ...(authorName === "Isra Anwar" ? { "@id": `${url}/#founder` } : {}),
       name: authorName,
       url: `${url}/about`,
     },
@@ -204,26 +194,11 @@ export function buildArticle(post, category, settings, socialImage = null) {
     article.wordCount = wordCount;
   }
 
-  // Speakable — bagian mana dari artikel yang layak dibacakan voice
-  // assistant. Kita target title + excerpt paragraph + heading level 2.
-  article.speakable = {
-    "@type": "SpeakableSpecification",
-    cssSelector: [".okr__post-title", ".okr__post-excerpt", ".okr__h2"],
-  };
-
   return article;
 }
 
-// ==================================================================
-// WebPage + Speakable — inject per-page. Speakable memberitahu voice
-// assistants (Google Assistant, Siri lewat schema pickup, dsb) bagian
-// halaman mana yang layak dibacakan. Kita target elemen dengan
-// class `.okr__h2` dan `.okr__hero-title` — heading + subtitle utama.
-//
-// AEO angle: halaman dengan Speakable schema lebih mudah muncul di
-// hasil "read aloud" / voice answer.
-// ==================================================================
-export function buildWebPage(pathname, pageTitle, description, settings) {
+// Page metadata follows the content language and canonical URL.
+export function buildWebPage(pathname, pageTitle, description, settings, language = "en", image = null) {
   const url = siteUrl(settings);
   const canonical = pathname === "/" ? `${url}/` : `${url}${pathname}`;
 
@@ -234,17 +209,13 @@ export function buildWebPage(pathname, pageTitle, description, settings) {
     url: canonical,
     name: pageTitle,
     description,
-    inLanguage: "id-ID",
+    inLanguage: language === "id" ? "id-ID" : language,
     isPartOf: { "@id": `${url}/#website` },
     about: { "@id": `${url}/#organization` },
-    primaryImageOfPage: {
+    ...(image ? { primaryImageOfPage: {
       "@type": "ImageObject",
-      url: `${url}/assets/brand/favicon-ia-v2.png`,
-    },
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: [".okr__hero-title", ".okr__hero-sub", ".okr__h2"],
-    },
+      url: absoluteUrl(image, settings),
+    } } : {}),
   };
 }
 
@@ -272,7 +243,6 @@ export function buildPerson(settings) {
     url: `${url}/about`,
     jobTitle: "Digital Consultant",
     worksFor: { "@id": `${url}/#organization` },
-    image: `${url}/assets/brand/favicon-ia-v2.png`,
   };
 
   if (sameAs.length > 0) person.sameAs = sameAs;
@@ -292,7 +262,7 @@ export function buildProfessionalService(settings) {
 
   const service = {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
+    "@type": "Service",
     "@id": `${url}/#service`,
     name,
     url,
@@ -314,15 +284,8 @@ export function buildProfessionalService(settings) {
   return service;
 }
 
-// ==================================================================
-// FAQPage — untuk section "Pertanyaan yang sering muncul" di artikel.
-// Bikin post eligible untuk "People also ask" & featured snippet di Google.
-// AI answer engine (GPTBot, ClaudeBot, PerplexityBot) juga pakai FAQ schema
-// buat direct-answer extraction.
-//
-// Input: array [{ question, answer }]. Kembalikan null kalau kosong
-// supaya Seo.jsx bisa clear schema tag tanpa error.
-// ==================================================================
+// FAQPage describes questions and answers visibly included in the article.
+// Google no longer displays FAQ rich results; this is semantic markup.
 export function buildFaqPage(faqs) {
   if (!Array.isArray(faqs) || faqs.length === 0) return null;
 
@@ -337,5 +300,48 @@ export function buildFaqPage(faqs) {
         text: answer,
       },
     })),
+  };
+}
+
+// A detail page describes the service shown on that page. Starting prices
+// require a scope quote, so they are not advertised as fixed-price Offers.
+export function buildService(service, settings, language = "en") {
+  if (!service || service.kind === "category") return null;
+  const url = absoluteUrl(`/services/${service.slug}`, settings);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${url}#service`,
+    url,
+    name: service.name,
+    description: service.description || service.tagline || service.body,
+    serviceType: service.name,
+    provider: { "@id": `${siteUrl(settings)}/#organization` },
+    areaServed: { "@type": "Country", name: "Indonesia" },
+    mainEntityOfPage: { "@id": `${url}#webpage` },
+  };
+}
+
+export function buildProduct(product, settings, image = null) {
+  if (!product) return null;
+  const url = absoluteUrl(`/store/${product.slug}`, settings);
+  const price = Number(product.price);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${url}#product`,
+    url,
+    name: product.name,
+    description: product.description,
+    ...(image ? { image: absoluteUrl(image, settings) } : {}),
+    ...(Number.isFinite(price) && product.price !== null && product.price !== undefined && price >= 0 ? {
+      offers: {
+        "@type": "Offer",
+        url,
+        price: String(price),
+        priceCurrency: "IDR",
+        seller: { "@id": `${siteUrl(settings)}/#organization` },
+      },
+    } : {}),
   };
 }

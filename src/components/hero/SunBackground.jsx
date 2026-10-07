@@ -62,15 +62,6 @@ function getCameraFraming(aspect) {
   };
 }
 
-function supportsWebGL() {
-  try {
-    const canvas = document.createElement("canvas");
-    return Boolean(canvas.getContext("webgl2") || canvas.getContext("webgl"));
-  } catch {
-    return false;
-  }
-}
-
 const DUST_VERTEX_SHADER = `
   attribute float aSize;
   attribute float aSeed;
@@ -579,7 +570,8 @@ function createSharedSunFactory({ menu = false } = {}) {
     composer.addPass(new RenderPass(scene, camera));
     const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), isMobile ? 0.3 : 0.55, 0.6, 0.7);
     composer.addPass(bloom);
-    composer.addPass(new OutputPass());
+    const outputPass = new OutputPass();
+    composer.addPass(outputPass);
 
     function resize() {
       const width = shellEl.clientWidth;
@@ -832,6 +824,28 @@ function createSharedSunFactory({ menu = false } = {}) {
       }
     }
 
+    // Avoid blocking the first draw on solar shader compilation.
+    // Constructor failures already reach the caller and select the fallback.
+    renderer.setRenderTarget(composer.readBuffer);
+    await renderer.compileAsync(scene, camera);
+    // Postprocessing compiles nine fullscreen programs on its first draw. Prepare
+    // them against the same linear render target used by the composer.
+    const shaderScene = new THREE.Scene();
+    const shaderGeometry = new THREE.PlaneGeometry(2, 2);
+    const shaderCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    for (const material of [bloom.materialHighPassFilter,
+      ...bloom.separableBlurMaterials, bloom.compositeMaterial, bloom.blendMaterial]) {
+      shaderScene.add(new THREE.Mesh(shaderGeometry, material));
+    }
+    await renderer.compileAsync(shaderScene, shaderCamera);
+    renderer.setRenderTarget(null);
+    // Match OutputPass's default sRGB conversion before preparing its shader.
+    outputPass.material.defines.SRGB_TRANSFER = "";
+    shaderScene.clear();
+    shaderScene.add(new THREE.Mesh(shaderGeometry, outputPass.material));
+    await renderer.compileAsync(shaderScene, shaderCamera);
+    shaderGeometry.dispose();
+
     shared = {
       shellEl, attach, detach, mode: "ready",
     };
@@ -850,7 +864,7 @@ const ensureMenuShared = createSharedSunFactory({ menu: true });
 export function SunBackground({ onReady, variant = "page" }) {
   const ensure = variant === "menu" ? ensureMenuShared : ensureShared;
   const wrapperRef = useRef(null);
-  const [mode, setMode] = useState(() => (supportsWebGL() ? "loading" : "fallback"));
+  const [mode, setMode] = useState("loading");
 
   useEffect(() => {
     onReady?.(mode !== "loading");

@@ -7,6 +7,8 @@ Disallow: /admin/
 Disallow: /cart
 Disallow: /checkout
 Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 # ==========================================================
 # AI crawler yang biasa dipakai answer / generative engine.
@@ -16,42 +18,120 @@ Disallow: /orders/
 # ==========================================================
 User-agent: GPTBot
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: anthropic-ai
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: Perplexity-User
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: Bytespider
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: cohere-ai
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: DuckAssistBot
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 User-agent: Meta-ExternalAgent
 Allow: /
+Disallow: /admin
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders/
+Disallow: /order/
+Disallow: /private-shell.html
 
 # Sitemap + LLM-optimized site summary (llms.txt convention).
 Sitemap: https://www.israanwar.com/sitemap.xml

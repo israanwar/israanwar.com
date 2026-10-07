@@ -20,6 +20,8 @@ import {
   buildWebPage,
   buildPerson,
   buildProfessionalService,
+  buildService,
+  buildProduct,
 } from "../../lib/structuredData";
 
 function upsertMeta(selector, attributes) {
@@ -97,14 +99,17 @@ export function Seo({
   path,
   noindex = false,
   article = null,
+  service = null,
+  product = null,
   socialTitle = null,
   socialImage = null,
 }) {
   const location = useLocation();
   const settings = useLiveSettings();
-  const { lang } = useI18n();
+  const { lang, setPageLanguage } = useI18n();
+  const contentLanguage = article?.post ? (article.post.language || "id") : lang;
   const siteName = settings.seo_default_title || settings.site_name || site.name;
-  const metaDescription = description
+  const metaDescription = article?.post ? (description || article.post.meta_description || article.post.excerpt) : description
     ? localizeSiteDescription(description, lang)
     : localizeSiteDescription(
       settings.seo_default_description || settings.description || site.description,
@@ -126,9 +131,11 @@ export function Seo({
     // twitter:image at all, so sharing its link showed no brand identity
     // whatsoever. Falls back to the site's generic branded card.
     const shareImage = getSocialImageUrl(socialImage || SOCIAL_CARD_PATH);
-    const robots = noindex ? "noindex, nofollow" : "index, follow";
+    const robots = noindex ? "noindex, follow" : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
     document.title = pageTitle;
+    setPageLanguage(contentLanguage);
+    upsertMeta('meta[property="og:locale"]', { property: "og:locale", content: contentLanguage.startsWith("id") ? "id_ID" : "en_US" });
 
     upsertMeta('meta[name="description"]', { name: "description", content: metaDescription });
     upsertMeta('meta[name="robots"]', { name: "robots", content: robots });
@@ -176,6 +183,8 @@ export function Seo({
       upsertJsonLd("webpage", null);
       upsertJsonLd("person", null);
       upsertJsonLd("service", null);
+      upsertJsonLd("service-detail", null);
+      upsertJsonLd("product", null);
       return;
     }
 
@@ -186,9 +195,11 @@ export function Seo({
     upsertJsonLd("website", buildWebsite(settings));
     upsertJsonLd("person", buildPerson(settings));
     upsertJsonLd("service", buildProfessionalService(settings));
+    upsertJsonLd("service-detail", buildService(service, settings, contentLanguage));
+    upsertJsonLd("product", buildProduct(product, settings, socialImage));
     upsertJsonLd(
       "webpage",
-      buildWebPage(path || location.pathname, pageTitle, metaDescription, settings),
+      buildWebPage(path || location.pathname, pageTitle, metaDescription, settings, contentLanguage, shareImage),
     );
 
     // Per-page: BreadcrumbList (auto dari pathname).
@@ -213,7 +224,7 @@ export function Seo({
       upsertJsonLd("article", null);
       upsertJsonLd("faq", null);
     }
-  }, [location.pathname, metaDescription, noindex, path, siteName, title, article, settings, socialTitle, socialImage]);
+  }, [location.pathname, metaDescription, noindex, path, siteName, title, article, service, product, settings, socialTitle, socialImage, lang, contentLanguage, setPageLanguage]);
 
   return null;
 }

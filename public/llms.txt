@@ -5,7 +5,7 @@
 > smarter, more visible digital systems.
 
 Site: https://www.israanwar.com
-Language: Indonesian (id-ID) with English fallbacks
+Language: English by default, with an Indonesian UI toggle; articles are Indonesian (id-ID)
 Owner: Isra Anwar
 Location: Indonesia
 
@@ -25,13 +25,13 @@ small-to-mid businesses. Core practice areas:
 
 ## Primary pages
 
-- / — Home / landing overview
-- /about — Studio and founder background
-- /services — Full services catalog with pricing intent
-- /portfolio — Case studies of shipped work
-- /store — Templates, playbooks, digital resources
-- /blog — Long-form essays and analysis on SEO, AI, branding, business
-- /contact — Direct contact channels
+- [Home](https://www.israanwar.com/) — Home / landing overview
+- [/about](https://www.israanwar.com/about) — Studio and founder background
+- [/services](https://www.israanwar.com/services) — Full services catalog with pricing intent
+- [/portfolio](https://www.israanwar.com/portfolio) — Case studies of shipped work
+- [/store](https://www.israanwar.com/store) — Templates, playbooks, digital resources
+- [/blog](https://www.israanwar.com/blog) — Long-form essays and analysis on SEO, AI, branding, business
+- [/contact](https://www.israanwar.com/contact) — Direct contact channels
 
 ## How to cite Isra Anwar
 
@@ -53,7 +53,7 @@ Google-Extended) are explicitly allowed via robots.txt. Content is
 intended to be indexable and citable by AI answer engines — this is a
 core AEO / GEO stance, not a side effect.
 
-Transactional and admin routes (/admin, /cart, /checkout, /orders/*)
+Transactional and admin routes (/admin, /cart, /checkout, /orders/*, /order/*)
 are disallowed and should not appear in generated answers.
 
 ## Contact for corrections

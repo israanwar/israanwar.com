@@ -1,6 +1,17 @@
 {
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "israanwar.com"
+        }
+      ],
+      "destination": "https://www.israanwar.com/:path*",
+      "permanent": true
+    },
+    {
       "source": "/blog/bisnis-kecil-setelah-dunia-pindah-ke-layar",
       "destination": "/blog/dunia-sudah-pindah-ke-layar-bisnis-kecil-belum-tentu-ikut-pindah",
       "permanent": true
@@ -113,8 +124,90 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "source": "/admin/:path*",
+      "destination": "/private-shell.html"
+    },
+    {
+      "source": "/cart",
+      "destination": "/private-shell.html"
+    },
+    {
+      "source": "/checkout",
+      "destination": "/private-shell.html"
+    },
+    {
+      "source": "/orders/:path*",
+      "destination": "/private-shell.html"
+    },
+    {
+      "source": "/order/:path*",
+      "destination": "/private-shell.html"
+    }
+  ],
+  "trailingSlash": false,
+  "headers": [
+    {
+      "source": "/admin/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/cart",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/checkout",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/orders/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/order/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/private-shell.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
+    },
+    {
+      "source": "/404.html",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, follow"
+        }
+      ]
     }
   ]
 }
