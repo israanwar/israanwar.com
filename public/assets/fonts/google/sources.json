@@ -1,0 +1,104 @@
+[
+  {
+    "url": "https://fonts.gstatic.com/s/archivoblack/v23/HTxqL289NzCGg4MzN6KJ7eW6CYKF_jzx13HOvQ.woff2",
+    "file": "HTxqL289NzCGg4MzN6KJ7eW6CYKF_jzx13HOvQ.woff2",
+    "bytes": 6400,
+    "sha256": "372c9e5a54c31769d66ecd35c37142f1ecff9f5996abd7ffff5e97e8032cce96"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/archivoblack/v23/HTxqL289NzCGg4MzN6KJ7eW6CYyF_jzx13E.woff2",
+    "file": "HTxqL289NzCGg4MzN6KJ7eW6CYyF_jzx13E.woff2",
+    "bytes": 9792,
+    "sha256": "4eca2abdbbc1998c3a286e2e83a2256be5263ccb801aa93b00c64fea891efd3a"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJbecnFHGPezSQ.woff2",
+    "file": "pxiEyp8kv8JHgFVrJJbecnFHGPezSQ.woff2",
+    "bytes": 39504,
+    "sha256": "23617a1bf667dd6a29e2724ac6595e75924549d1c25e8672e2346ef38bc9984a"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnecnFHGPezSQ.woff2",
+    "file": "pxiEyp8kv8JHgFVrJJnecnFHGPezSQ.woff2",
+    "bytes": 5640,
+    "sha256": "1fae5e73d2788ee1dea1d76eca3a9f157a0386de6be8c280d076a53a64c358a1"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2",
+    "file": "pxiEyp8kv8JHgFVrJJfecnFHGPc.woff2",
+    "bytes": 7900,
+    "sha256": "3dc5d0c52428fe1696264907a1054ebbaac07f8cbe45832c105f819c2ae397c0"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z11lFd2JQEl8qw.woff2",
+    "file": "pxiByp8kv8JHgFVrLGT9Z11lFd2JQEl8qw.woff2",
+    "bytes": 39160,
+    "sha256": "9c8c47ee0aeaa2d378f4e5d5719ecbf05a601a35c285d0d48b888106bb15cf49"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1JlFd2JQEl8qw.woff2",
+    "file": "pxiByp8kv8JHgFVrLGT9Z1JlFd2JQEl8qw.woff2",
+    "bytes": 5496,
+    "sha256": "f8f0c28661c88edbcee022a4a80657619e8931af8c2a47c28e230307e2af30e5"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLGT9Z1xlFd2JQEk.woff2",
+    "file": "pxiByp8kv8JHgFVrLGT9Z1xlFd2JQEk.woff2",
+    "bytes": 7740,
+    "sha256": "289e0afc8be731a86822349e54557296f145926496bd2138db1bac0db77f77a2"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z11lFd2JQEl8qw.woff2",
+    "file": "pxiByp8kv8JHgFVrLEj6Z11lFd2JQEl8qw.woff2",
+    "bytes": 39384,
+    "sha256": "6d8ef422be4d827037f6f2d5766a0808018876fa5e9aa9a92787fad9d1f17938"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1JlFd2JQEl8qw.woff2",
+    "file": "pxiByp8kv8JHgFVrLEj6Z1JlFd2JQEl8qw.woff2",
+    "bytes": 5552,
+    "sha256": "72efc6a32cfd37c557108628cffa01153c480c3d4cde556744406e50b9d8e9f7"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFd2JQEk.woff2",
+    "file": "pxiByp8kv8JHgFVrLEj6Z1xlFd2JQEk.woff2",
+    "bytes": 7992,
+    "sha256": "872e862918591a9e824dc03ed92f05729435ffbb8ebbb10eff7eda26592b1798"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z11lFd2JQEl8qw.woff2",
+    "file": "pxiByp8kv8JHgFVrLCz7Z11lFd2JQEl8qw.woff2",
+    "bytes": 39204,
+    "sha256": "6eb8802d7319fcd48850eb38e41ed6ea12d917faafdfac7dae5614a517dc2b54"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1JlFd2JQEl8qw.woff2",
+    "file": "pxiByp8kv8JHgFVrLCz7Z1JlFd2JQEl8qw.woff2",
+    "bytes": 5448,
+    "sha256": "2477683a4b1200680780a759cc1b93b816410362dc5f4c74ebfeafa212bcb74d"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLCz7Z1xlFd2JQEk.woff2",
+    "file": "pxiByp8kv8JHgFVrLCz7Z1xlFd2JQEk.woff2",
+    "bytes": 7848,
+    "sha256": "197a3cbd7290c242c5c765268cdd69a9a39867fdc80cd13071f243a81c56fb76"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDD4Z11lFd2JQEl8qw.woff2",
+    "file": "pxiByp8kv8JHgFVrLDD4Z11lFd2JQEl8qw.woff2",
+    "bytes": 39088,
+    "sha256": "a8ad4aa5049a5198b7013b83880fa162539757fbc00310197c83fcaf054fed56"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDD4Z1JlFd2JQEl8qw.woff2",
+    "file": "pxiByp8kv8JHgFVrLDD4Z1JlFd2JQEl8qw.woff2",
+    "bytes": 5484,
+    "sha256": "db859b9cbc7a91707aeb8829f8e9df1d21b6354dac9481b89c4186bb23c842df"
+  },
+  {
+    "url": "https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDD4Z1xlFd2JQEk.woff2",
+    "file": "pxiByp8kv8JHgFVrLDD4Z1xlFd2JQEk.woff2",
+    "bytes": 7816,
+    "sha256": "4ef5511d8e7b39ae3f98ffed14d6071d7914e0c145fee5a79bb43aa962ff0fc4"
+  }
+]

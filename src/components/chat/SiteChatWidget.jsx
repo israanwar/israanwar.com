@@ -80,10 +80,12 @@ const REVEAL_STEPS = 46;
 // it can find and quote matching parts, not summarize or reason about them.
 export function SiteChatWidget() {
   const { t, lang } = useI18n();
-  const knowledge = useBalaoKnowledge();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [messages, setMessages] = useState([]);
+  const knowledge = useBalaoKnowledge({ enabled: open || messages.length > 0 });
+  const knowledgeRef = useRef(knowledge);
+  useEffect(() => { knowledgeRef.current = knowledge; }, [knowledge]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [thinkingStage, setThinkingStage] = useState(0);
@@ -142,7 +144,7 @@ export function SiteChatWidget() {
 
     replyTimeoutRef.current = window.setTimeout(() => {
       window.clearInterval(thinkingIntervalRef.current);
-      const reply = answerBalao(text, lang, knowledge, doc);
+      const reply = answerBalao(text, lang, knowledgeRef.current, doc);
       startReveal(reply);
     }, THINKING_STAGE_MS * THINKING_STAGE_KEYS.length);
   }

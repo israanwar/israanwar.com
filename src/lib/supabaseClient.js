@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { liveDataTable } from "./liveDataEvents";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -15,7 +16,7 @@ export const supabase = supabaseEnabled
   })
   : null;
 
-let remoteChangeChannel = null;
+const remoteChangeChannels = new Map();
 
 export function emitRemoteChange(key) {
   if (typeof window !== "undefined") {
@@ -28,28 +29,31 @@ export function emitRemoteChange(key) {
   }
 }
 
-export function ensureRemoteChangeBridge() {
-  if (!supabaseEnabled || !supabase || typeof window === "undefined" || remoteChangeChannel) return;
-
-  const tables = [
-    "site_settings",
-    "homepage_sections",
-    "pages",
-    "posts",
-    "products",
-    "services",
-    "media",
-    "contacts",
-    "orders",
-  ];
-
-  remoteChangeChannel = supabase.channel("okr-public-data");
-  tables.forEach((table) => {
-    remoteChangeChannel.on(
+export function ensureRemoteChangeBridge(key) {
+  if (!supabaseEnabled || !supabase || typeof window === "undefined") return () => {};
+  const table = liveDataTable(key);
+  if (!table) return () => {};
+  let entry = remoteChangeChannels.get(table);
+  if (!entry) {
+    const channel = supabase.channel(`okr-public-data:${table}`);
+    channel.on(
       "postgres_changes",
       { event: "*", schema: "public", table },
       () => emitRemoteChange(table),
     );
-  });
-  remoteChangeChannel.subscribe();
+    entry = { channel, subscribers: 0 };
+    remoteChangeChannels.set(table, entry);
+    channel.subscribe();
+  }
+  entry.subscribers += 1;
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    entry.subscribers -= 1;
+    if (entry.subscribers === 0) {
+      remoteChangeChannels.delete(table);
+      void supabase.removeChannel(entry.channel);
+    }
+  };
 }

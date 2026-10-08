@@ -349,12 +349,12 @@ export function LandingPage() {
   const settings = useLiveSettings();
   const rawSections = useLiveHomepage();
   const sections = localizeHomepage(rawSections, lang);
-  const posts = useLivePosts({ status: "published" }).slice(0, 6);
+  const posts = useLivePosts({ status: "published", limit: 6, view: "home" }).slice(0, 6);
   const rawPortfolio = useLivePage("portfolio");
   const portfolio = useMemo(() => localizePage(rawPortfolio, lang), [rawPortfolio, lang]);
   // The folder catalog uses six explicitly curated categories, while its
   // preview cards keep the real child-service routes from the shared catalog.
-  const rawServiceItems = useLiveServices({ status: "active" });
+  const rawServiceItems = useLiveServices({ status: "active", view: "folder" });
   const serviceItems = useMemo(
     () => localizeServiceCardItems(rawServiceItems, lang),
     [rawServiceItems, lang],

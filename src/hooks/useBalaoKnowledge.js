@@ -17,13 +17,14 @@ import { site } from "../data/site";
 // picks it up the same way ServicesPage.jsx does), and it can never leak
 // anything that isn't already public (there's no separate/hidden data
 // source here, just the public content hooks).
-export function useBalaoKnowledge() {
-  const rawServices = useLiveServices({ status: "active" });
-  const posts = useLivePosts({ status: "published" });
-  const products = useLiveProducts({ status: "active" });
-  const about = useLivePage("about");
-  const portfolio = useLivePage("portfolio");
-  const settings = useLiveSettings();
+export function useBalaoKnowledge({ enabled = true } = {}) {
+  const options = { enabled };
+  const rawServices = useLiveServices({ status: "active" }, options);
+  const posts = useLivePosts({ status: "published" }, options);
+  const products = useLiveProducts({ status: "active" }, options);
+  const about = useLivePage("about", options);
+  const portfolio = useLivePage("portfolio", options);
+  const settings = useLiveSettings(options);
 
   return useMemo(() => {
     const categories = rawServices

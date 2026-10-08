@@ -8,6 +8,7 @@ import {
   servicesData, postsData,
 } from "../lib/supabaseData";
 import { ensureRemoteChangeBridge } from "../lib/supabaseClient";
+import { affectsLiveData, storageChangeKey } from "../lib/liveDataEvents";
 import { applyProductPriceDiscount, applyProductPriceDiscounts } from "../lib/productPricing";
 import { normalizePortfolioProjects } from "../lib/portfolioProjects";
 
@@ -76,32 +77,43 @@ function scheduleRefresh(key, readFn) {
 // Every component asking for the same key shares one fetch/subscription —
 // the first mounted subscriber sets it up, the last one to unmount tears it
 // down; everyone in between just reads the shared cached value.
-function useLiveState(key, readFn, fallbackFn) {
+function useLiveState(key, readFn, fallbackFn, enabled = true) {
   const [state, setState] = useState(() => {
+    // A closed chat or empty cart does not need to parse its full local
+    // fallback catalog either. Initialize it when the consumer is enabled.
+    if (!enabled) return { value: undefined, loading: true, error: null };
     const entry = getEntry(key, fallbackFn);
     return { value: entry.value, loading: entry.loading, error: entry.error };
   });
 
   useEffect(() => {
+    if (!enabled) return undefined;
     const entry = getEntry(key, fallbackFn);
     setState({ value: entry.value, loading: entry.loading, error: entry.error });
     entry.listeners.add(setState);
 
     if (entry.listeners.size === 1) {
-      ensureRemoteChangeBridge();
+      const releaseBridge = ensureRemoteChangeBridge(key);
       const refresh = () => scheduleRefresh(key, readFn);
+      const onChange = (event) => {
+        if (affectsLiveData(key, event.detail?.key)) refresh();
+      };
+      const onStorage = (event) => {
+        if (affectsLiveData(key, storageChangeKey(event))) refresh();
+      };
       const onVis = () => { if (!document.hidden) refresh(); };
       document.addEventListener("visibilitychange", onVis);
       window.addEventListener("focus", refresh);
-      window.addEventListener("storage", refresh);
-      window.addEventListener("okr:local-store-change", refresh);
-      window.addEventListener("okr:remote-store-change", refresh);
+      window.addEventListener("storage", onStorage);
+      window.addEventListener("okr:local-store-change", onChange);
+      window.addEventListener("okr:remote-store-change", onChange);
       entry.cleanupGlobal = () => {
         document.removeEventListener("visibilitychange", onVis);
         window.removeEventListener("focus", refresh);
-        window.removeEventListener("storage", refresh);
-        window.removeEventListener("okr:local-store-change", refresh);
-        window.removeEventListener("okr:remote-store-change", refresh);
+        window.removeEventListener("storage", onStorage);
+        window.removeEventListener("okr:local-store-change", onChange);
+        window.removeEventListener("okr:remote-store-change", onChange);
+        releaseBridge();
       };
       refresh();
     }
@@ -110,31 +122,34 @@ function useLiveState(key, readFn, fallbackFn) {
       entry.listeners.delete(setState);
       if (entry.listeners.size === 0) {
         if (entry.frame) cancelAnimationFrame(entry.frame);
+        entry.frame = 0;
+        entry.requestId += 1;
         entry.cleanupGlobal?.();
         entry.cleanupGlobal = null;
       }
     };
-  }, [key]);
+  }, [key, enabled]);
 
   return state;
 }
 
-function useLive(key, readFn, fallbackFn) {
-  return useLiveState(key, readFn, fallbackFn).value;
+function useLive(key, readFn, fallbackFn, enabled = true) {
+  return useLiveState(key, readFn, fallbackFn, enabled).value;
 }
 
 // Pages (about, contact, portfolio, privacy, terms)
-export function useLivePage(key) {
+export function useLivePage(key, { enabled = true } = {}) {
   return useLive(
     `page:${key}`,
     () => pagesData.get(key),
     () => key === "portfolio" ? normalizePortfolioProjects(pagesRepo.get(key)) : pagesRepo.get(key) ?? {},
+    enabled,
   ) ?? {};
 }
 
 // Global site settings
-export function useLiveSettings() {
-  return useLive("settings", () => settingsData.get(), () => settingsRepo.get() ?? {}) ?? {};
+export function useLiveSettings({ enabled = true } = {}) {
+  return useLive("settings", () => settingsData.get(), () => settingsRepo.get() ?? {}, enabled) ?? {};
 }
 
 // Homepage sections (hero, cta, process, services list, cases list)
@@ -143,12 +158,13 @@ export function useLiveHomepage() {
 }
 
 // Store products
-export function useLiveProducts(filter) {
+export function useLiveProducts(filter, { enabled = true } = {}) {
   const status = filter?.status;
   const rows = useLive(
     `products:${status ?? "all"}`,
     () => productsData.list(status ? { status } : undefined),
     () => applyProductPriceDiscounts(productsRepo.list(status ? { status } : undefined)),
+    enabled,
   );
   return Array.isArray(rows) ? rows : [];
 }
@@ -178,12 +194,14 @@ export function useLiveProductState(slug) {
 }
 
 // Services
-export function useLiveServices(filter) {
+export function useLiveServices(filter, { enabled = true } = {}) {
   const status = filter?.status;
+  const view = filter?.view;
   const rows = useLive(
-    `services:${status ?? "all"}`,
-    () => servicesData.list(status ? { status } : undefined),
+    `services:${status ?? "all"}${view ? `:view=${view}` : ""}`,
+    () => servicesData.list({ status, view }),
     () => servicesRepo.list(status ? { status } : undefined),
+    enabled,
   );
   return Array.isArray(rows) ? rows : [];
 }
@@ -195,12 +213,18 @@ export function useLiveServiceState(slug) {
 }
 
 // Blog posts
-export function useLivePosts(filter) {
+export function useLivePosts(filter, { enabled = true } = {}) {
   const status = filter?.status;
+  const limit = filter?.limit;
+  const view = filter?.view;
   const rows = useLive(
-    `posts:${status ?? "all"}`,
-    () => postsData.list(status ? { status } : undefined),
-    () => postsRepo.list(status ? { status } : undefined),
+    `posts:${status ?? "all"}${limit ? `:limit=${limit}` : ""}${view ? `:view=${view}` : ""}`,
+    () => postsData.list({ status, limit, view }),
+    () => {
+      const items = postsRepo.list(status ? { status } : undefined);
+      return limit ? items.slice(0, limit) : items;
+    },
+    enabled,
   );
   return Array.isArray(rows) ? rows : [];
 }
@@ -219,8 +243,8 @@ export function useLivePostState(slug) {
 // mirror — always empty for a Supabase-backed store, so every cart item
 // was silently dropped and checkout looked "empty" for every product).
 export function useLiveCart() {
-  const products = useLiveProducts();
   const [items, setItems] = useState(() => cartRepo.list());
+  const products = useLiveProducts(undefined, { enabled: items.length > 0 });
   useEffect(() => {
     const off = cartRepo.onChange(setItems);
     return off;

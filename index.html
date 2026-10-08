@@ -94,16 +94,8 @@
     <link rel="icon" type="image/png" href="/assets/brand/favicon-ia-v2.png?v=20260916-ia-v2-black-badge" sizes="512x512" />
     <link rel="apple-touch-icon" href="/assets/brand/favicon-ia-v2.png?v=20260916-ia-v2-black-badge" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <!-- Wordmark font — Archivo Black (mendekati Styrene A / Anthropic vibe).
-         dns-prefetch is a cheap belt-and-braces alongside preconnect for the
-         narrow mobile browsers (older iOS Safari) that don't ack preconnect
-         until later in parse. -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Archivo Black and Poppins use the same WOFF2 files, now served
+         locally by brand-fonts.css alongside the application stylesheet. -->
     <!-- Google AdSense Auto ads. Keep this global so AdSense can evaluate
          every public route rendered by the SPA. -->
     <script
