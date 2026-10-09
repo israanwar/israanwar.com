@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { publicBootstrap } from "./publicBootstrap";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, startTransition } from "react";
 import { useLocation } from "react-router-dom";
 
 const KEY = "okr:lang";
@@ -551,9 +552,15 @@ function initialLang() {
   }
 }
 
-export function I18nProvider({ children }) {
+export function I18nProvider({ children, initialLanguage }) {
   const location = useLocation();
-  const [lang, setLang] = useState(initialLang);
+  const [lang, setLang] = useState(() => initialLanguage ?? publicBootstrap?.lang ?? initialLang());
+  const [languageReady, setLanguageReady] = useState(() => !publicBootstrap);
+  useEffect(() => {
+    if (!publicBootstrap) return;
+    const stored = initialLang();
+    startTransition(() => { setLang(stored); setLanguageReady(true); });
+  }, []);
   const [pageLanguage, setPageLanguageState] = useState(null);
   const setPageLanguage = useCallback((language) => {
     setPageLanguageState(previous => previous?.path === location.pathname && previous?.language === language
@@ -561,6 +568,7 @@ export function I18nProvider({ children }) {
   }, [location.pathname]);
   const contentLanguage = pageLanguage?.path === location.pathname ? pageLanguage.language : lang;
   useEffect(() => {
+    if (!languageReady) return;
     const nextLang = normalizeLang(lang);
     try {
       localStorage.setItem(KEY, nextLang);
@@ -568,7 +576,7 @@ export function I18nProvider({ children }) {
       // Ignore storage failures; document language still updates below.
     }
     document.documentElement.lang = location.pathname.startsWith("/admin") ? "id" : contentLanguage;
-  }, [lang, contentLanguage, location.pathname]);
+  }, [lang, contentLanguage, location.pathname, languageReady]);
 
   // t(key, params?) — support {var} interpolation
   const t = useCallback((key, params) => {

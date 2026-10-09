@@ -1,3 +1,4 @@
+import { publicBootstrap } from "../lib/publicBootstrap";
 import { useEffect, useMemo, useState } from "react";
 import {
   pagesRepo, settingsRepo, homepageRepo, productsRepo,
@@ -17,13 +18,16 @@ import { normalizePortfolioProjects } from "../lib/portfolioProjects";
 // one fetch, one set of global listeners, and one cached value instead of
 // each mounted component re-fetching and re-subscribing independently.
 const cacheStore = new Map();
+export function getPublicDataSnapshot() {
+ return Object.fromEntries([...cacheStore].filter(([key])=>/^(settings|homepage|page:|products:|product:|services:|service:|posts:|post:)/.test(key)).map(([key,entry])=>[key,entry.value]));
+}
 
 function getEntry(key, fallbackFn) {
   let entry = cacheStore.get(key);
   if (!entry) {
     entry = {
-      value: fallbackFn(),
-      loading: true,
+      value: Object.hasOwn(publicBootstrap?.data ?? {}, key) ? publicBootstrap.data[key] : fallbackFn(),
+      loading: !Object.hasOwn(publicBootstrap?.data ?? {}, key),
       error: null,
       listeners: new Set(),
       frame: 0,
@@ -243,9 +247,10 @@ export function useLivePostState(slug) {
 // mirror — always empty for a Supabase-backed store, so every cart item
 // was silently dropped and checkout looked "empty" for every product).
 export function useLiveCart() {
-  const [items, setItems] = useState(() => cartRepo.list());
+  const [items, setItems] = useState(() => publicBootstrap ? [] : cartRepo.list());
   const products = useLiveProducts(undefined, { enabled: items.length > 0 });
   useEffect(() => {
+    setItems(cartRepo.list());
     const off = cartRepo.onChange(setItems);
     return off;
   }, []);

@@ -2,8 +2,8 @@
 // Semua data disimpan di localStorage browser (per device).
 // Tidak ada request network sama sekali.
 
-import { ISRA_ANWAR_BLOG_POSTS_SEED } from "../data/blogSeedIsraVoice";
-import { ISRA_ANWAR_SERVICES_SEED } from "../data/serviceCatalog";
+import { getBlogPostsSeed } from "../data/blogSeedIsraVoice";
+import { getServicesSeed } from "../data/serviceCatalog";
 import { applyProductPriceDiscount } from "./productPricing";
 import { normalizePortfolioProjects } from "./portfolioProjects";
 import { DEFAULT_QRIS_SETTINGS, normalizePaymentSettings } from "./paymentSettings";
@@ -29,7 +29,16 @@ const HERO_HEADLINE = "Build what conventional minds miss before the market move
 const HERO_SUBTITLE = "Strategy, design, technology, and AI engineered into sharper systems that turn early insight into measurable business momentum.";
 
 // -------------- helpers --------------
+let seedReady = false;
+let seeding = false;
 function read(key, fallback) {
+  // Public HTML already includes its initial content. Cart/session reads do
+  // not need to migrate a complete fallback catalog. Seed lazily on the first
+  // content repository read, keeping the same offline/admin fallback data.
+  if (!seedReady && !seeding && key !== KEYS.cart && key !== KEYS.session) {
+    seeding = true;
+    try { ensureSeed(); seedReady = true; } finally { seeding = false; }
+  }
   try {
     const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : fallback;
@@ -67,6 +76,8 @@ function rebrandStoredValue(value) {
 // No local admin user is seeded here. Local (non-Supabase) admin login is
 // intentionally unavailable — see auth.signIn/signUp below.
 function ensureSeed() {
+  const ISRA_ANWAR_BLOG_POSTS_SEED = getBlogPostsSeed();
+  const ISRA_ANWAR_SERVICES_SEED = getServicesSeed();
   const DEFAULT_SETTINGS = {
     site_name: "Isra Anwar",
     tagline: HERO_HEADLINE,
@@ -1297,6 +1308,7 @@ function ensureSeed() {
 
   // Store items seed (versioned — v17 = requested final prices for selected modules)
   if (localStorage.getItem("okr:seeded:store:v17") !== "1") {
+    const STORE_SEED = getStoreSeed();
     // Slug legacy dari seed v1 (kategori lama "Metode Kerja", "Template") — dibuang
     const LEGACY_SLUGS = new Set([
       "metode-content-ops-playbook",
@@ -1699,7 +1711,9 @@ const P = (slug, name, category, price, description) => {
   };
 };
 
-const STORE_SEED = [
+let storeSeed;
+function getStoreSeed() {
+  return storeSeed ??= [
   // 1. Templates
   P("tpl-notion-freelancer-os", "Notion Freelancer OS", "Templates", 129000,
     "Complete Notion workspace for freelancers: clients, projects, invoices, timesheets, and knowledge base. Ready to fork."),
@@ -1984,7 +1998,8 @@ const STORE_SEED = [
   P("modul-digital-sales-funnel", "Module: Digital Sales Funnel & Automation", "Modules", 299000,
     "Build automated sales flows with funnels & tools — awareness, lead, nurture, close, retention."),
 ];
-// ensureSeed() dipindah ke akhir file — SERVICES_SEED & PAGES_SEED dideklarasikan lebih jauh ke bawah.
+}
+// Seed factories run only when a local content repository needs them.
 
 // -------------- auth --------------
 const authListeners = new Set();
@@ -2690,5 +2705,4 @@ These terms are governed by the laws of the Republic of Indonesia. Any disputes 
 };
 
 
-// Init seed data — dipanggil setelah semua const SEED dideklarasikan (menghindari TDZ)
-ensureSeed();
+// Fallback content is initialized by read() when it is actually needed.

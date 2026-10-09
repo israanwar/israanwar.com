@@ -3062,8 +3062,7 @@
 }
 
 .okr__hero--pointcloud .okr__isra-cloud-stage,
-.okr__hero--pointcloud .okr__isra-cloud-fallback,
-.okr__hero-pointcloud-copy {
+.okr__hero--pointcloud .okr__isra-cloud-fallback {
   opacity: 0;
   transition: opacity 420ms ease;
 }

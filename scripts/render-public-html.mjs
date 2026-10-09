@@ -1,14 +1,15 @@
 import { createServer } from 'node:http';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { chromium } from '@playwright/test';
 import { site } from '../src/data/site.js';
+import { inlineStylesheet, publicStartup, stylesheetSelectors, matchedStylesheet } from './public-delivery.mjs';
 
 // Render the built application itself instead of maintaining a second copy
 // of its content. A fresh browser context preserves the default language and
 // empty visitor state. Fail the build rather than publish partial snapshots.
 export async function renderPublicHtml({ distDir, routes, template }) {
-  const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.woff2':'font/woff2' };
+  const mime = { '.html':'text/html', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.woff2':'font/woff2', '.webp':'image/webp' };
   const server = createServer(async (req, res) => {
     try {
       const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
@@ -33,8 +34,11 @@ export async function renderPublicHtml({ distDir, routes, template }) {
       launchOptions.executablePath = await buildChromium.executablePath();
     }
     browser = await chromium.launch(launchOptions);
+    const rendererEntry=(await readdir(resolve(distDir,'assets'))).find(name=>/^prerender-.*\.js$/.test(name));
+    if(!rendererEntry)throw new Error('Build renderer entry is missing');
     const pending = routes.filter(r => !r.noindex);
     const snapshots = [];
+    const stylesheetSources = new Map();
     let completed = 0;
     await Promise.all(Array.from({length:4}, async () => {
       while (pending.length) {
@@ -42,6 +46,13 @@ export async function renderPublicHtml({ distDir, routes, template }) {
         const context = await browser.newContext({viewport:{width:1440,height:1000},reducedMotion:'reduce'});
         const page = await context.newPage();
         const errors = [];
+        const fonts = new Set();
+        page.on('request', request => {
+          if (request.resourceType() === 'font') {
+            const url = new URL(request.url());
+            if (url.origin === base) fonts.add(url.pathname);
+          }
+        });
         page.on('pageerror', e => errors.push(e.message));
         await page.addInitScript(() => {
           window.__prerenderData = {pending:0, changed:Date.now(), failures:[]};
@@ -89,18 +100,64 @@ export async function renderPublicHtml({ distDir, routes, template }) {
           if (await page.locator('meta[name="robots"]').getAttribute('content').then(v=>v?.includes('noindex'))) {
             throw new Error('Expected public route rendered as noindex');
           }
-          const html = await page.evaluate(() => {
+          const delivery = await page.evaluate(() => ({
+            styles: [...document.querySelectorAll('link[rel="stylesheet"]')].map(link => new URL(link.href).pathname),
+            entry: document.querySelector('script[type="module"][src]')?.getAttribute('src'),
+            ads: document.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')?.getAttribute('src'),
+          }));
+          const sources = await Promise.all(delivery.styles.map(async href => {
+            if (!stylesheetSources.has(href)) stylesheetSources.set(href, readFile(resolve(distDir,'.'+href),'utf8'));
+            return {href, css:await stylesheetSources.get(href)};
+          }));
+          const selectors = [...new Set(sources.flatMap(style => stylesheetSelectors(style.css)))];
+          const matched = new Set(await page.evaluate(selectors => selectors.filter(selector => {
+            try {
+              const base = selector.replace(/::[a-z-]+(?:\([^)]*\))?/gi, '').replace(/:(hover|active|focus-visible|focus-within|focus)(?![a-z-])/gi, '');
+              return Boolean(document.querySelector(base));
+            } catch { return true; }
+          }), selectors));
+          const styles = sources.map(({href, css}) => ({href, css:inlineStylesheet(matchedStylesheet(css, matched),href)}));
+          const startup = publicStartup(delivery.entry, delivery.ads, delivery.styles);
+          const html = await page.evaluate(async ({rendererEntry, styles, startup, fonts}) => {
+            await import('/assets/'+rendererEntry);
+            const snapshot=window.__ISRA_PRERENDER__();
             const clone = document.documentElement.cloneNode(true);
             // Runtime-only surfaces must not become persistent build artifacts.
             clone.querySelectorAll('iframe, .adsbygoogle').forEach(e=>e.remove());
             const root = clone.querySelector('#root');
-            root.querySelectorAll('.okr__touch-active').forEach(e=>e.classList.remove('okr__touch-active'));
+            if(snapshot.html!==null) {
+            root.innerHTML=snapshot.html;
+            const bootstrap=document.createElement('script');bootstrap.id='public-bootstrap';bootstrap.type='application/json';
+            bootstrap.textContent=JSON.stringify(snapshot.bootstrap).replaceAll('<','\\u003c');
+            clone.querySelector('head').append(bootstrap);
+            // Select the stored language before the app module hydrates. Both
+            // alternatives are React server markup, never a blank replacement.
+            const locale=document.createElement('script');
+            locale.textContent=`(()=>{try{if(localStorage.getItem('okr:lang')!=='id'||localStorage.getItem('okr:migrated:lang:v2')!=='1'||localStorage.getItem('okr:migrated:lang:v3')!=='1')return;const node=document.getElementById('public-bootstrap'),value=JSON.parse(node.textContent);document.getElementById('root').innerHTML=value.alternates.id;value.lang='id';delete value.alternates;node.textContent=JSON.stringify(value);document.documentElement.lang='id';}catch{}})();`;
+            root.after(locale);
+            for (const {href, css} of styles) {
+              for (const link of clone.querySelectorAll('link[rel="stylesheet"]')) {
+                if (new URL(link.href).pathname !== href) continue;
+                const style = document.createElement('style'); style.dataset.buildStylesheet = href; style.textContent = css;
+                link.replaceWith(style);
+              }
+            }
+            clone.querySelectorAll('link[rel="modulepreload"]').forEach(link => link.remove());
+            for (const href of fonts) {
+              if ([...clone.querySelectorAll('link[rel="preload"][as="font"]')].some(link => link.getAttribute('href') === href)) continue;
+              const font = document.createElement('link'); font.rel = 'preload'; font.as = 'font'; font.href = href; font.type = 'font/woff2'; font.crossOrigin = 'anonymous';
+              clone.querySelector('head').append(font);
+            }
+            clone.querySelector('script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]')?.remove();
+            const entry = clone.querySelector('script[type="module"][src]');
+            const boot = document.createElement('script'); boot.type = 'module'; boot.dataset.publicEntry = entry.getAttribute('src'); boot.textContent = startup; entry.replaceWith(boot);
+            }
             const style = document.createElement('style');
             style.id = 'prerender-readable';
             style.textContent = '#root .okr__reveal{opacity:1!important;transform:none!important}';
             clone.querySelector('head').append(style);
             return '<!doctype html>\n' + clone.outerHTML;
-          });
+          },{rendererEntry, styles, startup, fonts:[...fonts]});
           snapshots.push({ path: route.path, html });
           completed++;
           if (completed % 25 === 0) console.log(`Rendered ${completed} public pages`);

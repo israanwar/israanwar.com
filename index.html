@@ -14,32 +14,26 @@
         let keepInitialScrollAtTop = true;
         const releaseInitialScroll = () => {
           keepInitialScrollAtTop = false;
+          window.__ISRA_INITIAL_SCROLL_RELEASED__ = true;
+          window.removeEventListener("scroll", resetInitialScroll);
+          window.removeEventListener("pageshow", resetInitialScroll);
         };
-
         const resetInitialScroll = () => {
           if (!keepInitialScrollAtTop || window.location.hash) return;
-          window.scrollTo(0, 0);
-          document.documentElement.scrollTop = 0;
-          if (document.body) document.body.scrollTop = 0;
+          if (window.scrollX !== 0 || window.scrollY !== 0) {
+            window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+          }
         };
 
-        resetInitialScroll();
-        // A real browser-chrome reload (not just Playwright's CDP-driven
-        // one) can still restore the old scroll position at points later
-        // than head-parse time — some engines do it around DOMContentLoaded
-        // or `load`, after the SPA's own lazy route chunk has started
-        // growing the page. Re-applying at each of these points, plus on
-        // every bfcache restore (not just the first), closes that gap
-        // without fighting a reader who has since scrolled on purpose.
-        // Intent listeners live in this pre-React layer too because `load`
-        // can arrive after someone already started interacting on a slow
-        // connection; React's ScrollToTop cannot protect that early window.
+        // Native restoration emits scroll. Correct only an actual movement;
+        // repeated layout-time writes during parsing and load are unnecessary.
+        // Reader input releases this guard before its own scroll event.
         ["wheel", "touchstart", "pointerdown", "keydown"].forEach((type) =>
           window.addEventListener(type, releaseInitialScroll, { passive: true, once: true }),
         );
-        document.addEventListener("DOMContentLoaded", resetInitialScroll, { once: true });
-        window.addEventListener("load", resetInitialScroll, { once: true });
+        window.addEventListener("scroll", resetInitialScroll, { passive: true });
         window.addEventListener("pageshow", resetInitialScroll);
+        window.setTimeout(releaseInitialScroll, 8000);
       })();
     </script>
     <!-- Pinch-zoom and double-tap-zoom are intentionally left enabled —
@@ -94,6 +88,7 @@
     <link rel="icon" type="image/png" href="/assets/brand/favicon-ia-v2.png?v=20260916-ia-v2-black-badge" sizes="512x512" />
     <link rel="apple-touch-icon" href="/assets/brand/favicon-ia-v2.png?v=20260916-ia-v2-black-badge" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preload" href="/node_modules/@fontsource/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <!-- Archivo Black and Poppins use the same WOFF2 files, now served
          locally by brand-fonts.css alongside the application stylesheet. -->
     <!-- Google AdSense Auto ads. Keep this global so AdSense can evaluate

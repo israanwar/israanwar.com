@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  build: { cssMinify: true },
+  build: { cssMinify: true, rolldownOptions: { input: { main: "index.html", prerender: "src/prerender-entry.jsx" } } },
   // jSquash codecs (Image Compressor tool) ship Emscripten/wasm-bindgen glue
   // that resolves its own .wasm binary relative to `import.meta.url` at
   // runtime. esbuild's dev-server dependency pre-bundling copies that glue

@@ -1,9 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { App } from "./App";
-import { AuthProvider } from "./hooks/useAuth";
-import { I18nProvider } from "./lib/i18n";
+import { Application } from "./Application";
+import { publicBootstrap } from "./lib/publicBootstrap";
 import "@fontsource/plus-jakarta-sans/400.css";
 import "@fontsource/plus-jakarta-sans/500.css";
 import "@fontsource/plus-jakarta-sans/600.css";
@@ -20,16 +18,13 @@ const rootEl = document.getElementById("root");
 if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
 }
-if (window.location.pathname === "/" && !window.location.hash) {
-  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-}
 
 // Warm the bundled fonts in parallel with React instead of making the entire
 // application wait behind them. The previous await left a black, scrollable
 // document in place long enough for browser scroll restoration to become the
 // first thing a visitor saw. @fontsource still supplies the same font files;
 // this only removes the render-blocking waterfall.
-if (document.fonts?.load) {
+if (!publicBootstrap && document.fonts?.load) {
   void Promise.all([
     document.fonts.load('400 1em "Plus Jakarta Sans"'),
     document.fonts.load('600 1em "Plus Jakarta Sans"'),
@@ -39,18 +34,10 @@ if (document.fonts?.load) {
   });
 }
 
-// Built pages contain a snapshot of this same application. Clear it before
-// createRoot mounts; this is prerendering, not React hydration.
-if (rootEl) rootEl.textContent = "";
-
-ReactDOM.createRoot(rootEl).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <I18nProvider>
-          <App />
-        </I18nProvider>
-      </AuthProvider>
-    </BrowserRouter>
-  </React.StrictMode>,
-);
+// The public build emits React server markup and its initial public data.
+// Hydrate it in place: never clear readable content while downloading JS.
+if (publicBootstrap) {
+ ReactDOM.hydrateRoot(rootEl, <Application />, {onRecoverableError(error){console.error("Public hydration:",error);}});
+} else {
+ ReactDOM.createRoot(rootEl).render(<Application />);
+}

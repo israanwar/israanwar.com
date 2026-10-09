@@ -2840,7 +2840,10 @@ const OKKA_FAQS = {
   ],
 };
 
-export const ISRA_ANWAR_BLOG_POSTS_SEED = RAW_ISRA_VOICE_POSTS.map((post) => {
+let blogPostsSeed;
+export function getBlogPostsSeed() {
+  if (blogPostsSeed) return blogPostsSeed;
+  return blogPostsSeed = RAW_ISRA_VOICE_POSTS.map((post) => {
   const { body, ...rest } = post;
   const fullBody = [
     body,
@@ -2880,3 +2883,7 @@ export const ISRA_ANWAR_BLOG_POSTS_SEED = RAW_ISRA_VOICE_POSTS.map((post) => {
     updated_at: rest.published_at,
   };
 });
+
+}
+
+export const ISRA_ANWAR_BLOG_POSTS_SEED = /*#__PURE__*/ getBlogPostsSeed();

@@ -195,7 +195,7 @@ export function SiteHeader({ settings }) {
         <div className="okr__wrap okr__nav">
           <Link className="okr__brand" to="/" onClick={closeMenu}>
             <span className="okr__logo-badge">
-              <IsraAnwarMark decorative markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png" />
+              <IsraAnwarMark decorative markSrc="/assets/brand/israanwar-mark-ia-v2-mono.webp" />
             </span>
             <span className="okr__brand-wordmark">{settings.site_name || "Isra Anwar"}</span>
           </Link>
@@ -328,7 +328,7 @@ export function SiteFooter({ settings }) {
             <div className="okr__footer-brand-col">
               <div className="okr__foot-brand">
                 <span className="okr__logo-badge">
-                  <IsraAnwarMark decorative markSrc="/assets/brand/israanwar-mark-ia-v2-mono.png" />
+                  <IsraAnwarMark decorative markSrc="/assets/brand/israanwar-mark-ia-v2-mono.webp" />
                 </span>
                 <span className="okr__brand-wordmark">{settings.site_name || "Isra Anwar"}</span>
               </div>

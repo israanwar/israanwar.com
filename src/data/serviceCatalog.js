@@ -355,6 +355,9 @@ function buildServiceBody(category, serviceName) {
   return `${serviceName} for teams that need ${category.name.toLowerCase()} work with clear strategy, clean execution, and measurable business value.`;
 }
 
+let servicesSeed;
+export function getServicesSeed() {
+  if (servicesSeed) return servicesSeed;
 const categoryEntries = SERVICE_CATEGORIES.map((category, index) => ({
   id: `seed-service-category-${category.slug}`,
   slug: category.slug,
@@ -391,5 +394,10 @@ const serviceEntries = SERVICE_CATEGORIES.flatMap((category, categoryIndex) =>
   }))
 );
 
+  return servicesSeed = [...categoryEntries, ...serviceEntries];
+}
+
 export const ISRA_ANWAR_SERVICE_CATEGORIES = SERVICE_CATEGORIES;
-export const ISRA_ANWAR_SERVICES_SEED = [...categoryEntries, ...serviceEntries];
+// Existing build tools keep their array export; unused eager construction is
+// removed from visitor bundles, which import the lazy factory instead.
+export const ISRA_ANWAR_SERVICES_SEED = /*#__PURE__*/ getServicesSeed();

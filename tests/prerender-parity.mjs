@@ -23,7 +23,7 @@ for(const file of documents){
  assert.ok(!html.includes('id="ssg-shell"'), `${file}: obsolete content shell`);
  assert.match(html, /id="prerender-readable"/, `${file}: missing app snapshot`);
  assert.match(html, /<h1[\s>]/, `${file}: missing H1`);
- assert.match(html, /type="module"[^>]*src="[^"]+"/, `${file}: missing app entry`);
+ assert.match(html, /type="module"[^>]*(?:src|data-public-entry)="[^"]+"/, `${file}: missing app entry`);
 }
 console.log(`PASS ${documents.length} public HTML documents: application snapshot, H1, client entry`);
 const sitemap=await readFile(resolve(dist,'sitemap.xml'),'utf8');
@@ -53,6 +53,7 @@ try{
   await js.route('**/*', r => /googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com/.test(r.request().url()) ? r.abort() : r.continue());
   await js.route('**/api/post-views**', r => r.fulfill({status:200,contentType:'application/json',body:'{"count":0}'}));
   const errors=[];js.on('pageerror',e=>errors.push(e.message));
+  js.on('console', message => { if (message.type() === 'error' && message.text().includes('Public hydration:')) errors.push(message.text()); });
   await raw.goto(base+route);
   await js.goto(base+route,{waitUntil:'networkidle'});
   const collect=p=>p.evaluate(()=>({title:document.title,description:document.querySelector('meta[name="description"]')?.content,canonical:document.querySelector('link[rel="canonical"]')?.href,h1:[...document.querySelectorAll('h1')].map(e=>e.textContent),price:[...document.querySelectorAll('.service-price')].map(e=>e.textContent)}));
