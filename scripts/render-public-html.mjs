@@ -3,7 +3,7 @@ import { readFile, writeFile, readdir } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { chromium } from '@playwright/test';
 import { site } from '../src/data/site.js';
-import { inlineStylesheet, publicStartup, stylesheetSelectors, matchedStylesheet } from './public-delivery.mjs';
+import { inlineStylesheet, publicStartup, stylesheetSelectors, matchedStylesheet, separateFontFaces } from './public-delivery.mjs';
 
 // Render the built application itself instead of maintaining a second copy
 // of its content. A fresh browser context preserves the default language and
@@ -116,7 +116,10 @@ export async function renderPublicHtml({ distDir, routes, template }) {
               return Boolean(document.querySelector(base));
             } catch { return true; }
           }), selectors));
-          const styles = sources.map(({href, css}) => ({href, css:inlineStylesheet(matchedStylesheet(css, matched),href)}));
+          const styles = sources.map(({href, css}) => {
+            const split = separateFontFaces(inlineStylesheet(matchedStylesheet(css, matched), href));
+            return {href, css:split.rules, fonts:split.fonts};
+          });
           const startup = publicStartup(delivery.entry, delivery.ads, delivery.styles);
           const html = await page.evaluate(async ({rendererEntry, styles, startup, fonts}) => {
             await import('/assets/'+rendererEntry);
@@ -135,11 +138,12 @@ export async function renderPublicHtml({ distDir, routes, template }) {
             const locale=document.createElement('script');
             locale.textContent=`(()=>{try{if(localStorage.getItem('okr:lang')!=='id'||localStorage.getItem('okr:migrated:lang:v2')!=='1'||localStorage.getItem('okr:migrated:lang:v3')!=='1')return;const node=document.getElementById('public-bootstrap'),value=JSON.parse(node.textContent);document.getElementById('root').innerHTML=value.alternates.id;value.lang='id';delete value.alternates;node.textContent=JSON.stringify(value);document.documentElement.lang='id';}catch{}})();`;
             root.after(locale);
-            for (const {href, css} of styles) {
+            for (const {href, css, fonts} of styles) {
               for (const link of clone.querySelectorAll('link[rel="stylesheet"]')) {
                 if (new URL(link.href).pathname !== href) continue;
-                const style = document.createElement('style'); style.dataset.buildStylesheet = href; style.textContent = css;
-                link.replaceWith(style);
+                const fontStyle = document.createElement('style'); fontStyle.dataset.buildFonts = href; fontStyle.textContent = fonts;
+                const style = document.createElement('style'); style.dataset.buildStylesheet = href; style.dataset.initialRules = 'true'; style.textContent = css;
+                link.replaceWith(fontStyle, style);
               }
             }
             clone.querySelectorAll('link[rel="modulepreload"]').forEach(link => link.remove());

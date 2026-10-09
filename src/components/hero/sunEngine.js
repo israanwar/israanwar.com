@@ -533,10 +533,14 @@ export async function createSunEngine({ canvas, surface: shellEl, environment, i
     const outputPass = new OutputPass();
     composer.addPass(outputPass);
 
+    let renderedWidth = 0;
+    let renderedHeight = 0;
     function resize() {
       const width = shellEl.clientWidth;
       const height = shellEl.clientHeight;
-      if (!width || !height) return;
+      // Scroll updates bounds, but only actual size changes need new drawing
+      // buffers, bloom targets, or camera framing. Keep the existing frame.
+      if (!width || !height || (width === renderedWidth && height === renderedHeight)) return;
       renderer.setSize(width, height, false);
       composer.setSize(width, height);
       camera.aspect = width / height;
@@ -549,6 +553,8 @@ export async function createSunEngine({ canvas, surface: shellEl, environment, i
       dustMaterial.uniforms.uPixelRatio.value = pointRatio;
       iconMaterial.uniforms.uPixelRatio.value = pointRatio;
       camera.updateProjectionMatrix();
+      renderedWidth = width;
+      renderedHeight = height;
     }
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(shellEl);

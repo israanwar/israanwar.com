@@ -4,7 +4,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { resolve, extname } from 'node:path';
 import { chromium } from '@playwright/test';
 import { SLUG_RENAMES } from '../src/data/slugRenames.js';
-const dist = resolve('dist');
+const dist = resolve(process.env.PARITY_DIST || 'dist');
 const server = createServer(async(req,res)=>{
  try {
   let path=resolve(dist,'.'+new URL(req.url,'http://localhost').pathname);
@@ -71,6 +71,8 @@ try{
   }
   if(route==='/services') {
    assert.match(await raw.locator('#root').innerText(),/Rp200\.000/);
+   // Capture the reader's active no-JS surface after the paired JS page.
+   await raw.bringToFront();
    await raw.screenshot({path:'/tmp/seo-step1-services-nojs.png'});
   }
   console.log(`PASS ${route}: HTML and client metadata/headings; accessible without JavaScript`);

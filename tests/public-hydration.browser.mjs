@@ -38,10 +38,27 @@ try {
       assert.ok(!requests.some(url => /\/assets\/prerender-[^/]+\.js/.test(url)), 'Build-only server renderer must never download on a visitor page');
       assert.deepEqual(errors, []);
       assert.ok(await page.evaluate(() => window.__fontLoadCycles <= 1), 'Deferred styles must not restart the font loading cycle');
+      assert.equal(await page.locator('style[data-initial-rules="true"]').count(), 0, 'Retire duplicate initial selectors only after complete CSS loads');
+      assert.ok(await page.locator('style[data-build-fonts]').count() > 0, 'Initial font registrations must remain active');
       assert.equal(await page.evaluate(() => localStorage.getItem('okr:seeded:store:v17')), null, 'Public hydration must not seed an unused local store catalog');
       console.log(`PASS retained public HTML, language ${language}, worker renderer, build-only bundle excluded: ${width}px`);
       await page.close();
     }
+  }
+  {
+    const page = await browser.newPage({ viewport: { width: 390, height: 900 } });
+    const errors = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.route('**/*.css', route => route.abort());
+    await page.route('**/*', route => /googlesyndication\.com|doubleclick\.net|google-analytics\.com|googletagmanager\.com/.test(new URL(route.request().url()).hostname) ? route.abort() : route.fallback());
+    await page.goto(base + '/', { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.querySelector('.okr__sun-hero-bg')?.dataset.mode === 'ready');
+    assert.ok(await page.locator('style[data-initial-rules="true"]').count() > 0, 'Failed CSS downloads must retain readable initial selectors');
+    assert.ok(await page.locator('style[data-build-fonts]').count() > 0);
+    assert.ok((await page.locator('#root h1').first().innerText()).trim());
+    assert.deepEqual(errors, []);
+    await page.close();
+    console.log('PASS failed complete stylesheet retains initial CSS and font registrations');
   }
   for (const width of [390, 1440]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });

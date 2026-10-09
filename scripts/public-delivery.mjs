@@ -11,6 +11,32 @@ export function inlineStylesheet(css, href) {
   });
 }
 
+// Keep font registrations in their own persistent sheet. The matching
+// selector rules can then be retired once the complete cascade is active.
+export function separateFontFaces(css) {
+  const root = postcss.parse(css);
+  const fontNames = /^(font-face|font-feature-values|font-palette-values)$/i;
+  function fontNode(node) {
+    if (node.type !== 'atrule') return null;
+    if (fontNames.test(node.name)) return node.clone();
+    if (!node.nodes) return node.name === 'layer' ? node.clone() : null;
+    const copy = node.clone({ nodes: [] });
+    for (const child of node.nodes) {
+      const selected = fontNode(child);
+      if (selected) copy.append(selected);
+    }
+    // Preserve layer declaration order even when a layer has no fonts.
+    return copy.nodes.length || node.name === 'layer' ? copy : null;
+  }
+  const fonts = postcss.root();
+  for (const node of root.nodes) {
+    const selected = fontNode(node);
+    if (selected) fonts.append(selected);
+  }
+  root.walkAtRules(fontNames, rule => rule.remove());
+  return { fonts: fonts.toString(), rules: root.toString() };
+}
+
 export function publicStartup(entry, adsSource, stylesheets = []) {
   return `
 const firstPaint = new Promise(resolve => {
@@ -49,6 +75,11 @@ await Promise.all(${JSON.stringify(stylesheets)}.map(href => new Promise(resolve
     try { removeDuplicateFaces(link.sheet); }
     catch (error) { console.warn('Deferred font deduplication failed:', error); }
     link.media = 'all';
+    // Retain the original font-face registrations while removing redundant
+    // bootstrap selector rules. Failed downloads retain their initial CSS.
+    for (const style of document.querySelectorAll('style[data-build-stylesheet]')) {
+      if (style.dataset.buildStylesheet === href && style.dataset.initialRules === 'true') style.remove();
+    }
     resolve();
   };
   link.onerror = () => { console.warn('Deferred stylesheet failed:', href); resolve(); };
