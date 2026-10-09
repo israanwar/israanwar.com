@@ -126,7 +126,8 @@ export function ServiceFolderGrid({ items, lang = "en", includeAll = false, show
           <span aria-hidden="true"><TouchText text={headingLead} keyPrefix="services-heading-lead" /></span>{" "}
           <em aria-hidden="true"><TouchText text={headingAccent} keyPrefix="services-heading-accent" /></em>
         </h2>
-        <p aria-label={description}>
+        <p>
+          <span className="okr__visually-hidden">{description}</span>
           <span aria-hidden="true"><TouchText text={description} keyPrefix="services-description" /></span>
         </p>
       </header>}

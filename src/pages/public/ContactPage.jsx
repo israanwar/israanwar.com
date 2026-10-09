@@ -75,32 +75,32 @@ export function ContactPage() {
 
                 <div className="okr__field-2col">
                   <div className="okr__field">
-                    <label className="okr__label">{t("contact_name")} *</label>
-                    <input className={`okr__input${errors.name ? " has-error" : ""}`}
+                    <label htmlFor="contact-name" className="okr__label">{t("contact_name")} *</label>
+                    <input id="contact-name" className={`okr__input${errors.name ? " has-error" : ""}`}
                       required value={form.name} onChange={(e) => set("name", e.target.value)} />
                     {errors.name && <div className="okr__field-error">{errors.name}</div>}
                   </div>
                   <div className="okr__field">
-                    <label className="okr__label">{t("contact_email")} *</label>
-                    <input type="email" className={`okr__input${errors.email ? " has-error" : ""}`}
+                    <label htmlFor="contact-email" className="okr__label">{t("contact_email")} *</label>
+                    <input id="contact-email" type="email" className={`okr__input${errors.email ? " has-error" : ""}`}
                       required value={form.email} onChange={(e) => set("email", e.target.value)} />
                     {errors.email && <div className="okr__field-error">{errors.email}</div>}
                   </div>
                 </div>
                 <div className="okr__field-2col">
                   <div className="okr__field">
-                    <label className="okr__label">{t("contact_phone")}</label>
-                    <input className="okr__input" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
+                    <label htmlFor="contact-phone" className="okr__label">{t("contact_phone")}</label>
+                    <input id="contact-phone" className="okr__input" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
                   </div>
                   <div className="okr__field">
-                    <label className="okr__label">{t("contact_subject")}</label>
-                    <input className="okr__input" value={form.subject} onChange={(e) => set("subject", e.target.value)}
+                    <label htmlFor="contact-subject" className="okr__label">{t("contact_subject")}</label>
+                    <input id="contact-subject" className="okr__input" value={form.subject} onChange={(e) => set("subject", e.target.value)}
                       placeholder={t("contact_subject_ph")} />
                   </div>
                 </div>
                 <div className="okr__field">
-                  <label className="okr__label">{t("contact_message")} *</label>
-                  <textarea className={`okr__input${errors.message ? " has-error" : ""}`}
+                  <label htmlFor="contact-message" className="okr__label">{t("contact_message")} *</label>
+                  <textarea id="contact-message" className={`okr__input${errors.message ? " has-error" : ""}`}
                     rows={6} required value={form.message} onChange={(e) => set("message", e.target.value)} />
                   {errors.message && <div className="okr__field-error">{errors.message}</div>}
                 </div>

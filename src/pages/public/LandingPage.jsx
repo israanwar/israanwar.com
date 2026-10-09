@@ -396,7 +396,8 @@ export function LandingPage() {
             <SunBackground onReady={setHeroSceneReady} />
             <div className="okr__hero-pointcloud-copy">
               {hero.kicker && (
-                <p className="okr__hero-pointcloud-kicker" aria-label={hero.kicker}>
+                <p className="okr__hero-pointcloud-kicker">
+                  <span className="okr__visually-hidden">{hero.kicker}</span>
                   <span aria-hidden="true">{renderTouchLetters(hero.kicker, "hero-kicker")}</span>
                 </p>
               )}
@@ -414,7 +415,8 @@ export function LandingPage() {
                 </h1>
               )}
               {hero.subtitle && (
-                <p className="okr__hero-pointcloud-subtitle" aria-label={hero.subtitle}>
+                <p className="okr__hero-pointcloud-subtitle">
+                  <span className="okr__visually-hidden">{hero.subtitle}</span>
                   <span aria-hidden="true">{renderTouchLetters(hero.subtitle, "hero-subtitle")}</span>
                 </p>
               )}
