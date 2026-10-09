@@ -15,6 +15,8 @@ try {
       });
       page.on('request', request => requests.push(request.url()));
       await page.addInitScript(language => {
+        window.__fontLoadCycles = 0;
+        document.fonts.addEventListener('loadingdone', () => window.__fontLoadCycles++);
         localStorage.setItem('okr:lang', language);
         localStorage.setItem('okr:migrated:lang:v2', '1');
         localStorage.setItem('okr:migrated:lang:v3', '1');
@@ -35,6 +37,7 @@ try {
       assert.equal(await page.locator('.okr__isra-cloud-stage').first().getAttribute('data-renderer'), 'worker');
       assert.ok(!requests.some(url => /\/assets\/prerender-[^/]+\.js/.test(url)), 'Build-only server renderer must never download on a visitor page');
       assert.deepEqual(errors, []);
+      assert.ok(await page.evaluate(() => window.__fontLoadCycles <= 1), 'Deferred styles must not restart the font loading cycle');
       assert.equal(await page.evaluate(() => localStorage.getItem('okr:seeded:store:v17')), null, 'Public hydration must not seed an unused local store catalog');
       console.log(`PASS retained public HTML, language ${language}, worker renderer, build-only bundle excluded: ${width}px`);
       await page.close();

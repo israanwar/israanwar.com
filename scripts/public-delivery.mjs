@@ -33,7 +33,24 @@ if (!document.hidden) {
 }
 await Promise.all(${JSON.stringify(stylesheets)}.map(href => new Promise(resolve => {
   const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = href;
-  link.onload = resolve;
+  // The initial inline CSS already installs every font face. Keep this sheet
+  // inactive until its duplicate faces are removed, then activate its complete
+  // non-font cascade atomically. This also retains the original asset URL for
+  // Vite's dependency deduplication and leaves private/invoice CSS untouched.
+  link.media = 'not all';
+  link.onload = () => {
+    function removeDuplicateFaces(sheet) {
+      for (let index = sheet.cssRules.length - 1; index >= 0; index--) {
+        const rule = sheet.cssRules[index];
+        if (rule.type === CSSRule.FONT_FACE_RULE) sheet.deleteRule(index);
+        else if (rule.cssRules) removeDuplicateFaces(rule);
+      }
+    }
+    try { removeDuplicateFaces(link.sheet); }
+    catch (error) { console.warn('Deferred font deduplication failed:', error); }
+    link.media = 'all';
+    resolve();
+  };
   link.onerror = () => { console.warn('Deferred stylesheet failed:', href); resolve(); };
   document.head.append(link);
 })));
