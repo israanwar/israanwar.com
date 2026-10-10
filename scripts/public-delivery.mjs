@@ -37,7 +37,7 @@ export function separateFontFaces(css) {
   return { fonts: fonts.toString(), rules: root.toString() };
 }
 
-export function publicStartup(entry, adsSource, stylesheets = []) {
+export function publicStartup(entry, adsSource, stylesheets = [], sunPrewarm = null) {
   return `
 const firstPaint = new Promise(resolve => {
   if (document.hidden || performance.getEntriesByType('paint').some(e => e.name === 'first-contentful-paint')) return resolve();
@@ -51,6 +51,12 @@ const firstPaint = new Promise(resolve => {
   observer.observe({type:'paint', buffered:true});
 });
 await firstPaint;
+${sunPrewarm ? `void import(${JSON.stringify(sunPrewarm)}).catch(() => {});` : ""}
+// Fetch the application graph while fonts and its complete CSS settle.
+// Execution still waits for the stylesheet cascade below.
+const appPreload = document.createElement('link');
+appPreload.rel = 'modulepreload'; appPreload.href = ${JSON.stringify(entry)};
+document.head.append(appPreload);
 if (!document.hidden) {
   // Let bundled fonts settle without making app startup wait indefinitely
   // for a font request. The visible HTML is retained throughout this phase.

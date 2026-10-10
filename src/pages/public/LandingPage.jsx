@@ -113,6 +113,16 @@ function CertificationsStrip({ providers, t }) {
     let rafId;
     let last = performance.now();
     let pos = trackRef.current ? trackRef.current.scrollLeft : 0;
+    const track = trackRef.current;
+    let half = track ? track.scrollWidth / 2 : 0;
+    // Refresh geometry when its inputs change, rather than forcing a layout
+    // read between scroll writes on every animation frame.
+    const measure = () => { half = track ? track.scrollWidth / 2 : 0; };
+    const sizeObserver = new ResizeObserver(measure);
+    if (track) {
+      sizeObserver.observe(track);
+      for (const child of track.children) sizeObserver.observe(child);
+    }
     function step(now) {
       const dt = now - last;
       last = now;
@@ -124,7 +134,6 @@ function CertificationsStrip({ providers, t }) {
       if (pausedRef.current) {
         pos = track.scrollLeft;
       } else {
-        const half = track.scrollWidth / 2;
         if (half > 0) {
           pos += CERTSTRIP_SPEED * dt;
           if (pos >= half) pos -= half;
@@ -134,7 +143,7 @@ function CertificationsStrip({ providers, t }) {
       rafId = requestAnimationFrame(step);
     }
     rafId = requestAnimationFrame(step);
-    return () => cancelAnimationFrame(rafId);
+    return () => { cancelAnimationFrame(rafId); sizeObserver.disconnect(); };
   }, [providers]);
 
   // Defensive cleanup only — the drag listeners below are normally removed
@@ -289,7 +298,7 @@ function CertificationsStrip({ providers, t }) {
             aria-hidden={i < providers.length ? undefined : true}
           >
             <span className="okr__certstrip-card-icon">
-              <img src={provider.logo} alt="" aria-hidden="true" draggable={false} />
+              <img src={provider.logo} alt="" aria-hidden="true" draggable={false} loading="lazy" decoding="async" />
             </span>
             <span className="okr__certstrip-card-name">{provider.name}</span>
           </button>

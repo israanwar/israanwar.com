@@ -29,7 +29,14 @@ async function createRenderer(shell, canvas, menu) {
       failureListeners.forEach(listener => listener(failure));
     };
     try {
-      worker = new Worker(new URL("./sun.worker.js", import.meta.url), { type: "module" });
+      const prepared = menu ? null : window.__ISRA_EARLY_SUN_WORKER__;
+      if (prepared && !prepared.failed) {
+        clearTimeout(prepared.timeout);
+        delete window.__ISRA_EARLY_SUN_WORKER__;
+        worker = prepared.worker;
+      } else {
+        worker = new Worker(new URL("./sun.worker.js", import.meta.url), { type: "module" });
+      }
       worker.onmessage = ({ data }) => {
         if (data.type === "ready") readyResolve();
         else if (data.type === "frame") frameResolve?.();

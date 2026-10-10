@@ -36,6 +36,8 @@ export async function renderPublicHtml({ distDir, routes, template }) {
     browser = await chromium.launch(launchOptions);
     const rendererEntry=(await readdir(resolve(distDir,'assets'))).find(name=>/^prerender-.*\.js$/.test(name));
     if(!rendererEntry)throw new Error('Build renderer entry is missing');
+    const sunPrewarm=(await readdir(resolve(distDir,'assets'))).find(name=>/^sunPrewarm-.*\.js$/.test(name));
+    if(!sunPrewarm)throw new Error('Sun prewarm entry is missing');
     const pending = routes.filter(r => !r.noindex);
     const snapshots = [];
     const stylesheetSources = new Map();
@@ -120,7 +122,7 @@ export async function renderPublicHtml({ distDir, routes, template }) {
             const split = separateFontFaces(inlineStylesheet(matchedStylesheet(css, matched), href));
             return {href, css:split.rules, fonts:split.fonts};
           });
-          const startup = publicStartup(delivery.entry, delivery.ads, delivery.styles);
+          const startup = publicStartup(delivery.entry, delivery.ads, delivery.styles, route.path === '/' ? '/assets/'+sunPrewarm : null);
           const html = await page.evaluate(async ({rendererEntry, styles, startup, fonts}) => {
             await import('/assets/'+rendererEntry);
             const snapshot=window.__ISRA_PRERENDER__();

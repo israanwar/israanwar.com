@@ -153,16 +153,19 @@ const SWARM_VERTEX_SHADER = `
     float spinCos = cos(spin);
     transformed.xy = mat2(spinCos, -spinSin, spinSin, spinCos) * transformed.xy;
     transformed *= 1.16;
-    vec3 impactDelta = transformed - uImpactCenter;
-    float impactDistance = length(impactDelta);
-    float pressureRadius = uImpactPhase * 1.55;
-    float contact = exp(-(impactDistance * impactDistance) / 0.16) * (1.0 - uImpactPhase);
-    float pressureRing = exp(-pow((impactDistance - pressureRadius) / 0.22, 2.0));
-    vec3 impactNormal = normalize(uImpactCenter);
-    float impactEnergy = (contact * 0.42 + pressureRing * 0.16) * uImpactStrength;
-    transformed += impactNormal * impactEnergy;
-    brightness += (contact * 0.9 + pressureRing * 0.62) * uImpactStrength;
-    opacity += (contact * 0.18 + pressureRing * 0.11) * uImpactStrength;
+    // Zero impact contributes exactly zero; avoid its distance/exponential work.
+    if (uImpactStrength > 0.0) {
+      vec3 impactDelta = transformed - uImpactCenter;
+      float impactDistance = length(impactDelta);
+      float pressureRadius = uImpactPhase * 1.55;
+      float contact = exp(-(impactDistance * impactDistance) / 0.16) * (1.0 - uImpactPhase);
+      float pressureRing = exp(-pow((impactDistance - pressureRadius) / 0.22, 2.0));
+      vec3 impactNormal = normalize(uImpactCenter);
+      float impactEnergy = (contact * 0.42 + pressureRing * 0.16) * uImpactStrength;
+      transformed += impactNormal * impactEnergy;
+      brightness += (contact * 0.9 + pressureRing * 0.62) * uImpactStrength;
+      opacity += (contact * 0.18 + pressureRing * 0.11) * uImpactStrength;
+    }
     vec4 mvPosition = modelViewMatrix * vec4(transformed, 1.0);
     vec4 mvCenter = modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0);
     float frontDepth = mvPosition.z - mvCenter.z;
