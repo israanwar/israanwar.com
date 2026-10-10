@@ -1,3 +1,4 @@
+import { preservePublicValue, preserveLiveSnapshot } from "../lib/liveDataSnapshot.js";
 import { publicBootstrap } from "../lib/publicBootstrap";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -57,7 +58,7 @@ function scheduleRefresh(key, readFn) {
     try {
       const next = await readFn();
       if (id === entry.requestId) {
-        entry.value = next;
+        entry.value = preservePublicValue(key, entry.value, next);
         entry.loading = false;
         entry.error = null;
         notify(entry);
@@ -81,7 +82,7 @@ function scheduleRefresh(key, readFn) {
 // Every component asking for the same key shares one fetch/subscription —
 // the first mounted subscriber sets it up, the last one to unmount tears it
 // down; everyone in between just reads the shared cached value.
-function useLiveState(key, readFn, fallbackFn, enabled = true) {
+function useLiveState(key, readFn, fallbackFn, enabled = true, valueOnly = false) {
   const [state, setState] = useState(() => {
     // A closed chat or empty cart does not need to parse its full local
     // fallback catalog either. Initialize it when the consumer is enabled.
@@ -93,8 +94,15 @@ function useLiveState(key, readFn, fallbackFn, enabled = true) {
   useEffect(() => {
     if (!enabled) return undefined;
     const entry = getEntry(key, fallbackFn);
-    setState({ value: entry.value, loading: entry.loading, error: entry.error });
-    entry.listeners.add(setState);
+    let current = state;
+    const update = (next) => {
+      const retained = preserveLiveSnapshot(current, next, valueOnly);
+      if (retained === current) return;
+      current = retained;
+      setState(retained);
+    };
+    update({ value: entry.value, loading: entry.loading, error: entry.error });
+    entry.listeners.add(update);
 
     if (entry.listeners.size === 1) {
       const releaseBridge = ensureRemoteChangeBridge(key);
@@ -123,7 +131,7 @@ function useLiveState(key, readFn, fallbackFn, enabled = true) {
     }
 
     return () => {
-      entry.listeners.delete(setState);
+      entry.listeners.delete(update);
       if (entry.listeners.size === 0) {
         if (entry.frame) cancelAnimationFrame(entry.frame);
         entry.frame = 0;
@@ -132,13 +140,13 @@ function useLiveState(key, readFn, fallbackFn, enabled = true) {
         entry.cleanupGlobal = null;
       }
     };
-  }, [key, enabled]);
+  }, [key, enabled, valueOnly]);
 
   return state;
 }
 
 function useLive(key, readFn, fallbackFn, enabled = true) {
-  return useLiveState(key, readFn, fallbackFn, enabled).value;
+  return useLiveState(key, readFn, fallbackFn, enabled, true).value;
 }
 
 // Pages (about, contact, portfolio, privacy, terms)
