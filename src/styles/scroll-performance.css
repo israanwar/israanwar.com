@@ -52,3 +52,12 @@
     animation: none !important;
   }
 }
+
+/* Sections that start below the first screen skip layout and paint until the
+   reader approaches them. `auto` remembers the real height once rendered, so
+   later visits and anchor jumps keep their position. */
+.okr__home > .okr__section,
+.okr__home > .services-kinetic-grid {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}

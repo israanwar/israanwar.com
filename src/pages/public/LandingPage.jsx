@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ArrowRight, ExternalLink, X } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -353,6 +353,13 @@ function CertificationsStrip({ providers, t }) {
   );
 }
 
+// Everything below the hero is already readable server markup. A Suspense
+// boundary lets React hydrate each section as separate, low-priority work
+// after the hero is interactive, instead of one long main-thread task.
+function DeferredHydration({ children }) {
+  return <Suspense fallback={null}>{children}</Suspense>;
+}
+
 export function LandingPage() {
   const { lang, t } = useI18n();
   const settings = useLiveSettings();
@@ -448,16 +455,21 @@ export function LandingPage() {
 
           {serviceItems.length > 0 && (
             <>
-              <ServicesKineticGrid scope="page" />
-              <section className="okr__section okr__services-section" id="services">
-                <div className="okr__wrap">
-                  <ServiceFolderGrid items={serviceItems} lang={lang} />
-                </div>
-              </section>
+              <DeferredHydration>
+                <ServicesKineticGrid scope="page" />
+              </DeferredHydration>
+              <DeferredHydration>
+                <section className="okr__section okr__services-section" id="services">
+                  <div className="okr__wrap">
+                    <ServiceFolderGrid items={serviceItems} lang={lang} />
+                  </div>
+                </section>
+              </DeferredHydration>
             </>
           )}
 
           {processItems.length > 0 && (
+            <DeferredHydration>
             <section
               className="okr__section okr__process-section okr__process-section--timeline"
               id="about"
@@ -476,9 +488,11 @@ export function LandingPage() {
                 <ProcessTimeline items={processItems} lang={lang} />
               </div>
             </section>
+            </DeferredHydration>
           )}
 
           {posts.length > 0 && (
+            <DeferredHydration>
             <section className="okr__section okr__journal-section" id="journal">
               <div className="okr__wrap">
                 <div className="okr__section-topbar okr__reveal">
@@ -502,9 +516,11 @@ export function LandingPage() {
                 </div>
               </div>
             </section>
+            </DeferredHydration>
           )}
 
           {cases.items?.length > 0 && (
+            <DeferredHydration>
             <section className="okr__section">
               <div className="okr__wrap">
                 <AnimatedHeadline
@@ -531,9 +547,11 @@ export function LandingPage() {
                 </div>
               </div>
             </section>
+            </DeferredHydration>
           )}
 
           {portfolio.certifications?.length > 0 && (
+            <DeferredHydration>
             <section className="okr__section okr__certs-section" id="certifications">
               <div className="okr__wrap">
                 <div className="okr__section-topbar okr__reveal">
@@ -554,9 +572,11 @@ export function LandingPage() {
                 <CertificationsStrip providers={portfolio.certifications} t={t} />
               </div>
             </section>
+            </DeferredHydration>
           )}
 
           {(cta.title || cta.subtitle || cta.button_label) && (
+            <DeferredHydration>
             <section className="okr__section okr__home-contact-section">
               <div className="okr__wrap">
                 <div className="okr__home-contact">
@@ -570,6 +590,7 @@ export function LandingPage() {
                 </div>
               </div>
             </section>
+            </DeferredHydration>
           )}
 
       </div>

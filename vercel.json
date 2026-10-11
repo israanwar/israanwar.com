@@ -208,6 +208,24 @@
           "value": "noindex, follow"
         }
       ]
+    },
+    {
+      "source": "/assets/:file([^/]+\\.(?:js|css|woff2|wasm))",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/fonts/google/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
     }
   ]
 }

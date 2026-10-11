@@ -62,7 +62,6 @@ export function BlogPinCard({ post, index, lang, t }) {
         "--tilt": `${BLOG_PIN_TILT[index % BLOG_PIN_TILT.length]}deg`,
         "--lift": `${BLOG_PIN_LIFT[index % BLOG_PIN_LIFT.length]}px`,
       }}
-      aria-label={`${post.title} — ${category?.name || t("blog_all")}`}
     >
       <span className="okr__blog-pin-dot" aria-hidden="true" />
       <span className="okr__blog-pin-category">

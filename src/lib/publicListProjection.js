@@ -15,3 +15,13 @@ export function serviceFolderRow(row) {
     },
   };
 }
+
+// The local seed fallback must hand the homepage the same reduced shape that
+// the Supabase `select()` projections above return. Otherwise a build without
+// remote data embeds every full service and post body in the public HTML.
+const pick = (item, keys) => Object.fromEntries(keys.filter(key => item?.[key] !== undefined).map(key => [key, item[key]]));
+const SERVICE_FOLDER_KEYS = ["id", "slug", "name", "status", "kind", "parent_slug", "order", "seed_source", "service_count", "child_slugs", "parent_name"];
+const HOME_POST_KEYS = ["id", "slug", "title", "status", "category", "published_at", "created_at", "updated_at", "author_id"];
+
+export const projectServiceFolderItem = item => pick(item, SERVICE_FOLDER_KEYS);
+export const projectHomePostItem = item => pick(item, HOME_POST_KEYS);

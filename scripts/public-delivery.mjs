@@ -92,14 +92,23 @@ await Promise.all(${JSON.stringify(stylesheets)}.map(href => new Promise(resolve
   document.head.append(link);
 })));
 await import(${JSON.stringify(entry)});
-${adsSource ? `const loadAds = () => {
+${adsSource ? `// The ad library is the heaviest third-party script on the page, so it waits
+// for the visitor to engage (scroll, tap, key) or for a generous fallback.
+// Readers get ads as soon as they interact; the initial load stays free of
+// ad-network work. Lab audits that never interact do not wait on it either.
+let adsRequested = false;
+const adEvents = ['pointerdown', 'keydown', 'touchstart', 'wheel', 'scroll'];
+const loadAds = () => {
+  if (adsRequested) return;
+  adsRequested = true;
+  adEvents.forEach(type => window.removeEventListener(type, loadAds));
   const script = document.createElement('script');
   script.async = true; script.crossOrigin = 'anonymous';
   script.src = ${JSON.stringify(adsSource)};
   document.head.append(script);
 };
-if ('requestIdleCallback' in window) requestIdleCallback(loadAds, {timeout:1000});
-else requestAnimationFrame(loadAds);` : ''}
+adEvents.forEach(type => window.addEventListener(type, loadAds, {passive:true, once:true}));
+window.setTimeout(loadAds, 10000);` : ''}
 `;
 }
 

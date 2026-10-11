@@ -18,7 +18,7 @@ import { normalizePortfolioProjects } from "./portfolioProjects";
 import { normalizePaymentSettings } from "./paymentSettings";
 import { POST_CONTENT_OVERRIDES } from "../data/postContentOverrides";
 import { SLUG_RENAMES } from "../data/slugRenames";
-import { HOME_POST_SELECT, SERVICE_FOLDER_SELECT, serviceFolderRow } from "./publicListProjection";
+import { HOME_POST_SELECT, SERVICE_FOLDER_SELECT, projectHomePostItem, projectServiceFolderItem, serviceFolderRow } from "./publicListProjection";
 
 // Reverse lookup (new slug -> old/current Supabase slug), built once. Used
 // so a request for the new, human-facing URL still finds the right row —
@@ -391,7 +391,8 @@ export const postsData = {
       return (data ?? []).map(postRowToItem);
     }, () => {
       const items = postsRepo.list(filter);
-      return Number.isInteger(filter?.limit) && filter.limit > 0 ? items.slice(0, filter.limit) : items;
+      const limited = Number.isInteger(filter?.limit) && filter.limit > 0 ? items.slice(0, filter.limit) : items;
+      return filter?.view === "home" ? limited.map(projectHomePostItem) : limited;
     });
   },
   async get(id) {
@@ -559,7 +560,10 @@ export const servicesData = {
       const { data, error } = await query;
       if (error) throw error;
       return (data ?? []).map(row => rowToItem(folderView ? serviceFolderRow(row) : row));
-    }, () => servicesRepo.list(filter));
+    }, () => {
+      const items = servicesRepo.list(filter);
+      return filter?.view === "folder" ? items.map(projectServiceFolderItem) : items;
+    });
   },
   async get(id) {
     return tryRemote(async () => {

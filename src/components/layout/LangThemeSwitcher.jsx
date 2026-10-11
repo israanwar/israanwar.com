@@ -8,7 +8,7 @@ export function LangThemeSwitcher() {
       type="button"
       onClick={toggle}
       title={lang === "id" ? "Switch to English" : "Ganti ke Bahasa Indonesia"}
-      aria-label="Toggle language"
+      aria-label={`${lang === "id" ? "ID" : "EN"} - Toggle language`}
     >
       {lang === "id" ? "ID" : "EN"}
     </button>
