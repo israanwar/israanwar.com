@@ -44,7 +44,8 @@ identity-audit-*.jpg
 identity-audit-*.png
 
 # Local dev-tool configuration (machine/session-specific, not project source)
-.claude/
+.claude/*
+!.claude/settings.json
 .mcp.json
 .stitch/
 

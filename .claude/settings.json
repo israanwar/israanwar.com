@@ -1,0 +1,13 @@
+{
+  "extraKnownMarketplaces": {
+    "omc": {
+      "source": {
+        "source": "github",
+        "repo": "yeachan-heo/oh-my-claudecode"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "oh-my-claudecode@omc": true
+  }
+}
