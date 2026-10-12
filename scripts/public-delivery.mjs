@@ -98,8 +98,13 @@ ${adsSource ? `const loadAds = () => {
   script.src = ${JSON.stringify(adsSource)};
   document.head.append(script);
 };
-if ('requestIdleCallback' in window) requestIdleCallback(loadAds, {timeout:1000});
-else requestAnimationFrame(loadAds);` : ''}
+const adInputs = ['pointerdown', 'keydown', 'wheel'];
+const scheduleAds = () => {
+  for (const type of adInputs) document.removeEventListener(type, scheduleAds, true);
+  if ('requestIdleCallback' in window) requestIdleCallback(loadAds, {timeout:1000});
+  else requestAnimationFrame(loadAds);
+};
+for (const type of adInputs) document.addEventListener(type, scheduleAds, {once:true, passive:true, capture:true});` : ''}
 `;
 }
 

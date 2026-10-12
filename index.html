@@ -16,13 +16,17 @@
           keepInitialScrollAtTop = false;
           window.__ISRA_INITIAL_SCROLL_RELEASED__ = true;
           window.removeEventListener("scroll", resetInitialScroll);
-          window.removeEventListener("pageshow", resetInitialScroll);
+          window.removeEventListener("pageshow", onPageShow);
         };
         const resetInitialScroll = () => {
           if (!keepInitialScrollAtTop || window.location.hash) return;
           if (window.scrollX !== 0 || window.scrollY !== 0) {
             window.scrollTo({ top: 0, left: 0, behavior: "auto" });
           }
+        };
+
+        const onPageShow = (event) => {
+          if (event.persisted) resetInitialScroll();
         };
 
         // Native restoration emits scroll. Correct only an actual movement;
@@ -32,7 +36,9 @@
           window.addEventListener(type, releaseInitialScroll, { passive: true, once: true }),
         );
         window.addEventListener("scroll", resetInitialScroll, { passive: true });
-        window.addEventListener("pageshow", resetInitialScroll);
+        // A first load has not scrolled yet; reading scroll offsets there forces
+        // layout on the full document. Only a bfcache restore needs correcting.
+        window.addEventListener("pageshow", onPageShow);
         window.setTimeout(releaseInitialScroll, 8000);
       })();
     </script>
