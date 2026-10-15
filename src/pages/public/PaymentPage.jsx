@@ -1,12 +1,12 @@
 import { useEffect, useReducer, useState } from "react";
-import { useParams, useNavigate, Link, Navigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams, Link, Navigate } from "react-router-dom";
 import {
   Check, Copy, Clock, X, Download, ShoppingBag, FileImage, ChevronRight, RefreshCw,
 } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { ORDER_STATUS } from "../../lib/localStore";
-import { ordersData, productsData } from "../../lib/supabaseData";
+import { ordersData } from "../../lib/supabaseData";
 import { useLiveSettings } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import {
@@ -406,19 +406,72 @@ function WaitingView({ order, L }) {
 /* ============================================================
  * PAID — download products
  * ============================================================ */
-function PaidView({ order, L }) {
-  const [products, setProducts] = useState([]);
-  useEffect(() => {
-    Promise.all(order.items.map((it) => productsData.get(it.product_id))).then((list) => {
-      setProducts(list.filter(Boolean));
-    });
-  }, [order.id]);
+function readOrderToken(orderNumber, fromUrl) {
+  if (fromUrl) {
+    try { window.localStorage.setItem(`okr:order-token:${orderNumber}`, fromUrl); } catch { /* opsional */ }
+    return fromUrl;
+  }
+  try { return window.localStorage.getItem(`okr:order-token:${orderNumber}`) || ""; } catch { return ""; }
+}
 
-  const downloadItems = order.items.map((it) => {
-    const p = products.find((x) => x.id === it.product_id);
-    return { ...it, download_url: p?.download_url };
+async function postOrderDownload(body) {
+  const res = await fetch("/api/order-download", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
-  const hasAnyDownload = downloadItems.some((it) => it.download_url);
+  return res;
+}
+
+async function callOrderDownload(body) {
+  const res = await postOrderDownload(body);
+  const data = await res.json().catch(() => null);
+  if (!res.ok || !data?.success) throw new Error(data?.error || "Gagal memuat unduhan.");
+  return data;
+}
+
+function PaidView({ order, L }) {
+  const [searchParams] = useSearchParams();
+  const token = readOrderToken(order.order_number, searchParams.get("t") || "");
+  const [files, setFiles] = useState(null);
+  const [error, setError] = useState("");
+  const [busyId, setBusyId] = useState("");
+
+  useEffect(() => {
+    let alive = true;
+    if (!token) { setFiles([]); return undefined; }
+    callOrderDownload({ orderNumber: order.order_number, token })
+      .then((d) => { if (alive) setFiles(d.files ?? []); })
+      .catch((e) => { if (alive) { setFiles([]); setError(e.message); } });
+    return () => { alive = false; };
+  }, [order.order_number, token]);
+
+  async function download(file) {
+    setBusyId(file.product_id);
+    setError("");
+    try {
+      const res = await postOrderDownload({ orderNumber: order.order_number, token, productId: file.product_id });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || "Gagal mengunduh file.");
+      }
+      const blob = await res.blob();
+      const href = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = href;
+      a.download = file.filename || "download.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(href), 10000);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusyId("");
+    }
+  }
+
+  const hasAnyDownload = (files ?? []).length > 0;
 
   return (
     <div className="okr__panel" style={{ textAlign: "center", padding: "40px 32px", marginBottom: 20 }}>
@@ -435,24 +488,18 @@ function PaidView({ order, L }) {
         {L.paid_body}
       </p>
 
-      {hasAnyDownload ? (
+      {files === null ? null : hasAnyDownload ? (
         <div style={{ display: "grid", gap: 10 }}>
-          {downloadItems.map((it) => (
-            it.download_url ? (
-              <a key={it.product_id} href={it.download_url} target="_blank" rel="noreferrer"
-                className="okr__btn okr__btn--primary"
-                style={{ width: "100%", justifyContent: "space-between", padding: "14px 20px" }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-                  <Download size={16} /> {L.download} {it.name}
-                </span>
-                <ChevronRight size={16} />
-              </a>
-            ) : (
-              <div key={it.product_id} className="okr__panel" style={{ padding: 14, background: "rgba(255,255,255,0.02)" }}>
-                <div style={{ fontSize: 14, fontWeight: 600 }}>{it.name}</div>
-                <div style={{ fontSize: 12, color: "var(--okr-muted)", marginTop: 4 }}>{L.download_via_email}</div>
-              </div>
-            )
+          {files.map((f) => (
+            <button key={f.product_id} type="button" onClick={() => download(f)}
+              disabled={busyId === f.product_id}
+              className="okr__btn okr__btn--primary"
+              style={{ width: "100%", justifyContent: "space-between", padding: "14px 20px" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+                <Download size={16} /> {L.download} {f.name}
+              </span>
+              <ChevronRight size={16} />
+            </button>
           ))}
         </div>
       ) : (
@@ -464,6 +511,7 @@ function PaidView({ order, L }) {
           {L.download_via_email}
         </div>
       )}
+      {error && <p role="alert" style={{ color: "#fca5a5", margin: "14px 0 0", fontSize: 13 }}>{error}</p>}
     </div>
   );
 }

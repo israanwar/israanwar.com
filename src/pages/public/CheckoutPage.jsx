@@ -60,8 +60,15 @@ export function CheckoutPage() {
     setSubmitted(true); // gate: prevent redirect to /cart after cartRepo.clear()
     setSubmitError(null);
     try {
+      // Token acak yang mengikat pesanan ke pembelinya. Tidak ikut keluar lewat fungsi publik.
+      // Hanya hash-nya yang disimpan di pesanan, jadi kebocoran data pesanan tidak membuka unduhan.
+      const accessToken = `${crypto.randomUUID()}${crypto.randomUUID()}`.replace(/-/g, "");
+      const accessTokenHash = Array.from(
+        new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(accessToken))),
+      ).map((b) => b.toString(16).padStart(2, "0")).join("");
       const order = await ordersData.create({
       ...form,
+      access_token_hash: accessTokenHash,
       payment_method: getCheckoutPaymentMethod(settings),
       subtotal: detail.total,
       items: detail.rows.map(({ product, qty, subtotal }) => {
@@ -73,7 +80,8 @@ export function CheckoutPage() {
       total: detail.total,
       });
       // Navigate ke halaman payment DULU — clear cart setelah nav biar UI tidak lompat.
-      nav(`/orders/${order.order_number}/payment`, { replace: true });
+      try { window.localStorage.setItem(`okr:order-token:${order.order_number}`, accessToken); } catch { /* opsional */ }
+      nav(`/orders/${order.order_number}/payment?t=${accessToken}`, { replace: true });
       setTimeout(() => cartRepo.clear(), 100);
     } catch (e) {
       setSubmitError(e.message ?? "Pesanan gagal dibuat. Coba lagi.");
