@@ -61,7 +61,7 @@ export function AdminPostEditPage() {
   const [post, setPost] = useState({
     title: "", slug: "", excerpt: "", content: null, cover_url: "", tags: [], status: "draft",
     category: "", focus_keyword: "", meta_title: "", meta_description: "",
-    canonical_path: "", related_slugs: [], references: [], published_at: "", read_count: "",
+    canonical_path: "", related_slugs: [], references: [], published_at: "", read_count: "", reading_time: "",
   });
   const [referencesText, setReferencesText] = useState("");
   const [loading, setLoading] = useState(!isNew);
@@ -153,6 +153,10 @@ export function AdminPostEditPage() {
         status: publishStatus ?? post.status,
         published_at: publishStatus === "published" ? (post.published_at || new Date().toISOString()) : post.published_at,
       };
+      const readingTime = Number(post.reading_time);
+      patch.reading_time = post.reading_time !== "" && Number.isFinite(readingTime) && readingTime > 0
+        ? Math.round(readingTime)
+        : null;
       const readCount = Number(post.read_count);
       if (post.read_count !== "" && Number.isFinite(readCount)) {
         patch.read_count = Math.max(1, Math.round(readCount));
@@ -272,12 +276,24 @@ export function AdminPostEditPage() {
                 <input
                   className="wpx__input"
                   type="number"
-                  min="1236"
+                  min="1"
                   value={post.read_count ?? ""}
                   onChange={(e) => set("read_count", e.target.value)}
                   placeholder="Auto"
                 />
                 <p className="wpx__help">Kosongkan untuk angka baca otomatis yang stabil.</p>
+              </div>
+              <div className="wpx__field">
+                <label className="wpx__label">Waktu baca (menit)</label>
+                <input
+                  className="wpx__input"
+                  type="number"
+                  min="1"
+                  value={post.reading_time ?? ""}
+                  onChange={(e) => set("reading_time", e.target.value)}
+                  placeholder="Auto"
+                />
+                <p className="wpx__help">Kosongkan untuk dihitung otomatis dari isi artikel.</p>
               </div>
             </div>
           </div>

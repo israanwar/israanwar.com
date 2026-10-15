@@ -30,6 +30,9 @@ const { ISRA_ANWAR_BLOG_POSTS_SEED } = await import(
 const { BLOG_CATEGORIES, CATEGORY_BY_SLUG, DEFAULT_CATEGORY_SLUG } = await import(
   `file://${projectRoot}/src/data/blogCategories.js`
 );
+const { getPostReadingMinutes } = await import(
+  `file://${projectRoot}/src/lib/blogMetrics.js`
+);
 const { getBlogSocialArtworkPath } = await import(
   `file://${projectRoot}/src/data/blogArtwork.js`
 );
@@ -284,7 +287,7 @@ function renderBodyHtml(route) {
   if (route.article) {
     const { post, category } = route.article;
     const tagsLine = post.tags?.length ? `<p>${xmlEsc(post.tags.join(" · ").toUpperCase())}</p>` : "";
-    const metaBits = [fmtDateID(post.published_at || post.created_at), post.reading_time ? `${post.reading_time} min read` : ""].filter(Boolean);
+    const metaBits = [fmtDateID(post.published_at || post.created_at), `${getPostReadingMinutes(post)} min read`].filter(Boolean);
     const excerptHtml = post.excerpt ? `<p>${xmlEsc(post.excerpt)}</p>` : "";
     main = `<main>
     <p><a href="/">Home</a> / <a href="/blog">Blog</a>${category ? ` / <a href="/blog/${xmlEsc(category.slug)}">${xmlEsc(category.name)}</a>` : ""}</p>

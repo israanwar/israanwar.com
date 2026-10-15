@@ -42,3 +42,24 @@ export function getPostReadCount(post = {}) {
 export function formatPostReadCount(value, lang = "en") {
   return Number(value ?? 0).toLocaleString(lang === "id" ? "id-ID" : "en-US");
 }
+
+// Hitung kata dari isi artikel (TipTap JSON, atau string HTML) lalu jadikan
+// menit baca. Dipakai kalau admin tidak mengisi reading_time secara manual.
+function collectText(node, out) {
+  if (node == null) return;
+  if (typeof node === "string") { out.push(node.replace(/<[^>]*>/g, " ")); return; }
+  if (Array.isArray(node)) { node.forEach((n) => collectText(n, out)); return; }
+  if (typeof node === "object") {
+    if (typeof node.text === "string") out.push(node.text);
+    if (node.content) collectText(node.content, out);
+  }
+}
+
+export function getPostReadingMinutes(post = {}) {
+  const manual = Number(post.reading_time);
+  if (Number.isFinite(manual) && manual > 0) return Math.round(manual);
+  const parts = [];
+  collectText(post.content, parts);
+  const words = parts.join(" ").split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
+}

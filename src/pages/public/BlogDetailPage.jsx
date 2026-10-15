@@ -7,7 +7,7 @@ import { PostShareBar } from "../../components/blog/PostShareBar";
 import { NewsletterForm } from "../../components/marketing/NewsletterForm";
 import { ArrowLeft } from "lucide-react";
 import { useI18n } from "../../lib/i18n";
-import { formatPostReadCount } from "../../lib/blogMetrics";
+import { formatPostReadCount, getPostReadingMinutes } from "../../lib/blogMetrics";
 import { usePostViewCount } from "../../hooks/usePostViewCount";
 import { CATEGORY_BY_SLUG, DEFAULT_CATEGORY_SLUG } from "../../data/blogCategories";
 import { getBlogSocialArtworkPath } from "../../data/blogArtwork";
@@ -41,7 +41,7 @@ export function BlogDetailPage() {
   const description = post.meta_description || post.excerpt;
   const seoTitle = post.meta_title || `${post.title} — Blog israanwar`;
   const canonicalPath = post.canonical_path || `/blog/${post.slug}`;
-  const readingTime = post.reading_time ?? 1;
+  const readingTime = getPostReadingMinutes(post);
   const rawCategory = CATEGORY_BY_SLUG[post.category] ?? CATEGORY_BY_SLUG[DEFAULT_CATEGORY_SLUG];
   const postIndex = Math.max(0, allPosts.findIndex((candidate) => candidate.id === post.id));
   const socialImage = post.cover_url || getBlogSocialArtworkPath(postIndex) || SOCIAL_CARD_PATH;
