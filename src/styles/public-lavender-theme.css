@@ -386,3 +386,38 @@
 )::after {
   content: none !important;
 }
+
+/* Store cards: dark surface with high-contrast text. The body text used to
+   inherit the light-theme ink colour, which is near-invisible on #08080b. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__product-img {
+  background: #0b0a10 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__artifact-card-edition {
+  color: #c9c3d6 !important;
+  font-size: 9px !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__product-cat {
+  color: #d7c9ff !important;
+  font-size: 10px !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__product-name {
+  color: #ffffff !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact :is(.okr__product-proof, .okr__product-sold, .okr__product-rating) {
+  color: #c4bfd0 !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__product-price {
+  color: #f1eaff !important;
+}

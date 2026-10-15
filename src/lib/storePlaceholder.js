@@ -1,16 +1,16 @@
 const STORE_WATERMARK = "Isra Anwar — Store";
 
-// One brand look for every generated cover: white canvas, ink title, one
-// lavender accent line. Earlier versions layered diagonal ribbons, rotated
+// One brand look for every generated cover: dark canvas (matches the site
+// theme), light title, one lavender accent line. Earlier versions layered diagonal ribbons, rotated
 // chip badges, grid lines, and a dark "Arcana" palette per category —
 // busy and, per feedback, cheap-looking. This is deliberately plain:
 // kicker, rule, headline, a faint real logo watermark. Category still
 // changes the kicker label so covers stay informative per product type,
 // just never the color.
-const INK = "#20181b";
-const MUTED = "#9a8f92";
+const INK = "#f7f5fb";
+const MUTED = "#b8afca";
 const ACCENT = "#d7c9ff";
-const BG = "#fcfbf8";
+const BG = "#0b0a10";
 
 const CATEGORY_LABELS = {
   google: "SEO & GROWTH SYSTEM",
@@ -169,7 +169,7 @@ function fontSizeFor(lines) {
 function titleSvg(lines) {
   const fontSize = fontSizeFor(lines);
   const lineHeight = fontSize * 1.12;
-  const baseline = 470;
+  const baseline = 480;
   const startY = baseline - (lines.length - 1) * lineHeight;
 
   return lines.map((line, index) => {
@@ -192,11 +192,11 @@ export function generateStoreCover(product = {}) {
     // load inside an SVG used as a data: URI <img src>, and inlining the
     // file as base64 would add ~40KB to every cached cover for a corner
     // watermark nobody consciously looks at.
-    `<path d="M540 620 L790 160 L900 620 Z" fill="${INK}" opacity="0.035"/>` +
-    `<text x="80" y="98" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" font-weight="700" fill="${MUTED}" letter-spacing="3">${xmlEsc(kicker)}</text>` +
-    `<rect x="80" y="114" width="44" height="3" fill="${ACCENT}"/>` +
+    `<path d="M540 620 L790 160 L900 620 Z" fill="#ffffff" opacity="0.05"/>` +
+    `<text x="80" y="100" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="26" font-weight="700" fill="${MUTED}" letter-spacing="2">${xmlEsc(kicker)}</text>` +
+    `<rect x="80" y="122" width="56" height="4" fill="${ACCENT}"/>` +
     titleSvg(lines) +
-    `<text x="80" y="536" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="12" font-weight="600" fill="${MUTED}" letter-spacing="2">${xmlEsc(STORE_WATERMARK)}</text>` +
+    `<text x="80" y="548" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="22" font-weight="600" fill="${MUTED}" letter-spacing="1">${xmlEsc(STORE_WATERMARK)}</text>` +
     `</svg>`;
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
