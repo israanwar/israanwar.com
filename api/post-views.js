@@ -43,9 +43,20 @@ export default async function handler(req, res) {
 
     if (req.method === "POST") {
       const seed = Number(req.body?.seed);
+      const base = Number(req.body?.base);
       const exists = await redis.exists(key);
       if (!exists && Number.isFinite(seed) && seed > 0) {
         await redis.set(key, Math.round(seed));
+      }
+      // Admin menetapkan read count manual: reset counter ke angka itu sekali
+      // setiap nilai base berubah, lalu lanjut bertambah normal.
+      if (Number.isFinite(base) && base > 0) {
+        const baseKey = `post_views_base:${slug}`;
+        const lastBase = Number((await redis.get(baseKey)) ?? 0);
+        if (lastBase !== Math.round(base)) {
+          await redis.set(key, Math.round(base));
+          await redis.set(baseKey, Math.round(base));
+        }
       }
       const count = await redis.incr(key);
       return res.status(200).json({ slug, count });

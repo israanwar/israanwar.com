@@ -96,7 +96,7 @@ function productRowToItem(row) {
 export function postRowToItem(row) {
   const legacyId = row.data?.legacy_id || (!isUuid(row.data?.id) ? row.data?.id : null);
   const item = { ...rowToItem(row), id: row.id, ...(legacyId ? { legacy_id: legacyId } : {}) };
-  const override = POST_CONTENT_OVERRIDES[item.slug];
+  const override = item.admin_edited_at ? null : POST_CONTENT_OVERRIDES[item.slug];
   const merged = override ? { ...item, ...override } : item;
   // A post's related_slugs can point at another post that got renamed —
   // resolve those references to the new slug too, otherwise "related
@@ -445,7 +445,7 @@ export const postsData = {
     return writeRemote(async () => {
       const current = await this.get(id);
       if (!current) throw new Error("Post tidak ditemukan di Supabase. Muat ulang halaman sebelum menyimpan.");
-      const next = { ...current, ...patch };
+      const next = { ...current, ...patch, admin_edited_at: new Date().toISOString() };
       const { id: _rowId, ...rowPatch } = postPayload(next);
       const { data, error } = await supabase
         .from("posts")

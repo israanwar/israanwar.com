@@ -132,7 +132,9 @@ const serviceEntries = ISRA_ANWAR_SERVICES_SEED
   );
 
 // Sort blog posts: newest first supaya crawler prioritas ke content baru.
-const sortedPosts = [...ISRA_ANWAR_BLOG_POSTS_SEED]
+const { fetchDbOnlyPosts } = await import("./fetch-db-posts.mjs");
+const dbOnlyPosts = await fetchDbOnlyPosts(ISRA_ANWAR_BLOG_POSTS_SEED);
+const sortedPosts = [...ISRA_ANWAR_BLOG_POSTS_SEED, ...dbOnlyPosts]
   .filter((p) => p.status === "published")
   .sort((a, b) => (b.published_at ?? "").localeCompare(a.published_at ?? ""));
 

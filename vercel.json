@@ -142,6 +142,10 @@
     {
       "source": "/order/:path*",
       "destination": "/private-shell.html"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/index.html"
     }
   ],
   "trailingSlash": false,

@@ -769,7 +769,10 @@ BLOG_CATEGORIES.forEach((c) => {
 });
 
 // Blog post pages — dengan Article + FAQPage schema.
-const publishedPosts = ISRA_ANWAR_BLOG_POSTS_SEED
+const { fetchDbOnlyPosts } = await import("./fetch-db-posts.mjs");
+const dbOnlyPosts = await fetchDbOnlyPosts(ISRA_ANWAR_BLOG_POSTS_SEED);
+if (dbOnlyPosts.length) console.log(`  · ${dbOnlyPosts.length} artikel dari admin (Supabase) ikut di-prerender`);
+const publishedPosts = [...ISRA_ANWAR_BLOG_POSTS_SEED, ...dbOnlyPosts]
   .filter((p) => p.status === "published")
   .sort((a, b) => (
     String(b.published_at ?? b.created_at ?? "").localeCompare(String(a.published_at ?? a.created_at ?? ""))

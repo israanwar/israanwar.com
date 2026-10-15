@@ -26,7 +26,7 @@ export function usePostViewCount(post) {
         const res = await fetch("/api/post-views", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ slug: post.slug, seed: fallback }),
+          body: JSON.stringify({ slug: post.slug, seed: fallback, base: Number(post.read_count) > 0 ? Math.round(Number(post.read_count)) : undefined }),
         });
         if (!res.ok) throw new Error(`bad status ${res.status}`);
         const data = await res.json();

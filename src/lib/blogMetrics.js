@@ -22,7 +22,7 @@ function numericMetric(post) {
 
 export function getPostReadCount(post = {}) {
   const explicit = numericMetric(post);
-  if (explicit) return clamp(explicit);
+  if (explicit) return Math.round(explicit);
 
   const seed = hashString(`${post.slug ?? ""}|${post.title ?? ""}|${post.category ?? ""}`);
   const published = new Date(post.published_at ?? post.created_at ?? Date.now()).getTime();

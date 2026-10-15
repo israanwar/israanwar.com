@@ -5,6 +5,18 @@ import { RichEditor } from "../../components/admin/RichEditor";
 import { useAuth } from "../../hooks/useAuth";
 import { BLOG_CATEGORIES } from "../../data/blogCategories";
 import { auditPostSeo } from "../../lib/seoAudit";
+import { supabase } from "../../lib/supabaseClient";
+
+// Minta Vercel rebuild agar halaman statis + sitemap ikut berubah. Best-effort.
+async function requestRebuild() {
+  try {
+    const { data } = await supabase.auth.getSession();
+    const token = data?.session?.access_token;
+    if (!token) return "";
+    const res = await fetch("/api/deploy", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+    return res.status === 202 ? " Rebuild situs dipicu, perubahan publik tayang dalam beberapa menit." : "";
+  } catch { return ""; }
+}
 
 function slugify(s) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -143,17 +155,20 @@ export function AdminPostEditPage() {
       };
       const readCount = Number(post.read_count);
       if (post.read_count !== "" && Number.isFinite(readCount)) {
-        patch.read_count = Math.max(1236, Math.round(readCount));
+        patch.read_count = Math.max(1, Math.round(readCount));
       }
       if (isNew) {
         const saved = await createPost({ ...patch, author_id: user.id });
+        const note = saved.status === "published" ? await requestRebuild() : "";
         nav(`/admin/posts/${saved.slug}`, { replace: true });
+        if (note) setMsg({ type: "success", text: `Tersimpan.${note}` });
       } else {
         const saved = await updatePost(id, patch);
         setPost(saved);
         setOriginalSlug(saved.slug);
         if (id !== saved.slug) nav(`/admin/posts/${saved.slug}`, { replace: true });
-        setMsg({ type: "success", text: "Tersimpan." });
+        const note = saved.status === "published" ? await requestRebuild() : "";
+        setMsg({ type: "success", text: `Tersimpan.${note}` });
       }
     } catch (e) {
       setMsg({ type: "error", text: e.message });
