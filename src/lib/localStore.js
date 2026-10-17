@@ -2530,6 +2530,8 @@ This policy may be updated at any time. The latest version will always be availa
           { name: "AI Capabilities and Limitations", url: "https://academy.claude.com/verify/9f76d33420da71607a1dff2bbc9c3183" },
           { name: "Building with the Claude API", url: "https://academy.claude.com/verify/737ef965805e087af65b72c28b57b8ab" },
           { name: "Model Context Protocol: Advanced topics", url: "https://academy.claude.com/verify/55d81b130e33164c2fa55fdc36e86237" },
+          { name: "Building effective human-agent teams (beta)", url: "https://academy.claude.com/verify/903a3e9f1b41cd744875dd6b5c22d2bb" },
+          { name: "Teaching AI Fluency", url: "https://academy.claude.com/verify/41870a10e87c5847dc0fcb4e4d6b44ff" },
         ],
       },
       {

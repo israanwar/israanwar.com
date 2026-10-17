@@ -10,6 +10,12 @@ const MCP_ADVANCED_CERTIFICATE = {
   url: "https://academy.claude.com/verify/55d81b130e33164c2fa55fdc36e86237",
 };
 
+const ANTHROPIC_CERTIFICATES = [
+  MCP_ADVANCED_CERTIFICATE,
+  { name: "Building effective human-agent teams (beta)", url: "https://academy.claude.com/verify/903a3e9f1b41cd744875dd6b5c22d2bb" },
+  { name: "Teaching AI Fluency", url: "https://academy.claude.com/verify/41870a10e87c5847dc0fcb4e4d6b44ff" },
+];
+
 function normalizeOrgName(value) {
   const org = String(value ?? "").trim();
   if (org === "Investoft" || org === "Investoft.com") return "R24 Studio";
@@ -34,13 +40,15 @@ export function normalizePortfolioProjects(page) {
   return {
     ...page,
     consulting: nextConsulting,
-    // Include this credential when portfolio data comes from an older saved page.
+    // Include these credentials when portfolio data comes from an older saved page.
     certifications: Array.isArray(page.certifications)
       ? page.certifications.map((provider) => {
         if (provider.slug !== "anthropic") return provider;
         const items = Array.isArray(provider.items) ? provider.items : [];
-        if (items.some((item) => item.url === MCP_ADVANCED_CERTIFICATE.url)) return provider;
-        return { ...provider, items: [...items, { ...MCP_ADVANCED_CERTIFICATE }] };
+        const missing = ANTHROPIC_CERTIFICATES.filter((certificate) =>
+          !items.some((item) => item.url === certificate.url));
+        if (!missing.length) return provider;
+        return { ...provider, items: [...items, ...missing.map((certificate) => ({ ...certificate }))] };
       })
       : page.certifications,
   };
