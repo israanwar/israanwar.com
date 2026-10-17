@@ -144,7 +144,7 @@ export function SiteChatWidget() {
 
     replyTimeoutRef.current = window.setTimeout(() => {
       window.clearInterval(thinkingIntervalRef.current);
-      const reply = answerBalao(text, lang, knowledgeRef.current, doc);
+      const reply = answerBalao(text, lang, knowledgeRef.current, doc, messages);
       startReveal(reply);
     }, THINKING_STAGE_MS * THINKING_STAGE_KEYS.length);
   }

@@ -9,6 +9,7 @@ import {
 import { TOOLS_CATALOG, TOOLS_TOTAL_COUNT } from "../data/toolsCatalog";
 import { BLOG_CATEGORIES } from "../data/blogCategories";
 import { site } from "../data/site";
+import { RATE_CARD, PRICING_RULES } from "../data/rateCard";
 
 // Assembles everything Balao (the chat widget) is allowed to know, from the
 // exact same live data sources every real page on the site already reads
@@ -58,6 +59,8 @@ export function useBalaoKnowledge({ enabled = true } = {}) {
     return {
       categories,
       services,
+      rateCard: RATE_CARD,
+      pricingRules: PRICING_RULES,
       tools: TOOLS_CATALOG,
       toolsTotalCount: TOOLS_TOTAL_COUNT,
       blogCategories: BLOG_CATEGORIES,
@@ -70,7 +73,7 @@ export function useBalaoKnowledge({ enabled = true } = {}) {
       })),
       products: products.map((p) => ({
         name: p.name,
-        price: p.price ?? 0,
+        price: p.price ?? null,
         description: p.description || "",
         slug: p.slug,
       })),

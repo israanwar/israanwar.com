@@ -1,6 +1,6 @@
 // Balao — the site's chat widget — answers purely from this file, with
 // zero external API calls. No AI provider, no API key, no ongoing cost:
-// keyword/token matching against a `knowledge` object built from the
+// catalog retrieval, conversation context, and guided diagnostic rules against a `knowledge` object built from the
 // site's own live data (services, blog posts, store products, About,
 // Portfolio, contact settings) — see useBalaoKnowledge.js. Nothing here is
 // invented, and nothing here is internal/code — only what a visitor could
@@ -27,7 +27,8 @@
 // comprehension. It can't summarize the document or reason about what it
 // means; that would again require a real AI model.
 
-import { SEO_EXPERTISE } from "../data/seoExpertise";
+import { SEO_EXPERTISE } from "../data/seoExpertise.js";
+import { answerCatalogQuestion, clarificationAnswer } from "./balaoAdvisor.js";
 
 // Casual Indonesian chat shorthand, expanded to its canonical word before
 // any matching happens. Without this, every keyword list below would also
@@ -912,12 +913,15 @@ function documentPreviewAnswer(doc, lang) {
 // is checked last, right before giving up — a question that clearly
 // matches a known site topic (contact, pricing, a service...) still wins,
 // so an uploaded document can't accidentally hijack an unrelated question.
-export function answerBalao(rawText, siteLang, knowledge, doc) {
+export function answerBalao(rawText, siteLang, knowledge, doc, history = []) {
   const tokens = tokenize(rawText);
   const text = ` ${tokens.join(" ")} `;
   const tokenSet = withStemVariants(tokens);
   const lang = detectLang(tokenSet, text, siteLang || "en");
   const k = knowledge;
+
+  const catalogReply = answerCatalogQuestion(rawText, lang, k, history);
+  if (catalogReply) return catalogReply;
 
   if (matchesAny(tokenSet, text, CONTACT_KEYWORDS)) return contactAnswer(lang, k);
   if (matchesAny(tokenSet, text, PRICING_KEYWORDS)) return pricingAnswer(lang, k);
@@ -966,5 +970,5 @@ export function answerBalao(rawText, siteLang, knowledge, doc) {
     return chunks.length > 0 ? documentAnswer(chunks, doc, lang) : documentPreviewAnswer(doc, lang);
   }
 
-  return fallbackAnswer(lang, k);
+  return lang === "id" || lang === "en" ? clarificationAnswer(lang) : fallbackAnswer(lang, k);
 }
