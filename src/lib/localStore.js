@@ -2529,6 +2529,7 @@ This policy may be updated at any time. The latest version will always be availa
           { name: "Claude Cowork", url: "https://academy.claude.com/verify/031c71a72121835abc8b66d1ba1c6c14" },
           { name: "AI Capabilities and Limitations", url: "https://academy.claude.com/verify/9f76d33420da71607a1dff2bbc9c3183" },
           { name: "Building with the Claude API", url: "https://academy.claude.com/verify/737ef965805e087af65b72c28b57b8ab" },
+          { name: "Model Context Protocol: Advanced topics", url: "https://academy.claude.com/verify/55d81b130e33164c2fa55fdc36e86237" },
         ],
       },
       {
