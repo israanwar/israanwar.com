@@ -248,11 +248,16 @@ export function BlogListPage({ initialCategorySlug = null }) {
                     )}
                   </div>
                 ) : (
-                  <div className="okr__blog-pin-grid">
-                    {pageItems.map((p, i) => (
-                      <BlogPinCard key={p.id} post={p} index={pageStart + i} lang={lang} t={t} />
-                    ))}
-                  </div>
+                  <>
+                    {/* Card titles are <h3>; this keeps the outline h1 > h2 > h3.
+                        It sits outside the grid so :nth-child card styling is unchanged. */}
+                    <h2 className="okr__visually-hidden">{lang === "id" ? "Daftar artikel" : "Articles"}</h2>
+                    <div className="okr__blog-pin-grid">
+                      {pageItems.map((p, i) => (
+                        <BlogPinCard key={p.id} post={p} index={pageStart + i} lang={lang} t={t} />
+                      ))}
+                    </div>
+                  </>
                 )}
 
                 <BlogPagination

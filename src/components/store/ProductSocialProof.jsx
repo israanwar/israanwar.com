@@ -26,7 +26,7 @@ export function ProductSocialProof({ product, variant = "card" }) {
     <div className={`okr__product-proof okr__product-proof--${variant}`}>
       {ratingText && (
         <>
-          <span className="okr__product-stars" aria-label={t("store_rating", { rating: ratingText })}>
+          <span className="okr__product-stars" role="img" aria-label={t("store_rating", { rating: ratingText })}>
             {Array.from({ length: 5 }).map((_, index) => (
               <Star
                 key={index}

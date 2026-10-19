@@ -65,7 +65,15 @@ function ServiceFolder({ folder, visual, isOpen, onOpen, onClose, onToggle, lang
       )}
       <div className="service-folder-meta">
         <h3>{folder.name}</h3>
-        <Link className="service-folder-all-link" to={`/services/${folder.slug}`}>
+        <Link
+          className="service-folder-all-link"
+          to={`/services/${folder.slug}`}
+          // Several categories share the same count, so the name carries the
+          // category too while still starting with the visible label.
+          aria-label={lang === "id"
+            ? `${serviceCount} layanan ${folder.name}`
+            : `${serviceCount} services in ${folder.name}`}
+        >
           {serviceCount} {lang === "id" ? "layanan" : "services"}
         </Link>
       </div>
@@ -131,6 +139,8 @@ export function ServiceFolderGrid({ items, lang = "en", includeAll = false, show
           <span aria-hidden="true"><TouchText text={description} keyPrefix="services-description" /></span>
         </p>
       </header>}
+      {/* Card titles are <h3>; keep an <h2> above them for heading order. */}
+      {!showHeading && <h2 className="okr__visually-hidden">{`${headingLead} ${headingAccent}`}</h2>}
 
       <div className="service-folder-grid">
         {folders.map((folder) => (

@@ -1000,7 +1000,9 @@
 }
 
 .okr__hero-sub {
-  color: #686866 !important;
+  /* #686866 was 3.8:1 on the black page; this keeps the muted tone at
+     6.2:1 (WCAG AA needs 4.5:1 for body text). */
+  color: #8b8b88 !important;
   font-size: clamp(18px, 1.7vw, 22px);
   line-height: 1.55;
   max-width: 680px;
@@ -1607,7 +1609,7 @@
    ========================================================================== */
 
 .okr {
-  --okr-font-brand: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+  --okr-font-brand: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", Inter, ui-sans-serif, system-ui, sans-serif;
   --okr-font-display: var(--okr-font-brand);
   font-family: var(--okr-font-brand) !important;
   font-weight: 400;
@@ -3067,6 +3069,21 @@
   transition: opacity 420ms ease;
 }
 
+/* Static stand-in for the sun's glow while the WebGL scene boots. The canvas
+   is opaque (alpha: false), so once it fades in it fully covers this; until
+   then the first paint already looks like the finished hero instead of a
+   flat black block that brightens seconds later. */
+.okr__hero--pointcloud .okr__isra-cloud {
+  background: radial-gradient(ellipse 85% 55% at 50% 42%, #5a4c6c 0%, #463a55 40%, #2a2134 72%, #120c18 100%);
+}
+
+/* On wider screens the sun is a disc sized from the viewport height. */
+@media (min-width: 768px) {
+  .okr__hero--pointcloud .okr__isra-cloud {
+    background: radial-gradient(circle 52vh at 50% 47%, #5a4c6c 0%, #4f4262 50%, #3f3352 82%, #2a2136 96%, #0c0713 calc(52vh + 8vh));
+  }
+}
+
 .okr__hero--pointcloud.is-scene-ready .okr__isra-cloud-stage,
 .okr__hero--pointcloud.is-scene-ready .okr__isra-cloud-fallback,
 .okr__hero--pointcloud.is-scene-ready .okr__hero-pointcloud-copy {
@@ -3082,7 +3099,7 @@
 .okr__hero-pointcloud-kicker {
   margin: 0 0 18px;
   color: rgba(238, 230, 255, 0.78);
-  font-family: "Plus Jakarta Sans", Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", Arial, sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -3096,7 +3113,7 @@
   align-items: center;
   margin: 0;
   color: #fff;
-  font-family: "Plus Jakarta Sans", Arial, sans-serif;
+  font-family: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", Arial, sans-serif;
   font-size: clamp(46px, min(5.2vw, 7svh), 88px);
   font-weight: 400;
   letter-spacing: -0.06em;
@@ -3390,8 +3407,9 @@
 }
 
 /* Certification marks are supplied in mixed dark and brand-colour artwork.
-   A clean white tile guarantees every original logo remains legible. */
-.okr .okr__home .okr__certstrip-card {
+   A clean white tile guarantees every original logo remains legible. Applies
+   wherever the strip is used (Home and Portfolio share the component). */
+.okr .okr__certstrip-card {
   background-color: #ffffff !important;
   border-color: rgba(255, 255, 255, 0.24) !important;
 }
@@ -3514,7 +3532,7 @@
   color: #20181b !important;
 }
 
-.okr .okr__home .okr__certstrip-card:is(:hover, :focus-visible) {
+.okr .okr__certstrip-card:is(:hover, :focus-visible) {
   border-color: rgba(215, 201, 255, 0.5) !important;
 }
 
@@ -3649,7 +3667,7 @@
   --okr-line-strong: rgba(255, 255, 255, 0.12);
   --okr-text: #eef0f6;
   --okr-muted: #8b8f9d;
-  --okr-dim: #6b6f7c;
+  --okr-dim: #7d818e;
   --okr-primary: #56636f;
   --okr-primary-2: #c9cdd1;
   --okr-card-bg: #111111;

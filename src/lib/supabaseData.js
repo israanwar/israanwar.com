@@ -6,7 +6,7 @@ import { normalizePortfolioProjects } from "./portfolioProjects";
 import { normalizePaymentSettings } from "./paymentSettings";
 import { POST_CONTENT_OVERRIDES } from "../data/postContentOverrides";
 import { SLUG_RENAMES } from "../data/slugRenames";
-import { HOME_POST_SELECT, SERVICE_FOLDER_SELECT, serviceFolderRow } from "./publicListProjection";
+import { HOME_POST_SELECT, SERVICE_FOLDER_SELECT, SERVICE_LIST_SELECT, serviceFolderRow, serviceListRow } from "./publicListProjection";
 
 // Offline/admin fallback store, loaded only when a remote read fails, when
 // Supabase is not configured, or when an admin write mirrors data locally.
@@ -542,11 +542,13 @@ export const servicesData = {
   async list(filter) {
     return tryRemote(async () => {
       const folderView = filter?.view === "folder";
-      let query = supabase.from("services").select(folderView ? SERVICE_FOLDER_SELECT : "*").order("order_index", { ascending: true });
+      const listView = filter?.view === "list";
+      const select = folderView ? SERVICE_FOLDER_SELECT : listView ? SERVICE_LIST_SELECT : "*";
+      let query = supabase.from("services").select(select).order("order_index", { ascending: true });
       if (filter?.status) query = query.eq("status", filter.status);
       const { data, error } = await query;
       if (error) throw error;
-      return (data ?? []).map(row => rowToItem(folderView ? serviceFolderRow(row) : row));
+      return (data ?? []).map(row => rowToItem(folderView ? serviceFolderRow(row) : listView ? serviceListRow(row) : row));
     }, async () => (await local()).servicesRepo.list(filter));
   },
   async get(id) {

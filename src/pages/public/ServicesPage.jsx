@@ -11,7 +11,7 @@ import { ServicePricing } from "../../components/services/ServicePricing";
 
 export function ServicesPage() {
   const { lang, t } = useI18n();
-  const rawItems = useLiveServices({ status: "active" });
+  const rawItems = useLiveServices({ status: "active", view: "list" });
   const serviceItems = useMemo(
     () => localizeServiceCardItems(rawItems, lang),
     [rawItems, lang],

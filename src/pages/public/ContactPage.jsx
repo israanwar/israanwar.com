@@ -58,6 +58,8 @@ export function ContactPage() {
               </p>
             )}
 
+            {/* Panel titles are <h3>; this keeps the outline h1 > h2 > h3. */}
+            <h2 className="okr__visually-hidden">{lang === "id" ? "Formulir dan info kontak" : "Contact form and details"}</h2>
             <div className="okr__contact-grid" style={{ marginTop: 56 }}>
               <form onSubmit={submit} className="okr__panel">
                 <h3 style={{ margin: "0 0 20px", fontSize: 18, fontWeight: 700 }}>{t("contact_send")}</h3>

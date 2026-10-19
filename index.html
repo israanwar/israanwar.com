@@ -67,6 +67,9 @@
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
     <meta name="color-scheme" content="dark" />
+    <!-- Paint the dark canvas before any stylesheet arrives, so the first
+         frames match the site instead of flashing white. -->
+    <style>html{background:#000}</style>
     <!-- iOS mobile web-app polish: standalone display + status-bar styling
          when the user adds the site to Home Screen. -->
     <meta name="apple-mobile-web-app-capable" content="yes" />

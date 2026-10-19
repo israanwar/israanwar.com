@@ -16,7 +16,7 @@ export function ServiceDetailPage() {
   const { lang, t } = useI18n();
   const { slug } = useParams();
   const { value: rawService, loading } = useLiveServiceState(slug);
-  const rawServices = useLiveServices({ status: "active" });
+  const rawServices = useLiveServices({ status: "active", view: "list" });
   const s = useMemo(
     () => localizeServiceItem(rawService, rawServices, lang),
     [rawService, rawServices, lang]
@@ -125,6 +125,8 @@ export function ServiceDetailPage() {
               </section>
             )}
 
+            {/* Single services have no visible <h2>; keep h1 > h2 > h3. */}
+            {!isCategory && <h2 className="okr__visually-hidden">{lang === "id" ? "Detail layanan" : "Service details"}</h2>}
             {s.deliverables?.length > 0 && (
               <div className="okr__panel" style={{ marginBottom: 32 }}>
                 <h3 style={{ margin: "0 0 20px", fontSize: 18, fontWeight: 700 }}>{t("services_deliverables")}</h3>

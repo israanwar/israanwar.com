@@ -37,6 +37,16 @@ const SOCIAL_SIZES = [
   ["YouTube thumbnail", "1280 × 720", "16:9"],
 ];
 
+// The invoice workspace restores browser drafts from localStorage and owns a
+// print portal, so it mounts on the client only. The rest of the page is
+// prerendered and hydrated like every other tool; the placeholder holds a
+// full viewport so content below it is never shifted inside the viewport.
+function ClientOnlyInvoiceWorkspace() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  return mounted ? <InvoiceBuilderWorkspace /> : <div style={{ minHeight: "100vh" }} aria-hidden="true" />;
+}
+
 export function ToolDetailPage() {
   const { slug } = useParams();
   const tool = getToolBySlug(slug);
@@ -60,12 +70,14 @@ export function ToolDetailPage() {
       <section className="okr__section okr__tool-work-section">
         <div className="okr__wrap">
           <div className="okr__tool-workspace">
+            {/* Workspace panels use <h3>; keep the outline h1 > h2 > h3. */}
+            <h2 className="okr__visually-hidden">{`${tool.name} workspace`}</h2>
             {tool.slug === "image-compressor" ? <ImageCompressorWorkspace />
               : tool.slug === "image-resizer" ? <ImageResizerWorkspace />
               : tool.kind === "image" && <ImageWorkspace tool={tool} />}
             {tool.kind === "generator" && <GeneratorWorkspace tool={tool} />}
             {tool.kind === "reference" && <SocialSizeGuide />}
-            {tool.slug === "invoice-builder" && <InvoiceBuilderWorkspace />}
+            {tool.slug === "invoice-builder" && <ClientOnlyInvoiceWorkspace />}
           </div>
 
           <div className="okr__tool-explainer">

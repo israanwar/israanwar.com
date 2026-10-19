@@ -52,8 +52,10 @@
   background-image: none !important;
 }
 
+/* The invoice builder is a light (white) surface with its own dark ink, so
+   it is excluded; forcing near-white headings there made them invisible. */
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  :is(.okr__h2, .okr__detail-title, .okr__card-title, .okr__product-name, .okr__post-title, .okr__case-title, .okr__cta h3, h1, h2, h3) {
+  :is(.okr__h2, .okr__detail-title, .okr__card-title, .okr__product-name, .okr__post-title, .okr__case-title, .okr__cta h3, h1, h2, h3):not(:where(.okr__invoice-workspace *)) {
   color: #f7f7f8 !important;
 }
 

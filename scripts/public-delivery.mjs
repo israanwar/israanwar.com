@@ -63,34 +63,40 @@ if (!document.hidden) {
   await Promise.race([document.fonts?.ready, new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))]);
   await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 }
-await Promise.all(${JSON.stringify(stylesheets)}.map(href => new Promise(resolve => {
+function removeDuplicateFaces(sheet) {
+  for (let index = sheet.cssRules.length - 1; index >= 0; index--) {
+    const rule = sheet.cssRules[index];
+    if (rule.type === CSSRule.FONT_FACE_RULE) sheet.deleteRule(index);
+    else if (rule.cssRules) removeDuplicateFaces(rule);
+  }
+}
+const deferredSheets = await Promise.all(${JSON.stringify(stylesheets)}.map(href => new Promise(resolve => {
   const link = document.createElement('link'); link.rel = 'stylesheet'; link.href = href;
   // The initial inline CSS already installs every font face. Keep this sheet
-  // inactive until its duplicate faces are removed, then activate its complete
-  // non-font cascade atomically. This also retains the original asset URL for
-  // Vite's dependency deduplication and leaves private/invoice CSS untouched.
+  // inactive until its duplicate faces are removed. This also retains the
+  // original asset URL for Vite's dependency deduplication and leaves
+  // private/invoice CSS untouched.
   link.media = 'not all';
-  link.onload = () => {
-    function removeDuplicateFaces(sheet) {
-      for (let index = sheet.cssRules.length - 1; index >= 0; index--) {
-        const rule = sheet.cssRules[index];
-        if (rule.type === CSSRule.FONT_FACE_RULE) sheet.deleteRule(index);
-        else if (rule.cssRules) removeDuplicateFaces(rule);
-      }
-    }
-    try { removeDuplicateFaces(link.sheet); }
-    catch (error) { console.warn('Deferred font deduplication failed:', error); }
-    link.media = 'all';
-    // Retain the original font-face registrations while removing redundant
-    // bootstrap selector rules. Failed downloads retain their initial CSS.
-    for (const style of document.querySelectorAll('style[data-build-stylesheet]')) {
-      if (style.dataset.buildStylesheet === href && style.dataset.initialRules === 'true') style.remove();
-    }
-    resolve();
-  };
-  link.onerror = () => { console.warn('Deferred stylesheet failed:', href); resolve(); };
-  document.head.append(link);
+  link.onload = () => resolve({ href, link, loaded: true });
+  link.onerror = () => { console.warn('Deferred stylesheet failed:', href); resolve({ href, link, loaded: false }); };
+  // Sit where the inline copy sits, so the cascade keeps the original order
+  // whichever sheet finishes downloading first.
+  const inline = [...document.querySelectorAll('style[data-build-stylesheet]')].find(style => style.dataset.buildStylesheet === href);
+  if (inline) inline.after(link); else document.head.append(link);
 })));
+// Swap every complete sheet in for its inline copy within one task, so no
+// frame ever renders a half-swapped cascade (which shifted layout briefly).
+// Retain the original font-face registrations while removing redundant
+// bootstrap selector rules. Failed downloads retain their initial CSS.
+for (const { href, link, loaded } of deferredSheets) {
+  if (!loaded) continue;
+  try { removeDuplicateFaces(link.sheet); }
+  catch (error) { console.warn('Deferred font deduplication failed:', error); }
+  link.media = 'all';
+  for (const style of document.querySelectorAll('style[data-build-stylesheet]')) {
+    if (style.dataset.buildStylesheet === href && style.dataset.initialRules === 'true') style.remove();
+  }
+}
 await import(${JSON.stringify(entry)});
 ${adsSource ? `const loadAds = () => {
   const script = document.createElement('script');

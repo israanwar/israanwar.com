@@ -289,7 +289,12 @@
   display: inline-flex;
   position: relative;
   z-index: 40;
-  margin: 7px 0 0;
+  /* 24px minimum touch target (WCAG 2.5.8); the padding is offset in the
+     top margin so the label stays where it was. */
+  min-height: 24px;
+  margin: 3px 0 0;
+  padding: 4px 10px;
+  box-sizing: border-box;
   align-items: center;
   justify-content: center;
   border-radius: 999px;

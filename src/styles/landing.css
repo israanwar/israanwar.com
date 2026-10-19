@@ -7,7 +7,7 @@
   --okr-text: #eef0f6;
   --okr-logo-ink: #d8d0dd;
   --okr-muted: #8b8f9d;
-  --okr-dim: #6b6f7c;
+  --okr-dim: #7d818e;
   --okr-primary: #56636f;
   --okr-primary-2: #c9cdd1;
   --okr-cyan: #777d85;
@@ -47,7 +47,7 @@
     linear-gradient(150deg, #090b0d 0%, #06080a 28%, #030405 54%, #000 80%);
   background-attachment: fixed;
   color: var(--okr-text);
-  font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+  font-family: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", Inter, ui-sans-serif, system-ui, sans-serif;
   min-height: 100svh;
   overflow-x: clip;
   padding-top: var(--okr-header-h);
