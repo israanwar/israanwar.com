@@ -234,6 +234,7 @@ const T = {
     nf_title: "Halaman tidak ditemukan.",
     nf_body: "URL ini belum tersedia atau sudah dipindahkan.",
     nf_action: "Kembali ke beranda",
+    nf_explore: "Atau jelajahi",
     // Landing fallbacks
     hero_cta_primary: "Konsultasi",
     hero_cta_secondary: "Diskusikan proyek Anda",
@@ -478,6 +479,7 @@ const T = {
     nf_title: "Page not found.",
     nf_body: "This URL doesn't exist or has been moved.",
     nf_action: "Back to home",
+    nf_explore: "Or explore",
     hero_cta_primary: "Consult",
     hero_cta_secondary: "Discuss your project",
     cta_wa_button: "Contact via WhatsApp",

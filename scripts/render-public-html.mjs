@@ -191,7 +191,19 @@ export async function renderPublicHtml({ distDir, routes, template }) {
     await shellPage.evaluate(() => {
       document.title = 'Page not found | Isra Anwar';
       document.querySelector('meta[name="description"]').content = 'This page could not be found. Return to Isra Anwar.';
-      document.querySelector('#root').innerHTML = '<main style="min-height:80vh;display:grid;place-content:center;text-align:center;padding:24px;color:#fff;background:#000"><p>404</p><h1>Page not found.</h1><p>The page you requested does not exist.</p><a href="/" style="color:#c8b7ff">Back to home</a></main>';
+      // Shown until the app loads (or when JavaScript is blocked), so it
+      // carries its own brand styling and the same links as NotFoundPage.
+      const links = [['/services', 'Services'], ['/tools', 'Tools'], ['/blog', 'Blog'], ['/store', 'Store'], ['/contact', 'Contact']]
+        .map(([href, label]) => `<li><a href="${href}" style="display:inline-block;padding:10px 18px;border:1px solid rgba(255,255,255,.22);border-radius:999px;color:#fff;text-decoration:none">${label}</a></li>`)
+        .join('');
+      document.querySelector('#root').innerHTML = '<main style="min-height:100vh;box-sizing:border-box;display:grid;place-content:center;text-align:center;padding:48px 16px;color:#fff;background:#000;font-family:\'Plus Jakarta Sans\',ui-sans-serif,system-ui,-apple-system,\'Segoe UI\',Roboto,Arial,sans-serif">'
+        + '<p style="margin:0;color:#c8b7ff;font-size:13px;font-weight:700;letter-spacing:.2em">404</p>'
+        + '<h1 style="margin:16px 0 0;font-size:clamp(36px,8vw,64px);line-height:1.05;letter-spacing:-.03em">Page not <span style="color:#c8b7ff">found.</span></h1>'
+        + '<p style="margin:20px 0 32px;color:#a1a1aa;font-size:16px">This URL doesn\'t exist or has been moved.</p>'
+        + '<p style="margin:0"><a href="/" style="display:inline-block;padding:14px 26px;border-radius:999px;background:#fff;color:#000;font-weight:600;text-decoration:none">Back to home</a></p>'
+        + '<nav aria-label="Or explore" style="margin-top:48px"><p style="margin:0;color:#85858d;font-size:13px;letter-spacing:.08em;text-transform:uppercase">Or explore</p>'
+        + `<ul style="list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:12px;padding:0;margin:16px 0 0">${links}</ul></nav>`
+        + '</main>';
     });
     await writeFile(resolve(distDir, '404.html'), '<!doctype html>\n' + await shellPage.locator('html').evaluate(e => e.outerHTML));
     await shellPage.close();
