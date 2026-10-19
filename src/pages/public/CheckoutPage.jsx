@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { cartRepo } from "../../lib/localStore";
+import { cartStore as cartRepo } from "../../lib/cartStore";
 import { ordersData } from "../../lib/supabaseData";
 import { useLiveCart, useLiveSettings } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";

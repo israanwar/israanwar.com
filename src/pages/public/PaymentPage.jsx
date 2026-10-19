@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { ORDER_STATUS } from "../../lib/localStore";
+import { ORDER_STATUS } from "../../lib/orderStatus";
 import { ordersData } from "../../lib/supabaseData";
 import { useLiveSettings } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";

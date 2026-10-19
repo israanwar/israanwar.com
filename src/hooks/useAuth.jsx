@@ -1,6 +1,10 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { auth } from "../lib/localStore";
 import { supabase, supabaseEnabled } from "../lib/supabaseClient";
+import { loadLocalStore } from "../lib/localStoreLoader";
+
+// The local auth fallback lives in localStore.js, which also carries the
+// offline seed catalog. Load it only when Supabase is not configured.
+const loadLocalAuth = () => loadLocalStore().then((m) => m.auth);
 
 const AuthContext = createContext(null);
 
@@ -31,8 +35,8 @@ async function toAppSession(supabaseSession) {
 }
 
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(() => supabaseEnabled ? null : auth.getSession());
-  const [loading, setLoading] = useState(() => supabaseEnabled);
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (supabaseEnabled && supabase) {
@@ -57,8 +61,20 @@ export function AuthProvider({ children }) {
       };
     }
 
-    const off = auth.onChange(setSession);
-    return off;
+    let alive = true;
+    let off = () => {};
+    loadLocalAuth().then((auth) => {
+      if (!alive) return;
+      setSession(auth.getSession());
+      setLoading(false);
+      off = auth.onChange(setSession);
+    }).catch(() => {
+      if (alive) setLoading(false);
+    });
+    return () => {
+      alive = false;
+      off();
+    };
   }, []);
 
   const login = useCallback(async (email, password) => {
@@ -72,7 +88,7 @@ export function AuthProvider({ children }) {
         setSession(appSession);
         return appSession;
       }
-      return await auth.signIn(email, password);
+      return await (await loadLocalAuth()).signIn(email, password);
     }
     finally { setLoading(false); }
   }, []);
@@ -91,14 +107,18 @@ export function AuthProvider({ children }) {
         if (appSession) setSession(appSession);
         return appSession;
       }
-      return await auth.signUp(email, password, fullName);
+      return await (await loadLocalAuth()).signUp(email, password, fullName);
     }
     finally { setLoading(false); }
   }, []);
 
   const logout = useCallback(async () => {
-    if (supabaseEnabled && supabase) await supabase.auth.signOut();
-    await auth.signOut();
+    if (supabaseEnabled && supabase) {
+      await supabase.auth.signOut();
+      localStorage.removeItem("okr:session");
+    } else {
+      await (await loadLocalAuth()).signOut();
+    }
     setSession(null);
   }, []);
 

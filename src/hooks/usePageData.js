@@ -1,10 +1,8 @@
 import { preservePublicValue, preserveLiveSnapshot } from "../lib/liveDataSnapshot.js";
 import { publicBootstrap } from "../lib/publicBootstrap";
 import { useEffect, useMemo, useState } from "react";
-import {
-  pagesRepo, settingsRepo, homepageRepo, productsRepo,
-  servicesRepo, postsRepo, cartRepo,
-} from "../lib/localStore";
+import { cartStore as cartRepo } from "../lib/cartStore";
+import { getLoadedLocalStore } from "../lib/localStoreLoader";
 import {
   pagesData, settingsData, homepageData, productsData,
   servicesData, postsData,
@@ -13,6 +11,18 @@ import { ensureRemoteChangeBridge } from "../lib/supabaseClient";
 import { affectsLiveData, storageChangeKey } from "../lib/liveDataEvents";
 import { applyProductPriceDiscount, applyProductPriceDiscounts } from "../lib/productPricing";
 import { normalizePortfolioProjects } from "../lib/portfolioProjects";
+
+// The local fallback store (localStore.js) carries the full offline seed
+// catalog, so it is not part of the initial bundle. Public pages get their
+// first values from the prerendered bootstrap and then from Supabase; the
+// local store is only read once something has loaded it (no Supabase, a
+// failed remote read, or the admin), and until then fallbacks are empty.
+function fromLocal(read, empty) {
+  return () => {
+    const localStore = getLoadedLocalStore();
+    return localStore ? read(localStore) : empty;
+  };
+}
 
 // Shared per-key cache so multiple components asking for the same data
 // (e.g. site settings requested by both the header and a page body) share
@@ -154,19 +164,19 @@ export function useLivePage(key, { enabled = true } = {}) {
   return useLive(
     `page:${key}`,
     () => pagesData.get(key),
-    () => key === "portfolio" ? normalizePortfolioProjects(pagesRepo.get(key)) : pagesRepo.get(key) ?? {},
+    fromLocal(({ pagesRepo }) => key === "portfolio" ? normalizePortfolioProjects(pagesRepo.get(key)) : pagesRepo.get(key) ?? {}, {}),
     enabled,
   ) ?? {};
 }
 
 // Global site settings
 export function useLiveSettings({ enabled = true } = {}) {
-  return useLive("settings", () => settingsData.get(), () => settingsRepo.get() ?? {}, enabled) ?? {};
+  return useLive("settings", () => settingsData.get(), fromLocal(({ settingsRepo }) => settingsRepo.get() ?? {}, {}), enabled) ?? {};
 }
 
 // Homepage sections (hero, cta, process, services list, cases list)
 export function useLiveHomepage() {
-  return useLive("homepage", () => homepageData.getAll(), () => homepageRepo.getAll() ?? {}) ?? {};
+  return useLive("homepage", () => homepageData.getAll(), fromLocal(({ homepageRepo }) => homepageRepo.getAll() ?? {}, {})) ?? {};
 }
 
 // Store products
@@ -175,7 +185,7 @@ export function useLiveProducts(filter, { enabled = true } = {}) {
   const rows = useLive(
     `products:${status ?? "all"}`,
     () => productsData.list(status ? { status } : undefined),
-    () => applyProductPriceDiscounts(productsRepo.list(status ? { status } : undefined)),
+    fromLocal(({ productsRepo }) => applyProductPriceDiscounts(productsRepo.list(status ? { status } : undefined)), []),
     enabled,
   );
   return Array.isArray(rows) ? rows : [];
@@ -187,21 +197,21 @@ export function useLiveProductsExist() {
   return useLive(
     "products:exists",
     () => productsData.exists(),
-    () => productsRepo.list().length > 0,
+    fromLocal(({ productsRepo }) => productsRepo.list().length > 0, false),
   ) ?? false;
 }
 export function useLiveProduct(slug) {
   return useLive(
     `product:${slug}`,
     () => productsData.getBySlug(slug),
-    () => applyProductPriceDiscount(productsRepo.getBySlug(slug)),
+    fromLocal(({ productsRepo }) => applyProductPriceDiscount(productsRepo.getBySlug(slug)), undefined),
   );
 }
 export function useLiveProductState(slug) {
   return useLiveState(
     `product:${slug}`,
     () => productsData.getBySlug(slug),
-    () => applyProductPriceDiscount(productsRepo.getBySlug(slug)),
+    fromLocal(({ productsRepo }) => applyProductPriceDiscount(productsRepo.getBySlug(slug)), undefined),
   );
 }
 
@@ -212,16 +222,16 @@ export function useLiveServices(filter, { enabled = true } = {}) {
   const rows = useLive(
     `services:${status ?? "all"}${view ? `:view=${view}` : ""}`,
     () => servicesData.list({ status, view }),
-    () => servicesRepo.list(status ? { status } : undefined),
+    fromLocal(({ servicesRepo }) => servicesRepo.list(status ? { status } : undefined), []),
     enabled,
   );
   return Array.isArray(rows) ? rows : [];
 }
 export function useLiveService(slug) {
-  return useLive(`service:${slug}`, () => servicesData.getBySlug(slug), () => servicesRepo.getBySlug(slug));
+  return useLive(`service:${slug}`, () => servicesData.getBySlug(slug), fromLocal(({ servicesRepo }) => servicesRepo.getBySlug(slug), undefined));
 }
 export function useLiveServiceState(slug) {
-  return useLiveState(`service:${slug}`, () => servicesData.getBySlug(slug), () => servicesRepo.getBySlug(slug));
+  return useLiveState(`service:${slug}`, () => servicesData.getBySlug(slug), fromLocal(({ servicesRepo }) => servicesRepo.getBySlug(slug), undefined));
 }
 
 // Blog posts
@@ -232,19 +242,19 @@ export function useLivePosts(filter, { enabled = true } = {}) {
   const rows = useLive(
     `posts:${status ?? "all"}${limit ? `:limit=${limit}` : ""}${view ? `:view=${view}` : ""}`,
     () => postsData.list({ status, limit, view }),
-    () => {
+    fromLocal(({ postsRepo }) => {
       const items = postsRepo.list(status ? { status } : undefined);
       return limit ? items.slice(0, limit) : items;
-    },
+    }, []),
     enabled,
   );
   return Array.isArray(rows) ? rows : [];
 }
 export function useLivePost(slug) {
-  return useLive(`post:${slug}`, () => postsData.getBySlug(slug), () => postsRepo.getBySlug(slug));
+  return useLive(`post:${slug}`, () => postsData.getBySlug(slug), fromLocal(({ postsRepo }) => postsRepo.getBySlug(slug), undefined));
 }
 export function useLivePostState(slug) {
-  return useLiveState(`post:${slug}`, () => postsData.getBySlug(slug), () => postsRepo.getBySlug(slug));
+  return useLiveState(`post:${slug}`, () => postsData.getBySlug(slug), fromLocal(({ postsRepo }) => postsRepo.getBySlug(slug), undefined));
 }
 
 // Cart — pakai listener bawaan cartRepo (lebih responsif dari polling).

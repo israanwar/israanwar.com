@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Check, X, Eye } from "lucide-react";
-import { ORDER_STATUS } from "../../lib/localStore";
+import { ORDER_STATUS } from "../../lib/orderStatus";
 import { ordersData } from "../../lib/supabaseData";
 
 const STATUS_LABEL = {

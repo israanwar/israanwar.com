@@ -5769,10 +5769,6 @@
   min-height: min(calc(100svh - var(--okr-header-h)), 900px);
   padding: clamp(78px, 10vw, 150px) 0 clamp(142px, 15vw, 190px);
   background-color: #090208;
-  background-image: url("/assets/landing/israanwar-dimensional-portal-hero.png");
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: cover;
 }
 
 .okr__hero::before {

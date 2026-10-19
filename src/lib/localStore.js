@@ -8,6 +8,10 @@ import { applyProductPriceDiscount } from "./productPricing";
 import { normalizePortfolioProjects } from "./portfolioProjects";
 import { DEFAULT_QRIS_SETTINGS, normalizePaymentSettings } from "./paymentSettings";
 import { generateStoreCover } from "./storePlaceholder";
+import { cartStore } from "./cartStore";
+import { ORDER_STATUS } from "./orderStatus";
+
+export { ORDER_STATUS };
 
 const KEYS = {
   session: "okr:session",
@@ -2169,34 +2173,9 @@ export const productsRepo = {
 };
 
 // -------------- cart (browser session) --------------
-const cartListeners = new Set();
+// The cart itself lives in cartStore.js; this keeps the old cartRepo API.
 export const cartRepo = {
-  list() { return read(KEYS.cart, []); },
-  onChange(fn) { cartListeners.add(fn); return () => cartListeners.delete(fn); },
-  _emit() { cartListeners.forEach((fn) => fn(this.list())); },
-  add(productId, qty = 1) {
-    const list = read(KEYS.cart, []);
-    const i = list.findIndex((it) => it.product_id === productId);
-    if (i >= 0) list[i].qty += qty;
-    else list.push({ product_id: productId, qty });
-    write(KEYS.cart, list); this._emit();
-    return list;
-  },
-  setQty(productId, qty) {
-    const list = read(KEYS.cart, []);
-    const i = list.findIndex((it) => it.product_id === productId);
-    if (i < 0) return list;
-    if (qty <= 0) list.splice(i, 1);
-    else list[i].qty = qty;
-    write(KEYS.cart, list); this._emit();
-    return list;
-  },
-  remove(productId) {
-    write(KEYS.cart, read(KEYS.cart, []).filter((it) => it.product_id !== productId));
-    this._emit();
-  },
-  clear() { write(KEYS.cart, []); this._emit(); },
-  count() { return read(KEYS.cart, []).reduce((s, it) => s + it.qty, 0); },
+  ...cartStore,
   detail() {
     const items = read(KEYS.cart, []);
     const products = read(KEYS.products, []);
@@ -2212,15 +2191,6 @@ export const cartRepo = {
 };
 
 // -------------- orders --------------
-// Status flow: PENDING_PAYMENT → WAITING_VERIFICATION → PAID / REJECTED / CANCELLED
-export const ORDER_STATUS = {
-  PENDING_PAYMENT: "pending_payment",
-  WAITING_VERIFICATION: "waiting_verification",
-  PAID: "paid",
-  REJECTED: "rejected",
-  CANCELLED: "cancelled",
-};
-
 function genOrderNumber() {
   const d = new Date();
   const y = d.getFullYear();

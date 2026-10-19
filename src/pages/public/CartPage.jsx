@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Trash2, ShoppingBag } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { cartRepo } from "../../lib/localStore";
+import { cartStore as cartRepo } from "../../lib/cartStore";
 import { useLiveCart } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeProduct } from "../../lib/storeI18n";
