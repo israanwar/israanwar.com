@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { publicBootstrap } from "../../lib/publicBootstrap";
 import { BLOG_CATEGORIES } from "../../data/blogCategories";
 import { useI18n } from "../../lib/i18n";
 import { localizeBlogCategory } from "../../lib/blogCategoryI18n";
@@ -12,6 +14,11 @@ import { formatPostReadCount, getPostReadCount } from "../../lib/blogMetrics";
 
 export function BlogSidebar({ posts, activeCategorySlug }) {
   const { lang, t } = useI18n();
+  // Estimated read counts grow with a post's age. Hydrate with the clock the
+  // prerendered HTML used, then move to the current time after mount, so the
+  // server and client markup always match on the first render.
+  const [now, setNow] = useState(() => publicBootstrap?.builtAt ?? Date.now());
+  useEffect(() => { setNow(Date.now()); }, []);
   const counts = posts.reduce((acc, p) => {
     const c = p.category || "opinion-philosophy";
     acc[c] = (acc[c] || 0) + 1;
@@ -96,7 +103,7 @@ export function BlogSidebar({ posts, activeCategorySlug }) {
                     day: "numeric", month: "short", year: "numeric",
                   })}
                   {" · "}
-                  {t("blog_read_count", { count: formatPostReadCount(getPostReadCount(p), lang) })}
+                  {t("blog_read_count", { count: formatPostReadCount(getPostReadCount(p, now), lang) })}
                 </div>
               </Link>
             </li>

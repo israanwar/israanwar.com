@@ -55,7 +55,7 @@ export function ToolDetailPage() {
   const related = TOOLS.filter((item) => item.categorySlug === tool.categorySlug && item.slug !== tool.slug).slice(0, 4);
 
   return (
-    <main className="okr__tool-detail-page">
+    <div className="okr__tool-detail-page">
       <Seo title={tool.name} description={tool.description} path={`/tools/${tool.slug}`} />
       <section className="okr__section okr__tool-detail-hero">
         <div className="okr__wrap">
@@ -102,7 +102,7 @@ export function ToolDetailPage() {
           )}
         </div>
       </section>
-    </main>
+    </div>
   );
 }
 

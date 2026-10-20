@@ -37,7 +37,7 @@ export function ToolsPage() {
   return (
     <>
       <Seo title="Free Online Tools" description={DESCRIPTION} path="/tools" />
-      <main className="okr__tools-page">
+      <div className="okr__tools-page">
         <section className="okr__section okr__tools-hero">
           <div className="okr__wrap">
             <div className="okr__tools-hero-copy">
@@ -140,7 +140,7 @@ export function ToolsPage() {
             </aside>
           </div>
         </section>
-      </main>
+      </div>
     </>
   );
 }

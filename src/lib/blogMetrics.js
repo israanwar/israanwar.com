@@ -20,14 +20,14 @@ function numericMetric(post) {
   return Number.isFinite(value) && value > 0 ? value : null;
 }
 
-export function getPostReadCount(post = {}) {
+export function getPostReadCount(post = {}, now = Date.now()) {
   const explicit = numericMetric(post);
   if (explicit) return Math.round(explicit);
 
   const seed = hashString(`${post.slug ?? ""}|${post.title ?? ""}|${post.category ?? ""}`);
-  const published = new Date(post.published_at ?? post.created_at ?? Date.now()).getTime();
+  const published = new Date(post.published_at ?? post.created_at ?? now).getTime();
   const ageDays = Number.isFinite(published)
-    ? Math.max(0, Math.floor((Date.now() - published) / 86400000))
+    ? Math.max(0, Math.floor((now - published) / 86400000))
     : 0;
   const ageBoost = Math.min(22000, ageDays * 42);
   const categoryBoost = String(post.category ?? "").includes("search") || String(post.category ?? "").includes("technology")

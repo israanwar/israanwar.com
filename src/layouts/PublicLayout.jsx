@@ -30,7 +30,11 @@ export function PublicLayout() {
   return (
     <SiteChrome>
       <Suspense fallback={<PublicRouteFallback />}>
-        <Outlet />
+        {/* One main landmark per page. It sits inside the boundary so the
+            tree above Suspense matches the prerendered markup exactly. */}
+        <main id="main-content">
+          <Outlet />
+        </main>
       </Suspense>
     </SiteChrome>
   );
