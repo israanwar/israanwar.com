@@ -264,10 +264,17 @@ export function useLivePostState(slug) {
 // cartRepo.detail() (which resolved against the local-only product
 // mirror — always empty for a Supabase-backed store, so every cart item
 // was silently dropped and checkout looked "empty" for every product).
+// Prerendered HTML is built with an empty cart, so only the components that
+// hydrate that HTML (the first mount, e.g. the header badge) may start empty.
+// Anything mounted after hydration, like /checkout reached by an in-app link,
+// must read the cart synchronously or it sees "empty" and redirects to /cart.
+let cartHydrated = false;
+
 export function useLiveCart() {
-  const [items, setItems] = useState(() => publicBootstrap ? [] : cartRepo.list());
+  const [items, setItems] = useState(() => publicBootstrap && !cartHydrated ? [] : cartRepo.list());
   const products = useLiveProducts(undefined, { enabled: items.length > 0 });
   useEffect(() => {
+    cartHydrated = true;
     setItems(cartRepo.list());
     const off = cartRepo.onChange(setItems);
     return off;
