@@ -1,38 +1,26 @@
 import { STORE_COVER_SLOTS } from "../data/storeCoverSlots.js";
-import { STORE_COVER_COLORS } from "../data/storeCoverColors.js";
-import { STORE_COVER_PLAN } from "../data/storeCoverPlan.js";
-import { ICON_BY_SLUG, SPARE_ICONS } from "../data/storeCoverIcons.js";
-import { oklchToHex } from "./oklch.js";
-import { ART_COUNT, FRAME_COUNT, ORNAMENT_COUNT, SKELETON_COUNT, TITLE_COUNT, WEIGHT_COUNT, renderLayout } from "./storeCoverLayouts.js";
+import { ICONS, ICON_BY_SLUG, SPARE_ICONS } from "../data/storeCoverIcons.js";
 
-// Premium editorial covers. Every product owns a slot (storeCoverSlots.js) that
-// fixes its color (OKLCH palette), its Lucide icon, and a design plan across six
-// dimensions (storeCoverPlan.js): skeleton, line-art family, medallion frame,
-// title style, ornament and line weight. Text color and accent are derived
-// from the background so they always clear a 4.5:1 contrast.
-const PLAN_DIMS = [SKELETON_COUNT, ART_COUNT, FRAME_COUNT, TITLE_COUNT, ORNAMENT_COUNT, WEIGHT_COUNT];
+// One cover system for every product: a black canvas, white type, lavender used
+// sparingly (the type label and one short rule), and a single Lucide icon.
+// Background, frame, type, icon size, stroke weight and spacing are identical on
+// every cover; only the icon, the title and the edition number change. No
+// gradients, glow or per-product color.
+const BG = "#08080b";
+const WHITE = "#f7f7f8";
+const LAVENDER = "#d7c9ff";
+const MUTED = "#85858d";
+const FRAME = "rgba(255,255,255,0.12)";
+const SANS = `font-family="'Plus Jakarta Sans', 'Helvetica Neue', Helvetica, Arial, system-ui, sans-serif"`;
+const ICON_SIZE = 96;
+const ICON_STROKE = 1.1;
+
 const SLOT_INDEX = new Map(STORE_COVER_SLOTS.map((slug, index) => [slug, index]));
 
 function hashString(value) {
   let hash = 2166136261;
   for (const ch of String(value)) hash = Math.imul(hash ^ ch.charCodeAt(0), 16777619) >>> 0;
   return hash;
-}
-
-function slotFor(slug) {
-  const known = SLOT_INDEX.get(slug);
-  if (known !== undefined) return known;
-  // Products added after the lists were written take a spare color after the
-  // listed ones until their slug is appended to storeCoverSlots.js.
-  const spare = Math.max(1, STORE_COVER_COLORS.length - STORE_COVER_SLOTS.length);
-  return STORE_COVER_SLOTS.length + (hashString(slug) % spare);
-}
-
-function planFor(slot, slug) {
-  const listed = STORE_COVER_PLAN[slot];
-  const values = listed ?? PLAN_DIMS.map((d, i) => hashString(`${slug}:${i}`) % d);
-  const [skeleton, art, frame, title, ornament, weight] = values;
-  return { skeleton, art, frame, title, ornament, weight };
 }
 
 function luminance(hex) {
@@ -48,40 +36,27 @@ export function contrastRatio(hexA, hexB) {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+// The colors the cover uses, exported so tests can check them.
+export const COVER_COLORS = { background: BG, text: WHITE, accent: LAVENDER, muted: MUTED };
 
-// Colors for one slot: a tonal two-stop background, a glassy plate, readable
-// ink and a foil-like accent that is a tint (deep backgrounds) or a deep shade
-// (light backgrounds) of the same family.
-export function coverLook(slot) {
-  const [L, C, H] = STORE_COVER_COLORS[slot % STORE_COVER_COLORS.length];
-  const bg1 = oklchToHex(L, C, H);
-  const bg2 = oklchToHex(clamp(L + (L > 0.55 ? -0.06 : 0.07), 0.12, 0.985), C * 1.04, H + 9);
-  return deriveLook({ bg1, bg2, L, C, H });
+// The Lucide icon of a product. Listed products have their own; a product added
+// later takes a spare one until its slug is added to storeCoverIcons.js.
+export function coverIconFor(slug) {
+  return ICON_BY_SLUG[slug] ?? SPARE_ICONS[hashString(slug) % SPARE_ICONS.length];
 }
 
-function deriveLook({ bg1, bg2, L, C, H, plate, accent: brandAccent }) {
-  const worst = (color) => Math.min(contrastRatio(color, bg1), contrastRatio(color, bg2));
-  const ivory = oklchToHex(0.975, 0.012, H);
-  const deepInk = oklchToHex(0.2, 0.035, H);
-  const deep = worst(ivory) > worst(deepInk);
-  const ink = deep ? ivory : deepInk;
-  let accent;
-  if (deep) {
-    let al = 0.84;
-    accent = oklchToHex(al, Math.min(0.12, C + 0.05), H + 14);
-    while (worst(accent) < 4.5 && al < 0.97) { al += 0.02; accent = oklchToHex(al, Math.min(0.1, C + 0.04), H + 14); }
-  } else {
-    let al = 0.44;
-    accent = oklchToHex(al, 0.13, H);
-    while (worst(accent) < 4.5 && al > 0.2) { al -= 0.02; accent = oklchToHex(al, 0.12, H); }
-  }
-  if (brandAccent && worst(brandAccent) >= 4.5) accent = brandAccent;
-  return {
-    bg1, bg2, ink, accent, deep, hue: H,
-    plate: plate ?? oklchToHex(clamp(L + (deep ? 0.05 : -0.045), 0.1, 0.99), C, H),
-    glow: oklchToHex(clamp(L + 0.14, 0.2, 0.99), C, H),
-  };
+function xmlEsc(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function cleanTitle(name) {
+  return String(name || "Untitled Product")
+    .replace(/^(module|modul)\s*:\s*/i, "")
+    .replace(/^bundle\s*:\s*/i, "Bundle ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 const TYPE_LABELS = {
@@ -108,57 +83,68 @@ const TYPE_LABELS = {
   brand: "BRANDING KIT",
 };
 
-// Products whose cover keeps its own brand colors. The image uploaded in the
-// admin is left untouched; only the storefront rendering is swapped.
-const COVER_OVERRIDES = {
-  jagojualanshopee: {
-    look: { bg1: "#fbf1e5", bg2: "#f2dcc3", L: 0.95, C: 0.03, H: 60, plate: "#f6e3cc", accent: "#b03509" },
-    icon: "shopping-basket",
-    kicker: "EBOOK · FORMAT PDF",
-    title: "Jago Jualan Shopee",
-    description: "Jurus anti ribet berjualan di Shopee, langkah demi langkah dalam 8 bab.",
-  },
-};
+// Products whose slug has no type prefix.
+const LABEL_BY_SLUG = { jagojualanshopee: "EBOOK \u00b7 FORMAT PDF" };
 
-function cleanTitle(name) {
-  return String(name || "Untitled Product")
-    .replace(/^(module|modul)\s*:\s*/i, "")
-    .replace(/^bundle\s*:\s*/i, "Bundle ")
-    .replace(/\s+/g, " ")
-    .trim();
+function typeLabel(product) {
+  if (LABEL_BY_SLUG[product.slug]) return LABEL_BY_SLUG[product.slug];
+  const prefix = String(product.slug || "").split("-")[0].toLowerCase();
+  return TYPE_LABELS[prefix] || String(product.category || "DIGITAL PRODUCT").toUpperCase();
 }
 
-function typeLabel(product, fallback) {
-  const prefix = String(product.slug || "").split("-")[0].toLowerCase();
-  return TYPE_LABELS[prefix] || String(product.category || fallback).toUpperCase();
+function wrapLines(title, maxChars) {
+  const words = String(title).replace(/\s*&\s*/g, " & ").split(/\s+/).filter(Boolean);
+  const lines = [];
+  let line = "";
+  for (const word of words) {
+    const next = (line + " " + word).trim();
+    if (next.length > maxChars && line) { lines.push(line); line = word; } else { line = next; }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+// The title is as large as fits in at most two lines; it shrinks before it is
+// ever cut.
+function titleLines(title) {
+  const maxWidth = 500;
+  for (let size = 38; size >= 22; size -= 2) {
+    const lines = wrapLines(title, Math.floor(maxWidth / (size * 0.56)));
+    if (lines.length <= 2 && Math.max(...lines.map((l) => l.length)) * size * 0.56 <= maxWidth * 1.04) return { lines, size };
+  }
+  const lines = wrapLines(title, Math.floor(maxWidth / (22 * 0.56)));
+  return { lines: lines.slice(0, 2).map((l, i, all) => (i === 1 && lines.length > 2 ? `${l}\u2026` : l)), size: 22 };
 }
 
 export function generateStoreCover(product = {}) {
   const slug = String(product.slug || product.name || "");
-  const override = COVER_OVERRIDES[product.slug];
-  const slot = slotFor(slug);
-  const look = override ? deriveLook(override.look) : coverLook(slot);
-  const plan = planFor(slot, slug);
-  const ctx = {
-    ...look,
-    plan,
-    slot,
-    seed: slot * 977 + 3,
-    edition: String(slot + 1).padStart(3, "0"),
-    icon: override?.icon ?? ICON_BY_SLUG[slug] ?? SPARE_ICONS[hashString(slug) % SPARE_ICONS.length],
-    kicker: override?.kicker || typeLabel(product, "DIGITAL PRODUCT"),
-    title: override?.title || cleanTitle(product.name),
-    description: override?.description ?? product.description,
-  };
-  const gx = 0.2 + ((slot * 37) % 60) / 100;
-  const gy = 0.15 + ((slot * 53) % 50) / 100;
+  const slot = SLOT_INDEX.get(slug);
+  const edition = slot === undefined ? "---" : String(slot + 1).padStart(3, "0");
+  // A few Lucide icons paint with currentColor, which inside an <img> SVG falls
+  // back to black and would vanish on the black canvas.
+  const icon = (ICONS[coverIconFor(slug)] ?? "").replace(/currentColor/g, WHITE);
+  const { lines, size } = titleLines(cleanTitle(product.name));
+  const lineHeight = size * 1.18;
+  // The title block is centered on y = 448, between the rule and the footer.
+  const firstBase = 448 - ((lines.length - 1) * lineHeight) / 2 + size * 0.34;
+  const scale = ICON_SIZE / 24;
+  const text = (x, y, str, { anchor = "start", fontSize, weight = 600, fill, spacing = 0 }) =>
+    `<text x="${x}" y="${y}" ${SANS} font-size="${fontSize}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}" letter-spacing="${spacing}">${xmlEsc(str)}</text>`;
+
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">` +
     `<desc>Isra Anwar Store generated cover</desc>` +
-    `<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${look.bg1}"/><stop offset="1" stop-color="${look.bg2}"/></linearGradient>` +
-    `<radialGradient id="gl" cx="${gx}" cy="${gy}" r="0.75"><stop offset="0" stop-color="${look.glow}" stop-opacity="0.5"/><stop offset="1" stop-color="${look.glow}" stop-opacity="0"/></radialGradient></defs>` +
-    `<rect width="800" height="600" fill="url(#bg)"/><rect width="800" height="600" fill="url(#gl)"/>` +
-    renderLayout(ctx) +
+    `<rect width="800" height="600" fill="${BG}"/>` +
+    `<rect x="100.5" y="36.5" width="599" height="527" fill="none" stroke="${FRAME}"/>` +
+    text(132, 88, typeLabel(product), { fontSize: 13, weight: 700, fill: LAVENDER, spacing: 4 }) +
+    text(668, 88, `N\u00b0 ${edition}`, { anchor: "end", fontSize: 13, weight: 500, fill: MUTED, spacing: 2 }) +
+    `<circle cx="400" cy="236" r="92" fill="none" stroke="${WHITE}" stroke-opacity="0.18"/>` +
+    `<g transform="translate(${400 - 12 * scale} ${236 - 12 * scale}) scale(${scale})" fill="none" stroke="${WHITE}" stroke-width="${ICON_STROKE}" stroke-linecap="round" stroke-linejoin="round">${icon}</g>` +
+    `<rect x="380" y="362" width="40" height="2" fill="${LAVENDER}"/>` +
+    lines.map((line, i) => text(400, (firstBase + i * lineHeight).toFixed(1), line, { anchor: "middle", fontSize: size, weight: 600, fill: WHITE, spacing: -0.4 })).join("") +
+    `<rect x="132" y="522" width="536" height="1" fill="${FRAME}"/>` +
+    text(132, 548, "ISRAANWAR.COM", { fontSize: 11, weight: 600, fill: MUTED, spacing: 4 }) +
+    text(668, 548, "2026", { anchor: "end", fontSize: 11, weight: 600, fill: MUTED, spacing: 3 }) +
     `</svg>`;
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
@@ -198,15 +184,19 @@ export function isLegacyStoreCover(url) {
 // is fixed per product) rather than rebuilding identical output repeatedly.
 const coverCache = new Map();
 
+// Products that always show the store cover system, even though a photo is
+// uploaded for them in the admin (the upload itself is left untouched).
+const SYSTEM_COVER_SLUGS = new Set(["jagojualanshopee"]);
+
 export function resolveProductCover(product) {
   if (
-    !COVER_OVERRIDES[product?.slug]
-    && product?.image_url
+    product?.image_url
+    && !SYSTEM_COVER_SLUGS.has(product.slug)
     && !isGeneratedStoreCover(product.image_url)
     && !isLegacyStoreCover(product.image_url)
   ) return product.image_url;
 
-  const cacheKey = `${product?.slug ?? ""}::${product?.name ?? ""}::${product?.category ?? ""}::${String(product?.description ?? "").slice(0, 40)}`;
+  const cacheKey = `${product?.slug ?? ""}::${product?.name ?? ""}::${product?.category ?? ""}`;
   const cached = coverCache.get(cacheKey);
   if (cached) return cached;
 

@@ -213,8 +213,8 @@
 
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
   .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible, :active) {
-  border-color: rgba(215, 201, 255, 0.62) !important;
-  box-shadow: 0 22px 48px rgba(42, 29, 72, 0.4) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.5) !important;
 }
 
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
@@ -393,8 +393,21 @@
    inherit the light-theme ink colour, which is near-invisible on #08080b. */
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
   .okr__products--artifact .okr__product-img {
-  background: #0b0a10 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: #08080b !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Store cards stay flat: no glow on the edition dot, and a calm hover zoom. */
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__artifact-card-edition::before {
+  box-shadow: none !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__artifact-card:is(:hover, :focus-visible, :focus-within) .okr__product-img img {
+  transform: scale(1.02) !important;
 }
 
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
