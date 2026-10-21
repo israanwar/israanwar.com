@@ -1,34 +1,94 @@
-// Generated covers follow the look of the real product covers: a warm light
-// canvas, a bold headline whose last word carries the accent color, a book
-// mockup with a simple glyph, and a dot grid. The accent hue changes with the
-// product family so the catalog is colorful instead of one flat tone.
+import { STORE_COVER_SLOTS } from "../data/storeCoverSlots.js";
+
+// Generated covers follow the look of the real product covers: a light canvas,
+// a bold headline whose last word carries the accent color, a book mockup with
+// a topic glyph, and a dot grid. Every product owns a slot (see
+// storeCoverSlots.js) that fixes its own background, so no two covers share
+// one: the hue steps by the golden angle (maximum spread), the pattern cycles
+// through eight kinds, and tone and gradient direction vary on top.
 const INK = "#1a1a1a";
 const MUTED = "#6b6560";
 const PAPER = "#fffdf9";
 
-const PALETTES = {
-  google: { accent: "#2563eb", bg: "#eef3fc", tint: "#dbe6fa" },
-  music: { accent: "#7c3aed", bg: "#f4effd", tint: "#e6dafb" },
-  workflow: { accent: "#0f9d6e", bg: "#ecf7f2", tint: "#d3eee3" },
-  commerce: { accent: "#e8541e", bg: "#fcf3ec", tint: "#f5e2d2" },
-  default: { accent: "#db2777", bg: "#fdeff5", tint: "#f9d9e7" },
-  indigo: { accent: "#4f46e5", bg: "#eef0fe", tint: "#dcdffb" },
-  teal: { accent: "#0891b2", bg: "#ecf8fb", tint: "#d2edf4" },
-  amber: { accent: "#d97706", bg: "#fdf6e8", tint: "#f8e8c6" },
-};
+const PATTERN_COUNT = 8;
+const SLOT_INDEX = new Map(STORE_COVER_SLOTS.map((slug, index) => [slug, index]));
 
-// Hue follows the product type so a catalog of mostly "workflow"-style
-// products does not collapse into one color. Music and Google/SEO keep their
-// own hues; the glyph still follows the topic.
-const TYPE_PALETTES = {
-  ebook: "commerce", modul: "commerce", bizdoc: "commerce",
-  bundle: "default", mkt: "default", brand: "default",
-  tpl: "teal", prod: "teal", planner: "teal", print: "teal",
-  checklist: "workflow", sop: "workflow", guideline: "workflow", playbook: "workflow",
-  framework: "indigo", workbook: "indigo", worksheet: "indigo",
-  blueprint: "amber", research: "amber",
-  prompt: "music", swipe: "music",
-};
+function hashString(value) {
+  let hash = 2166136261;
+  for (const ch of String(value)) hash = Math.imul(hash ^ ch.charCodeAt(0), 16777619) >>> 0;
+  return hash;
+}
+
+function slotFor(slug) {
+  const known = SLOT_INDEX.get(slug);
+  if (known !== undefined) return known;
+  // Products added after the slot list was written still get a stable,
+  // spread-out slot of their own until their slug is appended to the list.
+  return STORE_COVER_SLOTS.length + (hashString(slug) % 997);
+}
+
+function hsl(h, s, l) {
+  const hue = ((h % 360) + 360) % 360;
+  const sat = s / 100;
+  const light = l / 100;
+  const k = (n) => (n + hue / 30) % 12;
+  const amp = sat * Math.min(light, 1 - light);
+  const channel = (n) => Math.round(255 * (light - amp * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1))));
+  return `#${[0, 8, 4].map((n) => channel(n).toString(16).padStart(2, "0")).join("")}`;
+}
+
+const TONES = [
+  { s1: 85, l1: 96, s2: 80, l2: 92, tint: 86 },
+  { s1: 75, l1: 92, s2: 70, l2: 87, tint: 82 },
+  { s1: 62, l1: 88, s2: 60, l2: 82, tint: 77 },
+];
+
+function patternSvg(kind, accent, slot) {
+  const shift = (slot * 37) % 500;
+  switch (kind) {
+    case 0:
+      return `<pattern id="p" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="2.4" fill="${accent}" opacity="0.28"/></pattern><rect width="800" height="600" fill="url(#p)"/>`;
+    case 1:
+      return `<pattern id="p" width="28" height="28" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="28" fill="${accent}" opacity="0.10"/></pattern><rect width="800" height="600" fill="url(#p)"/>`;
+    case 2: {
+      let rings = "";
+      for (let r = 70; r <= 560; r += 70) rings += `<circle cx="${160 + shift}" cy="560" r="${r}" fill="none" stroke="${accent}" stroke-width="3" opacity="0.16"/>`;
+      return rings;
+    }
+    case 3:
+      return `<pattern id="p" width="44" height="44" patternUnits="userSpaceOnUse"><path d="M44 0 H0 V44" fill="none" stroke="${accent}" stroke-width="1.6" opacity="0.2"/></pattern><rect width="800" height="600" fill="url(#p)"/>`;
+    case 4: {
+      let waves = "";
+      for (let y = 90; y < 600; y += 70) waves += `<path d="M-20 ${y} q 40 -26 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0 t 80 0" fill="none" stroke="${accent}" stroke-width="3" opacity="0.17"/>`;
+      return waves;
+    }
+    case 5:
+      return `<pattern id="p" width="64" height="56" patternUnits="userSpaceOnUse"><path d="M32 8 L56 50 H8 Z" fill="none" stroke="${accent}" stroke-width="2.4" opacity="0.2"/></pattern><rect width="800" height="600" fill="url(#p)"/>`;
+    case 6:
+      return `<pattern id="p" width="46" height="46" patternUnits="userSpaceOnUse"><path d="M23 14 V32 M14 23 H32" stroke="${accent}" stroke-width="3" stroke-linecap="round" opacity="0.24"/></pattern><rect width="800" height="600" fill="url(#p)"/>`;
+    default:
+      return `<circle cx="${60 + (shift % 200)}" cy="560" r="230" fill="${accent}" opacity="0.1"/><circle cx="760" cy="60" r="${150 + (slot % 5) * 14}" fill="${accent}" opacity="0.1"/><circle cx="400" cy="660" r="150" fill="${accent}" opacity="0.08"/>`;
+  }
+}
+
+// Background and colors for one slot. Exported so tests can prove that every
+// slot looks different.
+export function coverBackground(slot) {
+  const hue = (slot * 137.508) % 360;
+  const kind = slot % PATTERN_COUNT;
+  const tone = TONES[Math.floor(slot / PATTERN_COUNT) % TONES.length];
+  const angle = (slot * 47) % 360;
+  const from = hsl(hue, tone.s1, tone.l1);
+  const to = hsl(hue + 34, tone.s2, tone.l2);
+  const accent = hsl(hue, 78, 36);
+  const tint = hsl(hue, 70, tone.tint);
+  const rad = (angle * Math.PI) / 180;
+  const gradient =
+    `<defs><linearGradient id="g" x1="${(0.5 - Math.cos(rad) / 2).toFixed(3)}" y1="${(0.5 - Math.sin(rad) / 2).toFixed(3)}" x2="${(0.5 + Math.cos(rad) / 2).toFixed(3)}" y2="${(0.5 + Math.sin(rad) / 2).toFixed(3)}">` +
+    `<stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs>` +
+    `<rect width="800" height="600" fill="url(#g)"/>`;
+  return { hue, kind, accent, tint, svg: gradient + patternSvg(kind, accent, slot) };
+}
 
 const TYPE_LABELS = {
   ebook: "EBOOK · FORMAT PDF",
@@ -256,15 +316,13 @@ function dotGrid(accent) {
 
 export function generateStoreCover(product = {}) {
   const categoryKey = classifyProductKey(product);
-  const prefix = String(product.slug || "").split("-")[0].toLowerCase();
-  const paletteKey = categoryKey === "google" || categoryKey === "music" ? categoryKey : TYPE_PALETTES[prefix] || categoryKey;
-  const { accent, bg, tint } = PALETTES[paletteKey] || PALETTES.default;
+  const { accent, tint, svg: background } = coverBackground(slotFor(String(product.slug || product.name || "")));
   const kicker = typeLabel(product, CATEGORY_LABELS[categoryKey]);
   const lines = wrapTitle(cleanTitle(product.name), 14, 4);
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">` +
     `<desc>Isra Anwar Store generated cover</desc>` +
-    `<rect width="800" height="600" fill="${bg}"/>` +
+    background +
     `<rect width="800" height="12" fill="${accent}"/>` +
     `<circle cx="620" cy="320" r="190" fill="${tint}"/>` +
     dotGrid(accent) +
