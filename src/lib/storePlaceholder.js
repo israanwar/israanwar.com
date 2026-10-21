@@ -135,6 +135,32 @@ const TYPE_LABELS = {
   brand: "BRANDING KIT",
 };
 
+// Products whose cover keeps its own colors but still uses the shared layout,
+// so the card sits well next to the generated ones. The image uploaded in the
+// admin is left untouched; only the storefront rendering is swapped.
+const COVER_OVERRIDES = {
+  jagojualanshopee: {
+    from: "#fdf6ee",
+    to: "#f5e6d3",
+    accent: "#e8541e",
+    glyph: "shop",
+    badge: ["8 BAB", "LANGKAH DEMI", "LANGKAH"],
+    kicker: "EBOOK · FORMAT PDF",
+    title: "Jago Jualan Shopee",
+    subtitle: "Jurus Anti Ribet",
+  },
+};
+
+function customLook({ from, to, accent }) {
+  const gradient =
+    `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs>` +
+    `<rect width="800" height="600" fill="url(#g)"/>`;
+  return {
+    accent, tint: "#f9e1d2", canvasAccent: accent, ink: INK, muted: MUTED, deep: false,
+    svg: gradient + patternSvg(0, accent, 0),
+  };
+}
+
 const CATEGORY_LABELS = {
   google: "SEO & GROWTH SYSTEM",
   music: "MUSIC & AUDIO",
@@ -318,11 +344,23 @@ function glyphSvg(key, accent) {
     case "workflow":
       return `<path d="M595 235 L645 235 M595 235 L620 290 M645 235 L620 290" ${stroke(5)}/>` +
         `<circle cx="595" cy="235" r="17" fill="${accent}"/><circle cx="645" cy="235" r="17" fill="${accent}"/><circle cx="620" cy="290" r="17" fill="${accent}"/>`;
+    case "shop":
+      return `<path d="M588 246 L598 218 H646 L656 246 Z" fill="${accent}"/><path d="M588 246 q8 14 17 0 q8 14 17 0 q8 14 17 0 q8 14 17 0" fill="${accent}" stroke="${accent}" stroke-width="2"/>` +
+        `<rect x="596" y="262" width="52" height="40" fill="none" stroke="${accent}" stroke-width="5"/><rect x="606" y="276" width="14" height="26" fill="${accent}"/><rect x="627" y="272" width="12" height="12" fill="none" stroke="${accent}" stroke-width="3"/>`;
     case "commerce":
       return `<rect x="590" y="244" width="60" height="54" rx="9" fill="${accent}"/><path d="M604 244 Q604 216 620 216 Q636 216 636 244" ${stroke(6)}/>`;
     default:
       return `<rect x="596" y="222" width="48" height="68" rx="7" ${stroke(7)}/><path d="M608 244 H632 M608 258 H632 M608 272 H624" ${stroke(5)}/>`;
   }
+}
+
+function badgeSvg(badge, accent) {
+  if (!badge) return "";
+  const font = 'font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" fill="#ffffff" text-anchor="middle"';
+  return `<circle cx="724" cy="462" r="56" fill="${accent}"/>` +
+    `<text x="724" y="466" ${font} font-size="28" font-weight="800" letter-spacing="-1">${xmlEsc(badge[0])}</text>` +
+    `<text x="724" y="484" ${font} font-size="9" font-weight="700" letter-spacing="1.5">${xmlEsc(badge[1])}</text>` +
+    `<text x="724" y="496" ${font} font-size="9" font-weight="700" letter-spacing="1.5">${xmlEsc(badge[2])}</text>`;
 }
 
 function dotGrid(accent) {
@@ -337,9 +375,12 @@ function dotGrid(accent) {
 
 export function generateStoreCover(product = {}) {
   const categoryKey = classifyProductKey(product);
-  const { accent, tint, canvasAccent, ink, muted, deep, svg: background } = coverBackground(slotFor(String(product.slug || product.name || "")));
-  const kicker = typeLabel(product, CATEGORY_LABELS[categoryKey]);
-  const lines = wrapTitle(cleanTitle(product.name), 14, 4);
+  const override = COVER_OVERRIDES[product.slug];
+  const { accent, tint, canvasAccent, ink, muted, deep, svg: background } = override
+    ? customLook(override)
+    : coverBackground(slotFor(String(product.slug || product.name || "")));
+  const kicker = override?.kicker || typeLabel(product, CATEGORY_LABELS[categoryKey]);
+  const lines = wrapTitle(override?.title || cleanTitle(product.name), 14, 4);
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">` +
     `<desc>Isra Anwar Store generated cover</desc>` +
@@ -356,12 +397,14 @@ export function generateStoreCover(product = {}) {
     `<rect x="500" y="126" width="244" height="10" fill="${accent}"/>` +
     `<rect x="500" y="136" width="14" height="336" fill="#000" opacity="0.05"/>` +
     `<circle cx="622" cy="255" r="78" fill="${tint}"/>` +
-    glyphSvg(categoryKey, accent) +
+    glyphSvg(override?.glyph || categoryKey, accent) +
     `<rect x="540" y="372" width="164" height="7" rx="3.5" fill="${INK}" opacity="0.85"/>` +
     `<rect x="540" y="392" width="120" height="7" rx="3.5" fill="${INK}" opacity="0.25"/>` +
     `<rect x="540" y="412" width="140" height="7" rx="3.5" fill="${INK}" opacity="0.25"/>` +
     `<text x="540" y="452" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="12" font-weight="700" fill="${accent}" letter-spacing="3">ISRA ANWAR</text>` +
     titleSvg(lines, canvasAccent, ink) +
+    (override?.subtitle ? `<text x="60" y="484" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="30" font-weight="500" fill="${ink}" letter-spacing="-0.5">${xmlEsc(override.subtitle)}</text>` : "") +
+    badgeSvg(override?.badge, accent) +
     `<rect x="60" y="520" width="680" height="1.5" fill="${ink}" opacity="0.2"/>` +
     `<path d="M60 566 L82 534 L94 551 L106 566 Z" fill="${ink}"/>` +
     `<text x="120" y="563" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="20" font-weight="700" fill="${muted}" letter-spacing="4">ISRAANWAR.COM</text>` +
@@ -407,7 +450,8 @@ const coverCache = new Map();
 
 export function resolveProductCover(product) {
   if (
-    product?.image_url
+    !COVER_OVERRIDES[product?.slug]
+    && product?.image_url
     && !isGeneratedStoreCover(product.image_url)
     && !isLegacyStoreCover(product.image_url)
   ) return product.image_url;

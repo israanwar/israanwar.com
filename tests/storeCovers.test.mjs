@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { contrastRatio, coverBackground, generateStoreCover } from '../src/lib/storePlaceholder.js';
+import { contrastRatio, coverBackground, generateStoreCover, resolveProductCover } from '../src/lib/storePlaceholder.js';
 import { STORE_COVER_SLOTS } from '../src/data/storeCoverSlots.js';
 import { STORE_COVER_COLORS } from '../src/data/storeCoverColors.js';
 
@@ -83,4 +83,11 @@ test('no muddy olive, khaki or mustard backgrounds', () => {
     const [hue, , light] = STORE_COVER_COLORS[slot];
     assert.ok(!(hue >= 38 && hue <= 110 && light < 84), `slot ${slot} is olive-range [${STORE_COVER_COLORS[slot]}]`);
   }
+});
+
+test('Jago Jualan Shopee keeps its orange and cream but uses the shared layout', () => {
+  const cover = resolveProductCover({ slug: 'jagojualanshopee', name: 'Jago Jualan Shopee: Jurus Anti Ribet', image_url: 'data:image/png;base64,AAAA' });
+  const svg = decodeURIComponent(cover.split(',').slice(1).join(','));
+  assert.match(svg, /^<svg[\s\S]*<\/svg>$/);
+  for (const part of ['#e8541e', '#fdf6ee', 'Jurus Anti Ribet', '8 BAB', 'ISRAANWAR.COM']) assert.ok(svg.includes(part), `missing ${part}`);
 });
