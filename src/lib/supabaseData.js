@@ -206,7 +206,9 @@ function genOrderNumber() {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
-  const seq = String(Date.now()).slice(-6);
+  // A little random jitter keeps two orders placed in the same millisecond apart.
+  const jitter = typeof crypto !== "undefined" && crypto.getRandomValues ? crypto.getRandomValues(new Uint16Array(1))[0] % 9973 : Math.floor(Math.random() * 9973);
+  const seq = String(Date.now() + jitter).slice(-6);
   return `OKR-${y}${m}${day}-${seq}`;
 }
 
@@ -746,11 +748,20 @@ export const ordersData = {
   },
   async create(payload) {
     return writeRemote(async () => {
-      const row = orderPayload(payload);
-      const { error } = await supabase.from("orders").insert(row);
-      if (error) throw error;
-      emitRemoteChange("orders");
-      return orderRowToItem(row);
+      // An order number that already exists (unique violation) gets a fresh
+      // number a couple of times before the error reaches the buyer.
+      let lastError;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const row = orderPayload(attempt === 0 ? payload : { ...payload, order_number: undefined });
+        const { error } = await supabase.from("orders").insert(row);
+        if (!error) {
+          emitRemoteChange("orders");
+          return orderRowToItem(row);
+        }
+        if (error.code !== "23505") throw error;
+        lastError = error;
+      }
+      throw lastError;
     });
   },
   async updateStatus(id, status, extra = {}) {

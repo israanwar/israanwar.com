@@ -1,7 +1,8 @@
 import { preservePublicValue, preserveLiveSnapshot } from "../lib/liveDataSnapshot.js";
 import { publicBootstrap } from "../lib/publicBootstrap";
 import { useEffect, useMemo, useState } from "react";
-import { cartStore as cartRepo } from "../lib/cartStore";
+import { cartStore as cartRepo, cartNotice } from "../lib/cartStore";
+import { buildCartView } from "../lib/cartView";
 import { getLoadedLocalStore } from "../lib/localStoreLoader";
 import {
   pagesData, settingsData, homepageData, productsData,
@@ -272,24 +273,27 @@ let cartHydrated = false;
 
 export function useLiveCart() {
   const [items, setItems] = useState(() => publicBootstrap && !cartHydrated ? [] : cartRepo.list());
+  const [removed, setRemoved] = useState(0);
   const products = useLiveProducts(undefined, { enabled: items.length > 0 });
   useEffect(() => {
     cartHydrated = true;
     setItems(cartRepo.list());
+    setRemoved(cartNotice.read());
     const off = cartRepo.onChange(setItems);
     return off;
   }, []);
-  return useMemo(() => {
-    const rows = items.map((it) => {
-      const product = products.find((p) => p.id === it.product_id);
-      if (!product) return null;
-      return { ...it, product, subtotal: (product.price ?? 0) * it.qty };
-    }).filter(Boolean);
-    const total = rows.reduce((sum, row) => sum + row.subtotal, 0);
-    // itemCount reflects the raw cart (synchronous, from localStorage) —
-    // unlike `rows`, it doesn't wait on the live product fetch, so pages
-    // that redirect away on an "empty" cart don't fire that redirect
-    // during the one render where products just haven't loaded yet.
-    return { rows, total, itemCount: items.length };
-  }, [items, products]);
+  const view = useMemo(() => buildCartView(items, products), [items, products]);
+  // Products that were deleted, drafted or priced at zero can never be bought,
+  // so they leave the cart (once the catalog has really loaded) instead of
+  // sitting there and blocking checkout.
+  useEffect(() => {
+    if (!view.ready || view.unavailable.length === 0) return;
+    view.unavailable.forEach((id) => cartRepo.remove(id));
+    setRemoved(cartNotice.add(view.unavailable.length));
+  }, [view]);
+  // itemCount reflects the raw cart (synchronous, from localStorage), unlike
+  // `rows`, it doesn't wait on the live product fetch, so pages that redirect
+  // away on an "empty" cart don't fire that redirect during the one render
+  // where products just haven't loaded yet.
+  return useMemo(() => ({ ...view, removed }), [view, removed]);
 }

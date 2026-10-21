@@ -102,6 +102,9 @@ async function runScenario(browser, base, slugs, viewport) {
         added = await cartHasItem().then(() => true, () => false);
       }
       if (!added) throw new Error('cart is still empty after clicking Add to cart');
+      // Digital products: however many times the button was clicked, one license.
+      const cart = await page.evaluate(() => JSON.parse(localStorage.getItem('okr:cart') || '[]'));
+      if (cart.length !== 1 || cart[0].qty !== 1) throw new Error(`repeated Add to cart left ${JSON.stringify(cart)} instead of one item at quantity 1`);
     });
     await step(`${label} open the cart with the header link`, async () => {
       await page.locator('a[href="/cart"]').first().click({ timeout: STEP_TIMEOUT });
@@ -119,6 +122,15 @@ async function runScenario(browser, base, slugs, viewport) {
       await checkoutForm.waitFor({ timeout: STEP_TIMEOUT });
       if (!page.url().endsWith('/checkout')) throw new Error(`redirected to ${page.url()}`);
     });
+    await step(`${label} Buy now on a product already in the cart keeps one license`, async () => {
+      await page.goto(`${base}/store/${slugs[0]}`, { waitUntil: 'networkidle' });
+      for (let attempt = 0; attempt < 6; attempt++) {
+        await page.getByRole('button', { name: 'Buy now' }).click({ timeout: STEP_TIMEOUT });
+        if (await page.waitForURL(/\/checkout$/, { timeout: 5000 }).then(() => true, () => false)) break;
+      }
+      const cart = await page.evaluate(() => JSON.parse(localStorage.getItem('okr:cart') || '[]'));
+      if (cart.length !== 1 || cart[0].qty !== 1) throw new Error(`Buy now on a carted product left ${JSON.stringify(cart)}`);
+    });
     await step(`${label} Buy now from a second product`, async () => {
       await page.goto(`${base}/store/${slugs[1] ?? slugs[0]}`, { waitUntil: 'networkidle' });
       // Same patience for Buy now: it only navigates once React has attached.
@@ -135,12 +147,19 @@ async function runScenario(browser, base, slugs, viewport) {
       await inputs.nth(1).fill('build-check@example.com');
       await inputs.nth(2).fill('081234567890');
       await checkoutForm.locator('textarea').first().fill('Automated build check, never stored.');
-      await checkoutForm.locator('button[type="submit"]').click();
+      // A fast double click must still create exactly one order.
+      await checkoutForm.locator('button[type="submit"]').dblclick();
       await page.waitForURL(/\/orders\/[^/]+\/payment/, { timeout: STEP_TIMEOUT });
+      if (orders.size !== 1) throw new Error(`a double click created ${orders.size} orders`);
       const [orderNumber, order] = [...orders.entries()].at(-1) ?? [];
       if (!orderNumber) throw new Error('no order insert was sent');
       if (!(Number(order.total) > 0)) throw new Error(`order total is ${order.total}`);
-      if (!(order.data?.items?.length > 0)) throw new Error('order has no items');
+      const items = order.data?.items ?? [];
+      if (!(items.length > 0)) throw new Error('order has no items');
+      if (new Set(items.map((item) => item.product_id)).size !== items.length) throw new Error('order lists a product twice');
+      if (items.some((item) => item.qty !== 1)) throw new Error(`order has a quantity other than 1: ${JSON.stringify(items.map((item) => item.qty))}`);
+      const itemsTotal = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+      if (itemsTotal !== Number(order.total)) throw new Error(`order total ${order.total} does not match its items (${itemsTotal})`);
       await page.getByText(orderNumber).first().waitFor({ timeout: STEP_TIMEOUT });
     });
     await step(`${label} empty cart sends checkout back to the cart`, async () => {
@@ -172,7 +191,7 @@ export async function verifyCheckout({ distDir }) {
         await runScenario(browser, base, slugs, viewport);
       }
     }
-    console.log('✓ Checkout verified: cart, checkout, reload, Buy now, place order, payment page (mobile and desktop)');
+    console.log('✓ Checkout verified: cart, one license per product, checkout, reload, Buy now, single order on double click, payment page (mobile and desktop)');
   } finally {
     await browser.close();
     server.close();

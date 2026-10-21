@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
@@ -26,6 +26,9 @@ export function CheckoutPage() {
   const [busy, setBusy] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  // A synchronous lock: state updates are async, so a fast double click could
+  // otherwise start two submissions before the button is disabled.
+  const submitting = useRef(false);
 
   // Guard: kalau cart kosong DAN belum submit → redirect ke cart. Checked
   // against itemCount (the raw, synchronous cart contents) rather than
@@ -52,10 +55,16 @@ export function CheckoutPage() {
 
   async function submit(ev) {
     ev.preventDefault();
+    if (submitting.current) return;
+    if (!detail.purchasable) {
+      setSubmitError(t(detail.ready ? "checkout_cart_unavailable" : "checkout_cart_loading"));
+      return;
+    }
     if (!validate()) {
       document.querySelector(".okr__field-error")?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
     }
+    submitting.current = true;
     setBusy(true);
     setSubmitted(true); // gate: prevent redirect to /cart after cartRepo.clear()
     setSubmitError(null);
@@ -85,6 +94,7 @@ export function CheckoutPage() {
       setTimeout(() => cartRepo.clear(), 100);
     } catch (e) {
       setSubmitError(e.message ?? "Pesanan gagal dibuat. Coba lagi.");
+      submitting.current = false;
       setSubmitted(false);
       setBusy(false);
     }
@@ -189,9 +199,14 @@ export function CheckoutPage() {
                   <span>{t("cart_total")}</span>
                   <span style={{ color: "var(--okr-primary-2)" }}>Rp {detail.total.toLocaleString("id-ID")}</span>
                 </div>
-                <button className="okr__btn okr__btn--primary" type="submit" disabled={busy} style={{ width: "100%", justifyContent: "center", marginTop: 20 }}>
+                <button className="okr__btn okr__btn--primary" type="submit" disabled={busy || !detail.purchasable} style={{ width: "100%", justifyContent: "center", marginTop: 20 }}>
                   {busy ? t("checkout_processing") : t("checkout_submit")}
                 </button>
+                {!detail.purchasable && (
+                  <p role="status" style={{ fontSize: 13, color: "var(--okr-muted)", textAlign: "center", margin: "12px 0 0" }}>
+                    {t(detail.ready ? "checkout_cart_unavailable" : "checkout_cart_loading")}
+                  </p>
+                )}
                 <p style={{ fontSize: 11, color: "var(--okr-dim)", textAlign: "center", marginTop: 10, marginBottom: 0 }}>
                   {t("checkout_terms")}
                 </p>

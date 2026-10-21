@@ -47,7 +47,6 @@ export function StoreItemPage() {
   const { slug } = useParams();
   const nav = useNavigate();
   const { value: product, loading } = useLiveProductState(slug);
-  const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
 
   if (loading && !product) {
@@ -69,7 +68,7 @@ export function StoreItemPage() {
     : null;
 
   function addToCart() {
-    cartRepo.add(product.id, qty);
+    cartRepo.add(product.id);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
@@ -107,19 +106,15 @@ export function StoreItemPage() {
                 </div>
                 <ProductDescription text={displayProduct.description} />
 
-                <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 24 }}>
-                  <div className="okr__qty">
-                    <button onClick={() => setQty(Math.max(1, qty - 1))} aria-label={t("qty_decrease")}>−</button>
-                    <span style={{ minWidth: 24, textAlign: "center", fontWeight: 600 }}>{qty}</span>
-                    <button onClick={() => setQty(qty + 1)} aria-label={t("qty_increase")}>+</button>
-                  </div>
+                <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 12 }}>
                   <button className="okr__btn okr__btn--primary" onClick={addToCart} style={{ flex: 1 }}>
                     {added ? <><Check size={16} /> {t("store_added")}</> : <><ShoppingBag size={16} /> {t("store_add")}</>}
                   </button>
                 </div>
-                <button className="okr__btn okr__btn--ghost" onClick={() => { cartRepo.add(product.id, qty); nav("/checkout"); }} style={{ width: "100%" }}>
+                <button className="okr__btn okr__btn--ghost" onClick={() => { cartRepo.add(product.id); nav("/checkout"); }} style={{ width: "100%" }}>
                   {t("store_buy_now")}
                 </button>
+                <p style={{ margin: "12px 0 0", fontSize: 13, color: "var(--okr-muted)" }}>{t("store_digital_note")}</p>
               </div>
             </div>
           </div>

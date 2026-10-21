@@ -2,15 +2,25 @@ import { Link } from "react-router-dom";
 import { Trash2, ShoppingBag } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { cartStore as cartRepo } from "../../lib/cartStore";
+import { useEffect } from "react";
+import { cartStore as cartRepo, cartNotice } from "../../lib/cartStore";
 import { useLiveCart } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeProduct } from "../../lib/storeI18n";
 import { resolveProductCover } from "../../lib/storePlaceholder";
 
+let pendingNoticeClear = null;
+
 export function CartPage() {
   const { lang, t } = useI18n();
-  const { rows, total, itemCount } = useLiveCart();
+  const { rows, total, itemCount, removed } = useLiveCart();
+  // The notice is shown once; leaving the cart page clears it. The clear is
+  // deferred so React's development double-mount (unmount, then mount again)
+  // cancels it instead of wiping the notice before it is seen.
+  useEffect(() => {
+    clearTimeout(pendingNoticeClear);
+    return () => { pendingNoticeClear = setTimeout(() => cartNotice.clear(), 0); };
+  }, []);
 
   return (
     <>
@@ -18,6 +28,12 @@ export function CartPage() {
               <section className="okr__section okr__page-hero">
           <div className="okr__wrap">
             <AnimatedHeadline text={t("cart_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
+
+            {removed > 0 && (
+              <p role="status" style={{ margin: "16px 0 0", padding: "12px 16px", borderRadius: 10, border: "1px solid var(--okr-line)", color: "var(--okr-muted)", fontSize: 14 }}>
+                {t("cart_removed_notice", { n: removed })}
+              </p>
+            )}
 
             {itemCount === 0 ? (
               <div style={{ textAlign: "center", padding: "60px 20px", color: "var(--okr-muted)" }}>
@@ -43,9 +59,7 @@ export function CartPage() {
                           )}
                         </div>
                         <div className="okr__qty">
-                          <button onClick={() => cartRepo.setQty(product.id, qty - 1)} aria-label={t("qty_decrease")}>−</button>
-                          <span style={{ minWidth: 24, textAlign: "center" }}>{qty}</span>
-                          <button onClick={() => cartRepo.setQty(product.id, qty + 1)} aria-label={t("qty_increase")}>+</button>
+                          <span style={{ fontSize: 13, color: "var(--okr-muted)", whiteSpace: "nowrap" }}>{t("cart_license")}</span>
                         </div>
                         <div className="okr__cart-actions">
                           <div style={{ fontWeight: 700, whiteSpace: "nowrap" }}>
@@ -63,7 +77,7 @@ export function CartPage() {
                 <div className="okr__panel okr__cart-summary">
                   <h3 style={{ margin: "0 0 16px", fontSize: 18, fontWeight: 700 }}>{t("cart_summary")}</h3>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0", borderBottom: "1px solid var(--okr-line)" }}>
-                    <span style={{ color: "var(--okr-muted)" }}>{t("cart_subtotal")} ({rows.reduce((s, r) => s + r.qty, 0)})</span>
+                    <span style={{ color: "var(--okr-muted)" }}>{t("cart_subtotal")} ({rows.length})</span>
                     <span>Rp {total.toLocaleString("id-ID")}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", padding: "16px 0", fontSize: 18, fontWeight: 700 }}>
