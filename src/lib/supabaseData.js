@@ -222,25 +222,28 @@ function orderPayload(order) {
   };
 }
 
-function cacheRecord(repo, id, item) {
+// Mirrors a saved row into the offline store. It is a best-effort cache, so a
+// failure here must never fail the save that already succeeded on Supabase.
+async function cacheRecord(repoName, id, item) {
   try {
-    return repo.update(id, item);
-  } catch {
+    const repo = (await local())[repoName];
     try {
-      if (item?.slug) return repo.update(item.slug, item);
+      return repo.update(id, item);
     } catch {
-      // Create below.
-    }
-    try {
+      try {
+        if (item?.slug) return repo.update(item.slug, item);
+      } catch {
+        // Create below.
+      }
       return repo.create(item);
-    } catch {
-      return item;
     }
+  } catch {
+    return item;
   }
 }
 
-function deleteCachedRecord(repo, id) {
-  try { repo.delete(id); }
+async function deleteCachedRecord(repoName, id) {
+  try { (await local())[repoName].delete(id); }
   catch { /* Local cache is best-effort. */ }
 }
 
@@ -424,7 +427,7 @@ export const postsData = {
         .select("*")
         .single();
       if (error) throw error;
-      cacheRecord(postsRepo, data.id, postRowToItem(data));
+      await cacheRecord("postsRepo", data.id, postRowToItem(data));
       emitRemoteChange("posts");
       return postRowToItem(data);
     });
@@ -442,7 +445,7 @@ export const postsData = {
         .select("*")
         .single();
       if (error) throw error;
-      cacheRecord(postsRepo, id, postRowToItem(data));
+      await cacheRecord("postsRepo", id, postRowToItem(data));
       emitRemoteChange("posts");
       return postRowToItem(data);
     });
@@ -454,7 +457,7 @@ export const postsData = {
         : supabase.from("posts").delete().eq("slug", id);
       const { error } = await query;
       if (error) throw error;
-      deleteCachedRecord(postsRepo, id);
+      await deleteCachedRecord("postsRepo", id);
       emitRemoteChange("posts");
     });
   },
@@ -504,7 +507,7 @@ export const productsData = {
         .select("*")
         .single();
       if (error) throw error;
-      cacheRecord(productsRepo, data.id, rowToItem(data));
+      await cacheRecord("productsRepo", data.id, rowToItem(data));
       emitRemoteChange("products");
       return productRowToItem(data);
     });
@@ -520,7 +523,7 @@ export const productsData = {
         .select("*")
         .single();
       if (error) throw error;
-      cacheRecord(productsRepo, id, rowToItem(data));
+      await cacheRecord("productsRepo", id, rowToItem(data));
       emitRemoteChange("products");
       return productRowToItem(data);
     });
@@ -532,7 +535,7 @@ export const productsData = {
         : supabase.from("products").delete().eq("slug", id);
       const { error } = await query;
       if (error) throw error;
-      deleteCachedRecord(productsRepo, id);
+      await deleteCachedRecord("productsRepo", id);
       emitRemoteChange("products");
     });
   },
@@ -576,7 +579,7 @@ export const servicesData = {
         .select("*")
         .single();
       if (error) throw error;
-      cacheRecord(servicesRepo, data.id, rowToItem(data));
+      await cacheRecord("servicesRepo", data.id, rowToItem(data));
       emitRemoteChange("services");
       return rowToItem(data);
     });
@@ -592,7 +595,7 @@ export const servicesData = {
         .select("*")
         .single();
       if (error) throw error;
-      cacheRecord(servicesRepo, id, rowToItem(data));
+      await cacheRecord("servicesRepo", id, rowToItem(data));
       emitRemoteChange("services");
       return rowToItem(data);
     });
@@ -604,7 +607,7 @@ export const servicesData = {
         : supabase.from("services").delete().eq("slug", id);
       const { error } = await query;
       if (error) throw error;
-      deleteCachedRecord(servicesRepo, id);
+      await deleteCachedRecord("servicesRepo", id);
       emitRemoteChange("services");
     });
   },
