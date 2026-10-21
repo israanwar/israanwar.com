@@ -1,13 +1,15 @@
 import { STORE_COVER_SLOTS } from "../data/storeCoverSlots.js";
+import { STORE_COVER_COLORS } from "../data/storeCoverColors.js";
 
 // Generated covers follow the look of the real product covers: a light canvas,
 // a bold headline whose last word carries the accent color, a book mockup with
 // a topic glyph, and a dot grid. Every product owns a slot (see
 // storeCoverSlots.js) that fixes its own background, so no two covers share
-// one: the hue steps by the golden angle (maximum spread), the pattern cycles
-// through eight kinds, and tone and gradient direction vary on top.
+// one: slot n takes color n from a palette picked so every pair is clearly
+// apart (storeCoverColors.js), the pattern cycles through eight kinds, and the
+// gradient direction varies on top. Text turns white on deep backgrounds.
 const INK = "#1a1a1a";
-const MUTED = "#6b6560";
+const MUTED = "#37332f";
 const PAPER = "#fffdf9";
 
 const PATTERN_COUNT = 8;
@@ -22,9 +24,11 @@ function hashString(value) {
 function slotFor(slug) {
   const known = SLOT_INDEX.get(slug);
   if (known !== undefined) return known;
-  // Products added after the slot list was written still get a stable,
-  // spread-out slot of their own until their slug is appended to the list.
-  return STORE_COVER_SLOTS.length + (hashString(slug) % 997);
+  // Products added after the slot list was written land in the spare colors
+  // after the listed ones (never on an existing product's color) until their
+  // slug is appended to the list.
+  const spare = Math.max(1, STORE_COVER_COLORS.length - STORE_COVER_SLOTS.length);
+  return STORE_COVER_SLOTS.length + (hashString(slug) % spare);
 }
 
 function hsl(h, s, l) {
@@ -37,11 +41,18 @@ function hsl(h, s, l) {
   return `#${[0, 8, 4].map((n) => channel(n).toString(16).padStart(2, "0")).join("")}`;
 }
 
-const TONES = [
-  { s1: 85, l1: 96, s2: 80, l2: 92, tint: 86 },
-  { s1: 75, l1: 92, s2: 70, l2: 87, tint: 82 },
-  { s1: 62, l1: 88, s2: 60, l2: 82, tint: 77 },
-];
+export function contrastRatio(hexA, hexB) {
+  const [hi, lo] = [luminance(hexA), luminance(hexB)].sort((a, b) => b - a);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+function luminance(hex) {
+  const channel = (i) => {
+    const v = parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16) / 255;
+    return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(0) + 0.7152 * channel(1) + 0.0722 * channel(2);
+}
 
 function patternSvg(kind, accent, slot) {
   const shift = (slot * 37) % 500;
@@ -74,20 +85,30 @@ function patternSvg(kind, accent, slot) {
 // Background and colors for one slot. Exported so tests can prove that every
 // slot looks different.
 export function coverBackground(slot) {
-  const hue = (slot * 137.508) % 360;
+  const [hue, sat, light] = STORE_COVER_COLORS[slot % STORE_COVER_COLORS.length];
   const kind = slot % PATTERN_COUNT;
-  const tone = TONES[Math.floor(slot / PATTERN_COUNT) % TONES.length];
   const angle = (slot * 47) % 360;
-  const from = hsl(hue, tone.s1, tone.l1);
-  const to = hsl(hue + 34, tone.s2, tone.l2);
-  const accent = hsl(hue, 78, 36);
-  const tint = hsl(hue, 70, tone.tint);
+  const from = hsl(hue, sat, light);
+  const to = hsl(hue, sat, Math.max(30, light - 7));
+  // Text color is whichever reads better on the darker end of the gradient;
+  // the accent line steps darker until it clears 4.5:1 on both ends.
+  const worst = (color) => Math.min(contrastRatio(color, from), contrastRatio(color, to));
+  const deep = worst("#ffffff") > worst(INK);
+  const ink = deep ? "#ffffff" : INK;
+  const muted = deep ? "#f1f1f1" : MUTED;
+  const accentCandidates = deep ? ["#ffffff"] : [30, 22, 15, 8].map((l) => hsl(hue, 85, l));
+  const canvasAccent = accentCandidates.find((color) => worst(color) >= 4.5) ?? ink;
+  const accent = hsl(hue, 78, 34);
+  const tint = hsl(hue, 70, 88);
   const rad = (angle * Math.PI) / 180;
   const gradient =
     `<defs><linearGradient id="g" x1="${(0.5 - Math.cos(rad) / 2).toFixed(3)}" y1="${(0.5 - Math.sin(rad) / 2).toFixed(3)}" x2="${(0.5 + Math.cos(rad) / 2).toFixed(3)}" y2="${(0.5 + Math.sin(rad) / 2).toFixed(3)}">` +
     `<stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs>` +
     `<rect width="800" height="600" fill="url(#g)"/>`;
-  return { hue, kind, accent, tint, svg: gradient + patternSvg(kind, accent, slot) };
+  return {
+    hue, kind, accent, tint, canvasAccent, ink, muted, deep, from, to,
+    svg: gradient + patternSvg(kind, deep ? "#ffffff" : canvasAccent, slot),
+  };
 }
 
 const TYPE_LABELS = {
@@ -272,7 +293,7 @@ function typeLabel(product, fallback) {
 
 // Headline sits on the left; the last line takes the accent color, like the
 // real covers.
-function titleSvg(lines, accent) {
+function titleSvg(lines, accent, ink) {
   const longest = Math.max(1, ...lines.map((line) => line.length));
   const fitted = Math.floor(400 / (longest * 0.58));
   const fontSize = Math.max(34, Math.min(lines.length <= 2 ? 66 : lines.length === 3 ? 56 : 46, fitted));
@@ -282,7 +303,7 @@ function titleSvg(lines, accent) {
 
   return lines.map((line, index) => {
     const isLast = index === lines.length - 1;
-    return `<text x="60" y="${(startY + index * lineHeight).toFixed(1)}" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="${fontSize}" font-weight="800" fill="${isLast ? accent : INK}" letter-spacing="-1.5">${xmlEsc(line)}</text>`;
+    return `<text x="60" y="${(startY + index * lineHeight).toFixed(1)}" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="${fontSize}" font-weight="800" fill="${isLast ? accent : ink}" letter-spacing="-1.5">${xmlEsc(line)}</text>`;
   }).join("");
 }
 
@@ -316,18 +337,18 @@ function dotGrid(accent) {
 
 export function generateStoreCover(product = {}) {
   const categoryKey = classifyProductKey(product);
-  const { accent, tint, svg: background } = coverBackground(slotFor(String(product.slug || product.name || "")));
+  const { accent, tint, canvasAccent, ink, muted, deep, svg: background } = coverBackground(slotFor(String(product.slug || product.name || "")));
   const kicker = typeLabel(product, CATEGORY_LABELS[categoryKey]);
   const lines = wrapTitle(cleanTitle(product.name), 14, 4);
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">` +
     `<desc>Isra Anwar Store generated cover</desc>` +
     background +
-    `<rect width="800" height="12" fill="${accent}"/>` +
-    `<circle cx="620" cy="320" r="190" fill="${tint}"/>` +
-    dotGrid(accent) +
-    `<text x="60" y="78" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="19" font-weight="700" fill="${accent}" letter-spacing="5">${xmlEsc(kicker)}</text>` +
-    `<rect x="60" y="98" width="52" height="5" fill="${accent}"/>` +
+    `<rect width="800" height="12" fill="${canvasAccent}"/>` +
+    `<circle cx="620" cy="320" r="190" fill="#ffffff" opacity="${deep ? 0.18 : 0.4}"/>` +
+    dotGrid(canvasAccent) +
+    `<text x="60" y="78" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="19" font-weight="700" fill="${canvasAccent}" letter-spacing="5">${xmlEsc(kicker)}</text>` +
+    `<rect x="60" y="98" width="52" height="5" fill="${canvasAccent}"/>` +
     // Book mockup: page edge, soft shadow, cover, accent top bar.
     `<rect x="508" y="146" width="244" height="346" rx="3" fill="#000" opacity="0.08"/>` +
     `<rect x="506" y="132" width="244" height="346" rx="3" fill="#efe6d6"/>` +
@@ -340,11 +361,11 @@ export function generateStoreCover(product = {}) {
     `<rect x="540" y="392" width="120" height="7" rx="3.5" fill="${INK}" opacity="0.25"/>` +
     `<rect x="540" y="412" width="140" height="7" rx="3.5" fill="${INK}" opacity="0.25"/>` +
     `<text x="540" y="452" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="12" font-weight="700" fill="${accent}" letter-spacing="3">ISRA ANWAR</text>` +
-    titleSvg(lines, accent) +
-    `<rect x="60" y="520" width="680" height="1.5" fill="#000" opacity="0.12"/>` +
-    `<path d="M60 566 L82 534 L94 551 L106 566 Z" fill="${INK}"/>` +
-    `<text x="120" y="563" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="20" font-weight="700" fill="${MUTED}" letter-spacing="4">ISRAANWAR.COM</text>` +
-    `<text x="740" y="563" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="20" font-weight="600" fill="${MUTED}" letter-spacing="3">2026</text>` +
+    titleSvg(lines, canvasAccent, ink) +
+    `<rect x="60" y="520" width="680" height="1.5" fill="${ink}" opacity="0.2"/>` +
+    `<path d="M60 566 L82 534 L94 551 L106 566 Z" fill="${ink}"/>` +
+    `<text x="120" y="563" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="20" font-weight="700" fill="${muted}" letter-spacing="4">ISRAANWAR.COM</text>` +
+    `<text x="740" y="563" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, system-ui, sans-serif" font-size="20" font-weight="600" fill="${muted}" letter-spacing="3">2026</text>` +
     `</svg>`;
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
