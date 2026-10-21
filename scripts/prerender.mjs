@@ -840,3 +840,7 @@ const { renderPublicHtml } = await import("./render-public-html.mjs");
 await renderPublicHtml({ distDir, routes, template: TEMPLATE });
 const { verifyPublicHtml } = await import("./verify-public-html.mjs");
 await verifyPublicHtml({ distDir, routes });
+// Fail the deploy if a visitor could not get from a product to the payment
+// page. No order is created: the check intercepts every Supabase write.
+const { verifyCheckout } = await import("./verify-checkout.mjs");
+await verifyCheckout({ distDir });

@@ -11,7 +11,8 @@
     "preview": "vite preview --host 0.0.0.0",
     "sitemap": "node scripts/generate-sitemap.mjs",
     "social:images": "node scripts/generate-blog-social-images.mjs",
-    "prerender": "node scripts/prerender.mjs"
+    "prerender": "node scripts/prerender.mjs",
+    "verify:checkout": "node scripts/verify-checkout.mjs dist"
   },
   "dependencies": {
     "@fontsource/cormorant-garamond": "^5.2.8",
