@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { contrastRatio, coverBackground, generateStoreCover, resolveProductCover } from '../src/lib/storePlaceholder.js';
+import { contrastRatio, coverBackground, coverComposition, generateStoreCover, resolveProductCover } from '../src/lib/storePlaceholder.js';
 import { STORE_COVER_SLOTS } from '../src/data/storeCoverSlots.js';
+import { glyphForProduct, LAYOUT_COUNT, PATTERN_COUNT } from '../src/lib/storeCoverLayouts.js';
 import { STORE_COVER_COLORS } from '../src/data/storeCoverColors.js';
 
 // CIELAB distance between two #rrggbb colors (D65). Roughly: below 5 looks the
@@ -90,4 +91,39 @@ test('Jago Jualan Shopee keeps its orange and cream but uses the shared layout',
   const svg = decodeURIComponent(cover.split(',').slice(1).join(','));
   assert.match(svg, /^<svg[\s\S]*<\/svg>$/);
   for (const part of ['#e8541e', '#fdf6ee', 'Jurus Anti Ribet', '8 BAB', 'ISRAANWAR.COM']) assert.ok(svg.includes(part), `missing ${part}`);
+});
+
+test('no two listed products share a layout and pattern pair', () => {
+  const seen = new Map();
+  STORE_COVER_SLOTS.forEach((slug, slot) => {
+    const { layout, pattern } = coverComposition(slot);
+    const key = `${layout}/${pattern}`;
+    assert.ok(!seen.has(key), `${slug} and ${seen.get(key)} share layout ${layout} with pattern ${pattern}`);
+    seen.set(key, slug);
+  });
+});
+
+test('all layouts and all patterns are in use, evenly', () => {
+  const layouts = new Array(LAYOUT_COUNT).fill(0);
+  const patterns = new Array(PATTERN_COUNT).fill(0);
+  STORE_COVER_SLOTS.forEach((_, slot) => { const c = coverComposition(slot); layouts[c.layout]++; patterns[c.pattern]++; });
+  assert.ok(layouts.every((n) => n >= 9), `uneven layouts ${layouts}`);
+  assert.ok(patterns.every((n) => n >= 6), `uneven patterns ${patterns}`);
+});
+
+test('products get a spread of topic glyphs, not one icon', () => {
+  const glyphs = new Set(STORE_COVER_SLOTS.map((slug) => glyphForProduct({ slug, name: slug.replace(/-/g, ' ') })));
+  assert.ok(glyphs.size >= 14, `only ${glyphs.size} glyphs: ${[...glyphs]}`);
+});
+
+test('cover structure differs between products, not only color', () => {
+  // Strip colors and text so only shapes remain, then compare.
+  const shape = (svg) => svg.replace(/#[0-9a-f]{3,8}\b/gi, '#').replace(/>[^<]*</g, '><').replace(/\d+(\.\d+)?/g, '0');
+  const structures = new Map();
+  for (const slug of STORE_COVER_SLOTS.filter((s) => s !== 'jagojualanshopee')) {
+    const svg = decodeURIComponent(generateStoreCover({ slug, name: slug.replace(/-/g, ' ') }).split(',').slice(1).join(','));
+    const { layout, pattern } = coverComposition(STORE_COVER_SLOTS.indexOf(slug));
+    structures.set(`${layout}/${pattern}`, shape(svg).length);
+  }
+  assert.equal(structures.size, STORE_COVER_SLOTS.length - 1);
 });
