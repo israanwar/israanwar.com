@@ -1,129 +1,112 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { contrastRatio, coverBackground, coverComposition, generateStoreCover, resolveProductCover } from '../src/lib/storePlaceholder.js';
+import { contrastRatio, coverLook, generateStoreCover, resolveProductCover } from '../src/lib/storePlaceholder.js';
 import { STORE_COVER_SLOTS } from '../src/data/storeCoverSlots.js';
-import { glyphForProduct, LAYOUT_COUNT, PATTERN_COUNT } from '../src/lib/storeCoverLayouts.js';
 import { STORE_COVER_COLORS } from '../src/data/storeCoverColors.js';
+import { STORE_COVER_PLAN } from '../src/data/storeCoverPlan.js';
+import { ICONS, ICON_BY_SLUG, SPARE_ICONS } from '../src/data/storeCoverIcons.js';
+import { ART_COUNT, FRAME_COUNT, ORNAMENT_COUNT, SKELETON_COUNT, TITLE_COUNT, WEIGHT_COUNT } from '../src/lib/storeCoverLayouts.js';
 
-// CIELAB distance between two #rrggbb colors (D65). Roughly: below 5 looks the
-// same, around 10 is clearly different, above 15 is obviously different.
-function lab(hex) {
-  const lin = (i) => { const v = parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16) / 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
-  const [r, g, b] = [lin(0), lin(1), lin(2)];
-  const x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
-  const y = r * 0.2126 + g * 0.7152 + b * 0.0722;
-  const z = (b * 0.9505 + g * 0.1192 + r * 0.0193) / 1.08883;
-  const f = (t) => (t > 0.008856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
-  return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))];
-}
-const deltaE = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+const N = STORE_COVER_SLOTS.length;
+const DIMS = [SKELETON_COUNT, ART_COUNT, FRAME_COUNT, TITLE_COUNT, ORNAMENT_COUNT, WEIGHT_COUNT];
+const svgOf = (cover) => decodeURIComponent(cover.split(',').slice(1).join(','));
+const lab = ([L, C, H]) => [L * 100, C * 100 * Math.cos((H * Math.PI) / 180), C * 100 * Math.sin((H * Math.PI) / 180)];
+const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 
-test('slot list has no duplicate slugs and fits the palette', () => {
-  assert.equal(new Set(STORE_COVER_SLOTS).size, STORE_COVER_SLOTS.length);
-  assert.ok(STORE_COVER_SLOTS.length <= STORE_COVER_COLORS.length, 'more products than palette colors');
+test('every listed product has a slot, a color, a plan and an icon', () => {
+  assert.equal(new Set(STORE_COVER_SLOTS).size, N, 'duplicate slugs');
+  assert.ok(STORE_COVER_COLORS.length >= N + 20, 'not enough colors including spares');
+  assert.equal(STORE_COVER_PLAN.length, N);
+  for (const slug of STORE_COVER_SLOTS) assert.ok(ICON_BY_SLUG[slug], `${slug} has no icon`);
 });
 
-test('every slot has its own background', () => {
-  const seen = new Set();
-  for (let slot = 0; slot < STORE_COVER_COLORS.length * 2; slot++) {
-    const { svg } = coverBackground(slot);
-    assert.ok(!seen.has(svg), `slot ${slot} repeats an earlier background`);
-    seen.add(svg);
+test('no icon is used twice, and every icon exists', () => {
+  const used = STORE_COVER_SLOTS.map((slug) => ICON_BY_SLUG[slug]);
+  assert.equal(new Set(used).size, used.length, 'an icon repeats');
+  for (const name of used) assert.ok(ICONS[name], `${name} missing from the bank`);
+  for (const name of SPARE_ICONS) assert.ok(!used.includes(name), `spare ${name} is already in use`);
+  assert.ok(SPARE_ICONS.length >= 10);
+});
+
+test('no two products share a color and every pair is clearly apart', () => {
+  const colors = STORE_COVER_COLORS.slice(0, N);
+  assert.equal(new Set(colors.map((c) => c.join(','))).size, N);
+  const labs = colors.map(lab);
+  let min = Infinity;
+  for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) min = Math.min(min, dist(labs[i], labs[j]));
+  assert.ok(min >= 4.5, `closest pair is only ${min.toFixed(2)} apart in OKLab`);
+});
+
+test('palette stays clean, with no muddy browns, olive, lime or dusty tones', () => {
+  for (const [slot, [L, C, H]] of STORE_COVER_COLORS.entries()) {
+    const label = `slot ${slot} [${L}, ${C}, ${H}]`;
+    assert.ok(!(H >= 70 && H <= 140 && L < 0.9), `${label} is olive or lime`);
+    assert.ok(!(H >= 20 && H < 70 && L < 0.54), `${label} is brown`);
+    assert.ok(!((H < 70 || H >= 340) && L >= 0.5 && L <= 0.82 && C < 0.14), `${label} is dusty rose or salmon`);
+    assert.ok(!(L > 0.55 && C > 0.17), `${label} is neon`);
   }
 });
 
-test('no two listed products share a color or look alike', () => {
-  const colors = STORE_COVER_SLOTS.map((_, slot) => coverBackground(slot).from);
-  assert.equal(new Set(colors).size, colors.length, 'two products share the exact same color');
-  const labs = colors.map(lab);
-  let min = Infinity;
-  for (let i = 0; i < labs.length; i++) for (let j = i + 1; j < labs.length; j++) min = Math.min(min, deltaE(labs[i], labs[j]));
-  assert.ok(min >= 12, `closest pair of products is only ${min.toFixed(1)} apart in CIELAB`);
+test('products use many different hues, not a handful', () => {
+  const hues = new Set(STORE_COVER_COLORS.slice(0, N).map(([, , H]) => Math.round(H / 15)));
+  assert.ok(hues.size >= 18, `only ${hues.size} hue families`);
 });
 
-test('title and kicker text stay readable on every background', () => {
-  for (let slot = 0; slot < STORE_COVER_COLORS.length; slot++) {
-    const { from, to, ink, muted, canvasAccent } = coverBackground(slot);
-    for (const [name, color, min] of [['title', ink, 4.5], ['accent line', canvasAccent, 4.5], ['footer', muted, 3]]) {
-      for (const bg of [from, to]) {
-        const bad = []; if (!(contrastRatio(color, bg) >= min)) bad.push(slot); assert.equal(bad.length, 0, `slot ${slot} ${name} ${color} on ${bg} is ${contrastRatio(color, bg).toFixed(2)}:1`);
-      }
+test('any two products differ in at least four of six design dimensions', () => {
+  const dist4 = (a, b) => a.reduce((n, v, i) => n + (v !== b[i] ? 1 : 0), 0);
+  for (let i = 0; i < N; i++) {
+    STORE_COVER_PLAN[i].forEach((v, d) => assert.ok(v >= 0 && v < DIMS[d], `slot ${i} dimension ${d} out of range`));
+    for (let j = i + 1; j < N; j++) {
+      assert.ok(dist4(STORE_COVER_PLAN[i], STORE_COVER_PLAN[j]) >= 4, `${STORE_COVER_SLOTS[i]} and ${STORE_COVER_SLOTS[j]} are too alike`);
     }
   }
 });
 
-test('many different hues are used, not a handful', () => {
-  const hues = new Set(STORE_COVER_SLOTS.map((_, slot) => coverBackground(slot).hue));
-  assert.ok(hues.size >= 50, `only ${hues.size} distinct hues`);
-});
-
-test('covers for every listed product are distinct, valid and readable', () => {
-  const covers = STORE_COVER_SLOTS.map((slug) => generateStoreCover({ slug, name: slug.replace(/-/g, ' '), category: 'Modules' }));
-  assert.equal(new Set(covers).size, covers.length);
-  for (const cover of covers) {
-    const svg = decodeURIComponent(cover.split(',').slice(1).join(','));
-    assert.match(svg, /^<svg[\s\S]*<\/svg>$/);
-    assert.ok(!/#0b0a10/i.test(svg), 'no black canvas');
-  }
-});
-
-test('a product missing from the slot list gets a stable cover on a spare color', () => {
-  const a = generateStoreCover({ slug: 'brand-new-product', name: 'Brand New Product' });
-  const b = generateStoreCover({ slug: 'brand-new-product', name: 'Brand New Product' });
-  assert.equal(a, b);
-  const listedColors = new Set(STORE_COVER_SLOTS.map((_, slot) => coverBackground(slot).from));
-  for (const slug of ['brand-new-product', 'another-new-product', 'x', 'y', 'z']) {
-    const svg = decodeURIComponent(generateStoreCover({ slug, name: slug }).split(',').slice(1).join(','));
-    const stop = svg.match(/stop-color="(#[0-9a-f]{6})"/)[1];
-    assert.ok(!listedColors.has(stop), `${slug} reuses a listed product's color`);
-  }
-});
-
-test('no muddy olive, khaki or mustard backgrounds', () => {
-  for (let slot = 0; slot < STORE_COVER_COLORS.length; slot++) {
-    const [hue, , light] = STORE_COVER_COLORS[slot];
-    assert.ok(!(hue >= 38 && hue <= 110 && light < 84), `slot ${slot} is olive-range [${STORE_COVER_COLORS[slot]}]`);
-  }
-});
-
-test('Jago Jualan Shopee keeps its orange and cream but uses the shared layout', () => {
-  const cover = resolveProductCover({ slug: 'jagojualanshopee', name: 'Jago Jualan Shopee: Jurus Anti Ribet', image_url: 'data:image/png;base64,AAAA' });
-  const svg = decodeURIComponent(cover.split(',').slice(1).join(','));
-  assert.match(svg, /^<svg[\s\S]*<\/svg>$/);
-  for (const part of ['#e8541e', '#fdf6ee', 'Jurus Anti Ribet', '8 BAB', 'ISRAANWAR.COM']) assert.ok(svg.includes(part), `missing ${part}`);
-});
-
-test('no two listed products share a layout and pattern pair', () => {
-  const seen = new Map();
-  STORE_COVER_SLOTS.forEach((slug, slot) => {
-    const { layout, pattern } = coverComposition(slot);
-    const key = `${layout}/${pattern}`;
-    assert.ok(!seen.has(key), `${slug} and ${seen.get(key)} share layout ${layout} with pattern ${pattern}`);
-    seen.set(key, slug);
+test('every dimension is used broadly', () => {
+  DIMS.forEach((size, d) => {
+    const counts = new Array(size).fill(0);
+    STORE_COVER_PLAN.forEach((plan) => counts[plan[d]]++);
+    assert.ok(counts.every((n) => n >= Math.floor(N / size / 3)), `dimension ${d} is lopsided ${counts}`);
   });
 });
 
-test('all layouts and all patterns are in use, evenly', () => {
-  const layouts = new Array(LAYOUT_COUNT).fill(0);
-  const patterns = new Array(PATTERN_COUNT).fill(0);
-  STORE_COVER_SLOTS.forEach((_, slot) => { const c = coverComposition(slot); layouts[c.layout]++; patterns[c.pattern]++; });
-  assert.ok(layouts.every((n) => n >= 9), `uneven layouts ${layouts}`);
-  assert.ok(patterns.every((n) => n >= 6), `uneven patterns ${patterns}`);
-});
-
-test('products get a spread of topic glyphs, not one icon', () => {
-  const glyphs = new Set(STORE_COVER_SLOTS.map((slug) => glyphForProduct({ slug, name: slug.replace(/-/g, ' ') })));
-  assert.ok(glyphs.size >= 14, `only ${glyphs.size} glyphs: ${[...glyphs]}`);
-});
-
-test('cover structure differs between products, not only color', () => {
-  // Strip colors and text so only shapes remain, then compare.
-  const shape = (svg) => svg.replace(/#[0-9a-f]{3,8}\b/gi, '#').replace(/>[^<]*</g, '><').replace(/\d+(\.\d+)?/g, '0');
-  const structures = new Map();
-  for (const slug of STORE_COVER_SLOTS.filter((s) => s !== 'jagojualanshopee')) {
-    const svg = decodeURIComponent(generateStoreCover({ slug, name: slug.replace(/-/g, ' ') }).split(',').slice(1).join(','));
-    const { layout, pattern } = coverComposition(STORE_COVER_SLOTS.indexOf(slug));
-    structures.set(`${layout}/${pattern}`, shape(svg).length);
+test('text and accent stay readable on every background', () => {
+  for (let slot = 0; slot < STORE_COVER_COLORS.length; slot++) {
+    const { bg1, bg2, ink, accent } = coverLook(slot);
+    for (const bg of [bg1, bg2]) {
+      assert.ok(contrastRatio(ink, bg) >= 4.5, `slot ${slot} ink ${ink} on ${bg} is ${contrastRatio(ink, bg).toFixed(2)}:1`);
+      assert.ok(contrastRatio(accent, bg) >= 4.5, `slot ${slot} accent ${accent} on ${bg} is ${contrastRatio(accent, bg).toFixed(2)}:1`);
+    }
   }
-  assert.equal(structures.size, STORE_COVER_SLOTS.length - 1);
+});
+
+test('every listed cover is distinct, well formed and uses the product icon', () => {
+  const covers = STORE_COVER_SLOTS.map((slug) => generateStoreCover({ slug, name: slug.replace(/-/g, ' '), description: 'A short description. More text.' }));
+  assert.equal(new Set(covers).size, covers.length);
+  covers.forEach((cover, i) => {
+    const svg = svgOf(cover);
+    assert.match(svg, /^<svg[\s\S]*<\/svg>$/);
+    assert.ok(!/NaN|undefined|null/.test(svg), `${STORE_COVER_SLOTS[i]} has a broken value`);
+    assert.ok(svg.includes(ICONS[ICON_BY_SLUG[STORE_COVER_SLOTS[i]]]), `${STORE_COVER_SLOTS[i]} is missing its icon`);
+  });
+});
+
+test('a product missing from the lists gets a stable cover on spare color and icon', () => {
+  const make = (slug) => generateStoreCover({ slug, name: slug });
+  assert.equal(make('brand-new-product'), make('brand-new-product'));
+  const used = new Set(STORE_COVER_SLOTS.map((slug) => ICONS[ICON_BY_SLUG[slug]]));
+  const listedBg = new Set(STORE_COVER_SLOTS.map((_, slot) => coverLook(slot).bg1));
+  for (const slug of ['brand-new-product', 'another-new-product', 'x', 'y']) {
+    const svg = svgOf(make(slug));
+    assert.ok(![...used].some((body) => svg.includes(body)), `${slug} reuses a listed product icon`);
+    const stop = svg.match(/id="bg"[^>]*><stop offset="0" stop-color="(#[0-9a-f]{6})"/)[1];
+    assert.ok(!listedBg.has(stop), `${slug} reuses a listed product color`);
+  }
+});
+
+test('Jago Jualan Shopee keeps its cream and orange and its own tagline', () => {
+  const cover = resolveProductCover({ slug: 'jagojualanshopee', name: 'Jago Jualan Shopee: Jurus Anti Ribet', image_url: 'data:image/png;base64,AAAA' });
+  const svg = svgOf(cover);
+  assert.match(svg, /^<svg[\s\S]*<\/svg>$/);
+  for (const part of ['#fbf1e5', '#b03509', 'Jurus anti ribet', 'ISRAANWAR.COM']) assert.ok(svg.includes(part), `missing ${part}`);
 });

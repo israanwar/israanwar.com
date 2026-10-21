@@ -1,16 +1,16 @@
 import { STORE_COVER_SLOTS } from "../data/storeCoverSlots.js";
 import { STORE_COVER_COLORS } from "../data/storeCoverColors.js";
-import { LAYOUT_COUNT, PATTERN_COUNT, glyphForProduct, patternBackground, renderLayout } from "./storeCoverLayouts.js";
+import { STORE_COVER_PLAN } from "../data/storeCoverPlan.js";
+import { ICON_BY_SLUG, SPARE_ICONS } from "../data/storeCoverIcons.js";
+import { oklchToHex } from "./oklch.js";
+import { ART_COUNT, FRAME_COUNT, ORNAMENT_COUNT, SKELETON_COUNT, TITLE_COUNT, WEIGHT_COUNT, renderLayout } from "./storeCoverLayouts.js";
 
-// Generated covers differ in color AND composition. Every product owns a slot
-// (see storeCoverSlots.js). The slot picks a color from a palette whose pairs
-// are all clearly apart (storeCoverColors.js), one of twelve page layouts and
-// one of twelve background patterns (storeCoverLayouts.js), arranged so that
-// no two products share a (layout, pattern) pair. Text turns white on deep
-// backgrounds.
-const INK = "#1a1a1a";
-const MUTED = "#37332f";
-
+// Premium editorial covers. Every product owns a slot (storeCoverSlots.js) that
+// fixes its color (OKLCH palette), its Lucide icon, and a design plan across six
+// dimensions (storeCoverPlan.js): skeleton, line-art family, medallion frame,
+// title style, ornament and line weight. Text color and accent are derived
+// from the background so they always clear a 4.5:1 contrast.
+const PLAN_DIMS = [SKELETON_COUNT, ART_COUNT, FRAME_COUNT, TITLE_COUNT, ORNAMENT_COUNT, WEIGHT_COUNT];
 const SLOT_INDEX = new Map(STORE_COVER_SLOTS.map((slug, index) => [slug, index]));
 
 function hashString(value) {
@@ -22,26 +22,17 @@ function hashString(value) {
 function slotFor(slug) {
   const known = SLOT_INDEX.get(slug);
   if (known !== undefined) return known;
-  // Products added after the slot list was written land in the spare colors
-  // after the listed ones (never on an existing product's color) until their
-  // slug is appended to the list.
+  // Products added after the lists were written take a spare color after the
+  // listed ones until their slug is appended to storeCoverSlots.js.
   const spare = Math.max(1, STORE_COVER_COLORS.length - STORE_COVER_SLOTS.length);
   return STORE_COVER_SLOTS.length + (hashString(slug) % spare);
 }
 
-function hsl(h, s, l) {
-  const hue = ((h % 360) + 360) % 360;
-  const sat = s / 100;
-  const light = l / 100;
-  const k = (n) => (n + hue / 30) % 12;
-  const amp = sat * Math.min(light, 1 - light);
-  const channel = (n) => Math.round(255 * (light - amp * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1))));
-  return `#${[0, 8, 4].map((n) => channel(n).toString(16).padStart(2, "0")).join("")}`;
-}
-
-export function contrastRatio(hexA, hexB) {
-  const [hi, lo] = [luminance(hexA), luminance(hexB)].sort((a, b) => b - a);
-  return (hi + 0.05) / (lo + 0.05);
+function planFor(slot, slug) {
+  const listed = STORE_COVER_PLAN[slot];
+  const values = listed ?? PLAN_DIMS.map((d, i) => hashString(`${slug}:${i}`) % d);
+  const [skeleton, art, frame, title, ornament, weight] = values;
+  return { skeleton, art, frame, title, ornament, weight };
 }
 
 function luminance(hex) {
@@ -52,47 +43,44 @@ function luminance(hex) {
   return 0.2126 * channel(0) + 0.7152 * channel(1) + 0.0722 * channel(2);
 }
 
-// Layout and pattern for a slot. For slots 0..143 every pair is unique: the
-// layout cycles fastest, and the pattern shifts by five per layout.
-export function coverComposition(slot) {
-  const layout = slot % LAYOUT_COUNT;
-  const pattern = (Math.floor(slot / LAYOUT_COUNT) + layout * 5) % PATTERN_COUNT;
-  return { layout, pattern };
+export function contrastRatio(hexA, hexB) {
+  const [hi, lo] = [luminance(hexA), luminance(hexB)].sort((a, b) => b - a);
+  return (hi + 0.05) / (lo + 0.05);
 }
 
-// Hues 38-110 turn muddy olive at accent lightness, so accents borrow a warm
-// orange instead while the canvas keeps its own pale tone.
-function accentHue(hue) {
-  return hue >= 38 && hue <= 110 ? 22 : hue;
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+// Colors for one slot: a tonal two-stop background, a glassy plate, readable
+// ink and a foil-like accent that is a tint (deep backgrounds) or a deep shade
+// (light backgrounds) of the same family.
+export function coverLook(slot) {
+  const [L, C, H] = STORE_COVER_COLORS[slot % STORE_COVER_COLORS.length];
+  const bg1 = oklchToHex(L, C, H);
+  const bg2 = oklchToHex(clamp(L + (L > 0.55 ? -0.06 : 0.07), 0.12, 0.985), C * 1.04, H + 9);
+  return deriveLook({ bg1, bg2, L, C, H });
 }
 
-// Background and colors for one slot. Exported so tests can prove that every
-// slot looks different.
-export function coverBackground(slot) {
-  const [hue, sat, light] = STORE_COVER_COLORS[slot % STORE_COVER_COLORS.length];
-  const { layout, pattern: kind } = coverComposition(slot);
-  const angle = (slot * 47) % 360;
-  const from = hsl(hue, sat, light);
-  const to = hsl(hue, sat, Math.max(30, light - 7));
-  const tone = accentHue(hue);
-  // Text color is whichever reads better on the darker end of the gradient;
-  // the accent line steps darker until it clears 4.5:1 on both ends.
-  const worst = (color) => Math.min(contrastRatio(color, from), contrastRatio(color, to));
-  const deep = worst("#ffffff") > worst(INK);
-  const ink = deep ? "#ffffff" : INK;
-  const muted = deep ? "#f1f1f1" : MUTED;
-  const accentCandidates = deep ? ["#ffffff"] : [30, 22, 15, 8].map((l) => hsl(tone, 85, l));
-  const canvasAccent = accentCandidates.find((color) => worst(color) >= 4.5) ?? ink;
-  const accent = hsl(tone, 78, 34);
-  const tint = hsl(tone, 70, 88);
-  const rad = (angle * Math.PI) / 180;
-  const gradient =
-    `<defs><linearGradient id="g" x1="${(0.5 - Math.cos(rad) / 2).toFixed(3)}" y1="${(0.5 - Math.sin(rad) / 2).toFixed(3)}" x2="${(0.5 + Math.cos(rad) / 2).toFixed(3)}" y2="${(0.5 + Math.sin(rad) / 2).toFixed(3)}">` +
-    `<stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs>` +
-    `<rect width="800" height="600" fill="url(#g)"/>`;
+function deriveLook({ bg1, bg2, L, C, H, plate, accent: brandAccent }) {
+  const worst = (color) => Math.min(contrastRatio(color, bg1), contrastRatio(color, bg2));
+  const ivory = oklchToHex(0.975, 0.012, H);
+  const deepInk = oklchToHex(0.2, 0.035, H);
+  const deep = worst(ivory) > worst(deepInk);
+  const ink = deep ? ivory : deepInk;
+  let accent;
+  if (deep) {
+    let al = 0.84;
+    accent = oklchToHex(al, Math.min(0.12, C + 0.05), H + 14);
+    while (worst(accent) < 4.5 && al < 0.97) { al += 0.02; accent = oklchToHex(al, Math.min(0.1, C + 0.04), H + 14); }
+  } else {
+    let al = 0.44;
+    accent = oklchToHex(al, 0.13, H);
+    while (worst(accent) < 4.5 && al > 0.2) { al -= 0.02; accent = oklchToHex(al, 0.12, H); }
+  }
+  if (brandAccent && worst(brandAccent) >= 4.5) accent = brandAccent;
   return {
-    hue, kind, layout, accent, tint, canvasAccent, ink, muted, deep, from, to,
-    svg: gradient + patternBackground(kind, deep ? "#ffffff" : canvasAccent, slot),
+    bg1, bg2, ink, accent, deep, hue: H,
+    plate: plate ?? oklchToHex(clamp(L + (deep ? 0.05 : -0.045), 0.1, 0.99), C, H),
+    glow: oklchToHex(clamp(L + 0.14, 0.2, 0.99), C, H),
   };
 }
 
@@ -120,32 +108,17 @@ const TYPE_LABELS = {
   brand: "BRANDING KIT",
 };
 
-// Products whose cover keeps its own colors but sits in the same system as the
-// generated ones. The image uploaded in the admin is left untouched; only the
-// storefront rendering is swapped.
+// Products whose cover keeps its own brand colors. The image uploaded in the
+// admin is left untouched; only the storefront rendering is swapped.
 const COVER_OVERRIDES = {
   jagojualanshopee: {
-    from: "#fdf6ee",
-    to: "#f5e6d3",
-    accent: "#e8541e",
-    glyph: "shop",
-    badge: ["8 BAB", "LANGKAH DEMI", "LANGKAH"],
+    look: { bg1: "#fbf1e5", bg2: "#f2dcc3", L: 0.95, C: 0.03, H: 60, plate: "#f6e3cc", accent: "#b03509" },
+    icon: "shopping-basket",
     kicker: "EBOOK · FORMAT PDF",
     title: "Jago Jualan Shopee",
-    subtitle: "Jurus Anti Ribet",
+    description: "Jurus anti ribet berjualan di Shopee, langkah demi langkah dalam 8 bab.",
   },
 };
-
-function customLook({ from, to, accent }, slot) {
-  const { layout, pattern: kind } = coverComposition(slot);
-  const gradient =
-    `<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${from}"/><stop offset="1" stop-color="${to}"/></linearGradient></defs>` +
-    `<rect width="800" height="600" fill="url(#g)"/>`;
-  return {
-    layout, kind, accent, tint: "#f9e1d2", canvasAccent: accent, ink: INK, muted: MUTED, deep: false,
-    svg: gradient + patternBackground(kind, accent, slot),
-  };
-}
 
 function cleanTitle(name) {
   return String(name || "Untitled Product")
@@ -161,21 +134,31 @@ function typeLabel(product, fallback) {
 }
 
 export function generateStoreCover(product = {}) {
+  const slug = String(product.slug || product.name || "");
   const override = COVER_OVERRIDES[product.slug];
-  const slot = slotFor(String(product.slug || product.name || ""));
-  const look = override ? customLook(override, slot) : coverBackground(slot);
-  const body = renderLayout(look.layout, {
+  const slot = slotFor(slug);
+  const look = override ? deriveLook(override.look) : coverLook(slot);
+  const plan = planFor(slot, slug);
+  const ctx = {
     ...look,
+    plan,
+    slot,
+    seed: slot * 977 + 3,
+    edition: String(slot + 1).padStart(3, "0"),
+    icon: override?.icon ?? ICON_BY_SLUG[slug] ?? SPARE_ICONS[hashString(slug) % SPARE_ICONS.length],
     kicker: override?.kicker || typeLabel(product, "DIGITAL PRODUCT"),
     title: override?.title || cleanTitle(product.name),
-    subtitle: override?.subtitle,
-    glyph: override?.glyph || glyphForProduct(product),
-    badge: override?.badge,
-  });
+    description: override?.description ?? product.description,
+  };
+  const gx = 0.2 + ((slot * 37) % 60) / 100;
+  const gy = 0.15 + ((slot * 53) % 50) / 100;
   const svg =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">` +
     `<desc>Isra Anwar Store generated cover</desc>` +
-    look.svg + body +
+    `<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${look.bg1}"/><stop offset="1" stop-color="${look.bg2}"/></linearGradient>` +
+    `<radialGradient id="gl" cx="${gx}" cy="${gy}" r="0.75"><stop offset="0" stop-color="${look.glow}" stop-opacity="0.5"/><stop offset="1" stop-color="${look.glow}" stop-opacity="0"/></radialGradient></defs>` +
+    `<rect width="800" height="600" fill="url(#bg)"/><rect width="800" height="600" fill="url(#gl)"/>` +
+    renderLayout(ctx) +
     `</svg>`;
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
@@ -223,7 +206,7 @@ export function resolveProductCover(product) {
     && !isLegacyStoreCover(product.image_url)
   ) return product.image_url;
 
-  const cacheKey = `${product?.slug ?? ""}::${product?.name ?? ""}::${product?.category ?? ""}`;
+  const cacheKey = `${product?.slug ?? ""}::${product?.name ?? ""}::${product?.category ?? ""}::${String(product?.description ?? "").slice(0, 40)}`;
   const cached = coverCache.get(cacheKey);
   if (cached) return cached;
 
