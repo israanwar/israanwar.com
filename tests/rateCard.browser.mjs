@@ -19,7 +19,7 @@ try {
     await pick('GA4');
     await select.selectOption('content-creative');
     await pick('Landing Page Copywriting');
-    assert.match(await summary.innerText(), /Rp1\.100\.000/);
+    assert.match(await summary.innerText(), /Rp2\.250\.000/);
     await select.selectOption('analytics-data-intelligence');
     assert.equal(await builder.locator('.service-pricing-item').filter({has:page.locator('strong',{hasText:/^Google Analytics Setup$/})}).getByRole('checkbox').isDisabled(), true);
     await select.selectOption('search-optimization');
@@ -29,14 +29,14 @@ try {
     await select.selectOption('web-development');
     await pick('Additional Page');
     await builder.getByRole('spinbutton',{name:'Quantity Additional Page',exact:true}).fill('3');
-    assert.match(await summary.innerText(), /Rp1\.400\.000/);
+    assert.match(await summary.innerText(), /Rp2\.550\.000/);
     await pick('Enterprise Web Development');
     assert.match(await summary.innerText(), /Custom quote for unpriced selections/);
     const quote = await summary.getByRole('link',{name:'Request Package Quote',exact:true}).getAttribute('href');
     assert.match(new URL(quote).searchParams.get('text'), /Additional Page × 3/);
     await page.reload();
     await builder.waitFor();
-    assert.match(await summary.innerText(), /Rp1\.400\.000/);
+    assert.match(await summary.innerText(), /Rp2\.550\.000/);
     await summary.getByRole('button',{name:'Clear package',exact:true}).click();
     assert.match(await summary.innerText(), /Select a service/);
     await page.goto(`${baseURL}/services/web-development-landing-page-development`);
@@ -44,7 +44,7 @@ try {
     await builder.waitFor();
     assert.match(await summary.innerText(), /Landing Page Development × 1/);
     await page.goto(`${baseURL}/services/web-development`);
-    assert.match(await page.locator('.service-subservice-grid').innerText(), /Starting from Rp200\.000/);
+    assert.match(await page.locator('.service-subservice-grid').innerText(), /Starting from Rp1\.000\.000/);
     await page.goto(`${baseURL}/services#build-package`);
     await builder.waitFor();
     await builder.scrollIntoViewIfNeeded();

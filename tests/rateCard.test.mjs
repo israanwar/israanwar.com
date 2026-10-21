@@ -20,7 +20,7 @@ test('cross-category package separates project, recurring and minimum commitment
   const choose = (category, name) => items.find(i => i.category === category && i.name === name && i.kind === 'service');
   const rows = [choose('web-development', 'Landing Page Development'), choose('content-creative', 'Landing Page Copywriting'), items.find(i => i.category === 'web-development' && i.name === 'Basic SEO'), items.find(i => i.category === 'web-development' && i.name === 'GA4'), choose('support-growth', 'Website Maintenance'), choose('search-optimization', 'SEO Starter')];
   const result = calculateEstimate(items, Object.fromEntries(rows.map(i => [i.id, 1])));
-  assert.equal(result.project, 1100000); assert.equal(result.monthly, 1800000); assert.equal(result.commitment, 4800000); assert.equal(result.review, true);
+  assert.equal(result.project, 2250000); assert.equal(result.monthly, 2250000); assert.equal(result.commitment, 5250000); assert.equal(result.review, true);
 });
 test('unit quantities, removal, and custom quotes do not invent fixed amounts', () => {
   const page = items.find(i => i.name === 'Additional Page');

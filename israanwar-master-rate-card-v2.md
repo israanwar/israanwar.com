@@ -28,7 +28,7 @@ All services are also available as **Enterprise / Custom Quote**.
 
 | Service | Starting From |
 |---|---:|
-| Landing Page Development | Rp200.000 |
+| Landing Page Development | Rp1.000.000 |
 | Portfolio Website Development | Rp500.000 |
 | Website Migration & Modernization | Rp750.000 |
 | Company Profile Website | Rp1.000.000 |
@@ -39,7 +39,7 @@ All services are also available as **Enterprise / Custom Quote**.
 | Custom Website Development | Rp2.000.000 |
 | Web Application Development | Rp3.000.000 |
 | Headless CMS Development | Rp3.000.000 |
-| Website Maintenance | Rp300.000/month |
+| Website Maintenance | Rp750.000/month |
 | Enterprise Web Development | Custom Quote |
 
 ## Web Development Add-ons
@@ -52,8 +52,8 @@ All services are also available as **Enterprise / Custom Quote**.
 | Contact Form | Rp100.000 |
 | Basic Copywriting | Rp100.000/page |
 | Search Console | Rp100.000 |
-| GA4 | Rp150.000 |
-| Google Tag Manager | Rp150.000 |
+| GA4 | Rp500.000 |
+| Google Tag Manager | Rp500.000 |
 | Basic SEO | Rp250.000 |
 | Speed Optimization | Rp250.000 |
 | Basic Technical SEO | Rp300.000 |
@@ -68,7 +68,7 @@ All services are also available as **Enterprise / Custom Quote**.
 | Admin Dashboard | Rp1.500.000 |
 | Enterprise Functionality | Custom Quote |
 
-**Rule:** Landing Page Rp200.000 applies only to the minimum defined scope. Additional pages, features, integrations, content, analytics, SEO, and custom functionality are charged separately.
+**Rule:** Landing Page Rp1.000.000 applies only to the minimum defined scope. Additional pages, features, integrations, content, analytics, SEO, and custom functionality are charged separately.
 
 ---
 
@@ -263,7 +263,7 @@ Search Optimization includes:
 | FAQ Schema | Rp150.000/page |
 | Sitemap Optimization | Rp150.000 |
 | Schema Markup | Rp150.000/schema |
-| GA4 Setup | Rp150.000 |
+| GA4 Setup | Rp500.000 |
 | Internal Linking | Rp200.000 |
 | Core Web Vitals Review | Rp250.000 |
 | Keyword Mapping | Rp250.000 |
@@ -278,7 +278,7 @@ Search Optimization includes:
 
 | Service | Starting From |
 |---|---:|
-| AI Strategy Consulting | Rp500.000 |
+| AI Strategy Consulting | Rp1.000.000 |
 | Prompt Engineering | Rp500.000 |
 | AI Workflow Automation | Rp750.000 |
 | Workflow Integration | Rp750.000 |
@@ -374,10 +374,10 @@ Search Optimization includes:
 
 | Add-on | Starting From |
 |---|---:|
-| GA4 Integration | Rp150.000 |
-| Google Tag Manager | Rp150.000 |
+| GA4 Integration | Rp500.000 |
+| Google Tag Manager | Rp500.000 |
 | Pixel Setup | Rp250.000 |
-| Conversion Tracking | Rp250.000 |
+| Conversion Tracking | Rp500.000 |
 | Landing Page Review | Rp250.000 |
 | Competitor Ads Analysis | Rp300.000 |
 | Remarketing Setup | Rp300.000 |
@@ -400,7 +400,7 @@ Search Optimization includes:
 
 | Service | Starting From |
 |---|---:|
-| SEO Content Writing | Rp100.000/article |
+| SEO Content Writing | Rp200.000/article |
 | Visual Content Design | Rp150.000/content |
 | Content Localization | Rp250.000 |
 | Email Copywriting | Rp250.000/email |
@@ -505,16 +505,16 @@ Search Optimization includes:
 
 | Service | Starting From |
 |---|---:|
-| Google Analytics Setup | Rp150.000 |
-| Google Tag Manager | Rp150.000 |
-| Conversion Tracking | Rp200.000 |
-| Dashboard Development | Rp300.000 |
-| Data Visualization | Rp300.000 |
-| Marketing Dashboard | Rp400.000 |
+| Google Analytics Setup | Rp500.000 |
+| Google Tag Manager | Rp500.000 |
+| Conversion Tracking | Rp500.000 |
+| Dashboard Development | Rp1.000.000 |
+| Data Visualization | Rp500.000 |
+| Marketing Dashboard | Rp1.000.000 |
 | Customer Analytics | Rp500.000 |
 | Marketing Performance Analysis | Rp500.000 |
-| BI Dashboard | Rp750.000 |
-| Data Strategy Consulting | Rp750.000 |
+| BI Dashboard | Rp1.500.000 |
+| Data Strategy Consulting | Rp1.000.000 |
 | Enterprise Analytics | Custom Quote |
 
 ## Tracking Add-ons
@@ -542,11 +542,11 @@ Search Optimization includes:
 |---|---:|
 | Google Sheets Dashboard | Rp250.000 |
 | Looker Studio | Rp300.000 |
-| Marketing Dashboard | Rp400.000 |
+| Marketing Dashboard | Rp1.000.000 |
 | Sales Dashboard | Rp400.000 |
 | E-Commerce Dashboard | Rp500.000 |
 | Executive Dashboard | Rp750.000 |
-| BI Dashboard | Rp750.000 |
+| BI Dashboard | Rp1.500.000 |
 | Multi-Source Dashboard | Rp1.000.000+ |
 | Enterprise BI | Custom Quote |
 
@@ -613,7 +613,7 @@ Search Optimization includes:
 
 | Service | Starting From |
 |---|---:|
-| Business Consulting | Rp500.000 |
+| Business Consulting | Rp1.000.000 |
 | Technology Consulting | Rp500.000 |
 | Business Process Analysis | Rp750.000 |
 | Digital Maturity Assessment | Rp750.000 |
@@ -666,9 +666,9 @@ Search Optimization includes:
 
 | Service | Starting From |
 |---|---:|
-| Website Maintenance | Rp300.000/month |
-| Technical Support | Rp300.000/month |
-| Content Maintenance | Rp300.000/month |
+| Website Maintenance | Rp750.000/month |
+| Technical Support | Rp500.000/month |
+| Content Maintenance | Rp500.000/month |
 | Performance Optimization | Rp500.000 |
 | Security Monitoring | Rp500.000/month |
 | Monthly Growth Report | Rp500.000/month |
@@ -727,7 +727,7 @@ Clients are not required to purchase a full category.
 
 | Package | Starting From |
 |---|---:|
-| Landing Page Starter | Rp200.000 |
+| Landing Page Starter | Rp1.000.000 |
 | Company Presence | Rp1.000.000 |
 | E-Commerce Starter | Rp1.500.000 |
 | SEO Starter | Rp1.500.000/month |
@@ -735,8 +735,8 @@ Clients are not required to purchase a full category.
 | AI Automation Starter | Rp750.000 |
 | AI Chatbot Starter | Rp1.000.000 |
 | AI Agent Starter | Rp1.500.000 |
-| Analytics Starter | Rp150.000 |
-| Dashboard Starter | Rp250.000 |
+| Analytics Starter | Rp500.000 |
+| Dashboard Starter | Rp1.000.000 |
 | CRM Starter | Rp1.500.000 |
 | Digital System Starter | Rp750.000 |
 | Digital Growth | Build Your Own |

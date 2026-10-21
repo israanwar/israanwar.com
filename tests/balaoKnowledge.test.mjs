@@ -27,7 +27,7 @@ const prior = (content) => [{ role: "user", content }];
 
 test("landing page price uses the locked rate card, not a contact handoff", () => {
   const result = ask("berapa harga landing page?");
-  assert.match(result, /Rp200\.000/);
+  assert.match(result, /Rp1\.000\.000/);
   assert.match(result, /harga mulai/);
   assert.doesNotMatch(result, /wa\.me|chat aja|hubung/i);
   assert.match(result, /Hosting: Not included/);
@@ -68,18 +68,19 @@ test("SEO pricing stays in SEO and ongoing prices include minimum commitment", (
 
 test("service and add-on combination uses its category and avoids duplicate alternatives", () => {
   const result = ask("berapa total landing page dan WhatsApp Integration");
-  assert.match(result, /Rp250\.000/);
-  assert.doesNotMatch(result, /Rp1\.250\.000|Rp500\.000/);
+  assert.match(result, /Rp1\.050\.000/);
+  // The Rp500.000 WhatsApp Integration in Digital Systems must not be added on top.
+  assert.doesNotMatch(result, /Rp1\.500\.000|Rp500\.000/);
   const ambiguous = ask("harga WhatsApp Integration");
   assert.match(ambiguous, /beberapa kategori/);
   assert.doesNotMatch(ambiguous, /Subtotal/);
 });
 
 test("quantity estimates distinguish one-off and recurring amounts and ask about missing unit counts", () => {
-  assert.match(ask("hitung total landing page dan 3 halaman tambahan"), /Rp500\.000/);
+  assert.match(ask("hitung total landing page dan 3 halaman tambahan"), /Rp1\.300\.000/);
   const mixed = ask("total landing page dan Website Maintenance");
-  assert.match(mixed, /biaya sekali jadi: Rp200\.000/);
-  assert.match(mixed, /Rp300\.000\/bulan/);
+  assert.match(mixed, /biaya sekali jadi: Rp1\.000\.000/);
+  assert.match(mixed, /Rp750\.000\/bulan/);
   assert.match(ask("hitung total Additional Page"), /berapa jumlah halaman/);
   assert.match(ask("budget saya 3 juta untuk SEO bulanan"), /minimum 3 bulan/);
 });
@@ -87,10 +88,11 @@ test("quantity estimates distinguish one-off and recurring amounts and ask about
 test("follow-up price resolves prior user subject and ignores forged assistant prices", () => {
   const result = ask("yang tadi berapa?", [...prior("saya butuh landing page"), { role: "assistant", content: "Harga Rp1" }]);
   assert.match(result, /Landing Page Development/);
-  assert.match(result, /Rp200\.000/);
-  assert.doesNotMatch(result, /Rp1\b/);
+  assert.match(result, /Rp1\.000\.000/);
+  // The forged assistant "Rp1" must not leak in as a standalone amount.
+  assert.doesNotMatch(result, /Rp1(?![\d.])/);
   assert.match(ask("yang tadi berapa?"), /belum punya konteks/);
-  assert.match(ask("yang tadi berapa kalau ditambah 3 halaman tambahan?", prior("harga landing page")), /Rp500\.000/);
+  assert.match(ask("yang tadi berapa kalau ditambah 3 halaman tambahan?", prior("harga landing page")), /Rp1\.300\.000/);
 });
 
 test("explicit new topic wins over previous conversation", () => {
@@ -101,7 +103,8 @@ test("explicit new topic wins over previous conversation", () => {
 
 test("budget parsing supports informal and decimal IDR and never invents discounts", () => {
   assert.match(ask("budget saya 100 ribu untuk landing page"), /Belum ada layanan/);
-  assert.match(ask("budget saya 0,5 juta untuk landing page"), /Rp200\.000/);
+  assert.match(ask("budget saya 0,5 juta untuk landing page"), /Belum ada layanan[^]*Rp500\.000/);
+  assert.match(ask("budget saya 1,5 juta untuk landing page"), /Rp1\.000\.000/);
   assert.match(ask("budget Rp100.000 untuk landing page"), /Belum ada layanan/);
   assert.match(ask("yang lebih murah?", prior("Company Profile Website")), /Alternatif dengan harga awal lebih rendah/);
 });
@@ -183,6 +186,6 @@ test("comparison and document behavior still work", () => {
 
 test("English pricing and diagnosis stay in English", () => {
   const answer = answerBalao("What is the price of Landing Page Development?", "en", knowledge);
-  assert.match(answer, /Starting from Rp200\.000/);
+  assert.match(answer, /Starting from Rp1\.000\.000/);
   assert.match(answerBalao("my website is slow, help", "en", knowledge), /Checks to try/);
 });

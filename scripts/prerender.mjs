@@ -7,6 +7,7 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { publicPostPath } from "../src/lib/publicPostUrls.js";
+import { applyProductPriceDiscount } from "../src/lib/productPricing.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, "..");
@@ -697,12 +698,14 @@ try {
 
     productRoutes = (products ?? []).map((row) => {
       const data = row.data ?? {};
+      const slug = row.slug ?? data.slug;
       const product = {
         id: data.id ?? row.id,
-        slug: row.slug ?? data.slug,
+        slug,
         name: row.name ?? data.name,
         category: row.category ?? data.category,
-        price: row.price ?? data.price,
+        // Same price the storefront shows, including code-level overrides.
+        price: applyProductPriceDiscount({ ...data, slug, price: row.price ?? data.price }).price,
         description: data.description ?? "",
         image_url: data.image_url ?? null,
       };
