@@ -273,7 +273,7 @@ export function LandingPage() {
             <section className="okr__section okr__home-contact-section">
               <div className="okr__wrap">
                 <div className="okr__home-contact">
-                  <span className="okr__home-contact-eyebrow">LET'S TALK</span>
+                  <span className="okr__home-contact-eyebrow">{t("home_contact_eyebrow")}</span>
                   {cta.title && <h2>{cta.title}</h2>}
                   {cta.subtitle && <p>{cta.subtitle}</p>}
                   {cta.button_label && (whatsappHref

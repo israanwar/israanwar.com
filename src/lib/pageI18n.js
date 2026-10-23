@@ -240,6 +240,8 @@ const TEXT_ID = {
   "Website development, SEO architecture, and organic visibility optimization.": "Pengembangan website, arsitektur SEO, dan optimasi visibilitas organik.",
   "SEO & Content Strategy Consultant": "SEO & Content Strategy Consultant",
   "Research-method content architecture, topical mapping, and organic growth planning for educational search intent.": "Arsitektur konten metodologi penelitian, pemetaan topik, dan perencanaan pertumbuhan organik untuk intent edukasi.",
+  "YouTube Sports Channel Consultant": "Konsultan Channel YouTube Olahraga",
+  "Sports YouTube channel strategy, content direction, channel optimization, monetization, and audience growth.": "Strategi channel YouTube olahraga, arahan konten, optimasi channel, monetisasi, dan pertumbuhan audiens.",
   "2022-Now": "2022-Sekarang",
   "2023-Now": "2023-Sekarang",
   "2024-Now": "2024-Sekarang",

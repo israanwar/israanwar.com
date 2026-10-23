@@ -20,11 +20,12 @@ export function parseRateCard(markdown) {
   }
   return items;
 }
+import { rateLabel } from './rateCardI18n.js';
 export const rupiah = value => `Rp${new Intl.NumberFormat('id-ID').format(value)}`;
 export function priceLabel(item, lang = 'id') {
-  if (!item) return lang === 'id' ? 'Custom Quote' : 'Custom Quote';
-  if (item.custom) return item.price;
-  const units = { project: lang === 'id' ? 'proyek' : 'project', month: lang === 'id' ? 'bulan' : 'month', page: lang === 'id' ? 'halaman' : 'page', screen: 'screen', flow: 'flow', language: lang === 'id' ? 'bahasa' : 'language', integration: lang === 'id' ? 'integrasi' : 'integration', article: lang === 'id' ? 'artikel' : 'article', content: lang === 'id' ? 'konten' : 'content', email: 'email', slide: 'slide', post: 'post', schema: 'schema', product: lang === 'id' ? 'produk' : 'product', category: lang === 'id' ? 'kategori' : 'category', platform: 'platform', event: 'event', API: 'API', process: lang === 'id' ? 'proses' : 'process' };
+  if (!item) return rateLabel('Custom Quote', lang);
+  if (item.custom) return rateLabel(item.price, lang);
+  const units = { project: lang === 'id' ? 'proyek' : 'project', month: lang === 'id' ? 'bulan' : 'month', page: lang === 'id' ? 'halaman' : 'page', screen: lang === 'id' ? 'layar' : 'screen', flow: 'flow', language: lang === 'id' ? 'bahasa' : 'language', integration: lang === 'id' ? 'integrasi' : 'integration', article: lang === 'id' ? 'artikel' : 'article', content: lang === 'id' ? 'konten' : 'content', email: 'email', slide: 'slide', post: 'post', schema: 'schema', product: lang === 'id' ? 'produk' : 'product', category: lang === 'id' ? 'kategori' : 'category', platform: 'platform', event: 'event', API: 'API', process: lang === 'id' ? 'proses' : 'process' };
   return `${lang === 'id' ? 'Mulai dari' : 'Starting from'} ${rupiah(item.amount)}${item.openEnded ? '+' : ''} / ${units[item.unit] || item.unit}`;
 }
 const aliases = {

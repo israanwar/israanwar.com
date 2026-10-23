@@ -8,6 +8,7 @@ import {
   AlertTriangle, Check, Download, ImageOff, Loader2, RefreshCw, Trash2, UploadCloud,
 } from "lucide-react";
 import { formatBytes } from "../../lib/browserTools";
+import { useToolsText } from "../../lib/toolsI18n";
 import { compressImage } from "../../lib/imageCompressor/client";
 import "./ImageCompressorWorkspace.css";
 
@@ -31,6 +32,7 @@ let uid = 0;
 function nextId() { return `img-${++uid}`; }
 
 export function ImageCompressorWorkspace() {
+  const tt = useToolsText();
   const [entries, setEntries] = useState([]);
   const [outputFormat, setOutputFormat] = useState("auto");
   const [quality, setQuality] = useState(75);
@@ -67,17 +69,17 @@ export function ImageCompressorWorkspace() {
       }));
     } catch (error) {
       setEntries((current) => current.map((item) => (item.id === entry.id
-        ? { ...item, status: "error", error: error?.message || "This image could not be compressed." }
+        ? { ...item, status: "error", error: tt(error?.message || "This image could not be compressed.") }
         : item)));
     }
   }
 
   function validateFile(file) {
     if (!ACCEPTED_TYPES.includes(file.type) && !ACCEPTED_EXT.test(file.name)) {
-      return "Only JPEG, PNG, and WebP images are supported.";
+      return tt("Only JPEG, PNG, and WebP images are supported.");
     }
     if (file.size > MAX_FILE_BYTES) {
-      return `Files over ${formatBytes(MAX_FILE_BYTES)} aren't supported yet.`;
+      return tt("Files over {size} aren't supported yet.", { size: formatBytes(MAX_FILE_BYTES) });
     }
     return "";
   }
@@ -107,7 +109,7 @@ export function ImageCompressorWorkspace() {
         probe.onload = () => {
           if (probe.naturalWidth * probe.naturalHeight > MAX_MEGAPIXELS) {
             setEntries((current) => current.map((item) => (item.id === entry.id
-              ? { ...item, status: "error", error: "This image's resolution is too high to process in-browser." }
+              ? { ...item, status: "error", error: tt("This image's resolution is too high to process in-browser.") }
               : item)));
             return;
           }
@@ -210,17 +212,17 @@ export function ImageCompressorWorkspace() {
             onChange={(event) => addFiles(event.target.files)}
           />
           <span className="okr__tool-drop-icon"><UploadCloud size={32} /></span>
-          <strong>Choose JPEG, PNG, or WebP images</strong>
-          <span>or drag and drop them here — you can select more than one</span>
-          <small>Up to 30 MB each · processed on this device, never uploaded</small>
+          <strong>{tt("Choose JPEG, PNG, or WebP images")}</strong>
+          <span>{tt("or drag and drop them here — you can select more than one")}</span>
+          <small>{tt("Up to 30 MB each · processed on this device, never uploaded")}</small>
         </label>
       ) : (
         <div className="okr__compressor-body">
           <div className="okr__compressor-settings">
             <label className="okr__field okr__compressor-format">
-              <span className="okr__label">Output format</span>
+              <span className="okr__label">{tt("Output format")}</span>
               <select className="okr__input" value={outputFormat} onChange={(event) => handleFormatChange(event.target.value)}>
-                <option value="auto">Keep original format</option>
+                <option value="auto">{tt("Keep original format")}</option>
                 <option value="jpeg">JPEG</option>
                 <option value="png">PNG</option>
                 <option value="webp">WebP</option>
@@ -228,7 +230,7 @@ export function ImageCompressorWorkspace() {
             </label>
             {showQualityControl && (
               <label className="okr__field okr__range-field okr__compressor-quality">
-                <span className="okr__label">Quality<strong>{quality}%</strong></span>
+                <span className="okr__label">{tt("Quality")}<strong>{quality}%</strong></span>
                 <input
                   type="range"
                   min={30}
@@ -239,7 +241,7 @@ export function ImageCompressorWorkspace() {
               </label>
             )}
             {!showQualityControl && (
-              <p className="okr__compressor-hint">PNG output is lossless — quality doesn't apply, but file size is still optimized.</p>
+              <p className="okr__compressor-hint">{tt("PNG output is lossless — quality doesn't apply, but file size is still optimized.")}</p>
             )}
           </div>
 
@@ -259,15 +261,15 @@ export function ImageCompressorWorkspace() {
                 onChange={(event) => addFiles(event.target.files)}
                 style={{ position: "absolute", width: 1, height: 1, opacity: 0 }}
               />
-              <UploadCloud size={17} /> Add more images
+              <UploadCloud size={17} /> {tt("Add more images")}
             </label>
             {doneCount > 1 && (
               <button className="okr__btn okr__btn--ghost" onClick={downloadAll}>
-                <Download size={17} /> Download all ({doneCount})
+                <Download size={17} /> {tt("Download all ({count})", { count: doneCount })}
               </button>
             )}
             <button className="okr__btn okr__btn--ghost" onClick={resetAll}>
-              <RefreshCw size={17} /> Reset
+              <RefreshCw size={17} /> {tt("Reset")}
             </button>
           </div>
         </div>
@@ -277,6 +279,7 @@ export function ImageCompressorWorkspace() {
 }
 
 function CompressorRow({ entry, onDownload, onRemove }) {
+  const tt = useToolsText();
   const { file, previewUrl, width, height, status, error, result } = entry;
   const savedPercent = result && file.size > 0
     ? Math.max(0, Math.round((1 - result.size / file.size) * 100))
@@ -298,13 +301,13 @@ function CompressorRow({ entry, onDownload, onRemove }) {
 
         {status === "processing" && (
           <p className="okr__compressor-status okr__compressor-status--busy">
-            <Loader2 className="is-spinning" size={15} /> Compressing…
+            <Loader2 className="is-spinning" size={15} /> {tt("Compressing…")}
           </p>
         )}
 
         {status === "error" && (
           <p className="okr__compressor-status okr__compressor-status--error" role="alert">
-            <AlertTriangle size={15} /> {error}
+            <AlertTriangle size={15} /> {tt(error)}
           </p>
         )}
 
@@ -314,7 +317,7 @@ function CompressorRow({ entry, onDownload, onRemove }) {
               <Check size={15} /> {formatBytes(result.size)}
               {savedPercent !== null && (
                 <span className="okr__compressor-savings">
-                  {savedPercent > 0 ? `−${savedPercent}%` : "no smaller"}
+                  {savedPercent > 0 ? `−${savedPercent}%` : tt("no smaller")}
                 </span>
               )}
             </p>
@@ -331,10 +334,10 @@ function CompressorRow({ entry, onDownload, onRemove }) {
       <div className="okr__compressor-row-actions">
         {status === "done" && result && (
           <button className="okr__btn okr__btn--primary" onClick={onDownload}>
-            <Download size={16} /> Download
+            <Download size={16} /> {tt("Download")}
           </button>
         )}
-        <button className="okr__compressor-remove" onClick={onRemove} aria-label={`Remove ${file.name}`}>
+        <button className="okr__compressor-remove" onClick={onRemove} aria-label={tt("Remove {name}", { name: file.name })}>
           <Trash2 size={16} />
         </button>
       </div>

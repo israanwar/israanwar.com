@@ -35,10 +35,10 @@ export function ServicesPage() {
               {t("services_page_subtitle", { count: serviceCount })}
             </p>
 
-            <a className="okr__btn okr__btn--primary" href="#build-package" style={{ marginBottom: 32 }}>Build Your Own Package</a>
+            <a className="okr__btn okr__btn--primary" href="#build-package" style={{ marginBottom: 32 }}>{t("services_build_package")}</a>
           </div>
         </section>
-      <section className="okr__section okr__services-section okr__services-plain" aria-label={lang === "id" ? "Katalog layanan" : "Service catalog"}>
+      <section className="okr__section okr__services-section okr__services-plain" aria-label={t("services_catalog_label")}>
         <div className="okr__wrap">
           {serviceItems.length === 0 ? (
             <p style={{ color: "var(--okr-muted)" }}>{t("services_empty")}</p>

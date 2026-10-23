@@ -199,7 +199,7 @@ export function SiteHeader({ settings }) {
             </span>
             <span className="okr__brand-wordmark">{settings.site_name || "Isra Anwar"}</span>
           </Link>
-          <nav className="okr__navlinks" aria-label="Primary">
+          <nav className="okr__navlinks" aria-label={t("nav_primary")}>
             {nav.map((item) => (
               item.dropdown ? (
                 <div key={item.label} className="okr__navlink-group">
@@ -289,7 +289,7 @@ export function SiteHeader({ settings }) {
         </button>
         <div className="okr__mobile-menu-content">
           <span className="okr__mobile-menu-kicker">INDEX</span>
-          <nav className="okr__mobile-menu-panel" aria-label="Mobile primary">
+          <nav className="okr__mobile-menu-panel" aria-label={t("nav_primary_mobile")}>
             {nav.map((item) => {
               const Icon = item.icon;
               return item.route ? (
@@ -332,7 +332,7 @@ export function SiteFooter({ settings }) {
                 </span>
                 <span className="okr__brand-wordmark">{settings.site_name || "Isra Anwar"}</span>
               </div>
-              {settings.tagline && <p className="okr__foot-tagline">{settings.tagline}</p>}
+              {settings.tagline && <p className="okr__foot-tagline">{localizeSiteDescription(settings.tagline, lang)}</p>}
               <p className="okr__foot-desc">{description}</p>
               <div className="okr__foot-social">
                 {settings.social_twitter && (
