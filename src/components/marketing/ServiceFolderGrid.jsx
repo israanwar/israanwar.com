@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { getServiceChildIcon } from "../../lib/serviceIcons";
+import { getServiceCategoryIcon, getServiceChildIcon } from "../../lib/serviceIcons";
 
 import { SERVICE_FOLDER_VISUALS } from "../../data/serviceFolderVisuals";
 import { ServiceFolderArtwork } from "./ServiceFolderArtwork";
@@ -24,13 +24,14 @@ function TouchText({ text, keyPrefix }) {
   });
 }
 
-function ServiceFolder({ folder, visual, isOpen, onOpen, onClose, onToggle, lang }) {
+function ServiceFolder({ folder, isOpen, onOpen, onClose, onToggle, lang }) {
   const serviceCount = folder.service_count ?? folder.services.length;
+  const CategoryIcon = getServiceCategoryIcon(folder.slug);
   const previewId = `service-folder-preview-${folder.slug}`;
   return (
     <article
       className={`service-folder-card${isOpen ? " is-open" : ""}`}
-      style={{ "--folder-gradient": visual.gradient, "--folder-glow": visual.accent }}
+      style={{ "--folder-gradient": "linear-gradient(145deg, #fcfbf8, #eeeaf5)", "--folder-glow": "#d7c9ff" }}
       onPointerEnter={(event) => { if (event.pointerType === "mouse") onOpen(); }}
       onPointerLeave={(event) => { if (event.pointerType === "mouse") onClose(); }}
       onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) onClose(); }}
@@ -49,7 +50,7 @@ function ServiceFolder({ folder, visual, isOpen, onOpen, onClose, onToggle, lang
         aria-label={lang === "id" ? `Pratinjau layanan ${folder.name}` : `Preview ${folder.name} services`}
         onClick={onToggle}
       >{isOpen ? "−" : "+"}</button>
-      <ServiceFolderArtwork />
+      <ServiceFolderArtwork icon={CategoryIcon} />
       {isOpen && (
         <nav className="service-folder-readable-list" id={previewId} aria-label={folder.name}>
           {folder.services.map((service, index) => {
@@ -147,7 +148,6 @@ export function ServiceFolderGrid({ items, lang = "en", includeAll = false, show
           <ServiceFolder
             key={folder.slug}
             folder={folder}
-            visual={folder.visual}
             isOpen={openSlug === folder.slug}
             onOpen={() => setOpenSlug(folder.slug)}
             onClose={() => setOpenSlug((current) => (current === folder.slug ? null : current))}

@@ -91,6 +91,9 @@
 
 .service-folder-catalog {
   --folder-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --services-brand-surface: #08080b;
+  --services-brand-border: rgba(255, 255, 255, 0.14);
+  --services-brand-lavender: #d7c9ff;
   width: 100%;
   padding: clamp(18px, 2vw, 28px) 0 clamp(48px, 4vw, 72px);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -254,6 +257,23 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, transparent 62%);
 }
 
+.service-folder-category-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #20181b;
+  transform: translate(-50%, -50%);
+}
+
+.service-folder-catalog .service-folder-front {
+  border-color: rgba(32, 24, 27, 0.12);
+}
+
+.service-folder-catalog .service-folder-back,
+.service-folder-catalog .service-folder-tab {
+  filter: brightness(0.92);
+}
+
 .service-folder-card.is-open .service-folder-back {
   transform: rotateX(-20deg) scaleY(1.05);
 }
@@ -385,8 +405,8 @@
   }
 
   .service-folder-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 34px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
   }
 
   .service-folder-card {
@@ -556,4 +576,49 @@
 }
 .service-folder-card.is-open :is(.service-folder-back,.service-folder-tab,.service-folder-front,.service-folder-front-shine) {
   transform: none;
+}
+
+@media (max-width: 680px) {
+  .service-folder-card {
+    min-height: 260px;
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .service-folder-card--leaf {
+    height: 280px;
+    min-height: 280px;
+  }
+
+  .service-folder-grid .service-folder-card .service-folder-stage {
+    top: 14px;
+    transform: translateX(-50%) scale(0.72);
+  }
+
+  .service-folder-grid .service-folder-card .service-folder-meta {
+    right: 10px;
+    bottom: 18px;
+    left: 10px;
+  }
+
+  .service-folder-card .service-folder-meta h3 {
+    height: auto;
+    min-height: 54px;
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  .service-folder-all-link { font-size: 12px; }
+  .service-folder-preview-toggle { top: 8px; right: 8px; }
+  .service-folder-readable-list {
+    top: 48px;
+    right: 8px;
+    bottom: 104px;
+    left: 8px;
+    padding-right: 0;
+  }
+  .service-folder-readable-list a { gap: 6px; padding: 8px 4px; font-size: 12px; }
+  .service-folder-readable-list a svg { width: 14px; height: 14px; }
 }

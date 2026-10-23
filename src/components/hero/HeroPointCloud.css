@@ -27,6 +27,13 @@
   touch-action: none;
 }
 
+/* Sun backgrounds share the robot's canvas styles, but must let a swipe
+   scroll the page. The browser cancels the pointer drag when vertical
+   panning starts; horizontal dragging can still rotate the sun. */
+.okr__sun-hero-bg .okr__isra-cloud-stage canvas {
+  touch-action: pan-y pinch-zoom;
+}
+
 .okr__isra-cloud::before,
 .okr__isra-cloud::after {
   content: "";
