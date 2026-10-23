@@ -11,6 +11,7 @@ import { ImageCompressorWorkspace } from "../../components/tools/ImageCompressor
 import { ImageResizerWorkspace } from "../../components/tools/ImageResizerWorkspace";
 import { InvoiceBuilderWorkspace } from "../../components/tools/InvoiceBuilderWorkspace";
 import { getToolBySlug, TOOLS } from "../../data/toolsCatalog";
+import { useToolsText } from "../../lib/toolsI18n";
 import {
   cleanCaption, contrastRatio, copyText, downloadText, escapeHtml, formatBytes,
   hslToHex, normalizeUrl,
@@ -49,6 +50,7 @@ function ClientOnlyInvoiceWorkspace() {
 
 export function ToolDetailPage() {
   const { slug } = useParams();
+  const tt = useToolsText();
   const tool = getToolBySlug(slug);
   if (!tool) return <Navigate to="/tools" replace />;
 
@@ -56,14 +58,14 @@ export function ToolDetailPage() {
 
   return (
     <div className="okr__tool-detail-page">
-      <Seo title={tool.name} description={tool.description} path={`/tools/${tool.slug}`} />
+      <Seo title={tt(tool.name)} description={tt(tool.description)} path={`/tools/${tool.slug}`} />
       <section className="okr__section okr__tool-detail-hero">
         <div className="okr__wrap">
-          <Link to="/tools" className="okr__tool-back"><ArrowLeft size={16} /> All tools</Link>
-          <span className="okr__kicker">// {tool.category}</span>
-          <AnimatedHeadline as="h1" text={tool.name} className="okr__hero-title--stagger" assembleLetters />
-          <p>{tool.description}</p>
-          <div className="okr__tool-privacy-chip"><ShieldCheck size={16} /> Runs locally in your browser</div>
+          <Link to="/tools" className="okr__tool-back"><ArrowLeft size={16} /> {tt("All tools")}</Link>
+          <span className="okr__kicker">// {tt(tool.category)}</span>
+          <AnimatedHeadline as="h1" text={tt(tool.name)} className="okr__hero-title--stagger" assembleLetters />
+          <p>{tt(tool.description)}</p>
+          <div className="okr__tool-privacy-chip"><ShieldCheck size={16} /> {tt("Runs locally in your browser")}</div>
         </div>
       </section>
 
@@ -71,7 +73,7 @@ export function ToolDetailPage() {
         <div className="okr__wrap">
           <div className="okr__tool-workspace">
             {/* Workspace panels use <h3>; keep the outline h1 > h2 > h3. */}
-            <h2 className="okr__visually-hidden">{`${tool.name} workspace`}</h2>
+            <h2 className="okr__visually-hidden">{tt("{name} workspace", { name: tt(tool.name) })}</h2>
             {tool.slug === "image-compressor" ? <ImageCompressorWorkspace />
               : tool.slug === "image-resizer" ? <ImageResizerWorkspace />
               : tool.kind === "image" && <ImageWorkspace tool={tool} />}
@@ -82,21 +84,21 @@ export function ToolDetailPage() {
 
           <div className="okr__tool-explainer">
             <div>
-              <span className="okr__tools-overline">HOW IT WORKS</span>
-              <AnimatedHeadline as="h2" text="One task. Three clear steps." className="okr__hero-title--stagger" assembleLetters />
+              <span className="okr__tools-overline">{tt("HOW IT WORKS")}</span>
+              <AnimatedHeadline as="h2" text={tt("One task. Three clear steps.")} className="okr__hero-title--stagger" assembleLetters />
             </div>
             <ol>
-              <li><span>01</span><div><strong>Provide the input</strong><p>{tool.kind === "image" ? "Choose a supported image from your device." : "Enter the information the tool needs."}</p></div></li>
-              <li><span>02</span><div><strong>Process it privately</strong><p>The result is created inside this browser tab—no account or hidden upload.</p></div></li>
-              <li><span>03</span><div><strong>Use the result</strong><p>Download the file or copy the generated output immediately.</p></div></li>
+              <li><span>01</span><div><strong>{tt("Provide the input")}</strong><p>{tt(tool.kind === "image" ? "Choose a supported image from your device." : "Enter the information the tool needs.")}</p></div></li>
+              <li><span>02</span><div><strong>{tt("Process it privately")}</strong><p>{tt("The result is created inside this browser tab—no account or hidden upload.")}</p></div></li>
+              <li><span>03</span><div><strong>{tt("Use the result")}</strong><p>{tt("Download the file or copy the generated output immediately.")}</p></div></li>
             </ol>
           </div>
 
           {related.length > 0 && (
             <section className="okr__tool-related">
-              <div className="okr__tools-section-heading"><div><span className="okr__tools-overline">KEEP WORKING</span><AnimatedHeadline as="h2" text="Related tools" className="okr__hero-title--stagger" assembleLetters /></div></div>
+              <div className="okr__tools-section-heading"><div><span className="okr__tools-overline">{tt("KEEP WORKING")}</span><AnimatedHeadline as="h2" text={tt("Related tools")} className="okr__hero-title--stagger" assembleLetters /></div></div>
               <div className="okr__tool-related-grid">
-                {related.map((item) => <Link key={item.slug} to={`/tools/${item.slug}`}><strong>{item.name}</strong><span>{item.description}</span></Link>)}
+                {related.map((item) => <Link key={item.slug} to={`/tools/${item.slug}`}><strong>{tt(item.name)}</strong><span>{tt(item.description)}</span></Link>)}
               </div>
             </section>
           )}
@@ -107,6 +109,7 @@ export function ToolDetailPage() {
 }
 
 function ImageWorkspace({ tool }) {
+  const tt = useToolsText();
   const config = IMAGE_CONFIG[tool.slug];
   const inputRef = useRef(null);
   const outputUrlRef = useRef("");
@@ -135,11 +138,11 @@ function ImageWorkspace({ tool }) {
   function chooseFile(selected) {
     setError(""); setOutput(null); setStatus("idle");
     if (!selected) return;
-    if (selected.size > 25 * 1024 * 1024) { setError("The maximum file size is 25 MB."); return; }
+    if (selected.size > 25 * 1024 * 1024) { setError(tt("The maximum file size is 25 MB.")); return; }
     const allowed = config.accept.split(",").some((rule) => rule.startsWith(".")
       ? selected.name.toLowerCase().endsWith(rule)
       : selected.type === rule);
-    if (!allowed) { setError(`Choose a supported ${config.input} image.`); return; }
+    if (!allowed) { setError(tt("Choose a supported {type} image.", { type: tt(config.input) })); return; }
     if (preview) URL.revokeObjectURL(preview);
     const nextPreview = URL.createObjectURL(selected);
     setFile(selected); setPreview(nextPreview);
@@ -166,7 +169,7 @@ function ImageWorkspace({ tool }) {
       await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; image.src = preview; });
       const width = config.resize ? dimensions.width : image.naturalWidth;
       const height = config.resize ? dimensions.height : image.naturalHeight;
-      if (width * height > 40_000_000) throw new Error("The output is too large. Keep it below 40 megapixels.");
+      if (width * height > 40_000_000) throw new Error(tt("The output is too large. Keep it below 40 megapixels."));
       const canvas = document.createElement("canvas");
       canvas.width = width; canvas.height = height;
       const context = canvas.getContext("2d", { alpha: true });
@@ -176,7 +179,7 @@ function ImageWorkspace({ tool }) {
       context.drawImage(image, 0, 0, width, height);
       const outputQuality = config.compress ? quality / 100 : config.quality;
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, outputMime, outputQuality));
-      if (!blob) throw new Error("This browser could not create the requested format.");
+      if (!blob) throw new Error(tt("This browser could not create the requested format."));
       if (outputUrlRef.current) URL.revokeObjectURL(outputUrlRef.current);
       const url = URL.createObjectURL(blob);
       outputUrlRef.current = url;
@@ -186,7 +189,7 @@ function ImageWorkspace({ tool }) {
       setOutput({ url, name, size: blob.size, width, height });
       setStatus("done");
     } catch (conversionError) {
-      setError(conversionError.message || "The image could not be processed.");
+      setError(tt(conversionError.message || "The image could not be processed."));
       setStatus("error");
     }
   }
@@ -201,16 +204,16 @@ function ImageWorkspace({ tool }) {
         >
           <input ref={inputRef} type="file" accept={config.accept} onChange={(event) => chooseFile(event.target.files[0])} />
           <span className="okr__tool-drop-icon"><UploadCloud size={32} /></span>
-          <strong>Choose {config.input} {config.input.includes(",") ? "image" : "file"}</strong>
-          <span>or drag and drop it here</span>
-          <small>Maximum 25 MB · processed locally</small>
+          <strong>{tt(config.input.includes(",") ? "Choose {type} image" : "Choose {type} file", { type: tt(config.input) })}</strong>
+          <span>{tt("or drag and drop it here")}</span>
+          <small>{tt("Maximum 25 MB · processed locally")}</small>
         </label>
       ) : (
         <>
           <div className="okr__image-stage">
-            <div className="okr__image-preview"><img src={output?.url || preview} alt="Selected preview" /></div>
+            <div className="okr__image-preview"><img src={output?.url || preview} alt={tt("Selected preview")} /></div>
             <div className="okr__image-controls">
-              <span className="okr__tools-overline">SELECTED FILE</span>
+              <span className="okr__tools-overline">{tt("SELECTED FILE")}</span>
               <AnimatedHeadline as="h2" text={file.name} className="okr__hero-title--stagger" assembleLetters />
               <p>{formatBytes(file.size)} · {dimensions.width} × {dimensions.height}px</p>
               {config.compress && <RangeField label="Output quality" value={quality} onChange={setQuality} suffix="%" />}
@@ -220,15 +223,15 @@ function ImageWorkspace({ tool }) {
                     <Field label="Width (px)" type="number" min="1" max="8192" value={dimensions.width} onChange={(event) => updateWidth(event.target.value)} />
                     <Field label="Height (px)" type="number" min="1" max="8192" value={dimensions.height} onChange={(event) => updateHeight(event.target.value)} />
                   </div>
-                  <label className="okr__tool-check"><input type="checkbox" checked={lockRatio} onChange={(event) => setLockRatio(event.target.checked)} /><LockKeyhole size={15} /> Lock aspect ratio</label>
+                  <label className="okr__tool-check"><input type="checkbox" checked={lockRatio} onChange={(event) => setLockRatio(event.target.checked)} /><LockKeyhole size={15} /> {tt("Lock aspect ratio")}</label>
                 </div>
               )}
-              {output && <div className="okr__tool-success"><Check size={17} /><span><strong>Ready to download</strong>{formatBytes(output.size)} · {output.width} × {output.height}px</span></div>}
+              {output && <div className="okr__tool-success"><Check size={17} /><span><strong>{tt("Ready to download")}</strong>{formatBytes(output.size)} · {output.width} × {output.height}px</span></div>}
               {error && <p className="okr__tool-error" role="alert">{error}</p>}
               <div className="okr__tool-actions">
-                {output ? <a className="okr__btn okr__btn--primary" href={output.url} download={output.name}><Download size={17} /> Download</a>
-                  : <button className="okr__btn okr__btn--primary" onClick={convert} disabled={status === "processing"}>{status === "processing" ? <><RefreshCw className="is-spinning" size={17} /> Processing…</> : <><Sparkles size={17} /> {config.compress ? "Compress image" : config.resize ? "Resize image" : `Convert to ${config.ext.toUpperCase()}`}</>}</button>}
-                <button className="okr__btn okr__btn--ghost" onClick={reset}>{output ? "Convert another" : "Remove"}</button>
+                {output ? <a className="okr__btn okr__btn--primary" href={output.url} download={output.name}><Download size={17} /> {tt("Download")}</a>
+                  : <button className="okr__btn okr__btn--primary" onClick={convert} disabled={status === "processing"}>{status === "processing" ? <><RefreshCw className="is-spinning" size={17} /> {tt("Processing…")}</> : <><Sparkles size={17} /> {config.compress ? tt("Compress image") : config.resize ? tt("Resize image") : tt("Convert to {format}", { format: config.ext.toUpperCase() })}</>}</button>}
+                <button className="okr__btn okr__btn--ghost" onClick={reset}>{output ? tt("Convert another") : tt("Remove")}</button>
               </div>
             </div>
           </div>
@@ -248,21 +251,23 @@ function GeneratorWorkspace({ tool }) {
 }
 
 function ToolShell({ children, output, filename = "result.txt", downloadType, preview }) {
+  const tt = useToolsText();
   const [copied, setCopied] = useState(false);
   async function handleCopy() { await copyText(output); setCopied(true); window.setTimeout(() => setCopied(false), 1400); }
   return (
     <div className="okr__generator-grid">
       <div className="okr__generator-form">{children}</div>
       <div className="okr__generator-output">
-        <div className="okr__generator-output-head"><span className="okr__tools-overline">LIVE OUTPUT</span>{output && <span className="okr__output-ready"><Check size={14} /> Ready</span>}</div>
-        {preview || <pre>{output || "Your result will appear here."}</pre>}
-        {output && <div className="okr__tool-actions"><button className="okr__btn okr__btn--primary" onClick={handleCopy}><Clipboard size={17} /> {copied ? "Copied" : "Copy result"}</button>{downloadType && <button className="okr__btn okr__btn--ghost" onClick={() => downloadText(output, filename, downloadType)}><Download size={17} /> Download</button>}</div>}
+        <div className="okr__generator-output-head"><span className="okr__tools-overline">{tt("LIVE OUTPUT")}</span>{output && <span className="okr__output-ready"><Check size={14} /> {tt("Ready")}</span>}</div>
+        {preview || <pre>{output || tt("Your result will appear here.")}</pre>}
+        {output && <div className="okr__tool-actions"><button className="okr__btn okr__btn--primary" onClick={handleCopy}><Clipboard size={17} /> {copied ? tt("Copied") : tt("Copy result")}</button>{downloadType && <button className="okr__btn okr__btn--ghost" onClick={() => downloadText(output, filename, downloadType)}><Download size={17} /> {tt("Download")}</button>}</div>}
       </div>
     </div>
   );
 }
 
 function TextGenerator({ slug }) {
+  const tt = useToolsText();
   const [values, setValues] = useState({ url: "", source: "", medium: "social", campaign: "", content: "", phone: "", message: "", title: "", description: "", author: "", robots: "index, follow", sitemap: "", allow: "/", disallow: "/admin\n/private", schemaType: "Person", name: "", email: "", caption: "" });
   const set = (key) => (event) => setValues((current) => ({ ...current, [key]: event.target.value }));
 
@@ -303,9 +308,9 @@ function TextGenerator({ slug }) {
       if (slug === "caption-formatter") return { output: cleanCaption(values.caption), error: "" };
       return { output: "", error: "" };
     } catch {
-      return { output: "", error: "Check the URL or input format." };
+      return { output: "", error: tt("Check the URL or input format.") };
     }
-  }, [slug, values]);
+  }, [slug, values, tt]);
 
   const config = {
     "utm-builder": <><Field label="Destination URL" placeholder="https://example.com/landing" value={values.url} onChange={set("url")} /><div className="okr__field-2col"><Field label="Campaign source" placeholder="instagram" value={values.source} onChange={set("source")} /><Field label="Campaign medium" placeholder="social" value={values.medium} onChange={set("medium")} /></div><Field label="Campaign name" placeholder="new-launch" value={values.campaign} onChange={set("campaign")} /><Field label="Content (optional)" placeholder="hero-button" value={values.content} onChange={set("content")} /></>,
@@ -323,6 +328,7 @@ function TextGenerator({ slug }) {
 }
 
 function QrGenerator() {
+  const tt = useToolsText();
   const [value, setValue] = useState("");
   const [size, setSize] = useState(720);
   const [result, setResult] = useState("");
@@ -332,27 +338,30 @@ function QrGenerator() {
     if (!value.trim()) { setResult(""); return undefined; }
     QRCode.toDataURL(value.trim(), { width: size, margin: 2, errorCorrectionLevel: "M", color: { dark: "#20181b", light: "#ffffff" } })
       .then((url) => { if (live) { setResult(url); setError(""); } })
-      .catch(() => { if (live) setError("The QR code could not be generated."); });
+      .catch(() => { if (live) setError(tt("The QR code could not be generated.")); });
     return () => { live = false; };
-  }, [size, value]);
-  const preview = result ? <div className="okr__qr-preview"><img src={result} alt="Generated QR code" /><a className="okr__btn okr__btn--primary" href={result} download="qr-code.png"><Download size={17} /> Download PNG</a></div> : null;
+  }, [size, value, tt]);
+  const preview = result ? <div className="okr__qr-preview"><img src={result} alt={tt("Generated QR code")} /><a className="okr__btn okr__btn--primary" href={result} download="qr-code.png"><Download size={17} /> {tt("Download PNG")}</a></div> : null;
   return <ToolShell output="" preview={preview}><Field label="Text or URL" textarea rows="6" placeholder="https://israanwar.com" value={value} onChange={(event) => setValue(event.target.value)} /><SelectField label="Image size" value={String(size)} onChange={(event) => setSize(Number(event.target.value))} options={["360", "720", "1080"]} suffix=" px" />{error && <p className="okr__tool-error">{error}</p>}</ToolShell>;
 }
 
 function PaletteGenerator() {
+  const tt = useToolsText();
   const [hue, setHue] = useState(258);
   const colors = useMemo(() => [-45, -20, 0, 25, 55].map((offset, index) => hslToHex((hue + offset + 360) % 360, 62 - index * 3, 42 + index * 7)), [hue]);
   const output = colors.join("\n");
   const preview = <div className="okr__palette-preview">{colors.map((color) => <button key={color} style={{ background: color }} onClick={() => copyText(color)}><span>{color}</span></button>)}</div>;
-  return <ToolShell output={output} preview={preview}><RangeField label="Base hue" value={hue} onChange={setHue} min={0} max={359} suffix="°" /><div className="okr__tool-note">Select a starting hue. Click any colour swatch to copy its HEX value.</div></ToolShell>;
+  return <ToolShell output={output} preview={preview}><RangeField label="Base hue" value={hue} onChange={setHue} min={0} max={359} suffix="°" /><div className="okr__tool-note">{tt("Select a starting hue. Click any colour swatch to copy its HEX value.")}</div></ToolShell>;
 }
 
 function ContrastChecker() {
+  const tt = useToolsText();
   const [foreground, setForeground] = useState("#20181b");
   const [background, setBackground] = useState("#fff6ed");
   const ratio = contrastRatio(foreground, background);
-  const output = `Contrast ratio: ${ratio.toFixed(2)}:1\nNormal text (AA): ${ratio >= 4.5 ? "PASS" : "FAIL"}\nLarge text (AA): ${ratio >= 3 ? "PASS" : "FAIL"}\nNormal text (AAA): ${ratio >= 7 ? "PASS" : "FAIL"}`;
-  const preview = <div className="okr__contrast-preview" style={{ color: foreground, background }}><span>Contrast preview</span><strong>Aa</strong><p>Clear, readable design earns attention.</p><div>{ratio.toFixed(2)}:1 · {ratio >= 4.5 ? "AA PASS" : "AA FAIL"}</div></div>;
+  const verdict = (passes) => tt(passes ? "PASS" : "FAIL");
+  const output = `${tt("Contrast ratio")}: ${ratio.toFixed(2)}:1\n${tt("Normal text (AA)")}: ${verdict(ratio >= 4.5)}\n${tt("Large text (AA)")}: ${verdict(ratio >= 3)}\n${tt("Normal text (AAA)")}: ${verdict(ratio >= 7)}`;
+  const preview = <div className="okr__contrast-preview" style={{ color: foreground, background }}><span>{tt("Contrast preview")}</span><strong>Aa</strong><p>{tt("Clear, readable design earns attention.")}</p><div>{ratio.toFixed(2)}:1 · {tt(ratio >= 4.5 ? "AA PASS" : "AA FAIL")}</div></div>;
   return <ToolShell output={output} preview={preview}><ColorField label="Text colour" value={foreground} onChange={setForeground} /><ColorField label="Background colour" value={background} onChange={setBackground} /></ToolShell>;
 }
 
@@ -366,22 +375,27 @@ function GradientGenerator() {
 }
 
 function SocialSizeGuide() {
-  return <div className="okr__size-guide"><div className="okr__size-guide-head"><FileImage size={28} /><div><AnimatedHeadline as="h2" text="Common working canvas sizes" className="okr__hero-title--stagger" assembleLetters /><p>Use these as practical starting points. Platform requirements can change.</p></div></div><div className="okr__size-table">{SOCIAL_SIZES.map(([name, size, ratio]) => <div key={name}><strong>{name}</strong><span>{size}px</span><small>{ratio}</small></div>)}</div></div>;
+  const tt = useToolsText();
+  return <div className="okr__size-guide"><div className="okr__size-guide-head"><FileImage size={28} /><div><AnimatedHeadline as="h2" text={tt("Common working canvas sizes")} className="okr__hero-title--stagger" assembleLetters /><p>{tt("Use these as practical starting points. Platform requirements can change.")}</p></div></div><div className="okr__size-table">{SOCIAL_SIZES.map(([name, size, ratio]) => <div key={name}><strong>{tt(name)}</strong><span>{size}px</span><small>{ratio}</small></div>)}</div></div>;
 }
 
-function Field({ label, textarea = false, ...props }) {
+function Field({ label, textarea = false, placeholder, ...props }) {
+  const tt = useToolsText();
   const Element = textarea ? "textarea" : "input";
-  return <label className="okr__field"><span className="okr__label">{label}</span><Element className="okr__input" {...props} /></label>;
+  return <label className="okr__field"><span className="okr__label">{tt(label)}</span><Element className="okr__input" placeholder={placeholder && tt(placeholder)} {...props} /></label>;
 }
 
 function SelectField({ label, options, suffix = "", ...props }) {
-  return <label className="okr__field"><span className="okr__label">{label}</span><select className="okr__input" {...props}>{options.map((option) => <option key={option} value={option}>{option}{suffix}</option>)}</select></label>;
+  const tt = useToolsText();
+  return <label className="okr__field"><span className="okr__label">{tt(label)}</span><select className="okr__input" {...props}>{options.map((option) => <option key={option} value={option}>{tt(option)}{suffix}</option>)}</select></label>;
 }
 
 function RangeField({ label, value, onChange, min = 20, max = 100, suffix = "" }) {
-  return <label className="okr__field okr__range-field"><span className="okr__label">{label}<strong>{value}{suffix}</strong></span><input type="range" min={min} max={max} value={value} onChange={(event) => onChange(Number(event.target.value))} /></label>;
+  const tt = useToolsText();
+  return <label className="okr__field okr__range-field"><span className="okr__label">{tt(label)}<strong>{value}{suffix}</strong></span><input type="range" min={min} max={max} value={value} onChange={(event) => onChange(Number(event.target.value))} /></label>;
 }
 
 function ColorField({ label, value, onChange }) {
-  return <label className="okr__field"><span className="okr__label">{label}</span><span className="okr__color-field"><input type="color" value={value} onChange={(event) => onChange(event.target.value)} /><input className="okr__input" value={value} pattern="#[0-9a-fA-F]{6}" onChange={(event) => { if (/^#[0-9a-fA-F]{6}$/.test(event.target.value)) onChange(event.target.value); }} /></span></label>;
+  const tt = useToolsText();
+  return <label className="okr__field"><span className="okr__label">{tt(label)}</span><span className="okr__color-field"><input type="color" value={value} onChange={(event) => onChange(event.target.value)} /><input className="okr__input" value={value} pattern="#[0-9a-fA-F]{6}" onChange={(event) => { if (/^#[0-9a-fA-F]{6}$/.test(event.target.value)) onChange(event.target.value); }} /></span></label>;
 }

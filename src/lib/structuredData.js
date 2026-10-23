@@ -2,6 +2,7 @@
 // not guarantee rich results, indexing, or citations by answer engines.
 
 import { site as SITE } from "../data/site.js";
+import { postCanonicalPath } from "./publicPostUrls.js";
 
 // Ambil canonical base URL (support settings override kalau nanti ada
 // custom domain). Fallback ke site.url dari data/site.js.
@@ -135,7 +136,7 @@ export function buildBreadcrumb(pathname, currentTitle, settings) {
 // ==================================================================
 export function buildArticle(post, category, settings, socialImage = null) {
   const url = siteUrl(settings);
-  const canonicalPath = post.canonical_path || `/blog/${post.slug}`;
+  const canonicalPath = postCanonicalPath(post);
   const canonical = absoluteUrl(canonicalPath, settings);
 
   // Author display — sistem ini masih single-author. Kalau nanti multi,

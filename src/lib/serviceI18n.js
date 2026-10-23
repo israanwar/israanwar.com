@@ -64,7 +64,7 @@ const CATEGORY_NAME_ID = {
   "support-growth": "Support & Growth",
 };
 
-const SERVICE_NAME_ID = {
+export const SERVICE_NAME_ID = {
   "Corporate Website Development": "Pengembangan Website Korporat",
   "Company Profile Website": "Website Company Profile",
   "Custom Website Development": "Pengembangan Website Custom",

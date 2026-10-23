@@ -12,6 +12,7 @@ import { resizeImage } from "../../lib/imageResizer/client";
 import {
   computeDimensions, computeHeightDriven, computeFitWithin, computePercentage, applyPreventUpscale,
 } from "../../lib/imageResizer/dimensions";
+import { useToolsText } from "../../lib/toolsI18n";
 import "./ImageResizerWorkspace.css";
 
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -34,6 +35,7 @@ let uid = 0;
 function nextId() { return `rsz-${++uid}`; }
 
 export function ImageResizerWorkspace() {
+  const tt = useToolsText();
   const [entries, setEntries] = useState([]);
   const [mode, setMode] = useState("dimensions");
   const [dimWidth, setDimWidth] = useState(1920);
@@ -108,17 +110,17 @@ export function ImageResizerWorkspace() {
       }));
     } catch (error) {
       setEntries((current) => current.map((item) => (item.id === entry.id
-        ? { ...item, status: "error", error: error?.message || "This image could not be resized.", target }
+        ? { ...item, status: "error", error: tt(error?.message || "This image could not be resized."), target }
         : item)));
     }
   }
 
   function validateFile(file) {
     if (!ACCEPTED_TYPES.includes(file.type) && !ACCEPTED_EXT.test(file.name)) {
-      return "Only JPEG, PNG, and WebP images are supported.";
+      return tt("Only JPEG, PNG, and WebP images are supported.");
     }
     if (file.size > MAX_FILE_BYTES) {
-      return `Files over ${formatBytes(MAX_FILE_BYTES)} aren't supported yet.`;
+      return tt("Files over {size} aren't supported yet.", { size: formatBytes(MAX_FILE_BYTES) });
     }
     return "";
   }
@@ -149,7 +151,7 @@ export function ImageResizerWorkspace() {
         probe.onload = () => {
           if (probe.naturalWidth * probe.naturalHeight > MAX_MEGAPIXELS) {
             setEntries((current) => current.map((item) => (item.id === entry.id
-              ? { ...item, status: "error", error: "This image's resolution is too high to process in-browser." }
+              ? { ...item, status: "error", error: tt("This image's resolution is too high to process in-browser.") }
               : item)));
             return;
           }
@@ -160,7 +162,7 @@ export function ImageResizerWorkspace() {
         };
         probe.onerror = () => {
           setEntries((current) => current.map((item) => (item.id === entry.id
-            ? { ...item, status: "error", error: "The source image could not be decoded." }
+            ? { ...item, status: "error", error: tt("The source image could not be decoded.") }
             : item)));
         };
         probe.src = previewUrl;
@@ -272,13 +274,13 @@ export function ImageResizerWorkspace() {
             onChange={(event) => addFiles(event.target.files)}
           />
           <span className="okr__tool-drop-icon"><UploadCloud size={32} /></span>
-          <strong>Choose JPEG, PNG, or WebP images</strong>
-          <span>or drag and drop them here — you can select more than one</span>
-          <small>Up to 30 MB each · processed on this device, never uploaded</small>
+          <strong>{tt("Choose JPEG, PNG, or WebP images")}</strong>
+          <span>{tt("or drag and drop them here — you can select more than one")}</span>
+          <small>{tt("Up to 30 MB each · processed on this device, never uploaded")}</small>
         </label>
       ) : (
         <div className="okr__resizer-body">
-          <div className="okr__resizer-modes" role="tablist" aria-label="Resize mode">
+          <div className="okr__resizer-modes" role="tablist" aria-label={tt("Resize mode")}>
             {[["dimensions", "Dimensions"], ["percentage", "Percentage"], ["fitwithin", "Fit within"]].map(([key, label]) => (
               <button
                 key={key}
@@ -288,7 +290,7 @@ export function ImageResizerWorkspace() {
                 className={mode === key ? "is-active" : ""}
                 onClick={() => { setMode(key); window.setTimeout(() => recomputeAllRef.current(), 0); }}
               >
-                {label}
+                {tt(label)}
               </button>
             ))}
           </div>
@@ -297,11 +299,11 @@ export function ImageResizerWorkspace() {
             {mode === "dimensions" && (
               <div className="okr__field-2col">
                 <label className="okr__field">
-                  <span className="okr__label">Width (px)</span>
+                  <span className="okr__label">{tt("Width (px)")}</span>
                   <input className="okr__input" type="number" min="1" max="10000" value={dimWidth} onChange={(event) => onDimWidthChange(event.target.value)} />
                 </label>
                 <label className="okr__field">
-                  <span className="okr__label">Height (px)</span>
+                  <span className="okr__label">{tt("Height (px)")}</span>
                   <input className="okr__input" type="number" min="1" max="10000" value={dimHeight} onChange={(event) => onDimHeightChange(event.target.value)} disabled={lockRatio} />
                 </label>
               </div>
@@ -322,7 +324,7 @@ export function ImageResizerWorkspace() {
                   ))}
                 </div>
                 <label className="okr__field okr__resizer-custom-percent">
-                  <span className="okr__label">Custom %</span>
+                  <span className="okr__label">{tt("Custom %")}</span>
                   <input
                     className={`okr__input${percentInvalid ? " has-error" : ""}`}
                     type="number"
@@ -332,18 +334,18 @@ export function ImageResizerWorkspace() {
                     onChange={(event) => onPercentChange(event.target.value)}
                   />
                 </label>
-                {percentInvalid && <p className="okr__field-error">Enter a percentage greater than 0.</p>}
+                {percentInvalid && <p className="okr__field-error">{tt("Enter a percentage greater than 0.")}</p>}
               </div>
             )}
 
             {mode === "fitwithin" && (
               <div className="okr__field-2col">
                 <label className="okr__field">
-                  <span className="okr__label">Max width (px)</span>
+                  <span className="okr__label">{tt("Max width (px)")}</span>
                   <input className="okr__input" type="number" min="1" max="10000" value={fitWidth} onChange={(event) => { setFitWidth(Math.max(1, Math.round(Number(event.target.value) || 1))); scheduleRecompute(); }} />
                 </label>
                 <label className="okr__field">
-                  <span className="okr__label">Max height (px)</span>
+                  <span className="okr__label">{tt("Max height (px)")}</span>
                   <input className="okr__input" type="number" min="1" max="10000" value={fitHeight} onChange={(event) => { setFitHeight(Math.max(1, Math.round(Number(event.target.value) || 1))); scheduleRecompute(); }} />
                 </label>
               </div>
@@ -352,19 +354,19 @@ export function ImageResizerWorkspace() {
             <div className="okr__resizer-toggles">
               {mode === "dimensions" && (
                 <label className="okr__tool-check">
-                  <input type="checkbox" checked={lockRatio} onChange={(event) => { setLockRatio(event.target.checked); scheduleRecompute(); }} /> Lock aspect ratio
+                  <input type="checkbox" checked={lockRatio} onChange={(event) => { setLockRatio(event.target.checked); scheduleRecompute(); }} /> {tt("Lock aspect ratio")}
                 </label>
               )}
               <label className="okr__tool-check">
-                <input type="checkbox" checked={preventUpscale} onChange={(event) => { setPreventUpscale(event.target.checked); scheduleRecompute(); }} /> Prevent upscale
+                <input type="checkbox" checked={preventUpscale} onChange={(event) => { setPreventUpscale(event.target.checked); scheduleRecompute(); }} /> {tt("Prevent upscale")}
               </label>
             </div>
 
             <div className="okr__compressor-settings okr__resizer-format-row">
               <label className="okr__field okr__compressor-format">
-                <span className="okr__label">Output format</span>
+                <span className="okr__label">{tt("Output format")}</span>
                 <select className="okr__input" value={outputFormat} onChange={(event) => { setOutputFormat(event.target.value); window.setTimeout(() => recomputeAllRef.current(), 0); }}>
-                  <option value="auto">Keep original format</option>
+                  <option value="auto">{tt("Keep original format")}</option>
                   <option value="jpeg">JPEG</option>
                   <option value="png">PNG</option>
                   <option value="webp">WebP</option>
@@ -372,11 +374,11 @@ export function ImageResizerWorkspace() {
               </label>
               {showQualityControl ? (
                 <label className="okr__field okr__range-field okr__compressor-quality">
-                  <span className="okr__label">Quality<strong>{quality}%</strong></span>
+                  <span className="okr__label">{tt("Quality")}<strong>{quality}%</strong></span>
                   <input type="range" min={30} max={95} value={quality} onChange={(event) => { setQuality(Number(event.target.value)); scheduleRecompute(); }} />
                 </label>
               ) : (
-                <p className="okr__compressor-hint">PNG output is lossless — quality doesn't apply.</p>
+                <p className="okr__compressor-hint">{tt("PNG output is lossless — quality doesn't apply.")}</p>
               )}
             </div>
           </div>
@@ -397,15 +399,15 @@ export function ImageResizerWorkspace() {
                 onChange={(event) => addFiles(event.target.files)}
                 style={{ position: "absolute", width: 1, height: 1, opacity: 0 }}
               />
-              <UploadCloud size={17} /> Add more images
+              <UploadCloud size={17} /> {tt("Add more images")}
             </label>
             {doneCount > 1 && (
               <button className="okr__btn okr__btn--ghost" onClick={downloadAll}>
-                <Download size={17} /> Download all ({doneCount})
+                <Download size={17} /> {tt("Download all ({count})", { count: doneCount })}
               </button>
             )}
             <button className="okr__btn okr__btn--ghost" onClick={resetAll}>
-              <RefreshCw size={17} /> Reset
+              <RefreshCw size={17} /> {tt("Reset")}
             </button>
           </div>
         </div>
@@ -415,6 +417,7 @@ export function ImageResizerWorkspace() {
 }
 
 function ResizerRow({ entry, onDownload, onRemove }) {
+  const tt = useToolsText();
   const { file, previewUrl, sourceWidth, sourceHeight, status, error, target, result } = entry;
   const sizeDelta = result && file.size > 0 ? result.size - file.size : null;
 
@@ -431,18 +434,18 @@ function ResizerRow({ entry, onDownload, onRemove }) {
           {target && !result && ` → ${target.width} × ${target.height}px`}
         </p>
         {target?.clamped && status !== "error" && (
-          <p className="okr__resizer-clamp-note">Kept at original size — target was larger and Prevent upscale is on.</p>
+          <p className="okr__resizer-clamp-note">{tt("Kept at original size — target was larger and Prevent upscale is on.")}</p>
         )}
 
         {(status === "processing" || status === "measuring" || status === "queued") && (
           <p className="okr__compressor-status okr__compressor-status--busy">
-            <Loader2 className="is-spinning" size={15} /> {status === "measuring" ? "Reading image…" : "Resizing…"}
+            <Loader2 className="is-spinning" size={15} /> {status === "measuring" ? tt("Reading image…") : tt("Resizing…")}
           </p>
         )}
 
         {status === "error" && (
           <p className="okr__compressor-status okr__compressor-status--error" role="alert">
-            <AlertTriangle size={15} /> {error}
+            <AlertTriangle size={15} /> {tt(error)}
           </p>
         )}
 
@@ -459,10 +462,10 @@ function ResizerRow({ entry, onDownload, onRemove }) {
       <div className="okr__compressor-row-actions">
         {status === "done" && result && (
           <button className="okr__btn okr__btn--primary" onClick={onDownload}>
-            <Download size={16} /> Download
+            <Download size={16} /> {tt("Download")}
           </button>
         )}
-        <button className="okr__compressor-remove" onClick={onRemove} aria-label={`Remove ${file.name}`}>
+        <button className="okr__compressor-remove" onClick={onRemove} aria-label={tt("Remove {name}", { name: file.name })}>
           <Trash2 size={16} />
         </button>
       </div>
