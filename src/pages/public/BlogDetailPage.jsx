@@ -12,6 +12,7 @@ import { usePostViewCount } from "../../hooks/usePostViewCount";
 import { CATEGORY_BY_SLUG, DEFAULT_CATEGORY_SLUG } from "../../data/blogCategories";
 import { getBlogSocialArtworkPath } from "../../data/blogArtwork";
 import { SOCIAL_CARD_PATH } from "../../lib/socialMeta";
+import { postCanonicalPath } from "../../lib/publicPostUrls";
 import "../../styles/blog-home-theme.css";
 
 export function BlogDetailPage() {
@@ -40,7 +41,7 @@ export function BlogDetailPage() {
   const faqs = Array.isArray(post.faqs) ? post.faqs : [];
   const description = post.meta_description || post.excerpt;
   const seoTitle = post.meta_title || `${post.title} — Blog israanwar`;
-  const canonicalPath = post.canonical_path || `/blog/${post.slug}`;
+  const canonicalPath = postCanonicalPath(post);
   const readingTime = getPostReadingMinutes(post);
   const rawCategory = CATEGORY_BY_SLUG[post.category] ?? CATEGORY_BY_SLUG[DEFAULT_CATEGORY_SLUG];
   const postIndex = Math.max(0, allPosts.findIndex((candidate) => candidate.id === post.id));
