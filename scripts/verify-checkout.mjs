@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import { readFile, readdir } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { chromium } from '@playwright/test';
+import { STORE_TRANSACTIONS_CLOSED } from '../src/data/storeStatus.js';
 
 // Build gate for the purchase path. It drives the built site the way a
 // visitor does (product page, cart, checkout, place order, payment page) and
@@ -173,6 +174,44 @@ async function runScenario(browser, base, slugs, viewport) {
   }
 }
 
+// While Store transactions are paused, the gate proves the opposite: the
+// catalog still renders, but no page offers a way to buy and no order write
+// is ever sent.
+async function runClosedScenario(browser, base, slugs, viewport) {
+  const context = await browser.newContext({ viewport });
+  const page = await context.newPage();
+  const pageErrors = [];
+  page.on('pageerror', error => pageErrors.push(String(error)));
+  const orders = await interceptWrites(page);
+  const notice = page.locator('.store-transaction-notice');
+  const label = `${viewport.width}px (transactions closed)`;
+  try {
+    await step(`${label} product page shows the notice and no buy buttons`, async () => {
+      await page.goto(`${base}/store/${slugs[0]}`, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(1500);
+      await notice.first().waitFor({ timeout: STEP_TIMEOUT });
+      for (const name of ['Add to cart', 'Buy now']) {
+        if (await page.getByRole('button', { name }).count()) throw new Error(`"${name}" is still offered`);
+      }
+    });
+    await step(`${label} a cart saved earlier cannot reach checkout`, async () => {
+      await page.evaluate((slug) => localStorage.setItem('okr:cart', JSON.stringify([{ product_id: slug, qty: 1 }])), slugs[0]);
+      await page.goto(`${base}/cart`, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(1500);
+      if (await page.locator('a[href="/checkout"]').count()) throw new Error('the cart still links to checkout');
+    });
+    await step(`${label} direct /checkout shows the notice and no order form`, async () => {
+      await page.goto(`${base}/checkout`, { waitUntil: 'networkidle' });
+      await notice.first().waitFor({ timeout: STEP_TIMEOUT });
+      if (await page.locator('form.okr__checkout-grid').count()) throw new Error('the checkout form is still rendered');
+    });
+    if (orders.size) throw new Error(`${orders.size} order insert(s) were sent while transactions are closed`);
+    if (pageErrors.length) throw new Error(`Checkout check found page errors at ${label}: ${pageErrors.slice(0, 3).join(' | ')}`);
+  } finally {
+    await context.close();
+  }
+}
+
 export async function verifyCheckout({ distDir }) {
   const storeDir = resolve(distDir, 'store');
   const slugs = (await readdir(storeDir, { withFileTypes: true })).filter(entry => entry.isDirectory()).map(entry => entry.name).sort();
@@ -180,18 +219,21 @@ export async function verifyCheckout({ distDir }) {
   const server = await startServer(distDir);
   const base = `http://127.0.0.1:${server.address().port}`;
   const browser = await launchBrowser();
+  const scenario = STORE_TRANSACTIONS_CLOSED ? runClosedScenario : runScenario;
   try {
     for (const viewport of [{ width: 390, height: 844 }, { width: 1280, height: 900 }]) {
       // A real break fails both attempts. One retry absorbs a runner hiccup
       // (slow hydration, a dropped network read) so it cannot block a deploy.
       try {
-        await runScenario(browser, base, slugs, viewport);
+        await scenario(browser, base, slugs, viewport);
       } catch (firstError) {
         console.warn(`Checkout check retrying once after: ${firstError.message}`);
-        await runScenario(browser, base, slugs, viewport);
+        await scenario(browser, base, slugs, viewport);
       }
     }
-    console.log('✓ Checkout verified: cart, one license per product, checkout, reload, Buy now, single order on double click, payment page (mobile and desktop)');
+    console.log(STORE_TRANSACTIONS_CLOSED
+      ? '✓ Checkout verified closed: catalog visible, no buy buttons, saved cart cannot reach checkout, no order form, no order writes (mobile and desktop)'
+      : '✓ Checkout verified: cart, one license per product, checkout, reload, Buy now, single order on double click, payment page (mobile and desktop)');
   } finally {
     await browser.close();
     server.close();
