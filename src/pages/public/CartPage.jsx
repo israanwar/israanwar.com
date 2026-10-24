@@ -8,6 +8,9 @@ import { useLiveCart } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeProduct } from "../../lib/storeI18n";
 import { resolveProductCover } from "../../lib/storePlaceholder";
+import { STORE_TRANSACTIONS_CLOSED } from "../../data/storeStatus";
+import { StoreTransactionNotice } from "../../components/store/StoreTransactionNotice";
+import "../../styles/store-stamp.css";
 
 let pendingNoticeClear = null;
 
@@ -28,6 +31,7 @@ export function CartPage() {
               <section className="okr__section okr__page-hero">
           <div className="okr__wrap">
             <AnimatedHeadline text={t("cart_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
+            {STORE_TRANSACTIONS_CLOSED && <StoreTransactionNotice />}
 
             {removed > 0 && (
               <p role="status" style={{ margin: "16px 0 0", padding: "12px 16px", borderRadius: 10, border: "1px solid var(--okr-line)", color: "var(--okr-muted)", fontSize: 14 }}>
@@ -84,9 +88,11 @@ export function CartPage() {
                     <span>{t("cart_total")}</span>
                     <span style={{ color: "var(--okr-primary-2)" }}>Rp {total.toLocaleString("id-ID")}</span>
                   </div>
-                  <Link to="/checkout" className="okr__btn okr__btn--primary" style={{ width: "100%", justifyContent: "center", marginTop: 8 }}>
-                    {t("cart_checkout")}
-                  </Link>
+                  {!STORE_TRANSACTIONS_CLOSED && (
+                    <Link to="/checkout" className="okr__btn okr__btn--primary" style={{ width: "100%", justifyContent: "center", marginTop: 8 }}>
+                      {t("cart_checkout")}
+                    </Link>
+                  )}
                   <Link to="/store" className="okr__btn okr__btn--ghost" style={{ width: "100%", justifyContent: "center", marginTop: 10 }}>
                     {t("cart_continue")}
                   </Link>

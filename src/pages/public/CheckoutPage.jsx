@@ -9,6 +9,9 @@ import { useI18n } from "../../lib/i18n";
 import { getCheckoutPaymentMethod, isGopayMerchantAutoEnabled } from "../../lib/gopayMerchantGateway";
 import { localizeProduct } from "../../lib/storeI18n";
 import { resolveProductCover } from "../../lib/storePlaceholder";
+import { STORE_TRANSACTIONS_CLOSED } from "../../data/storeStatus";
+import { StoreTransactionNotice } from "../../components/store/StoreTransactionNotice";
+import "../../styles/store-stamp.css";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+]?[\d\s\-()]{8,20}$/;
@@ -36,6 +39,17 @@ export function CheckoutPage() {
   // loaded, so gating on it fired this redirect on every visit, even with
   // items actually in the cart, during the render before that fetch
   // finished. Kalau sudah submit, biarkan navigate ke halaman payment berjalan.
+  if (STORE_TRANSACTIONS_CLOSED) {
+    return (
+      <>
+        <Seo title={`${t("checkout_title")} — israanwar`} description={t("store_transactions_closed_body")} noindex />
+        <section className="okr__section okr__page-hero"><div className="okr__wrap">
+          <AnimatedHeadline text={t("checkout_title")} className="okr__h2 okr__hero-title--stagger" highlightLast={1} assembleLetters />
+          <StoreTransactionNotice showStoreLink />
+        </div></section>
+      </>
+    );
+  }
   if (!submitted && detail.itemCount === 0) return <Navigate to="/cart" replace />;
 
   function set(k, v) {
@@ -55,6 +69,7 @@ export function CheckoutPage() {
 
   async function submit(ev) {
     ev.preventDefault();
+    if (STORE_TRANSACTIONS_CLOSED) return;
     if (submitting.current) return;
     if (!detail.purchasable) {
       setSubmitError(t(detail.ready ? "checkout_cart_unavailable" : "checkout_cart_loading"));

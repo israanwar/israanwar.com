@@ -8,9 +8,14 @@ import {
   readJson,
 } from "../_shared/gopay.ts";
 
+const STORE_TRANSACTIONS_CLOSED = true;
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return jsonResponse({ success: false, error: "Method not allowed" }, { status: 405 });
+  if (STORE_TRANSACTIONS_CLOSED) {
+    return jsonResponse({ success: false, error: "Pembayaran Store sementara ditutup" }, { status: 503 });
+  }
 
   try {
     const { orderNumber } = await readJson(req);

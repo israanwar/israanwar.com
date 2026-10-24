@@ -18,6 +18,9 @@ import {
   refreshGopayMerchantPayment,
 } from "../../lib/gopayMerchantGateway";
 import { createDynamicQrisDataUrl } from "../../lib/qrisDynamic";
+import { STORE_TRANSACTIONS_CLOSED } from "../../data/storeStatus";
+import { StoreTransactionNotice } from "../../components/store/StoreTransactionNotice";
+import "../../styles/store-stamp.css";
 
 export function PaymentPage() {
   const { orderNumber } = useParams();
@@ -96,10 +99,10 @@ function PaymentBody({ order, settings, onChanged }) {
       </div>
 
       {/* Main content: switches by status */}
-      {isPending && <PendingView order={order} settings={settings} L={L} onChanged={onChanged} />}
+      {isPending && (STORE_TRANSACTIONS_CLOSED ? <StoreTransactionNotice showStoreLink /> : <PendingView order={order} settings={settings} L={L} onChanged={onChanged} />)}
       {isWaiting && <WaitingView order={order} L={L} />}
       {isPaid && <PaidView order={order} L={L} />}
-      {isRejected && <RejectedView order={order} L={L} />}
+      {isRejected && (STORE_TRANSACTIONS_CLOSED ? <StoreTransactionNotice showStoreLink /> : <RejectedView order={order} L={L} />)}
 
       {/* Order summary — always shown */}
       <OrderSummary order={order} L={L} />

@@ -3,7 +3,10 @@ import { Navigate, useParams, useNavigate, Link } from "react-router-dom";
 import { ArrowLeft, ShoppingBag, Check } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
+import { StoreTransactionNotice } from "../../components/store/StoreTransactionNotice";
+import { STORE_TRANSACTIONS_CLOSED } from "../../data/storeStatus";
 import { cartStore as cartRepo } from "../../lib/cartStore";
+import "../../styles/store-stamp.css";
 import { useLiveProductState } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeProduct } from "../../lib/storeI18n";
@@ -106,15 +109,21 @@ export function StoreItemPage() {
                 </div>
                 <ProductDescription text={displayProduct.description} />
 
-                <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 12 }}>
-                  <button className="okr__btn okr__btn--primary" onClick={addToCart} style={{ flex: 1 }}>
-                    {added ? <><Check size={16} /> {t("store_added")}</> : <><ShoppingBag size={16} /> {t("store_add")}</>}
-                  </button>
-                </div>
-                <button className="okr__btn okr__btn--ghost" onClick={() => { cartRepo.add(product.id); nav("/checkout"); }} style={{ width: "100%" }}>
-                  {t("store_buy_now")}
-                </button>
-                <p style={{ margin: "12px 0 0", fontSize: 13, color: "var(--okr-muted)" }}>{t("store_digital_note")}</p>
+                {STORE_TRANSACTIONS_CLOSED ? (
+                  <StoreTransactionNotice />
+                ) : (
+                  <>
+                    <div style={{ display: "flex", gap: 16, alignItems: "center", marginBottom: 12 }}>
+                      <button className="okr__btn okr__btn--primary" onClick={addToCart} style={{ flex: 1 }}>
+                        {added ? <><Check size={16} /> {t("store_added")}</> : <><ShoppingBag size={16} /> {t("store_add")}</>}
+                      </button>
+                    </div>
+                    <button className="okr__btn okr__btn--ghost" onClick={() => { cartRepo.add(product.id); nav("/checkout"); }} style={{ width: "100%" }}>
+                      {t("store_buy_now")}
+                    </button>
+                    <p style={{ margin: "12px 0 0", fontSize: 13, color: "var(--okr-muted)" }}>{t("store_digital_note")}</p>
+                  </>
+                )}
               </div>
             </div>
           </div>

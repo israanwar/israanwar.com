@@ -6,6 +6,7 @@ import { normalizePortfolioProjects } from "./portfolioProjects";
 import { normalizePaymentSettings } from "./paymentSettings";
 import { POST_CONTENT_OVERRIDES } from "../data/postContentOverrides";
 import { SLUG_RENAMES } from "../data/slugRenames";
+import { STORE_TRANSACTIONS_CLOSED } from "../data/storeStatus";
 import { HOME_POST_SELECT, SERVICE_FOLDER_SELECT, SERVICE_LIST_SELECT, serviceFolderRow, serviceListRow } from "./publicListProjection";
 
 // Offline/admin fallback store, loaded only when a remote read fails, when
@@ -747,6 +748,7 @@ export const ordersData = {
     return this.get(orderNumber);
   },
   async create(payload) {
+    if (STORE_TRANSACTIONS_CLOSED) throw new Error("Transaksi Store sementara ditutup.");
     return writeRemote(async () => {
       // An order number that already exists (unique violation) gets a fresh
       // number a couple of times before the error reaches the buyer.
@@ -781,6 +783,7 @@ export const ordersData = {
     });
   },
   async uploadProof(id, dataUrl) {
+    if (STORE_TRANSACTIONS_CLOSED) throw new Error("Pembayaran Store sementara ditutup.");
     return writeRemote(async () => {
       const order = await this.get(id);
       const orderNumber = order?.order_number ?? id;

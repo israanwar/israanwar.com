@@ -6,6 +6,8 @@
 // one license per product. Quantity is therefore fixed at 1: adding the same
 // product again (a second click, "Buy now" after "Add to cart", or a cart
 // saved by an older version) never raises it.
+import { STORE_TRANSACTIONS_CLOSED } from "../data/storeStatus.js";
+
 const CART_KEY = "okr:cart";
 const listeners = new Set();
 
@@ -59,6 +61,7 @@ export const cartStore = {
   onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); },
   // Idempotent: a product already in the cart stays at one license.
   add(productId) {
+    if (STORE_TRANSACTIONS_CLOSED) return readCart();
     const list = readCart();
     if (list.some((item) => item.product_id === productId)) return list;
     list.push({ product_id: productId, qty: 1 });

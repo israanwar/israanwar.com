@@ -9,6 +9,7 @@ import { localizeProduct, storeCategoryLabel } from "../../lib/storeI18n";
 import { resolveProductCover } from "../../lib/storePlaceholder";
 import { BlogPagination } from "../../components/blog/BlogPagination";
 import { ProductSocialProof } from "../../components/store/ProductSocialProof";
+import "../../styles/store-stamp.css";
 
 const SORTS = [
   { key: "featured", labelKey: "store_sort_featured" },
@@ -92,6 +93,25 @@ export function StorePage() {
             <p style={{ color: "var(--okr-muted)", maxWidth: 640, marginTop: 20, marginBottom: 40 }}>
               {t("store_subtitle")}
             </p>
+
+            <aside className="store-update" aria-label={t("store_stamp_title")}>
+              <div className="store-update__seal" aria-hidden="true">
+                <div className="store-update__seal-inner">
+                  <span className="store-update__seal-kicker">ISRA ANWAR · STORE</span>
+                  <span className="store-update__seal-symbol">✦</span>
+                  <span className="store-update__seal-main">{t("store_stamp_first")}</span>
+                  <span className="store-update__seal-sub">{t("store_stamp_second")}</span>
+                  <span className="store-update__seal-rule" />
+                  <span className="store-update__seal-year">EST. 2017</span>
+                </div>
+              </div>
+              <div className="store-update__message">
+                <span className="store-update__eyebrow">ISRA ANWAR / STORE NOTICE</span>
+                <h2>{t("store_stamp_title")}</h2>
+                <p>{t("store_stamp_body")}</p>
+                <p className="store-update__availability">{t("store_transactions_closed_body")}</p>
+              </div>
+            </aside>
 
             {items.length === 0 ? (
               <p style={{ color: "var(--okr-muted)" }}>{t("store_empty")}</p>
