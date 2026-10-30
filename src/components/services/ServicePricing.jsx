@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { useLiveSettings } from '../../hooks/usePageData';
 import { RATE_CARD } from '../../data/rateCard';
 import { calculateEstimate, equivalentRate, priceLabel, rupiah, serviceRate } from '../../lib/rateCard';
 import '../../styles/service-pricing.css';
@@ -18,7 +17,6 @@ export function ServicePackageLink({ service, lang }) {
 
 export function ServicePricing({ lang }) {
   const id = lang === 'id';
-  const settings = useLiveSettings();
   const [params] = useSearchParams();
   const location = useLocation();
   useEffect(() => {
@@ -57,8 +55,6 @@ export function ServicePricing({ lang }) {
     link.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
-  let quoteUrl = '/contact';
-  try { const url = new URL(settings.whatsapp_url); if (['http:', 'https:'].includes(url.protocol)) { url.searchParams.set('text', message); quoteUrl = url.href; } } catch { /* Contact fallback while settings load. */ }
   return <section id="build-package" className="okr__section service-pricing">
     <div className="okr__wrap">
       <span className="okr__eyebrow">// BUILD YOUR OWN PACKAGE</span>
@@ -88,7 +84,7 @@ export function ServicePricing({ lang }) {
           {totals.review && <p className="service-pricing-review">{id ? 'Pilihan add-on, paket, dan layanan serupa akan direview untuk memastikan kecocokan serta menghindari biaya ganda. Estimasi ini belum mengurangi fitur yang tumpang tindih.' : 'Add-ons, packages, and similar services require a scope review to confirm compatibility and avoid duplicate charges. This estimate has not deducted overlapping features.'}</p>}
           {totals.rows.some(item => ['SEM', 'Performance Marketing', 'Google Ads Setup', 'Meta Ads Setup', 'TikTok Ads Setup', 'Marketplace Ads Setup'].includes(item.name)) && <p className="service-pricing-review">{id ? 'Untuk akun iklan besar, fee pengelolaan adalah fee minimum atau 10% belanja iklan, mana yang lebih tinggi. Nilai belanja iklan dan klasifikasi akun dikonfirmasi dalam penawaran.' : 'For large advertising accounts, the management fee is the minimum fee or 10% of ad spend, whichever is higher. Ad spend and account classification are confirmed in the quote.'}</p>}
           <p className="service-pricing-note">{id ? 'Harga awal, bukan tagihan final. Scope, fitur, integrasi, konten, volume, timeline, dan dukungan dikonfirmasi dalam penawaran. Biaya hosting, domain, API/AI, SaaS, lisensi, iklan, dan transaksi pihak ketiga tidak termasuk.' : 'Starting prices, not a final invoice. Scope, features, integrations, content, volume, timeline, and support are confirmed in the quote. Hosting, domain, API/AI, SaaS, licenses, ad spend, and third-party transaction fees are excluded.'}</p>
-          {totals.rows.length > 0 && <><a className="okr__btn okr__btn--primary" href={quoteUrl} target={quoteUrl.startsWith('http') ? '_blank' : undefined} rel="noreferrer">{id ? 'Minta Penawaran Paket Ini' : 'Request Package Quote'}</a><button className="service-pricing-clear" type="button" onClick={downloadSummary}>{id ? 'Unduh Ringkasan Paket' : 'Download Package Summary'}</button><button className="service-pricing-clear" type="button" onClick={() => setSelection({})}>{id ? 'Kosongkan paket' : 'Clear package'}</button></>}
+          {totals.rows.length > 0 && <><a className="okr__btn okr__btn--primary" href="/contact">{id ? 'Minta Penawaran Paket Ini' : 'Request Package Quote'}</a><button className="service-pricing-clear" type="button" onClick={downloadSummary}>{id ? 'Unduh Ringkasan Paket' : 'Download Package Summary'}</button><button className="service-pricing-clear" type="button" onClick={() => setSelection({})}>{id ? 'Kosongkan paket' : 'Clear package'}</button></>}
           <Link className="okr__link" to="/contact">{id ? 'Enterprise / Custom? Diskusikan kebutuhanmu' : 'Enterprise / Custom? Discuss your needs'}</Link>
         </aside>
       </div>

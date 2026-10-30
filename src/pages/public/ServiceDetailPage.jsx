@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
-import { ArrowLeft, MessageCircle, Check } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
-import { useLiveServiceState, useLiveServices, useLiveSettings } from "../../hooks/usePageData";
+import { useLiveServiceState, useLiveServices } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeServiceCardItem, localizeServiceItem } from "../../lib/serviceI18n";
 import { ServiceFolderArtwork } from "../../components/marketing/ServiceFolderArtwork";
@@ -21,7 +21,6 @@ export function ServiceDetailPage() {
     () => localizeServiceItem(rawService, rawServices, lang),
     [rawService, rawServices, lang]
   );
-  const settings = useLiveSettings();
   const isCategory = s?.kind === "category";
   const childServices = useMemo(() => {
     if (!s || !isCategory) return [];
@@ -47,12 +46,6 @@ export function ServiceDetailPage() {
 
   if (!s || s.status !== "active") return <Navigate to="/services" replace />;
 
-  const waMsg = encodeURIComponent(
-    lang === "id"
-      ? `Halo, saya tertarik dengan ${s.name} di israanwar.com. Mohon kirimkan informasi lebih lanjut.`
-      : `Hi, I'm interested in ${s.name} at israanwar.com. Please share more information.`
-  );
-  const waLink = `${settings.whatsapp_url}?text=${waMsg}`;
   const backTo = parentCategory ? `/services/${parentCategory.slug}` : "/services";
   const backLabel = parentCategory ? parentCategory.name : t("services_all");
 
@@ -144,8 +137,8 @@ export function ServiceDetailPage() {
             <div className="okr__cta" style={{ margin: "40px 0 0" }}>
               <h3>{t("services_cta_title")}</h3>
               <p>{t("services_cta_body")}</p>
-              <a className="okr__btn okr__btn--primary" href={waLink} target="_blank" rel="noreferrer">
-                <MessageCircle size={17} /> {t("services_cta_button")}
+              <a className="okr__btn okr__btn--primary" href="/contact">
+                {lang === "id" ? "Hubungi Kami" : "Contact Us"}
               </a>
             </div>
           </div>

@@ -86,8 +86,8 @@ function ensureSeed() {
     site_name: "Isra Anwar",
     tagline: HERO_HEADLINE,
     description: HERO_SUBTITLE,
-    whatsapp_number: "082189594190",
-    whatsapp_url: "https://wa.me/6282189594190",
+    whatsapp_number: "",
+    whatsapp_url: "",
     email: "israanwarr@gmail.com",
     social_linkedin: "https://www.linkedin.com/in/israanwarr/",
     social_github: "https://github.com/israanwar/",
@@ -2364,7 +2364,7 @@ const PAGES_SEED = {
   contact: {
     hero_kicker: "// CONTACT",
     hero_title: "Let's talk.",
-    hero_subtitle: "Have a project, question, or collaboration in mind? Send a message via the form below or reach us on WhatsApp / email.",
+    hero_subtitle: "Have a project, question, or collaboration in mind? Send a message via the form below or reach us by email.",
     address: "Indonesia (remote-first, working with clients worldwide)",
     hours: "Monday–Friday, 09:00–18:00 WIB",
     response_time: "We reply within 24 hours on business days.",
@@ -2407,7 +2407,7 @@ You have the right to:
 - Request corrections or deletion.
 - Withdraw consent for data usage at any time.
 
-For such requests, contact us via the email or WhatsApp listed on the contact page.
+For such requests, contact us via the email listed on the contact page.
 
 **6. Policy Changes**
 

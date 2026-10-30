@@ -163,8 +163,10 @@ test("unknown input asks clarifying questions, with no automatic WhatsApp handof
 });
 
 test("direct contact still works, but guarantees and unknown timelines are not invented", () => {
-  assert.match(ask("bagaimana cara hubungi Isra?"), /wa\.me/);
-  assert.match(ask("berapa nomor WhatsApp Isra?"), /wa\.me/);
+  assert.match(ask("bagaimana cara hubungi Isra?"), /contact@example\.test/);
+  const whatsappAnswer = ask("berapa nomor WhatsApp Isra?");
+  assert.match(whatsappAnswer, /contact@example\.test/);
+  assert.doesNotMatch(whatsappAnswer, /wa\.me|000/);
   assert.match(ask("bisa jamin ranking satu?"), /tidak bisa menjamin/);
   assert.match(ask("berapa lama landing page selesai?"), /Durasi pasti belum tersedia/);
 });

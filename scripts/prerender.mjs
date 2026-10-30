@@ -166,7 +166,6 @@ function injectJsonLd(html, schemas) {
 // -----------------------------------------------------------------------
 
 const REAL_SOCIAL = {
-  whatsapp_url: "https://wa.me/6282189594190",
   email: "israanwarr@gmail.com",
   linkedin: "https://www.linkedin.com/in/israanwarr/",
   github: "https://github.com/israanwar/",
@@ -202,7 +201,6 @@ function renderFooterHtml() {
       <a href="mailto:${xmlEsc(REAL_SOCIAL.email)}" aria-label="Email Isra Anwar" title="Email">
         <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
       </a>
-      <a href="${xmlEsc(REAL_SOCIAL.whatsapp_url)}" rel="noreferrer">WhatsApp</a>
       ${REAL_SOCIAL.instagram ? `<a href="${xmlEsc(REAL_SOCIAL.instagram)}" rel="noreferrer">Instagram</a>` : ""}
       <a href="${xmlEsc(REAL_SOCIAL.linkedin)}" rel="noreferrer">LinkedIn</a>
       <a href="${xmlEsc(REAL_SOCIAL.github)}" rel="noreferrer">GitHub</a>

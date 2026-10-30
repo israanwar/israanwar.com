@@ -31,7 +31,11 @@ function fromLocal(read, empty) {
 // each mounted component re-fetching and re-subscribing independently.
 const cacheStore = new Map();
 export function getPublicDataSnapshot() {
- return Object.fromEntries([...cacheStore].filter(([key])=>/^(settings|homepage|page:|products:|product:|services:|service:|posts:|post:)/.test(key)).map(([key,entry])=>[key,entry.value]));
+ return Object.fromEntries([...cacheStore].filter(([key])=>/^(settings|homepage|page:|products:|product:|services:|service:|posts:|post:)/.test(key)).map(([key,entry])=>{
+  if(key!=="settings" || !entry.value || typeof entry.value!=="object")return [key,entry.value];
+  const {whatsapp_number,whatsapp_url,admin_whatsapp,admin_whatsapp_url,...publicSettings}=entry.value;
+  return [key,publicSettings];
+ }));
 }
 
 function getEntry(key, fallbackFn) {

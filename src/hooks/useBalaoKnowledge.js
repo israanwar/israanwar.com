@@ -91,8 +91,6 @@ export function useBalaoKnowledge({ enabled = true } = {}) {
       },
       contact: {
         email: settings?.email || "israanwarr@gmail.com",
-        whatsappNumber: settings?.whatsapp_number || "",
-        whatsappUrl: settings?.whatsapp_url || "https://wa.me/6282189594190",
       },
       site: {
         name: settings?.site_name || site.name,

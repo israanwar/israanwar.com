@@ -32,7 +32,7 @@ You have the right to:
 - Request corrections or deletion.
 - Withdraw consent for data usage at any time.
 
-For such requests, contact us via the email or WhatsApp listed on the contact page.
+For such requests, contact us via the email listed on the contact page.
 
 **6. Policy Changes**
 
@@ -72,7 +72,7 @@ Anda berhak untuk:
 - Meminta koreksi atau penghapusan data.
 - Menarik persetujuan penggunaan data kapan saja.
 
-Untuk permintaan tersebut, hubungi kami melalui email atau WhatsApp yang tertera di halaman kontak.
+Untuk permintaan tersebut, hubungi kami melalui email yang tertera di halaman kontak.
 
 **6. Perubahan Kebijakan**
 
@@ -164,7 +164,7 @@ const TEXT_ID = {
 
   "// CONTACT": "// KONTAK",
   "Let's talk.": "Mari ngobrol.",
-  "Have a project, question, or collaboration in mind? Send a message via the form below or reach us on WhatsApp / email.": "Punya proyek, pertanyaan, atau rencana kolaborasi? Kirim pesan melalui formulir di bawah atau hubungi kami lewat WhatsApp / email.",
+  "Have a project, question, or collaboration in mind? Send a message via the form below or reach us by email.": "Punya proyek, pertanyaan, atau rencana kolaborasi? Kirim pesan melalui formulir di bawah atau hubungi kami lewat email.",
   "Indonesia (remote-first, working with clients worldwide)": "Indonesia (remote-first, bekerja dengan klien dari berbagai wilayah)",
   "Monday–Friday, 09:00–18:00 WIB": "Senin-Jumat, 09.00-18.00 WIB",
   "We reply within 24 hours on business days.": "Kami membalas maksimal 24 jam pada hari kerja.",

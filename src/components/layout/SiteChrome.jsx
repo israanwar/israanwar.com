@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import {
-  MessageCircle, Github, Instagram, Linkedin, Mail, ShoppingBag, Menu, X,
+  Github, Instagram, Linkedin, Mail, ShoppingBag, Menu, X,
   Home, Compass, ShoppingCart, BookOpen, Wrench,
 } from "lucide-react";
 import { useLiveSettings, useLiveProductsExist, useLiveCart } from "../../hooks/usePageData";
@@ -392,11 +392,6 @@ export function SiteFooter({ settings }) {
                     title={t("contact_label_email")}
                   >
                     <Mail size={17} aria-hidden="true" /> {t("contact_label_email")}
-                  </a>
-                )}
-                {settings.whatsapp_number && (
-                  <a className="okr__foot-contact-link" href={settings.whatsapp_url || `https://wa.me/${settings.whatsapp_number}`} target="_blank" rel="noreferrer">
-                    <MessageCircle size={16} /> WhatsApp
                   </a>
                 )}
               </div>

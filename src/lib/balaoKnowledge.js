@@ -763,32 +763,30 @@ function storeAnswer(lang, k) {
 }
 
 function pricingAnswer(lang, k) {
-  const { whatsappUrl, email } = k.contact;
-  const url = `${k.site.url}/contact`;
+  const { email } = k.contact;
   return pick(lang, {
-    id: `Soal harga, tergantung scope proyeknya sih, jadi aku gak mau asal nebak angka di sini. Paling gampang, langsung chat aja biar cepet dapet estimasi.\n\nWhatsApp: ${whatsappUrl}\nEmail: ${email}\nAtau isi form di ${url}`,
-    en: `Pricing really depends on the project scope, so I won't just throw out a number here. Fastest way to get a real estimate is to just reach out directly.\n\nWhatsApp: ${whatsappUrl}\nEmail: ${email}\nOr fill out the form at ${url}`,
-    es: `El precio depende del alcance del proyecto, así que no voy a inventar un número aquí. Lo más rápido es contactarnos directamente para una cotización real.\n\nWhatsApp: ${whatsappUrl}\nEmail: ${email}\nO llena el formulario en ${url}`,
-    ru: `Цена зависит от масштаба проекта, так что называть цифру наугад не буду. Быстрее всего получить реальную оценку: просто написать нам напрямую.\n\nWhatsApp: ${whatsappUrl}\nEmail: ${email}\nИли заполни форму на ${url}`,
-    zh: `价格取决于项目范围，所以我不会在这里随便报数字。想拿到准确报价，最快的方式是直接联系我们。\n\nWhatsApp：${whatsappUrl}\n邮箱：${email}\n或填写表单：${url}`,
-    ko: `가격은 프로젝트 범위에 따라 달라져서 여기서 대충 숫자를 말씀드리진 않을게요. 정확한 견적을 가장 빨리 받는 방법은 직접 문의하시는 거예요.\n\nWhatsApp: ${whatsappUrl}\n이메일: ${email}\n또는 폼 작성: ${url}`,
-    ja: `料金はプロジェクトの規模によるので、ここで適当な数字はお伝えしません。一番早いのは直接お問い合わせいただくことです。\n\nWhatsApp: ${whatsappUrl}\nメール: ${email}\nまたはフォームはこちら: ${url}`,
-    ar: `السعر يعتمد على حجم المشروع، فما راح أرمي رقم عشوائي هنا. أسرع طريقة تعرف السعر الحقيقي هي التواصل معنا مباشرة.\n\nواتساب: ${whatsappUrl}\nالبريد الإلكتروني: ${email}\nأو عبّي النموذج هنا: ${url}`,
+    id: `Untuk estimasi harga sesuai kebutuhanmu, kirim detail proyek lewat email: ${email}`,
+    en: `For a quote based on your needs, email the project details to ${email}`,
+    es: `Para recibir un presupuesto según tus necesidades, envía los detalles por correo a ${email}`,
+    ru: `Для оценки стоимости отправьте детали проекта на ${email}`,
+    zh: `如需根据需求报价，请将项目详情发送至邮箱：${email}`,
+    ko: `필요에 맞는 견적은 프로젝트 내용을 ${email}로 이메일 보내 주세요`,
+    ja: `ご希望に合わせた見積もりは、プロジェクトの詳細を ${email} へメールしてください`,
+    ar: `للحصول على عرض سعر مناسب، أرسل تفاصيل المشروع إلى ${email}`,
   });
 }
 
 function contactAnswer(lang, k) {
-  const { whatsappUrl, email } = k.contact;
-  const url = `${k.site.url}/contact`;
+  const { email } = k.contact;
   return pick(lang, {
-    id: `Gampang, bisa hubungin kita lewat:\n- WhatsApp: ${whatsappUrl}\n- Email: ${email}\n- Atau isi form di: ${url}`,
-    en: `Easy, you can reach us through:\n- WhatsApp: ${whatsappUrl}\n- Email: ${email}\n- Or the form at: ${url}`,
-    es: `Fácil, puedes contactarnos por:\n- WhatsApp: ${whatsappUrl}\n- Email: ${email}\n- O el formulario en: ${url}`,
-    ru: `Легко, можешь связаться с нами через:\n- WhatsApp: ${whatsappUrl}\n- Email: ${email}\n- Или форму на: ${url}`,
-    zh: `很简单，你可以通过以下方式联系我们：\n- WhatsApp：${whatsappUrl}\n- 邮箱：${email}\n- 或者填写表单：${url}`,
-    ko: `간단해요, 이렇게 연락하시면 돼요:\n- WhatsApp: ${whatsappUrl}\n- 이메일: ${email}\n- 또는 문의 폼: ${url}`,
-    ja: `簡単ですよ、こちらから連絡できます:\n- WhatsApp: ${whatsappUrl}\n- メール: ${email}\n- またはフォームはこちら: ${url}`,
-    ar: `سهل، تقدر تتواصل معنا عن طريق:\n- واتساب: ${whatsappUrl}\n- البريد الإلكتروني: ${email}\n- أو النموذج هنا: ${url}`,
+    id: `Kamu bisa hubungi Isra lewat email: ${email}`,
+    en: `You can contact Isra by email: ${email}`,
+    es: `Puedes contactar a Isra por correo electrónico: ${email}`,
+    ru: `Связаться с Исрой можно по электронной почте: ${email}`,
+    zh: `你可以通过电子邮件联系 Isra：${email}`,
+    ko: `Isra에게 이메일로 연락할 수 있어요: ${email}`,
+    ja: `Isra への連絡はメールでどうぞ: ${email}`,
+    ar: `يمكنك التواصل مع Isra عبر البريد الإلكتروني: ${email}`,
   });
 }
 

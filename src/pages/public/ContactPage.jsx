@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, MessageCircle, MapPin, Clock, Check } from "lucide-react";
+import { Mail, MapPin, Clock, Check } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
 import { AnimatedHeadline } from "../../components/ui/AnimatedHeadline";
 import { contactsData } from "../../lib/supabaseData";
@@ -118,11 +118,6 @@ export function ContactPage() {
                   {settings.email && (
                     <InfoRow icon={Mail} label={t("contact_label_email")}>
                       <a href={`mailto:${settings.email}`} style={{ color: "var(--okr-text)" }}>{settings.email}</a>
-                    </InfoRow>
-                  )}
-                  {settings.whatsapp_number && (
-                    <InfoRow icon={MessageCircle} label={t("contact_label_wa")}>
-                      <a href={settings.whatsapp_url} target="_blank" rel="noreferrer" style={{ color: "var(--okr-text)" }}>{settings.whatsapp_number}</a>
                     </InfoRow>
                   )}
                   {p.address && <InfoRow icon={MapPin} label={t("contact_label_loc")}>{p.address}</InfoRow>}

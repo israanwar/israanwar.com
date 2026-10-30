@@ -48,9 +48,6 @@ export function buildOrganization(settings) {
 
   if (sameAs.length > 0) org.sameAs = sameAs;
   if (settings?.email) org.email = settings.email;
-  if (settings?.whatsapp_number) {
-    org.telephone = settings.whatsapp_number;
-  }
 
   return org;
 }

@@ -85,9 +85,6 @@ export function LandingPage() {
   const hero = sections.hero ?? {};
   const heroTitle = [hero.title_line1, hero.title_line2].filter(Boolean).join(" ");
   const cta = sections.cta ?? {};
-  const whatsappHref = /^https:\/\/(wa\.me|api\.whatsapp\.com)\//i.test(settings.whatsapp_url ?? "")
-    ? settings.whatsapp_url
-    : null;
   const process = sections.process ?? { title: "", items: [] };
   const cases = sections.cases ?? { title: t("section_cases_title"), items: [] };
   const processItems = process.items ?? [];
@@ -276,10 +273,7 @@ export function LandingPage() {
                   <span className="okr__home-contact-eyebrow">LET'S TALK</span>
                   {cta.title && <h2>{cta.title}</h2>}
                   {cta.subtitle && <p>{cta.subtitle}</p>}
-                  {cta.button_label && (whatsappHref
-                    ? <a className="okr__btn okr__btn--primary" href={whatsappHref} target="_blank" rel="noopener noreferrer">{cta.button_label} <ArrowRight size={16} /></a>
-                    : <Link className="okr__btn okr__btn--primary" to="/contact">{cta.button_label} <ArrowRight size={16} /></Link>
-                  )}
+                  {cta.button_label && <Link className="okr__btn okr__btn--primary" to="/contact">{lang === "id" ? "Hubungi Kami" : "Contact Us"} <ArrowRight size={16} /></Link>}
                 </div>
               </div>
             </section>
