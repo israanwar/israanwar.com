@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Search } from "lucide-react";
 import { Seo } from "../../components/seo/Seo";
@@ -7,8 +7,8 @@ import { useLiveProducts } from "../../hooks/usePageData";
 import { useI18n } from "../../lib/i18n";
 import { localizeProduct, storeCategoryLabel } from "../../lib/storeI18n";
 import { resolveProductCover } from "../../lib/storePlaceholder";
-import { BlogPagination } from "../../components/blog/BlogPagination";
 import { ProductSocialProof } from "../../components/store/ProductSocialProof";
+import { StorePagination } from "../../components/store/StorePagination";
 import "../../styles/store-stamp.css";
 
 const SORTS = [
@@ -45,6 +45,7 @@ export function StorePage() {
   const [sort, setSort] = useState("featured");
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
+  const catalogStartRef = useRef(null);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -79,8 +80,14 @@ export function StorePage() {
   const pageItems = filtered.slice(pageStart, pageEnd);
 
   function updatePage(nextPage) {
+    if (nextPage === currentPage || nextPage < 1 || nextPage > totalPages) return;
     setPage(nextPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    requestAnimationFrame(() => {
+      catalogStartRef.current?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start",
+      });
+    });
   }
 
   return (
@@ -94,19 +101,9 @@ export function StorePage() {
               {t("store_subtitle")}
             </p>
 
-            <aside className="store-update" aria-label={t("store_stamp_title")}>
-              <div className="store-update__seal" aria-hidden="true">
-                <div className="store-update__seal-inner">
-                  <span className="store-update__seal-kicker">ISRA ANWAR · STORE</span>
-                  <span className="store-update__seal-symbol">✦</span>
-                  <span className="store-update__seal-main">{t("store_stamp_first")}</span>
-                  <span className="store-update__seal-sub">{t("store_stamp_second")}</span>
-                  <span className="store-update__seal-rule" />
-                  <span className="store-update__seal-year">EST. 2017</span>
-                </div>
-              </div>
+            <aside className="store-update" aria-label={t("store_transactions_closed_title")}>
               <div className="store-update__message">
-                <span className="store-update__eyebrow">ISRA ANWAR / STORE NOTICE</span>
+                <span className="store-update__eyebrow"><span className="store-update__status-dot" />{t("store_transactions_closed_title")}</span>
                 <h2>{t("store_stamp_title")}</h2>
                 <p>{t("store_stamp_body")}</p>
                 <p className="store-update__availability">{t("store_transactions_closed_body")}</p>
@@ -165,7 +162,7 @@ export function StorePage() {
                   </div>
                 </div>
 
-                <div className="okr__results-bar okr__store-results-bar">
+                <div className="okr__results-bar okr__store-results-bar" ref={catalogStartRef}>
                   <div className="okr__results-count">
                     {filtered.length === 0 ? (
                       <>
@@ -208,24 +205,18 @@ export function StorePage() {
                 ) : (
                   <>
                     <div className="okr__products okr__products--artifact">
-                      {pageItems.map((p, index) => {
+                      {pageItems.map((p) => {
                         const coverUrl = resolveProductCover(p);
-                        const productIndex = String(pageStart + index + 1).padStart(2, "0");
                         return (
                           <Link
                             key={p.id}
                             className="okr__product okr__artifact-card"
                             to={`/store/${p.slug}`}
-                            data-card-index={productIndex}
                           >
                             <div className="okr__product-img">
                               <img src={coverUrl} alt={p.name} loading="lazy" decoding="async" />
                             </div>
                             <div className="okr__product-body">
-                              <div className="okr__artifact-card-edition" aria-hidden="true">
-                                <span>{productIndex}</span>
-                                <span>ISRA ANWAR / ARTIFACT</span>
-                              </div>
                               {p.category && <div className="okr__product-cat">{p.category}</div>}
                               <div className="okr__product-name">{p.name}</div>
                               <ProductSocialProof product={p} />
@@ -237,7 +228,7 @@ export function StorePage() {
                     </div>
 
                     {totalPages > 1 && (
-                      <BlogPagination
+                      <StorePagination
                         current={currentPage}
                         total={totalPages}
                         onChange={updatePage}

@@ -208,13 +208,13 @@
   .okr__products--artifact > .okr__artifact-card {
   background: #08080b !important;
   border-color: rgba(255, 255, 255, 0.14) !important;
-  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.36) !important;
+  box-shadow: none !important;
 }
 
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
   .okr__products--artifact > .okr__artifact-card:is(:hover, :focus-visible, :active) {
-  border-color: rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.34) !important;
+  box-shadow: none !important;
 }
 
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
@@ -225,6 +225,16 @@
 .okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
   :is(.okr__product-price, .okr__product-stars svg, .okr__cart-actions strong) {
   color: #d7c9ff !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__artifact-card .okr__product-price {
+  color: #fff !important;
+}
+
+.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
+  .okr__products--artifact .okr__artifact-card .okr__product-stars svg {
+  color: #b8b8be !important;
 }
 
 /* Forms, filters, and tool controls. */
@@ -387,52 +397,4 @@
   .okr__mobile-menu
 )::after {
   content: none !important;
-}
-
-/* Store cards: dark surface with high-contrast text. The body text used to
-   inherit the light-theme ink colour, which is near-invisible on #08080b. */
-.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  .okr__products--artifact .okr__product-img {
-  background: #08080b !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-/* Store cards stay flat: no glow on the edition dot, and a calm hover zoom. */
-.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  .okr__products--artifact .okr__artifact-card-edition::before {
-  box-shadow: none !important;
-}
-
-.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  .okr__products--artifact .okr__artifact-card:is(:hover, :focus-visible, :focus-within) .okr__product-img img {
-  transform: scale(1.02) !important;
-}
-
-.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  .okr__products--artifact .okr__artifact-card-edition {
-  color: #c9c3d6 !important;
-  font-size: 9px !important;
-}
-
-.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  .okr__products--artifact .okr__product-cat {
-  color: #d7c9ff !important;
-  font-size: 10px !important;
-}
-
-.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  .okr__products--artifact .okr__product-name {
-  color: #ffffff !important;
-}
-
-.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  .okr__products--artifact :is(.okr__product-proof, .okr__product-sold, .okr__product-rating) {
-  color: #c4bfd0 !important;
-}
-
-.okr:not(:has(.okr__home)):not(:has(.okr__blog-page)):not(:has(.okr__blog-detail-page))
-  .okr__products--artifact .okr__product-price {
-  color: #f1eaff !important;
 }
