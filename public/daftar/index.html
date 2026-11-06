@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, follow">
+<title>Pendaftaran Webinar Retrograde Mercury Trading</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=Playfair+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  /* Layout: dua kolom tenang. Teks di kiri, formulir di kanan, tanpa kartu dekoratif. Satu aksen biru hanya untuk tindakan. */
+  :root {
+    color-scheme: dark;
+    --bg: #ffffff; --ink: #2b2b2d; --ink-2: #6b6b70; --surface: #f5f5f7; --line: #d2d2d7;
+    --accent: #e31c36; --accent-ink: #ffffff; --err: #d70015;
+    --font: "Sora", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --serif: "Playfair Display", "Iowan Old Style", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; padding-inline: 20px; background: var(--bg); color: var(--ink); font: 16px/1.55 var(--font); -webkit-font-smoothing: antialiased; }
+  /* Latar: putih polos dengan titik-titik halus */
+  body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background-image: radial-gradient(rgba(29,29,31,.16) 1px, transparent 1.6px); background-size: 24px 24px; }
+  .wrap { max-width: 1040px; margin: 0 auto; position: relative; }
+  header.bar { display: flex; justify-content: space-between; align-items: center; padding-block: 20px; border-bottom: 1px solid rgba(0,0,0,.08); }
+  .logo img { height: 48px; width: auto; display: block; }
+  .wordmark { font: 700 13px/1 var(--font); letter-spacing: .28em; text-transform: uppercase; }
+  .wordmark small { display: block; margin-top: 5px; font-weight: 500; font-size: 8.5px; letter-spacing: .24em; color: var(--ink-2); }
+  .tag { font-size: 13px; color: var(--ink-2); }
+  .grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 48px; padding-block: 48px 72px; }
+  @media (min-width: 900px) { .grid { grid-template-columns: minmax(0,1fr) 480px; gap: 72px; padding-block: 64px 96px; } .kiri { position: sticky; top: 32px; align-self: start; } }
+  .kicker { font-size: 13px; font-weight: 600; color: var(--accent); margin: 0 0 14px; }
+  h1 { font-size: clamp(32px, 5vw, 46px); line-height: 1.1; font-weight: 700; letter-spacing: -.03em; margin: 0 0 18px; text-wrap: balance; }
+  .sub { font-size: 18px; line-height: 1.5; color: var(--ink-2); margin: 0 0 24px; max-width: 34em; }
+  .biaya { margin: 0 0 32px; max-width: 34em; }
+  .daftar-poin { list-style: none; padding: 0; margin: 0 0 32px; display: grid; gap: 10px; }
+  .daftar-poin li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; }
+  .daftar-poin li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin: 10px 0 0 5px; }
+  .daftar-poin b { font-weight: 600; }
+  h2.k { font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 0 0 12px; }
+  .meta { margin: 0; border-top: 1px solid var(--line); }
+  .meta div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 15px; }
+  .meta dt { color: var(--ink-2); }
+  .meta dd { margin: 0; font-weight: 600; text-align: right; }
+  .penutup { margin: 24px 0 0; font-weight: 600; letter-spacing: -.01em; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 13px 24px; border-radius: 980px; border: 0; background: var(--accent); color: var(--accent-ink); font: 500 16px/1.2 var(--font); text-decoration: none; cursor: pointer; transition: background .2s; }
+  .btn:hover:not(:disabled) { background: #c9152e; }
+  .btn:disabled { opacity: .5; cursor: wait; }
+  .btn.abu { background: var(--surface); color: var(--ink); }
+  .btn.abu:hover:not(:disabled) { background: #e8e8ed; }
+  .btn:focus-visible, summary:focus-visible { outline: 3px solid rgba(227,28,54,.40); outline-offset: 2px; }
+  .btn[hidden] { display: none; }
+  #daftar { scroll-margin-top: 16px; }
+  .sheet { background: var(--bg); border: 1px solid rgba(0,0,0,.07); border-radius: 22px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 20px 50px rgba(24,24,40,.08); padding: 28px 24px 32px; }
+  @media (min-width: 560px) { .sheet { padding: 32px 32px 36px; } }
+  .langkah { display: flex; gap: 6px; margin-bottom: 24px; }
+  .langkah i { flex: 1; height: 3px; border-radius: 3px; background: var(--surface); }
+  .langkah i.on { background: var(--accent); }
+  .jl { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+  .jl h3 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+  .hitung { font-size: 13px; color: var(--ink-2); }
+  .eyebrow { display: none; }
+  .tahap[hidden], .cabang[hidden], .btn[hidden] { display: none; }
+  label.f { display: block; font-size: 13px; font-weight: 600; margin: 20px 0 8px; color: var(--ink); }
+  .hint { font-weight: 400; color: var(--ink-2); }
+  input[type=text], input[type=tel], input[type=email], select {
+    width: 100%; padding: 15px 16px; font: inherit; font-size: 17px; color: var(--ink); background: var(--surface);
+    border: 1px solid transparent; border-radius: 14px; appearance: none; outline: none; transition: border-color .15s, background .15s, box-shadow .15s;
+  }
+  select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%236b6b70' stroke-width='1.8' stroke-linecap='round'><path d='M1 1.5l5 5 5-5'/></svg>"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
+  input:focus, select:focus { background-color: var(--bg); border-color: var(--accent); box-shadow: 0 0 0 4px rgba(227,28,54,.14); }
+  [aria-invalid=true] { border-color: var(--err) !important; background-color: #fff5f5; }
+  .galat { font-size: 13px; color: var(--err); margin-top: 6px; }
+  .jalur { display: grid; gap: 8px; margin-top: 4px; }
+  .opsi { position: relative; display: block; cursor: pointer; }
+  .opsi input { position: absolute; opacity: 0; inset: 0; }
+  .opsi span { display: grid; grid-template-columns: 22px 1fr; gap: 14px; align-items: start; padding: 16px 18px; border: 1px solid var(--line); border-radius: 18px; transition: border-color .15s, background .15s, box-shadow .15s; }
+  .opsi span::before { content: ""; width: 20px; height: 20px; border: 1.5px solid var(--line); border-radius: 50%; margin-top: 1px; transition: all .15s; }
+  .opsi b { display: block; font-size: 16px; font-weight: 600; letter-spacing: -.014em; }
+  .opsi small { color: var(--ink-2); font-size: 14px; line-height: 1.4; }
+  .opsi:hover span { border-color: #86868b; }
+  .opsi input:checked + span { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; background: #fff7f7; }
+  .opsi input:checked + span::before { border: 6px solid var(--accent); }
+  .opsi input:focus-visible + span { outline: 3px solid rgba(227,28,54,.35); outline-offset: 2px; }
+  .cabang { margin-top: 16px; padding: 4px 20px 22px; background: var(--surface); border-radius: 20px; }
+  .cabang .judul { font-size: 12px; font-weight: 600; color: var(--accent); margin: 18px 0 0; }
+  .cabang input, .cabang select { background: var(--bg); }
+  .cek { display: grid; grid-template-columns: 22px 1fr; gap: 12px; font-size: 14px; line-height: 1.45; color: var(--ink-2); margin: 20px 0 0; cursor: pointer; }
+  .cek input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); }
+  .catatan { font-size: 12.5px; line-height: 1.5; color: var(--ink-2); margin: 24px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
+  .aksi { display: flex; justify-content: space-between; gap: 12px; margin-top: 32px; }
+  .aksi .btn { flex: 1; }
+  .aksi .btn.abu { flex: 0 0 auto; }
+  .jebakan { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+
+  /* Tiket */
+  #sukses[hidden] { display: none; }
+  .ok { text-align: center; margin-bottom: 28px; }
+  .ok .cek-ikon { width: 56px; height: 56px; border-radius: 50%; background: #e8f7ee; display: grid; place-items: center; margin: 0 auto 20px; }
+  .ok h3 { font-size: 32px; font-weight: 700; letter-spacing: -.03em; margin: 0 0 8px; }
+  .ok p { margin: 0; color: var(--ink-2); font-size: 16px; }
+  .tiket { background: #fafafc; border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+  .tiket .atas { padding: 24px 28px 20px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .tiket .atas small { display: block; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 4px; }
+  .tiket .atas .nm { font-size: 20px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
+  .tiket .potong { position: relative; border-top: 2px dashed var(--line); margin: 0 18px; }
+  .tiket .potong::before, .tiket .potong::after { content: ""; position: absolute; top: -13px; width: 24px; height: 24px; border-radius: 50%; background: var(--bg); border: 1px solid var(--line); }
+  .tiket .potong::before { left: -31px; } .tiket .potong::after { right: -31px; }
+  .tiket .bawah { padding: 28px; display: grid; justify-items: center; gap: 16px; }
+  .qr { width: 188px; height: 188px; padding: 12px; background: #fff; border-radius: 18px; box-shadow: 0 0 0 1px rgba(0,0,0,.06); }
+  .qr svg { width: 100%; height: 100%; display: block; }
+  .nomor-label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); text-align: center; }
+  .nomor { font: 600 28px/1.1 var(--mono); letter-spacing: .06em; text-align: center; }
+  .tiket dl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; width: 100%; margin: 4px 0 0; padding-top: 16px; border-top: 1px solid var(--line); }
+  .tiket dt { font-size: 11px; color: var(--ink-2); font-weight: 500; }
+  .tiket dd { margin: 2px 0 0; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+  .ok-aksi { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+  .langkah-lanjut { margin: 28px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; font-size: 15px; color: var(--ink-2); }
+  .langkah-lanjut li b { color: var(--ink); font-weight: 600; }
+  #mode-uji { margin-top: 20px; font-size: 13px; background: var(--surface); border-radius: 14px; padding: 14px; color: var(--ink-2); }
+  #mode-uji[hidden] { display: none; }
+
+  details { margin: 0 0 64px; border-top: 1px solid var(--line); padding-top: 20px; font-size: 14px; }
+  summary { cursor: pointer; font-weight: 600; border-radius: 8px; }
+  details p { color: var(--ink-2); }
+  .tautan { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--surface); }
+  .tautan > div { flex: 1; min-width: 0; }
+  .tautan strong { display: block; font-size: 13px; }
+  .tautan code { display: block; overflow-wrap: anywhere; font: 13px var(--mono); color: var(--ink-2); }
+  .tautan .btn, .cek-tim .btn { padding: 8px 16px; font-size: 13px; flex: none; }
+  .cek-tim { display: flex; gap: 8px; margin-top: 8px; }
+  .cek-tim input { text-transform: uppercase; font-family: var(--mono); }
+  #hasil-cek { margin-top: 12px; font-size: 14px; }
+  footer { padding-bottom: 40px; font-size: 12px; color: var(--ink-2); text-align: center; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
+
+  /* Kartu formulir ringkas */
+  .sheet { padding: 22px 18px 24px; border-radius: 20px; }
+  @media (min-width: 560px) { .sheet { padding: 26px 28px 28px; } }
+  .langkah { margin-bottom: 16px; }
+  .jl { margin-bottom: 2px; }
+  .jl h3 { font-size: 20px; }
+  label.f { margin: 12px 0 5px; font-size: 12.5px; }
+  input[type=text], input[type=tel], input[type=email], select { padding: 11px 13px; font-size: 16px; border-radius: 12px; }
+  .jalur { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+  .opsi:last-child { grid-column: 1 / -1; }
+  .opsi span { grid-template-columns: 16px 1fr; gap: 10px; align-items: center; padding: 11px 13px; border-radius: 14px; }
+  .opsi span::before { width: 16px; height: 16px; margin-top: 0; }
+  .opsi input:checked + span::before { border-width: 5px; }
+  .opsi b { font-size: 14px; line-height: 1.25; }
+  .opsi small { display: none; }
+  .opsi { display: flex; }
+  .opsi span { flex: 1; }
+  .opsi span::before { box-sizing: border-box; }
+  .cabang { margin-top: 12px; padding: 2px 14px 14px; border-radius: 16px; }
+  .cabang .judul { margin: 12px 0 0; line-height: 1.4; }
+  .cabang .judul span { color: var(--ink-2); font-weight: 400; }
+  .g2 { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .g2 > .judul, .g2 > .cek, .g2 > .catatan, .g2 > .galat { grid-column: 1 / -1; }
+  .fld { min-width: 0; display: flex; flex-direction: column; }
+  .fld > input, .fld > select { margin-top: auto; }
+  @media (min-width: 520px) {
+    .g2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 12px; }
+    .cabang .fld:last-child:nth-child(even) { grid-column: 1 / -1; }
+  }
+  .cek { margin: 12px 0 0; font-size: 13px; gap: 10px; }
+  .catatan { margin-top: 14px; padding-top: 12px; font-size: 12px; }
+  .aksi { margin-top: 18px; }
+  .btn { padding: 12px 22px; font-size: 15px; }
+  .galat { margin-top: 4px; }
+
+  /* Susunan kolom kiri dipadatkan agar terbaca tanpa menggulir */
+  h1 { font-size: clamp(30px, 4vw, 40px); margin-bottom: 12px; }
+  .sub { font-size: 17px; margin-bottom: 18px; }
+  .daftar-poin { gap: 8px; margin-bottom: 18px; font-size: 15px; }
+  .daftar-poin li::before { margin-top: 9px; }
+  .meta div { padding: 8px 0; font-size: 14px; }
+  .penutup { margin-top: 14px; }
+  .kicker { margin-bottom: 10px; }
+  @media (min-width: 900px) { .grid { padding-block: 40px 64px; } }
+
+  /* Kartu formulir lebih lega */
+  @media (min-width: 900px) { .grid { grid-template-columns: minmax(0,1fr) 560px; gap: 64px; } .wrap { max-width: 1160px; } }
+  .sheet { padding: 30px 24px 32px; border-radius: 28px; box-shadow: 0 2px 4px rgba(0,0,0,.04), 0 30px 70px rgba(24,24,40,.12); }
+  @media (min-width: 560px) { .sheet { padding: 44px 44px 46px; } }
+  .langkah { margin-bottom: 28px; }
+  .langkah i { height: 4px; }
+  .jl h3 { font-size: 30px; letter-spacing: -.02em; }
+  label.f { margin: 18px 0 8px; font-size: 14px; }
+  input[type=text], input[type=tel], input[type=email], select { padding: 15px 16px; font-size: 17px; border-radius: 14px; }
+  .jalur { gap: 12px; margin-top: 10px; }
+  .opsi span { padding: 16px 16px; border-radius: 16px; gap: 12px; grid-template-columns: 20px 1fr; }
+  .opsi span::before { width: 20px; height: 20px; }
+  .opsi input:checked + span::before { border-width: 6px; }
+  .opsi b { font-size: 16px; }
+  .cabang { margin-top: 20px; padding: 4px 22px 24px; border-radius: 20px; }
+  .cabang .judul { font-size: 13px; margin: 18px 0 0; }
+  .btn { padding: 17px 28px; font-size: 17px; }
+  .aksi { margin-top: 28px; }
+  .catatan { font-size: 13.5px; }
+  .jl h3 { font-size: 26px; }
+  @media (min-width: 560px) { .jl h3 { font-size: 30px; } }
+  .jl { align-items: baseline; gap: 12px; }
+  .jl span, .jl small, .jl .hit { white-space: nowrap; }
+  .opsi span { padding: 14px 12px; }
+  @media (min-width: 560px) { .opsi span { padding: 16px; } }
+
+  /* Kartu premium */
+  .sheet { --pad: 24px; padding: var(--pad); overflow: hidden; border: 1px solid rgba(0,0,0,.08); border-radius: 30px; box-shadow: 0 1px 1px rgba(0,0,0,.04), 0 12px 24px rgba(24,24,40,.06), 0 40px 90px rgba(24,24,40,.14); }
+  @media (min-width: 560px) { .sheet { --pad: 40px; } }
+  .kepala { margin: calc(var(--pad) * -1) calc(var(--pad) * -1) 30px; padding: 28px var(--pad) 26px; background: #151517; color: #fff; position: relative; }
+  .kepala::after { content: ""; position: absolute; left: var(--pad); right: var(--pad); bottom: 0; height: 1px; background: #f8d038; opacity: .55; }
+  .kp-a { margin: 0 0 12px; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: #f8d038; }
+  .kp-j { margin: 0 0 22px; font-size: 24px; line-height: 1.2; font-weight: 700; letter-spacing: -.025em; }
+  .kp-m { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 14px; }
+  .kp-m span { display: block; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #8e8e93; margin-bottom: 4px; }
+  .kp-m b { font-size: 14.5px; font-weight: 600; white-space: nowrap; }
+  @media (max-width: 420px) { .kp-a { letter-spacing: .1em; font-size: 10px; } .kp-j { font-size: 21px; } .kp-m { gap: 8px; } .kp-m b { font-size: 13px; } }
+  .langkah { margin-bottom: 22px; }
+  .langkah i { height: 3px; background: #ececf0; }
+  .jl { margin-bottom: 6px; }
+  .jl h3 { font-size: 28px; letter-spacing: -.03em; }
+  @media (max-width: 559px) { .jl h3 { font-size: 24px; } }
+  .hitung { font-size: 12px; font-weight: 600; letter-spacing: .06em; padding: 5px 10px; border-radius: 99px; background: var(--surface); color: var(--ink-2); white-space: nowrap; }
+  label.f { font-size: 13px; font-weight: 600; color: var(--ink); }
+  input[type=text], input[type=tel], input[type=email], select { background-color: #fafafc; border: 1px solid #e3e3e8; border-radius: 14px; transition: border-color .15s, box-shadow .15s, background-color .15s; }
+  .opsi span { border-color: #e3e3e8; background: #fff; box-shadow: 0 1px 0 rgba(0,0,0,.02); }
+  .opsi:hover span { border-color: #151517; }
+  .opsi input:checked + span { background: #151517; border-color: #151517; box-shadow: none; color: #fff; }
+  .opsi input:checked + span::before { border-color: #f8d038; background: #151517; }
+  .cabang { background: #f7f7f9; border: 1px solid #ededf1; }
+  .btn { background: #151517; color: #fff; box-shadow: 0 8px 20px rgba(21,21,23,.22); letter-spacing: -.01em; }
+  .btn:hover:not(:disabled) { background: #000; transform: translateY(-1px); }
+  .btn.abu { background: var(--surface); color: var(--ink); box-shadow: none; }
+  .btn.abu:hover:not(:disabled) { background: #e8e8ed; transform: none; }
+  #kirim { background: var(--accent); box-shadow: 0 8px 22px rgba(227,28,54,.32); }
+  #kirim:hover:not(:disabled) { background: #c9152e; }
+
+  /* Tema hitam */
+  :root { --bg: #000000; --ink: #f5f5f7; --ink-2: #9b9ba1; --surface: #1a1a1d; --line: #2e2e33; --err: #ff6b7a; --gold: #f8d038; }
+  body { background: #000; }
+  body::before { background-image: radial-gradient(rgba(255,255,255,.17) 1px, transparent 1.6px); }
+  header.bar { border-bottom-color: rgba(255,255,255,.12); }
+  .logo img { background: #fff; padding: 7px 14px; border-radius: 14px; height: 56px; }
+  .kicker { color: var(--gold); }
+  .daftar-poin li::before { background: var(--gold); }
+  .meta div, .meta { border-color: rgba(255,255,255,.12); }
+  .sheet { background: #0e0e10; border: 1px solid #2a2a2f; box-shadow: 0 0 0 1px rgba(248,208,56,.06), 0 40px 100px rgba(0,0,0,.8); }
+  .kepala { background: #17171a; border-bottom: 0; }
+  .kepala::after { opacity: .7; }
+  .langkah i { background: #26262b; }
+  .langkah i.on { background: var(--gold); }
+  .hitung { background: #1c1c20; color: #b9b9bf; }
+  label.f { color: #e9e9ee; }
+  input[type=text], input[type=tel], input[type=email], select { background-color: #17171a; border-color: #303036; color: var(--ink); }
+  input::placeholder { color: #6e6e75; }
+  input:focus, select:focus { background-color: #1c1c20; border-color: var(--gold); box-shadow: 0 0 0 4px rgba(248,208,56,.16); }
+  select option { background: #17171a; color: var(--ink); }
+  .opsi span { background: #141417; border-color: #2e2e33; }
+  .opsi:hover span { border-color: #6b6b72; }
+  .opsi input:checked + span { background: rgba(248,208,56,.09); border-color: var(--gold); color: #fff; box-shadow: 0 0 0 1px var(--gold) inset; }
+  .opsi input:checked + span::before { border-color: var(--gold); background: #0e0e10; }
+  .cabang { background: #141417; border-color: #26262b; }
+  .cabang .judul { color: var(--gold); }
+  .cabang input, .cabang select { background-color: #1c1c20; }
+  .btn { background: #f5f5f7; color: #000; box-shadow: 0 8px 24px rgba(255,255,255,.08); }
+  .btn:hover:not(:disabled) { background: #fff; }
+  .btn.abu { background: #1f1f23; color: #f5f5f7; }
+  .btn.abu:hover:not(:disabled) { background: #2a2a2f; }
+  #kirim { background: var(--accent); color: #fff; box-shadow: 0 8px 28px rgba(227,28,54,.38); }
+  #kirim:hover:not(:disabled) { background: #f0243f; }
+  .btn:focus-visible, summary:focus-visible { outline-color: rgba(248,208,56,.6); }
+  .catatan { border-top-color: #26262b; }
+  .tiket { background: #141417; border-color: #2e2e33; }
+  .tiket .potong::before, .tiket .potong::after { background: #0e0e10; border-color: #2e2e33; }
+  .qr { box-shadow: 0 0 0 1px rgba(255,255,255,.1); }
+  .tiket .nomor, #nomor { color: var(--gold); }
+  details { border-top-color: rgba(255,255,255,.12); }
+  footer, .foot { color: var(--ink-2); }
+  select { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%239b9ba1' stroke-width='1.8' stroke-linecap='round'><path d='M1 1.5l5 5 5-5'/></svg>"); }
+  select { padding-right: 40px; text-overflow: ellipsis; }
+  input[type=checkbox] { accent-color: #f8d038; }
+  .meta .pembicara dd { white-space: nowrap; font-size: 13px; }
+  @media (max-width: 899px) { .meta .pembicara { flex-direction: column; align-items: flex-start; gap: 4px; } .meta .pembicara dd { font-size: min(11.5px, calc((100vw - 42px) / 36.8)); text-align: left; } }
+  .meta dt, .meta dd { font-size: 11px; white-space: nowrap; }
+  @media (max-width: 899px) { .meta dt, .meta dd { font-size: min(11.5px, calc((100vw - 42px) / 36.8)); text-align: left; } .meta div { flex-direction: column; align-items: flex-start; gap: 3px; } }
+  header.bar { justify-content: flex-start; gap: 20px; }
+  .judul-bar { padding-left: 20px; border-left: 1px solid rgba(255,255,255,.2); display: grid; gap: 2px; line-height: 1.25; }
+  .judul-bar b { font-size: 15px; font-weight: 600; letter-spacing: .02em; color: #f8d038; text-transform: uppercase; font-size: 13px; letter-spacing: .14em; }
+  .judul-bar span { font-size: 14px; color: var(--ink-2); }
+  @media (max-width: 480px) { header.bar { gap: 14px; } .judul-bar { padding-left: 14px; } .judul-bar b { font-size: 11px; letter-spacing: .1em; } .judul-bar span { font-size: 12px; } .logo img { height: 48px; padding: 6px 11px; } }
+  .bhs { margin-left: auto; display: inline-flex; padding: 3px; border: 1px solid #2e2e33; border-radius: 99px; background: #0e0e10; }
+  .bhs button { font: 600 12px/1 var(--font); letter-spacing: .08em; padding: 8px 14px; border: 0; border-radius: 99px; background: transparent; color: var(--ink-2); cursor: pointer; }
+  .bhs button[aria-pressed="true"] { background: #f8d038; color: #000; }
+  .bhs button:focus-visible { outline: 2px solid #f8d038; outline-offset: 2px; }
+  @media (max-width: 480px) { .judul-bar { flex: 1; min-width: 0; } .judul-bar span { display: none; } .bhs button { padding: 7px 10px; font-size: 11px; } header.bar { gap: 12px; } }
+  /* Tipografi premium: serif untuk judul, Manrope untuk isi */
+  h1, .jl h3, .kp-j, .ok h3, .tiket .atas .nm { font-family: var(--serif); font-weight: 700; letter-spacing: -.012em; }
+  h1 { font-size: clamp(30px, 3.7vw, 42px); line-height: 1.12; }
+  .jl h3 { font-size: 30px; line-height: 1.15; letter-spacing: -.01em; }
+  @media (max-width: 559px) { .jl h3 { font-size: 25px; } }
+  .kp-j { font-size: 25px; line-height: 1.2; font-weight: 700; }
+  @media (max-width: 420px) { .kp-j { font-size: 21px; } }
+  .ok h3 { font-size: 30px; }
+  .tiket .atas .nm { font-size: 22px; }
+  body { letter-spacing: -.005em; }
+  .nomor, #t-nomor { font-family: var(--mono); font-weight: 600; letter-spacing: .06em; }
+  /* Kartu: Sora lebih ringan dan lapang */
+  body { font-size: 15px; font-weight: 400; letter-spacing: 0; }
+  .sheet { font-weight: 400; }
+  label.f { font-size: 12.5px; font-weight: 500; letter-spacing: .01em; color: #d8d8de; }
+  .opsi b { font-size: 14px; font-weight: 500; }
+  input[type=text], input[type=tel], input[type=email], select { font-size: 15px; font-weight: 400; }
+  .btn { font-size: 15px; font-weight: 500; letter-spacing: .02em; }
+  .kp-m b { font-size: 13.5px; font-weight: 500; }
+  .daftar-poin { font-size: 14px; }
+  .sub { font-weight: 300; font-size: 15px; }
+  .cek span, .catatan { font-size: 12.5px; }
+</style>
+
+<div class="wrap">
+  <header class="bar">
+    <div class="logo" id="logo"></div>
+    <div class="judul-bar"><b data-en="Exclusive Registration">Registrasi Eksklusif</b><span>Retrograde Mercury Trading 2026</span></div>
+    <div class="bhs" role="group" aria-label="Bahasa / Language"><button type="button" data-l="id">ID</button><button type="button" data-l="en">EN</button></div>
+  </header>
+
+  <div class="grid">
+    <section class="kiri">
+      <p class="kicker">A-CLUB · Exclusive Webinar</p>
+      <h1 data-en="Retrograde Mercury calls for a trading plan, not a feeling.">Retrograde Mercury butuh trading plan, bukan feeling.</h1>
+      <p class="sub" data-en="One live session to break down Gold scenarios, complete with entry, take profit, stop loss, and risk management.">Satu sesi live untuk membedah skenario Gold, lengkap dengan entry, take profit, stop loss, dan manajemen risiko.</p>
+      <h2 class="k" data-en="What you will get in this webinar">Di webinar ini kamu akan dapat</h2>
+      <ul class="daftar-poin">
+        <li><span data-en="<b>Gold market outlook in the late 2026 Mercury Retrograde.</b> Reading timing and levels in the final cycle of the year."><b>Outlook market Gold di Mercury Retrograde akhir 2026.</b> Membaca waktu dan level pada siklus terakhir tahun ini.</span></li>
+        <li><span data-en="<b>Breaking down the 1,618 pips scenario in Gold.</b> The opportunity and its risks, discussed in a measured way."><b>Bedah skenario 1.618 pips di Gold.</b> Peluang dan risikonya dibahas secara terukur.</span></li>
+        <li><span data-en="<b>Entry, take profit, and stop loss strategy.</b> Complete with risk management."><b>Strategi entry, take profit, dan stop loss.</b> Lengkap dengan manajemen risiko.</span></li>
+        <li><span data-en="<b>Trading psychology during Mercury Retrograde.</b> Staying disciplined, the Dr. Gema Goeyardi way."><b>Psikologi trading saat Mercury Retrograde.</b> Menjaga disiplin ala Dr. Gema Goeyardi.</span></li>
+      </ul>
+      <dl class="meta">
+        <div><dt data-en="Schedule">Jadwal</dt><dd id="jadwal"></dd></div>
+        <div class="pembicara"><dt data-en="Speakers">Pembicara</dt><dd data-en="Dr. Gema Goeyardi, ATP, CAT, CFTe, MFTA, Asst. Prof and Coach Robert">Dr. Gema Goeyardi, ATP, CAT, CFTe, MFTA, Asst. Prof dan Coach Robert</dd></div>
+        <div><dt data-en="Ticket">Tiket</dt><dd data-en="IDR 249,000">Rp249.000</dd></div>
+      </dl>
+      <p class="penutup" data-en="Enter the market with a plan, not with hope.">Masuklah ke market dengan rencana, bukan dengan harapan.</p>
+    </section>
+
+    <section id="daftar">
+      <p id="kuota-teks" hidden></p>
+<div class="sheet">
+      <form id="form" novalidate>
+        <div class="jebakan" aria-hidden="true"><label>Jangan diisi <input type="text" name="situs" tabindex="-1" autocomplete="off"></label></div>
+        <div class="kepala">
+          <p class="kp-a">A-CLUB · Exclusive Webinar · Live on Zoom</p>
+          <p class="kp-j">End of 2026 Retrograde Mercury Trading</p>
+          <div class="kp-m">
+            <div><span data-en="Date">Tanggal</span><b data-en="Mon, 26 Oct 2026">Senin, 26 Okt 2026</b></div>
+            <div><span data-en="Time">Pukul</span><b data-en="7:00 PM WIB">19.00 WIB</b></div>
+            <div><span data-en="Ticket">Tiket</span><b data-en="IDR 249,000">Rp249.000</b></div>
+          </div>
+        </div>
+        <div class="langkah" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+        <div class="jl"><h3 id="judul-form">Amankan kursimu.</h3><span class="hitung" id="hitung">1 dari 3</span></div>
+
+        <div class="tahap" data-t="1">
+          <div class="fld"><label class="f" data-en="Where did you hear about Astronacci?">Kamu mengenal Astronacci dari mana?</label>
+          <div class="jalur" id="jalur"></div>
+          <div class="galat" id="galat-jalur" role="alert"></div>
+
+          <div class="cabang g2" data-for="iklan" hidden><p class="judul">Asal iklan</p>
+            <label class="f" for="platform" data-en="Platform">Platform</label>
+            <select id="platform" name="platform" disabled><option value="" data-en="Select platform">Pilih platform</option><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>YouTube</option><option value="Lainnya" data-en="Other">Lainnya</option></select></div></div>
+          <div class="cabang g2" data-for="aktivasi" hidden><p class="judul">Brand activation</p>
+            <div class="fld"><label class="f" for="lokasi" data-en="Event name or location">Nama acara atau lokasi</label>
+            <input type="text" id="lokasi" name="lokasi" disabled></div>
+            <div class="fld"><label class="f" for="komunitas" data-en="Community <span class='hint'>(optional)</span>">Komunitas <span class="hint">(opsional)</span></label>
+            <input type="text" id="komunitas" name="komunitas" disabled></div></div>
+          <div class="cabang g2" data-for="kampus" hidden><p class="judul">Program kampus</p>
+            <div class="fld"><label class="f" for="kampus" data-en="Campus name">Nama kampus</label>
+            <input type="text" id="kampus" name="kampus" disabled></div>
+            <div class="fld"><label class="f" for="prodi" data-en="Study program or faculty">Program studi atau fakultas</label>
+            <input type="text" id="prodi" name="prodi" disabled></div>
+            <div class="fld"><label class="f" for="status_kampus">Status</label>
+            <select id="status_kampus" name="status_kampus" disabled><option value="" data-en="Select status">Pilih status</option><option value="Mahasiswa aktif" data-en="Active student">Mahasiswa aktif</option><option value="Dosen atau staf" data-en="Lecturer or staff">Dosen atau staf</option><option>Alumni</option><option value="Lainnya" data-en="Other">Lainnya</option></select></div>
+            <div class="fld"><label class="f" for="nim" data-en="Student ID <span class='hint'>(optional, for student offers)</span>">Nomor induk mahasiswa <span class="hint">(opsional, untuk penawaran mahasiswa)</span></label>
+            <input type="text" id="nim" name="nim" disabled></div></div>
+          <div class="cabang g2" data-for="institusi" hidden><p class="judul">Institusi</p>
+            <div class="fld"><label class="f" for="mitra" data-en="Partner institution or community">Institusi atau komunitas mitra</label>
+            <input type="text" id="mitra" name="mitra" disabled></div>
+            <div class="fld"><label class="f" for="jabatan" data-en="Position or role">Jabatan atau peran</label>
+            <input type="text" id="jabatan" name="jabatan" disabled></div></div>
+          <div class="cabang g2" data-for="kontak" hidden><p class="judul">Rekomendasi langsung</p>
+            <div class="fld"><label class="f" for="ref" data-en="How did you hear about A-CLUB?">Dari mana kamu mengenal A-CLUB?</label>
+            <select id="ref" name="ref" disabled><option value="" data-en="Select one">Pilih salah satu</option><option value="Video Dr. Gema Goeyardi, ATP, CAT, CFTe, MFTA, Asst. Prof" data-en="Video by Dr. Gema Goeyardi, ATP, CAT, CFTe, MFTA, Asst. Prof">Video Dr. Gema Goeyardi, ATP, CAT, CFTe, MFTA, Asst. Prof</option><option value="Artikel di situs Astronacci" data-en="Article on the Astronacci site">Artikel di situs Astronacci</option><option value="Rekomendasi teman atau rekan" data-en="Recommendation from a friend or colleague">Rekomendasi teman atau rekan</option><option value="Webinar sebelumnya" data-en="Previous webinar">Webinar sebelumnya</option><option value="Lainnya" data-en="Other">Lainnya</option></select></div></div>
+        </div>
+
+        <div class="tahap g2" data-t="2" hidden>
+          <div class="fld"><label class="f" for="nama" data-en="Full name">Nama lengkap</label>
+          <input type="text" id="nama" name="nama" autocomplete="name">
+          <div class="galat" id="galat-nama" role="alert"></div></div>
+          <div class="fld"><label class="f" for="wa" data-en="WhatsApp number <span class='hint'>(example: 081234567890)</span>">Nomor WhatsApp <span class="hint">(contoh: 081234567890)</span></label>
+          <input type="tel" id="wa" name="wa" autocomplete="tel" inputmode="tel">
+          <div class="galat" id="galat-wa" role="alert"></div></div>
+          <div class="fld"><label class="f" for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email">
+          <div class="galat" id="galat-email" role="alert"></div></div>
+          <div class="fld"><label class="f" for="kota" data-en="City of residence">Kota domisili</label>
+          <input type="text" id="kota" name="kota" autocomplete="address-level2">
+          <div class="galat" id="galat-kota" role="alert"></div></div>
+        </div>
+
+        <div class="tahap g2" data-t="3" hidden>
+          <div class="fld"><label class="f" for="tujuan" data-en="What do you most want to gain?">Apa yang paling ingin kamu dapat?</label>
+          <select id="tujuan" name="tujuan"><option value="" data-en="Select one">Pilih satu</option><option value="Memahami outlook Gold" data-en="Understand the Gold outlook">Memahami outlook Gold</option><option value="Menyusun entry, take profit, dan stop loss" data-en="Plan entry, take profit, and stop loss">Menyusun entry, take profit, dan stop loss</option><option value="Mengelola psikologi trading" data-en="Manage trading psychology">Mengelola psikologi trading</option><option value="Menambah wawasan" data-en="Broaden my knowledge">Menambah wawasan</option></select>
+          <div class="galat" id="galat-tujuan" role="alert"></div></div>
+          <div class="fld"><label class="f" for="pengalaman" data-en="Trading experience">Pengalaman trading</label>
+          <select id="pengalaman" name="pengalaman"><option value="" data-en="Select experience">Pilih pengalaman</option><option value="Belum pernah" data-en="Never traded">Belum pernah</option><option value="Kurang dari 1 tahun" data-en="Less than 1 year">Kurang dari 1 tahun</option><option value="1 sampai 3 tahun" data-en="1 to 3 years">1 sampai 3 tahun</option><option value="Lebih dari 3 tahun" data-en="More than 3 years">Lebih dari 3 tahun</option></select>
+          <div class="galat" id="galat-pengalaman" role="alert"></div></div>
+          <div class="fld"><label class="f" for="hadir" data-en="Attendance confirmation">Konfirmasi kehadiran</label>
+          <select id="hadir" name="hadir"><option value="" data-en="Select">Pilih kesiapan</option><option value="Pasti hadir" data-en="Will definitely attend">Pasti hadir</option><option value="Kemungkinan hadir" data-en="Likely to attend">Kemungkinan hadir</option></select>
+          <div class="galat" id="galat-hadir" role="alert"></div></div>
+          <div class="fld"><label class="f" for="konsultasi" data-en="After the session, may we contact you to discuss the A-CLUB program?">Setelah sesi, bersediakah kamu dihubungi untuk membahas program A-CLUB?</label>
+          <select id="konsultasi" name="konsultasi"><option value="" data-en="Select an answer">Pilih jawaban</option><option value="Ya" data-en="Yes">Ya</option><option value="Mungkin, setelah melihat webinar" data-en="Maybe, after the webinar">Mungkin, setelah melihat webinar</option><option value="Tidak" data-en="No">Tidak</option></select>
+          <div class="galat" id="galat-konsultasi" role="alert"></div></div>
+          <label class="cek"><input type="checkbox" id="setuju_data" name="setuju_data"><span data-en="I consent to my data being used for webinar registration, reminders, and A-CLUB program offers in accordance with applicable personal data protection regulations.">Saya menyetujui data saya dipakai untuk pendaftaran webinar, pengingat, dan penawaran program A-CLUB sesuai ketentuan pelindungan data pribadi yang berlaku.</span></label>
+          <div class="galat" id="galat-setuju_data" role="alert"></div>
+          <label class="cek"><input type="checkbox" id="setuju_wa" name="setuju_wa"><span data-en="I agree to be contacted via WhatsApp by the A-CLUB team.">Saya bersedia dihubungi lewat WhatsApp oleh tim A-CLUB.</span></label>
+          <div class="galat" id="galat-setuju_wa" role="alert"></div>
+          <p class="catatan" data-en="This webinar is for education only, not an investment recommendation or an invitation to buy or sell securities. Trading involves risk of loss and does not promise profit.">Webinar ini bersifat edukasi, bukan rekomendasi investasi atau ajakan membeli dan menjual efek. Trading mengandung risiko kerugian dan tidak menjanjikan keuntungan.</p>
+        </div>
+
+        <div class="aksi">
+          <button type="button" class="btn abu" id="kembali" hidden data-en="Back">Kembali</button>
+          <button type="button" class="btn" id="lanjut" data-en="Continue">Lanjutkan</button>
+          <button type="submit" class="btn" id="kirim" hidden data-en="Secure my seat">Amankan kursi saya</button>
+        </div>
+        <div class="galat" id="galat-kirim" role="alert"></div>
+      </form>
+
+      <div id="sukses" hidden aria-live="polite">
+        <div class="ok">
+          <div class="cek-ikon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1a8f4a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+          <h3 data-en="Your reservation is confirmed.">Reservasimu tercatat.</h3>
+          <p id="sukses-teks"></p>
+        </div>
+        <div class="tiket" id="tiket">
+          <div class="atas">
+            <div><small data-en="Registrant">Pendaftar</small><div class="nm" id="t-nama"></div></div>
+            <div class="wordmark" style="text-align:right">A-CLUB</div>
+          </div>
+          <div class="potong"></div>
+          <div class="bawah">
+            <div class="qr" id="t-qr" role="img" aria-label="Kode QR nomor reservasi"></div>
+            <div><div class="nomor-label" data-en="Reservation number">Nomor reservasi</div><div class="nomor" id="t-nomor"></div></div>
+            <dl>
+              <div><dt data-en="Event">Acara</dt><dd>Retrograde Mercury Trading</dd></div>
+              <div><dt data-en="Schedule">Jadwal</dt><dd id="t-jadwal"></dd></div>
+              <div><dt data-en="Channel">Jalur</dt><dd id="t-jalur"></dd></div>
+              <div><dt data-en="Ticket">Tiket</dt><dd data-en="IDR 249,000">Rp249.000</dd></div>
+              <div><dt data-en="Registered">Terdaftar</dt><dd id="t-waktu"></dd></div>
+            </dl>
+          </div>
+        </div>
+        <div class="ok-aksi">
+          <button type="button" class="btn abu" id="salin-nomor" data-en="Copy number">Salin nomor</button>
+        </div>
+        <ul class="langkah-lanjut">
+          <li data-en="<b>Keep this ticket.</b> Take a screenshot. Your reservation number and QR code are proof of registration."><b>Simpan tiket ini.</b> Ambil tangkapan layar. Nomor reservasi dan kode QR adalah bukti pendaftaranmu.</li>
+          <li data-en="<b>Wait for the WhatsApp confirmation.</b> The A-CLUB team will contact you within 24 hours with confirmation, ticket payment instructions, and the Zoom link."><b>Tunggu konfirmasi WhatsApp.</b> Tim A-CLUB menghubungimu dalam 24 jam untuk konfirmasi, instruksi pembayaran tiket, dan tautan Zoom.</li>
+          <li data-en="<b>Show the QR code</b> at re-registration."><b>Tunjukkan kode QR</b> saat registrasi ulang.</li>
+        </ul>
+        <div id="mode-uji" hidden><span data-en="Test mode: no data endpoint is set, so data is only stored in this browser.">Mode uji: alamat penerima data belum diisi, jadi data hanya tersimpan di peramban ini.</span> <button type="button" class="btn abu" id="unduh" data-en="Copy test data (CSV)">Salin data uji (CSV)</button></div>
+      </div>
+    </div>
+      </section>
+  </div>
+
+
+  <footer>Astronacci Trading + Research · Your Professional Trading Partner</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+/* ---------- Pengaturan ---------- */
+const CONFIG = {
+  // Logo resmi Astronacci: tempel data URI gambar (PNG atau SVG). Kosong = teks nama merek.
+  logo: "data:image/png;base64,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",
+  // Contoh: "Sabtu, 24 Oktober 2026, 19.00 WIB". Kosong = diumumkan lewat WhatsApp.
+  jadwal: "Senin, 26 Oktober 2026, 19.00 WIB via Zoom",
+  jadwal_en: "Monday, 26 October 2026, 7:00 PM WIB via Zoom",
+  // Alamat penerima data pendaftaran (webhook n8n, Google Apps Script, Supabase Edge Function, dan sejenisnya). Menerima POST berisi JSON. Kosong = mode uji, data hanya di peramban.
+  endpoint: "",
+  campaign: "retrograde-mercury-2026"
+};
+
+const JALUR = {
+  iklan:     { label: "Iklan berbayar", desc: "Instagram, Facebook, TikTok, atau YouTube", medium: "paid", en: { label: "Paid ads", desc: "Instagram, Facebook, TikTok, or YouTube" } },
+  aktivasi:  { label: "Brand activation", desc: "Booth atau event komunitas dan investasi", medium: "aktivasi", en: { label: "Brand activation", desc: "Booth or community and investment event" } },
+  kampus:    { label: "Program kampus", desc: "Kuliah umum atau kelas di kampus", medium: "kampus", en: { label: "Campus program", desc: "Guest lecture or class on campus" } },
+  institusi: { label: "Institusi", desc: "Webinar bersama kampus, komunitas, asosiasi profesi, atau perusahaan mitra", medium: "kemitraan", en: { label: "Institution", desc: "Webinar with a partner campus, community, professional association, or company" } },
+  kontak:    { label: "Rekomendasi langsung", desc: "Video Dr. Gema Goeyardi, ATP, CAT, CFTe, MFTA, Asst. Prof, artikel Astronacci, atau rekomendasi rekan", medium: "organik", en: { label: "Direct recommendation", desc: "Video by Dr. Gema Goeyardi, ATP, CAT, CFTe, MFTA, Asst. Prof, an Astronacci article, or a peer recommendation" } }
+};
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const q = new URLSearchParams(location.search);
+const P = (...k) => { for (const x of k) if (q.get(x)) return q.get(x); return ""; };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const lsGet = k => { try { return localStorage.getItem(k); } catch { return null; } };
+const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+
+/* ---------- Bahasa ---------- */
+let LANG = (() => { const u = q.get("lang"); if (u === "en" || u === "id") return u; const v = lsGet("bahasa"); return v === "en" ? "en" : "id"; })();
+const TXT = {
+  id: { hitung: n => n + " dari 3", judul: ["Amankan kursimu.", "Data dirimu", "Profil trading dan persetujuan"], wajib: "Wajib diisi.", pilih: "Pilih salah satu.", wa: "Nomor WhatsApp tidak valid. Contoh: 081234567890.", email: "Alamat email tidak valid.", setuju: "Persetujuan wajib dicentang.", simpan: "Menyimpan...", kirim: "Amankan kursi saya", gagal: "Reservasi belum tersimpan. Periksa koneksi lalu coba lagi.", tersalin: "Nomor tersalin", salin: "Salin nomor", csvOk: "CSV tersalin", csvGagal: "Gagal menyalin", qrAlt: "Gunakan nomor reservasi", qrLabel: "Kode QR nomor reservasi", terima: (n, j) => `Terima kasih, ${n}. Reservasimu lewat jalur ${j} sudah tercatat.`, tunai: "Diumumkan lewat WhatsApp", loc: "id-ID", title: "Pendaftaran Webinar Retrograde Mercury Trading" },
+  en: { hitung: n => n + " of 3", judul: ["Secure your seat.", "Your details", "Trading profile and consent"], wajib: "Required.", pilih: "Please choose one.", wa: "Invalid WhatsApp number. Example: 081234567890.", email: "Invalid email address.", setuju: "Consent is required.", simpan: "Saving...", kirim: "Secure my seat", gagal: "Your reservation was not saved. Check your connection and try again.", tersalin: "Number copied", salin: "Copy number", csvOk: "CSV copied", csvGagal: "Copy failed", qrAlt: "Use the reservation number", qrLabel: "QR code of the reservation number", terima: (n, j) => `Thank you, ${n}. Your reservation via ${j} has been recorded.`, tunai: "Announced via WhatsApp", loc: "en-GB", title: "Retrograde Mercury Trading Webinar Registration" }
+};
+const L = k => TXT[LANG][k];
+const jl = k => LANG === "en" ? JALUR[k].en.label : JALUR[k].label;
+const jd = k => LANG === "en" ? JALUR[k].en.desc : JALUR[k].desc;
+
+/* ---------- Logo dan jadwal ---------- */
+$("#logo").innerHTML = CONFIG.logo
+  ? `<img src="${esc(CONFIG.logo)}" alt="Astronacci Trading + Research">`
+  : `<div class="wordmark">Astronacci<small>Trading + Research</small></div>`;
+const jadwalTeks = () => (LANG === "en" ? (CONFIG.jadwal_en || CONFIG.jadwal) : CONFIG.jadwal) || L("tunai");
+
+/* ---------- Pilihan jalur ---------- */
+function renderJalur() {
+  const cur = ($("input[name=jalur]:checked") || {}).value;
+  $("#jalur").innerHTML = Object.keys(JALUR).map(k =>
+    `<label class="opsi"><input type="radio" name="jalur" value="${k}"${cur === k ? " checked" : ""}><span><div><b>${esc(jl(k))}</b><small>${esc(jd(k))}</small></div></span></label>`).join("");
+  $$("input[name=jalur]").forEach(r => r.addEventListener("change", e => { tampilkanJalur(e.target.value); $("#galat-jalur").textContent = ""; }));
+}
+function tampilkanJalur(k) {
+  $$(".cabang").forEach(fs => {
+    const aktif = fs.dataset.for === k;
+    fs.hidden = !aktif;
+    if (aktif) { const j = $('.judul', fs); if (j) j.innerHTML = esc(jl(k)) + ' <span>· ' + esc(jd(k)) + '</span>'; }
+    $$("input,select", fs).forEach(el => { el.disabled = !aktif; });
+  });
+}
+renderJalur();
+
+/* ---------- Isi otomatis dari tautan pendek: ?s=kampus&k=Nama ---------- */
+let awal = P("s", "sumber");
+if (!JALUR[awal]) awal = P("k", "kampus") ? "kampus" : P("m", "mitra") ? "institusi" : P("l", "lokasi") ? "aktivasi" : "";
+if (awal) { $(`input[name=jalur][value=${awal}]`).checked = true; tampilkanJalur(awal); }
+[["k", "kampus", "kampus"], ["m", "mitra", "mitra"], ["l", "lokasi", "lokasi"], ["p", "platform", "platform"]].forEach(([a, b, id]) => {
+  const v = P(a, b), el = $("#" + id); if (v && el) el.value = v;
+});
+
+/* ---------- Validasi ---------- */
+const normalisasiWa = v => { let d = v.replace(/[^\d+]/g, ""); if (d.startsWith("+")) d = d.slice(1); if (d.startsWith("0")) d = "62" + d.slice(1); return d; };
+const waValid = d => /^628\d{8,12}$/.test(d);
+const emailValid = v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const OPSIONAL = ["komunitas", "nim"];
+function dataForm() {
+  const f = Object.fromEntries(new FormData($("#form")).entries());
+  f.setuju_data = $("#setuju_data").checked; f.setuju_wa = $("#setuju_wa").checked;
+  return f;
+}
+function validasiTahap(t, f) {
+  const g = {};
+  if (t === 1) {
+    if (!f.jalur) g.jalur = L("pilih");
+    $$(".cabang:not([hidden]) input, .cabang:not([hidden]) select").forEach(el => { if (!OPSIONAL.includes(el.id) && !el.value.trim()) g[el.id] = L("wajib"); });
+  }
+  if (t === 2) {
+    ["nama", "kota"].forEach(k => { if (!(f[k] || "").trim()) g[k] = L("wajib"); });
+    if (!waValid(normalisasiWa(f.wa || ""))) g.wa = L("wa");
+    if (!emailValid(f.email || "")) g.email = L("email");
+  }
+  if (t === 3) {
+    ["tujuan", "pengalaman", "hadir", "konsultasi"].forEach(k => { if (!(f[k] || "").trim()) g[k] = L("wajib"); });
+    if (!f.setuju_data) g.setuju_data = L("setuju");
+    if (!f.setuju_wa) g.setuju_wa = L("setuju");
+  }
+  return g;
+}
+function tampilGalat(g) {
+  $$("#form .galat").forEach(x => x.textContent = "");
+  $$("#form [aria-invalid]").forEach(x => x.removeAttribute("aria-invalid"));
+  const kunci = Object.keys(g);
+  kunci.forEach(k => {
+    const inp = $("#" + k); let el = $("#galat-" + k);
+    if (!el && inp) { el = document.createElement("div"); el.className = "galat"; el.id = "galat-" + k; el.setAttribute("role", "alert"); inp.after(el); }
+    if (el) el.textContent = g[k];
+    if (inp) inp.setAttribute("aria-invalid", "true");
+  });
+  if (kunci.length) ($("#" + kunci[0]) || $("input[name=jalur]")).focus();
+  return kunci.length === 0;
+}
+
+/* ---------- Langkah ---------- */
+let t = 1;
+function ke(n) {
+  t = n;
+  $$(".tahap").forEach(x => x.hidden = +x.dataset.t !== n);
+  $$(".langkah i").forEach((x, i) => x.classList.toggle("on", i < n));
+  $("#hitung").textContent = L("hitung")(n);
+  $("#kembali").hidden = n === 1; $("#lanjut").hidden = n === 3; $("#kirim").hidden = n !== 3;
+  $("#judul-form").textContent = L("judul")[n - 1];
+}
+$("#lanjut").addEventListener("click", () => { if (tampilGalat(validasiTahap(t, dataForm()))) ke(t + 1); });
+$("#kembali").addEventListener("click", () => ke(t - 1));
+$("#form").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.tagName !== "BUTTON" && t < 3) { e.preventDefault(); $("#lanjut").click(); } });
+
+/* ---------- Label awal prospek (untuk tim Sales) ---------- */
+function labelAwal(f) {
+  let skor = 1;
+  skor += { "Menyusun entry, take profit, dan stop loss": 2, "Mengelola psikologi trading": 2, "Memahami outlook Gold": 1, "Menambah wawasan": 0 }[f.tujuan] ?? 0;
+  skor += { "Pasti hadir": 2, "Kemungkinan hadir": 1, "Ingin rekaman saja": 0 }[f.hadir] ?? 0;
+  skor += { "Ya": 1, "Mungkin, setelah melihat webinar": 0.5, "Tidak": 0 }[f.konsultasi] ?? 0;
+  return { skor, label: skor >= 4.5 ? "A" : skor >= 3 ? "B" : "C" };
+}
+
+/* ---------- Nomor reservasi ---------- */
+const ABJAD = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"; // tanpa 0, 1, I, L, O agar mudah dibaca
+function buatNomor() {
+  const b = new Uint8Array(6); crypto.getRandomValues(b);
+  return "ACL-" + [...b].map(x => ABJAD[x % ABJAD.length]).join("");
+}
+
+/* ---------- Tiket ---------- */
+function gambarQr(teks) {
+  try {
+    const qr = qrcode(0, "M"); qr.addData(teks); qr.make();
+    return qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+  } catch { return ""; }
+}
+let tiketAktif = null;
+function tampilTiket(d) {
+  tiketAktif = d;
+  $("#t-nama").textContent = d.nama;
+  $("#t-nomor").textContent = d.nomor;
+  $("#t-jadwal").textContent = jadwalTeks();
+  $("#t-jalur").textContent = JALUR[d.jalur] ? jl(d.jalur) : d.jalur_label;
+  $("#t-waktu").textContent = new Date(d.waktu).toLocaleString(L("loc"), { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  const svg = gambarQr(d.nomor);
+  $("#t-qr").innerHTML = svg || `<div style="display:grid;place-items:center;height:100%;font-size:12px;color:#6e6e73;text-align:center">${esc(L("qrAlt"))}</div>`;
+  $("#sukses-teks").textContent = L("terima")(d.nama, JALUR[d.jalur] ? jl(d.jalur) : d.jalur_label);
+  $("#t-qr").setAttribute("aria-label", L("qrLabel"));
+  $("#form").hidden = true; $("#sukses").hidden = false;
+}
+$("#salin-nomor").addEventListener("click", async e => {
+  const b = e.currentTarget, n = $("#t-nomor").textContent;
+  try { await navigator.clipboard.writeText(n); b.textContent = L("tersalin"); } catch { b.textContent = n; }
+  setTimeout(() => b.textContent = L("salin"), 2000);
+});
+
+/* ---------- Kirim ---------- */
+$("#form").addEventListener("submit", async e => {
+  e.preventDefault();
+  const f = dataForm();
+  if (f.situs) return;
+  for (const n of [1, 2, 3]) { const g = validasiTahap(n, f); if (Object.keys(g).length) { ke(n); tampilGalat(g); return; } }
+  const { skor, label } = labelAwal(f);
+  const data = {
+    ...f, wa: normalisasiWa(f.wa), email: f.email.trim().toLowerCase(), nama: f.nama.trim(),
+    jalur_label: JALUR[f.jalur].label, bahasa: LANG,
+    utm_source: P("utm_source") || f.jalur, utm_medium: P("utm_medium") || JALUR[f.jalur].medium,
+    utm_campaign: P("utm_campaign") || CONFIG.campaign, utm_content: P("utm_content"),
+    skor_awal: skor, label_awal: label, status: "terdaftar", waktu: new Date().toISOString()
+  };
+  delete data.situs;
+  const btn = $("#kirim"); btn.disabled = true; btn.textContent = L("simpan");
+  try {
+    data.nomor = buatNomor();
+    if (CONFIG.endpoint) {
+      const res = await fetch(CONFIG.endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(data) });
+      if (!res.ok) throw new Error("Server " + res.status);
+    } else {
+      try { const a = JSON.parse(lsGet("pendaftaran-uji") || "[]"); a.push(data); lsSet("pendaftaran-uji", JSON.stringify(a)); } catch {}
+      $("#mode-uji").hidden = false;
+    }
+    lsSet("tiket-acl", JSON.stringify(data));
+    tampilTiket(data);
+    $("#daftar").scrollIntoView({ block: "start" });
+  } catch (err) {
+    $("#galat-kirim").textContent = L("gagal");
+    btn.disabled = false; btn.textContent = L("kirim");
+  }
+});
+/* ---------- Terapkan bahasa ---------- */
+function terapkanBahasa() {
+  document.documentElement.lang = LANG;
+  document.title = L("title");
+  $$("[data-en]").forEach(el => {
+    if (el.dataset.id === undefined) el.dataset.id = el.innerHTML;
+    el.innerHTML = LANG === "en" ? el.dataset.en : el.dataset.id;
+  });
+  $$(".bhs button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.l === LANG)));
+  $("#jadwal").textContent = jadwalTeks();
+  renderJalur();
+  const aktif = ($("input[name=jalur]:checked") || {}).value; if (aktif) tampilkanJalur(aktif);
+  ke(t);
+  $$("#form .galat").forEach(x => x.textContent = "");
+  if (!$("#sukses").hidden && tiketAktif) tampilTiket(tiketAktif);
+  const kb = $("#kirim"); if (!kb.disabled) kb.textContent = L("kirim");
+  $("#salin-nomor").textContent = L("salin");
+}
+$$(".bhs button").forEach(b => b.addEventListener("click", () => { LANG = b.dataset.l; lsSet("bahasa", LANG); terapkanBahasa(); }));
+
+/* Tiket yang pernah dibuat di peramban ini tampil lagi saat halaman dibuka */
+try { const s = JSON.parse(lsGet("tiket-acl") || "null"); if (s && s.nomor) { tampilTiket(s); $("#kuota-teks").textContent = ""; } } catch {}
+
+terapkanBahasa();
+
+/* ---------- Salin data uji ---------- */
+$("#unduh").addEventListener("click", async () => {
+  let arsip = []; try { arsip = JSON.parse(lsGet("pendaftaran-uji") || "[]"); } catch {}
+  if (!arsip.length) return;
+  const kolom = [...new Set(arsip.flatMap(Object.keys))];
+  const sel = v => '"' + String(v ?? "").replace(/"/g, '""') + '"';
+  const csv = [kolom.map(sel).join(","), ...arsip.map(r => kolom.map(k => sel(r[k])).join(","))].join("\n");
+  try { await navigator.clipboard.writeText(csv); $("#unduh").textContent = L("csvOk"); } catch { $("#unduh").textContent = L("csvGagal"); }
+});
+</script>
+
+</body>
+</html>
