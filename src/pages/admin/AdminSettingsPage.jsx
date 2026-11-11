@@ -27,6 +27,7 @@ const SECTIONS = [
       { key: "email", label: "Email" },
       { key: "social_linkedin", label: "LinkedIn URL" },
       { key: "social_github", label: "GitHub URL" },
+      { key: "social_youtube", label: "YouTube URL" },
       { key: "social_instagram", label: "Instagram URL" },
       { key: "social_twitter", label: "Twitter URL" },
     ],

@@ -91,6 +91,7 @@ function ensureSeed() {
     email: "israanwarr@gmail.com",
     social_linkedin: "https://www.linkedin.com/in/israanwarr/",
     social_github: "https://github.com/israanwar/",
+    social_youtube: "https://www.youtube.com/@Isra_Anwar",
     social_instagram: "",
     social_twitter: "",
     seo_default_title: "Isra Anwar — Web Development, SEO & AI Workflow",
@@ -156,6 +157,7 @@ function ensureSeed() {
     const migrated = { ...s };
     if (!s.social_linkedin) migrated.social_linkedin = DEFAULT_SETTINGS.social_linkedin;
     if (!s.social_github) migrated.social_github = DEFAULT_SETTINGS.social_github;
+    if (!s.social_youtube) migrated.social_youtube = DEFAULT_SETTINGS.social_youtube;
     if (!s.social_instagram) migrated.social_instagram = DEFAULT_SETTINGS.social_instagram;
     migrated.updated_at = now();
     write(KEYS.settings, migrated);

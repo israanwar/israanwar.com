@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useLocation } from "react-router-dom";
 import {
-  Github, Instagram, Linkedin, Mail, ShoppingBag, Menu, X,
+  Github, Instagram, Linkedin, Youtube, Mail, ShoppingBag, Menu, X,
   Home, Compass, ShoppingCart, BookOpen, Wrench,
 } from "lucide-react";
 import { useLiveSettings, useLiveProductsExist, useLiveCart } from "../../hooks/usePageData";
@@ -355,6 +355,11 @@ export function SiteFooter({ settings }) {
                     <Github size={16} aria-hidden="true" />
                   </a>
                 )}
+                {
+                  <a className="okr__foot-social-link" href={settings.social_youtube || "https://www.youtube.com/@Isra_Anwar"} target="_blank" rel="noreferrer" aria-label="YouTube">
+                    <Youtube size={16} aria-hidden="true" />
+                  </a>
+                }
               </div>
             </div>
 
