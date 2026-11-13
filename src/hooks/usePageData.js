@@ -176,7 +176,9 @@ export function useLivePage(key, { enabled = true } = {}) {
 
 // Global site settings
 export function useLiveSettings({ enabled = true } = {}) {
-  return useLive("settings", () => settingsData.get(), fromLocal(({ settingsRepo }) => settingsRepo.get() ?? {}, {}), enabled) ?? {};
+  const settings = useLive("settings", () => settingsData.get(), fromLocal(({ settingsRepo }) => settingsRepo.get() ?? {}, {}), enabled) ?? {};
+  if (settings.email === "israanwarr@gmail.com") return { ...settings, email: "hello@israanwar.com" };
+  return settings;
 }
 
 // Homepage sections (hero, cta, process, services list, cases list)

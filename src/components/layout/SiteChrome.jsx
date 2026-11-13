@@ -389,16 +389,32 @@ export function SiteFooter({ settings }) {
             <div className="okr__footer-col okr__footer-col--contact">
               <div className="okr__foot-title">{t("foot_contact")}</div>
               <div className="okr__foot-contact">
-                {settings.email && (
+                {(settings.email || "hello@israanwar.com") && (
                   <a
                     className="okr__foot-contact-link"
-                    href={`mailto:${settings.email}`}
+                    href={`mailto:${settings.email || "hello@israanwar.com"}`}
                     aria-label={`${t("contact_label_email")} Isra Anwar`}
                     title={t("contact_label_email")}
                   >
                     <Mail size={17} aria-hidden="true" /> {t("contact_label_email")}
                   </a>
                 )}
+                {(() => {
+                  const phone = settings.phone || settings.admin_whatsapp || settings.whatsapp_number || "082189594190";
+                  const whatsappNumber = phone.replace(/[^\d]/g, "").replace(/^0/, "62");
+                  return (
+                    <a
+                      className="okr__foot-contact-link"
+                      href={`https://wa.me/${whatsappNumber}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="WhatsApp"
+                      title="WhatsApp"
+                    >
+                      <WhatsAppIcon /> WhatsApp
+                    </a>
+                  );
+                })()}
               </div>
             </div>
 
@@ -412,6 +428,14 @@ export function SiteFooter({ settings }) {
         </div>
       </div>
     </footer>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false">
+      <path fill="currentColor" d="M12.04 2.2a9.8 9.8 0 0 0-8.34 14.96L2.2 21.8l4.77-1.47A9.8 9.8 0 1 0 12.04 2.2Zm0 17.84a8.03 8.03 0 0 1-4.09-1.12l-.29-.17-2.83.87.92-2.73-.19-.29a8.04 8.04 0 1 1 6.54 3.64Zm4.41-6.03c-.24-.12-1.42-.7-1.64-.77-.22-.08-.38-.12-.54.12-.16.23-.62.77-.76.93-.14.16-.28.18-.52.06a6.55 6.55 0 0 1-1.92-1.18 7.23 7.23 0 0 1-1.34-1.67c-.14-.24 0-.37.11-.49.11-.11.24-.28.35-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.46-.4-.4-.54-.4h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.65.57.25 1.02.4 1.37.51.57.18 1.09.15 1.5.09.46-.07 1.42-.58 1.62-1.15.2-.56.2-1.04.14-1.14-.06-.1-.22-.22-.46-.28Z" />
+    </svg>
   );
 }
 

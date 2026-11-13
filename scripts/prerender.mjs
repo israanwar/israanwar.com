@@ -166,7 +166,7 @@ function injectJsonLd(html, schemas) {
 // -----------------------------------------------------------------------
 
 const REAL_SOCIAL = {
-  email: "israanwarr@gmail.com",
+  email: "hello@israanwar.com",
   linkedin: "https://www.linkedin.com/in/israanwarr/",
   github: "https://github.com/israanwar/",
   instagram: "",

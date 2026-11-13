@@ -90,7 +90,7 @@ export function useBalaoKnowledge({ enabled = true } = {}) {
         certifications: Array.isArray(portfolio?.certifications) ? portfolio.certifications : [],
       },
       contact: {
-        email: settings?.email || "israanwarr@gmail.com",
+        email: settings?.email || "hello@israanwar.com",
       },
       site: {
         name: settings?.site_name || site.name,

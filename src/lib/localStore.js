@@ -88,7 +88,7 @@ function ensureSeed() {
     description: HERO_SUBTITLE,
     whatsapp_number: "",
     whatsapp_url: "",
-    email: "israanwarr@gmail.com",
+    email: "hello@israanwar.com",
     social_linkedin: "https://www.linkedin.com/in/israanwarr/",
     social_github: "https://github.com/israanwar/",
     social_youtube: "https://www.youtube.com/@Isra_Anwar",
@@ -97,7 +97,7 @@ function ensureSeed() {
     seo_default_title: "Isra Anwar — Web Development, SEO & AI Workflow",
     seo_default_description: "Isra Anwar is a digital consulting studio in Indonesia helping personal brands and businesses grow through web development, SEO, AI-driven workflows, and content strategy built for measurable results.",
     ...DEFAULT_QRIS_SETTINGS,
-    admin_email: "israanwarr@gmail.com",
+    admin_email: "hello@israanwar.com",
     admin_whatsapp: "082189594190",
     admin_whatsapp_url: "https://wa.me/6282189594190",
     updated_at: now(),
@@ -175,6 +175,15 @@ function ensureSeed() {
     migrated.updated_at = now();
     write(KEYS.settings, migrated);
     localStorage.setItem("okr:migrated:settings:v7", "1");
+  }
+  if (localStorage.getItem("okr:migrated:settings:email-v8") !== "1") {
+    const s = read(KEYS.settings, {}) ?? {};
+    const migrated = { ...s };
+    if (s.email === "israanwarr@gmail.com") migrated.email = DEFAULT_SETTINGS.email;
+    if (s.admin_email === "israanwarr@gmail.com") migrated.admin_email = DEFAULT_SETTINGS.admin_email;
+    migrated.updated_at = now();
+    write(KEYS.settings, migrated);
+    localStorage.setItem("okr:migrated:settings:email-v8", "1");
   }
   if (localStorage.getItem("okr:migrated:settings:hero-copy:v1") !== "1") {
     const s = read(KEYS.settings, {}) ?? {};
